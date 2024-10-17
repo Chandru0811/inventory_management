@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import deals from "../../assets/CRMLogo.png";
 import { BsBarChartFill } from "react-icons/bs";
-import { BiSolidCategory} from "react-icons/bi";
+import { BiLogOut, BiSolidCategory } from "react-icons/bi";
 import { MdCategory } from "react-icons/md";
 import { FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { AiOutlineBarChart, AiOutlineShoppingCart } from "react-icons/ai";
@@ -86,13 +86,18 @@ function AdminSidebar({ handleLogout }) {
               {activeSubmenu === "inventory" && (
                 <ul className="list-unstyled ps-3">
                   <li>
-                    <NavLink className="nav-link" to="/items">
+                    <NavLink className="nav-link" to="/item">
                       Items
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink className="nav-link" to="/group-items">
+                    <NavLink className="nav-link" to="/itemgroup">
                       Group Items
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/inventoryadjustment">
+                      Inventory Adjustment
                     </NavLink>
                   </li>
                 </ul>
@@ -187,7 +192,8 @@ function AdminSidebar({ handleLogout }) {
               className="nav-link"
               onClick={handleLogOutClick}
             >
-              <FaChevronLeft className="me-2" />
+              <BiLogOut />
+              &nbsp;&nbsp; Logout
             </button>
           </div>
         </div>

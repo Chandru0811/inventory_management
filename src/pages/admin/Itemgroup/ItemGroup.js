@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../config/URL";
 
-const Customers = () => {
+const ItemGroup = () => {
   const tableRef = useRef(null);
   // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
@@ -15,7 +15,7 @@ const Customers = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllCustomers");
+        const response = await api.get("/getAllMstrCustomers");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,7 +56,7 @@ const Customers = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllCustomers");
+      const response = await api.get("/getAllItems");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -94,20 +94,20 @@ const Customers = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Customer</h1>
+                    <h1 className="h4 ls-tight headingColor ">Item Group</h1>
                   </div>
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {storedScreens?.levelCreate && ( */}
-                    <Link to="/customer/add">
+                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
+                    <Link to="/itemgroup/add">
                       <button type="submit" className="btn btn-sm btn-button">
                         <span cla>
                           Add <FaPlus className="pb-1" />
                         </span>
                       </button>
                     </Link>
-                    {/* )} */}
+                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
@@ -122,13 +122,13 @@ const Customers = () => {
                       S.NO
                     </th>
                     <th scope="col" className="text-center">
-                      CUSTOMER NAME
+                      ITEMGROUP NAME
                     </th>
                     <th scope="col" className="text-center">
-                      EMAIL
+                      TYPE
                     </th>
                     <th scope="col" className="text-center">
-                      PHONE
+                      BRAND NAME
                     </th>
                     <th scope="col" className="text-center">
                       ACTION
@@ -139,9 +139,9 @@ const Customers = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.contactName}</td>
-                      <td className="text-center">{data.email}</td>
-                      <td className="text-center">{data.phone}</td>
+                      <td className="text-center">{data.name}</td>
+                      <td className="text-center">{data.type}</td>
+                      <td className="text-center">{data.dimensions}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/customer/view/${data.id}`}>
@@ -176,4 +176,4 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default ItemGroup;

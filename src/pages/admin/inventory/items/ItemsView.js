@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import api from "../../../config/URL";
-
+import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-const CustomerView = () => {
+const ItemsView = () => {
   const { id } = useParams();
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(`/getMstrCustomerById/${id}`);
-        setData(response.data);
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(false);
+      //   try {
+      //     const response = await api.get(`/getMstrCustomerById/${id}`);
+      //     setData(response.data);
+      //   } catch (e) {
+      //     toast.error("Error fetching data: ", e?.response?.data?.message);
+      //   } finally {
+      //     setLoading(false);
+      //   }
     };
     getData();
   }, [id]);
@@ -46,12 +45,12 @@ const CustomerView = () => {
               <div className="row align-items-center">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor">View Customer</h1>
+                    <h1 className="h4 ls-tight headingColor">View Items</h1>
                   </div>
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-start">
-                    <Link to="/customer">
+                    <Link to="/item">
                       <button type="submit" className="btn btn-sm btn-light">
                         <span>Back</span>
                       </button>
@@ -68,7 +67,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Customer Name</b>
+                        <b>Name</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -82,7 +81,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Account Number </b>
+                        <b>Type </b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -96,7 +95,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Primary Contact</b>
+                        <b>Stock Keeping Unit</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -110,7 +109,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Customer Email </b>
+                        <b>Item Unit </b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -122,7 +121,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Customer Phone</b>
+                        <b>Dimensions</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -135,7 +134,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Website</b>
+                        <b>Weight</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -149,7 +148,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Bank Name</b>
+                        <b>Manaufacture Name</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -163,7 +162,119 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Bank Account Number</b>
+                        <b>Brand Name</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.bankAccNumber || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Manaufacturing Part Number</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.bankAccName || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Universal Product Code</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.bankAccNumber || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>International Article Number</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.bankAccName || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>International Standard BookNumber</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.bankAccNumber || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Opening Stock</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.bankAccName || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Opening Stock Rate</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.bankAccNumber || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Preferred Vendor</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.bankAccName || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Recorder points</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -176,16 +287,14 @@ const CustomerView = () => {
               </div>
             </div>
             {/* Users Information */}
-            <div className="container-fluid fw-bold fs-5 my-2 ms-2">
-              Billing Address
-            </div>
+            <div className="container-fluid fw-bold fs-5 my-2 ms-2">Sales</div>
             <div className="container">
               <div className="row mt-2 p-3">
                 <div className="col-md-6 col-12">
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Billing Country</b>
+                        <b>Selling Price</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -199,7 +308,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Billing Address </b>
+                        <b>Sales Account </b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -213,7 +322,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Billing City</b>
+                        <b>Sales Tax</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -227,7 +336,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Billing State</b>
+                        <b>Sales Account Description</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -237,38 +346,10 @@ const CustomerView = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Billing Zip Code</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.billZip || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Billing Attention</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.billAttention || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
             <div className="container-fluid fw-bold fs-5 my-2 ms-2">
-              Shipping Address
+              Purchase
             </div>
             <div className="container">
               <div className="row mt-2 p-3">
@@ -276,7 +357,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Shipping Country</b>
+                        <b>Cost Price</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -290,7 +371,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Shipping Address </b>
+                        <b>Purchase Account </b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -304,7 +385,7 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Shipping City</b>
+                        <b>Purchase Tax</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -318,54 +399,13 @@ const CustomerView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b> Shipping State</b>
+                        <b> Purchase Account Description</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         : {data.deliState || ""}
                       </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Shipping Zip Code</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.deliZip || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Shipping Attention</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.deliAttention || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Remarks</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">: {data.notes || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -378,4 +418,4 @@ const CustomerView = () => {
   );
 };
 
-export default CustomerView;
+export default ItemsView;
