@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/client/Home";
-
+import "../styles/client.css";
 function Client({
   handleLogout,
   handleLogin,

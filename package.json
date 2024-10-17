@@ -1,5 +1,5 @@
 {
-  "name": "dealslah_frontend",
+  "name": "inventory_management",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,7 +10,7 @@
     "bootstrap": "^5.3.3",
     "datatables.net-dt": "^2.1.4",
     "datatables.net-responsive-dt": "^3.0.2",
-    "formic": "^0.0.10",
+    "formik": "^2.4.6",
     "jquery": "^3.7.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
