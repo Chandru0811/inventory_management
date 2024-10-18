@@ -4,9 +4,9 @@ import "datatables.net-responsive-dt";
 import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
-import api from "../../../config/URL";
+import api from "../../../../config/URL";
 
-const Customers = () => {
+const Customer = () => {
   const tableRef = useRef(null);
   // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
@@ -100,7 +100,7 @@ const Customers = () => {
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
                     {/* {storedScreens?.levelCreate && ( */}
-                    <Link to="/customer/add">
+                    <Link to="/customers/add">
                       <button type="submit" className="btn btn-sm btn-button">
                         <span cla>
                           Add <FaPlus className="pb-1" />
@@ -144,13 +144,13 @@ const Customers = () => {
                       <td className="text-center">{data.phone}</td>
                       <td className="text-center">
                         <div className="gap-2">
-                          <Link to={`/customer/view/${data.id}`}>
+                          <Link to={`/customers/view/${data.id}`}>
                             <button className="btn btn-light btn-sm  shadow-none border-none">
                               View
                             </button>
                           </Link>
                           <Link
-                            to={`/customer/edit/${data.id}`}
+                            to={`/customers/edit/${data.id}`}
                             className="px-2"
                           >
                             <button className="btn btn-light  btn-sm shadow-none border-none">
@@ -176,4 +176,4 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default Customer;

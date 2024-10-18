@@ -100,6 +100,16 @@ function AdminSidebar({ handleLogout }) {
                       Inventory Adjustment
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink className="nav-link" to="/pricelist">
+                      Price List
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/compositeitem">
+                      Composite Item
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </li>
@@ -127,8 +137,18 @@ function AdminSidebar({ handleLogout }) {
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink className="nav-link" to="/sales-order">
+                    <NavLink className="nav-link" to="/salesorder">
                       Sales Order
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/packages">
+                      Packages
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/shipment">
+                      Shipment
                     </NavLink>
                   </li>
                 </ul>
@@ -152,13 +172,18 @@ function AdminSidebar({ handleLogout }) {
               {activeSubmenu === "purchases" && (
                 <ul className="list-unstyled ps-3">
                   <li>
-                    <NavLink className="nav-link" to="/vendors">
+                    <NavLink className="nav-link" to="/vendor">
                       Vendors
                     </NavLink>
                   </li>
                   <li>
                     <NavLink className="nav-link" to="/purchase-order">
                       Purchases Order
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/purchasereceive">
+                      Purchases Receives
                     </NavLink>
                   </li>
                 </ul>
@@ -189,11 +214,11 @@ function AdminSidebar({ handleLogout }) {
           <div className="mt-auto w-100 mb-4 nav-logo">
             <button
               style={{ width: "100%", color: "#fff" }}
-              className="nav-link"
+              className="nav-link d-flex justify-content-between"
               onClick={handleLogOutClick}
-            >
+            > Logout
+
               <BiLogOut />
-              &nbsp;&nbsp; Logout
             </button>
           </div>
         </div>

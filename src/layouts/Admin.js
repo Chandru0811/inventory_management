@@ -13,14 +13,45 @@ import ItemGroup from "../pages/admin/Itemgroup/ItemGroup";
 import ItemGroupAdd from "../pages/admin/Itemgroup/ItemGroupAdd";
 import ItemGroupEdit from "../pages/admin/Itemgroup/ItemGroupEdit";
 import ItemGroupView from "../pages/admin/Itemgroup/ItemGroupView";
-import Customers from "../pages/admin/Customers/Customer";
-import CustomerAdd from "../pages/admin/Customers/CustomerAdd";
-import CustomerEdit from "../pages/admin/Customers/CustomerEdit";
-import CustomerView from "../pages/admin/Customers/CustomerView";
 import InventoryAdjustment from "../pages/admin/inventory/Inventoryadjustment/InventoryAdjustment";
 import InventoryAdjustmentAdd from "../pages/admin/inventory/Inventoryadjustment/InventoryAdjustmentAdd";
 import InventoryAdjustmentEdit from "../pages/admin/inventory/Inventoryadjustment/InventoryAdjustmentEdit";
 import InventoryAdjustmentView from "../pages/admin/inventory/Inventoryadjustment/InventoryAdjustmentView";
+
+import Customer from "../pages/admin/Sales/Customers/Customer";
+import CustomerAdd from "../pages/admin/Sales/Customers/CustomerAdd";
+import CustomerEdit from "../pages/admin/Sales/Customers/CustomerEdit";
+import CustomerView from "../pages/admin/Sales/Customers/CustomerView";
+import SalesOrder from "../pages/admin/Sales/SalesOrder/SalesOrder";
+import SalesOrderAdd from "../pages/admin/Sales/SalesOrder/SalesOrderAdd";
+import SalesOrderEdit from "../pages/admin/Sales/SalesOrder/SalesOrderEdit";
+import SalesOrderView from "../pages/admin/Sales/SalesOrder/SalesOrderView";
+import Packages from "../pages/admin/Sales/Packages/Packages";
+import PackagesAdd from "../pages/admin/Sales/Packages/PackagesAdd";
+import PackagesEdit from "../pages/admin/Sales/Packages/PackagesEdit";
+import PackagesView from "../pages/admin/Sales/Packages/PackagesView";
+import Shipment from "../pages/admin/Sales/Shipment/Shipment";
+import ShipmentAdd from "../pages/admin/Sales/Shipment/ShipmentAdd";
+import ShipmentEdit from "../pages/admin/Sales/Shipment/ShipmentEdit";
+import ShipmentView from "../pages/admin/Sales/Shipment/ShipmentView";
+
+import PriceList from "../pages/admin/inventory/pricelist/PriceList";
+import PriceListAdd from "../pages/admin/inventory/pricelist/PriceListAdd";
+import PriceListEdit from "../pages/admin/inventory/pricelist/PriceListEdit";
+import PriceListView from "../pages/admin/inventory/pricelist/PriceListView";
+import CompositeItem from "../pages/admin/inventory/compositeitem/CompositeItem";
+import CompositeItemAdd from "../pages/admin/inventory/compositeitem/CompositeItemAdd";
+import CompositeItemEdit from "../pages/admin/inventory/compositeitem/CompositeItemEdit";
+import CompositeItemView from "../pages/admin/inventory/compositeitem/CompositeItemView";
+import Vendor from "../pages/admin/purchase/vendor/Vendor";
+import VendorAdd from "../pages/admin/purchase/vendor/VendorAdd";
+import VendorEdit from "../pages/admin/purchase/vendor/VendorEdit";
+import VendorView from "../pages/admin/purchase/vendor/VendorView";
+import PurchaseReceive from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceive";
+import PurchaseReceiveAdd from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceiveAdd";
+import PurchaseReceiveEdit from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceiveEdit";
+import PurchaseReceiveView from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceiveView"
+
 function Admin({ handleLogout }) {
   return (
     <div>
@@ -60,10 +91,67 @@ function Admin({ handleLogout }) {
                     element={<InventoryAdjustmentView />}
                   />
 
-                  <Route path="/customers" element={<Customers />} />
-                  <Route path="/customer/add" element={<CustomerAdd />} />
-                  <Route path="/customer/edit/id" element={<CustomerEdit />} />
-                  <Route path="/customer/view/id" element={<CustomerView />} />
+                  {/* Sales */}
+                  <Route path="/customers" element={<Customer />} />
+                  <Route path="/customers/add" element={<CustomerAdd />} />
+                  <Route path="/customers/edit" element={<CustomerEdit />} />
+                  <Route path="/customers/view" element={<CustomerView />} />
+
+                  <Route path="/salesorder" element={<SalesOrder />} />
+                  <Route path="/salesorder/add" element={<SalesOrderAdd />} />
+                  <Route path="/salesorder/edit" element={<SalesOrderEdit />} />
+                  <Route path="/salesorder/view" element={<SalesOrderView />} />
+
+                  <Route path="/packages" element={<Packages />} />
+                  <Route path="/packages/add" element={<PackagesAdd />} />
+                  <Route path="/packages/edit" element={<PackagesEdit />} />
+                  <Route path="/packages/view" element={<PackagesView />} />
+
+                  <Route path="/shipment" element={<Shipment />} />
+                  <Route path="/shipment/add" element={<ShipmentAdd />} />
+                  <Route path="/shipment/edit" element={<ShipmentEdit />} />
+                  <Route path="/shipment/view" element={<ShipmentView />} />
+
+                  <Route path="/pricelist" element={<PriceList />} />
+                  <Route path="/pricelist/add" element={<PriceListAdd />} />
+                  <Route path="/pricelist/edit" element={<PriceListEdit />} />
+                  <Route path="/pricelist/view" element={<PriceListView />} />
+
+                  <Route path="/compositeitem" element={<CompositeItem />} />
+                  <Route
+                    path="/compositeitem/add"
+                    element={<CompositeItemAdd />}
+                  />
+                  <Route
+                    path="/compositeitem/edit"
+                    element={<CompositeItemEdit />}
+                  />
+                  <Route
+                    path="/compositeitem/view"
+                    element={<CompositeItemView />}
+                  />
+
+                  <Route path="/vendor" element={<Vendor />} />
+                  <Route path="/vendor/add" element={<VendorAdd />} />
+                  <Route path="/vendor/edit" element={<VendorEdit />} />
+                  <Route path="/vendor/view" element={<VendorView />} />
+
+                  <Route
+                    path="/purchasereceive"
+                    element={<PurchaseReceive />}
+                  />
+                  <Route
+                    path="/purchasereceive/add"
+                    element={<PurchaseReceiveAdd />}
+                  />
+                  <Route
+                    path="/purchasereceive/edit"
+                    element={<PurchaseReceiveEdit />}
+                  />
+                  <Route
+                    path="/purchasereceive/view"
+                    element={<PurchaseReceiveView />}
+                  />
                 </Routes>
               </div>
             </main>
