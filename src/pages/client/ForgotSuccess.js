@@ -9,7 +9,7 @@ function ForgotSuccess() {
     >
       <h2
         className="d-flex justify-content-center mb-5"
-        style={{ color: "#ef4444" }}
+        style={{ color: "#181c2e" }}
       >
         Inventory
       </h2>
@@ -26,7 +26,7 @@ function ForgotSuccess() {
         </p>
         <div className="button-group mt-4">
           <Link to={`/`}>
-            <button className="btn" style={{ width: "250px" }}>
+            <button className="btn btn-primary" style={{ width: "250px" }}>
               Back to Login
             </button>
           </Link>

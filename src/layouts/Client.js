@@ -5,6 +5,7 @@ import "../styles/client.css";
 import Register from "../pages/client/Register";
 import ForgotPage from "../pages/client/ForgoPage";
 import ForgotSuccess from "../pages/client/ForgotSuccess";
+import ResetPage from "../pages/client/ResetPage";
 function Client({
   handleLogout,
   handleLogin,
@@ -21,7 +22,7 @@ function Client({
             <Route path="/forgotsuccess" element={<ForgotSuccess />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot" element={<ForgotPage />} />
-            {/* <Route path="/resetpassword" element={<ResetPage />} /> */}
+            <Route path="/resetpassword" element={<ResetPage />} />
           </Routes>
         </BrowserRouter>
       </div>

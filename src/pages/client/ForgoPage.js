@@ -96,7 +96,7 @@ const ForgotPage = () => {
               <Link to="/">
               <p className="text-muted" style={{ fontSize: "0.9rem" }}>
                 Go Back to &nbsp;
-                <span style={{ color: "#ef4444" }}>Login In</span>
+                <span style={{ color: "#181c2e" }}>Login In</span>
               </p>
               </Link>
             </div>

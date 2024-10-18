@@ -1,4 +1,5 @@
 import React from 'react'
+import user from "../../assets/user.webp";
 
 function AdminHeader() {
   return (
@@ -36,6 +37,10 @@ function AdminHeader() {
                 &nbsp;&nbsp;&nbsp;
                 <span className="position-relative mx-2">
                   <i className="bi bi-journal admin-icons"></i>
+                </span>
+                &nbsp;&nbsp;&nbsp;
+                <span style={{ fontSize: "24px" }}>
+                  <img src={user} className="img-fluid header-user" alt="img" />
                 </span>
               </div>
             </div>
