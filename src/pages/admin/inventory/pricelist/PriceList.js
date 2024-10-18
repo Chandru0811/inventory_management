@@ -4,9 +4,9 @@ import "datatables.net-responsive-dt";
 import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
-import api from "../../../config/URL";
+import api from "../../../../config/URL";
 
-const ItemGroup = () => {
+const PriceList = () => {
   const tableRef = useRef(null);
   // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
@@ -97,13 +97,13 @@ const ItemGroup = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Item Group</h1>
+                    <h1 className="h4 ls-tight headingColor ">Price List</h1>
                   </div>
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
                     {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
-                    <Link to="/itemgroup/add">
+                    <Link to="/pricelist/add">
                       <button
                         type="submit"
                         className="btn btn-sm btn-button btn-primary"
@@ -132,13 +132,13 @@ const ItemGroup = () => {
                       S.NO
                     </th>
                     <th scope="col" className="text-center">
-                      ITEMGROUP NAME
+                      NAME
                     </th>
                     <th scope="col" className="text-center">
-                      TYPE
+                      TRANSACTION TYPE
                     </th>
                     <th scope="col" className="text-center">
-                      BRAND NAME
+                      PRICELIST TYPE
                     </th>
                     <th scope="col" className="text-center">
                       ACTION
@@ -186,4 +186,4 @@ const ItemGroup = () => {
   );
 };
 
-export default ItemGroup;
+export default PriceList;

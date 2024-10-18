@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import api from "../../../config/URL";
+import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-const ItemGroupAdd = () => {
+const PriceListAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
 
@@ -80,7 +80,7 @@ const ItemGroupAdd = () => {
   });
 
   return (
-    <div className="container-fluid px-2 minHeight m-0">
+    <div className="container-fluid px-2  minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
           className="card shadow border-0 mb-2 top-header"
@@ -90,24 +90,24 @@ const ItemGroupAdd = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">Add ItemGroup</h1>
+                  <h1 className="h4 ls-tight headingColor">Add Price List</h1>
                 </div>
               </div>
               <div className="col-auto">
                 <div className="hstack gap-2 justify-content-end">
-                  <Link to="/itemgroup">
+                  <Link to="/pricelist">
                     <button type="submit" className="btn btn-sm btn-light">
                       <span>Back</span>
                     </button>
                   </Link>
                   <button
                     type="submit"
-                    className="btn btn-sm btn-button"
+                    className="btn btn-sm btn-buttonm btn-primary"
                     disabled={loading}
                   >
                     {loading ? (
                       <span
-                        className="spinner-border spinner-border-sm btn-primary"
+                        className="spinner-border spinner-border-sm"
                         aria-hidden="true"
                       ></span>
                     ) : (
@@ -132,7 +132,7 @@ const ItemGroupAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Group Name<span className="text-danger">*</span>
+                  Name <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -154,7 +154,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Type<span className="text-danger">*</span>
+                  Transaction Type<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -177,7 +177,7 @@ const ItemGroupAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Unit<span className="text-danger">*</span>
+                  Price List Type<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -201,7 +201,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Tax<span className="text-danger">*</span>
+                  Percentage<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -224,7 +224,7 @@ const ItemGroupAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Manaufacture Name<span className="text-danger">*</span>
+                  Round Off To<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -247,7 +247,7 @@ const ItemGroupAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Brand Name<span className="text-danger">*</span>
+                  Pricing Scheme<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -271,7 +271,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Multiple Items
+                  Currency
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -294,56 +294,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Attribute<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Options
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Type
+                  Discount
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -366,36 +317,11 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Sales Account
+                  Description
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Purchase Account
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
+                  <textarea
                     type="text"
                     name="bankAccName"
                     className={`form-control  ${
@@ -410,125 +336,6 @@ const ItemGroupAdd = () => {
                       {formik.errors.bankAccName}
                     </div>
                   )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Inventory Account
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  sales Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Purchase Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Image
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="file"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
                 </div>
               </div>
             </div>
@@ -539,4 +346,4 @@ const ItemGroupAdd = () => {
   );
 };
 
-export default ItemGroupAdd;
+export default PriceListAdd;

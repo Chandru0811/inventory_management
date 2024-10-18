@@ -81,9 +81,12 @@ const InventoryAdjustmentAdd = () => {
   });
 
   return (
-    <div className="container-fluid p-2 minHeight m-0">
+    <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
-        <div className="card shadow border-0 mb-2 top-header">
+        <div
+          className="card shadow border-0 mb-2 top-header"
+          style={{ borderRadius: "0" }}
+        >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
               <div className="col">
@@ -102,7 +105,7 @@ const InventoryAdjustmentAdd = () => {
                   </Link>
                   <button
                     type="submit"
-                    className="btn btn-sm btn-button"
+                    className="btn btn-sm btn-button btn-primary"
                     disabled={loading}
                   >
                     {loading ? (
@@ -121,7 +124,10 @@ const InventoryAdjustmentAdd = () => {
           </div>
         </div>
 
-        <div className="card shadow border-0 my-2">
+        <div
+          className="card shadow border-0 my-2"
+          style={{ borderRadius: "0" }}
+        >
           <div className="row mt-3 me-2">
             <div className="col-12 text-end"></div>
           </div>

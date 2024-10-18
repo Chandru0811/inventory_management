@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import api from "../../../config/URL";
+import api from "../../../../config/URL";
 import toast from "react-hot-toast";
+import CompositeItem from "./CompositeItem";
 
-const ItemGroupAdd = () => {
+const CompositeItemAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
 
@@ -90,19 +91,21 @@ const ItemGroupAdd = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">Add ItemGroup</h1>
+                  <h1 className="h4 ls-tight headingColor">
+                    Add Composite Items
+                  </h1>
                 </div>
               </div>
               <div className="col-auto">
                 <div className="hstack gap-2 justify-content-end">
-                  <Link to="/itemgroup">
+                  <Link to="/compositeitem">
                     <button type="submit" className="btn btn-sm btn-light">
                       <span>Back</span>
                     </button>
                   </Link>
                   <button
                     type="submit"
-                    className="btn btn-sm btn-button"
+                    className="btn btn-sm btn-button btn-primary"
                     disabled={loading}
                   >
                     {loading ? (
@@ -132,7 +135,7 @@ const ItemGroupAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Group Name<span className="text-danger">*</span>
+                  Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -177,7 +180,7 @@ const ItemGroupAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Unit<span className="text-danger">*</span>
+                  Stock Keeping Unit<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -201,7 +204,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Tax<span className="text-danger">*</span>
+                  Item Unit<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -217,6 +220,52 @@ const ItemGroupAdd = () => {
                   {formik.touched.email && formik.errors.email && (
                     <div className="invalid-feedback">
                       {formik.errors.email}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Dimensions<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="phone"
+                    className={`form-control  ${
+                      formik.touched.phone && formik.errors.phone
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("phone")}
+                  />
+                  {formik.touched.phone && formik.errors.phone && (
+                    <div className="invalid-feedback">
+                      {formik.errors.phone}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Weight<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="website"
+                    className={`form-control  ${
+                      formik.touched.website && formik.errors.website
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("website")}
+                  />
+                  {formik.touched.website && formik.errors.website && (
+                    <div className="invalid-feedback">
+                      {formik.errors.website}
                     </div>
                   )}
                 </div>
@@ -271,7 +320,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Multiple Items
+                  Manaufacturing Part Number
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -294,7 +343,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Attribute<span className="text-danger">*</span>
+                  Universal Product Code<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -318,55 +367,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Options
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Type
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Sales Account
+                  International Article Number
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -391,7 +392,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Purchase Account
+                  International Standard BookNumber
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -414,7 +415,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Inventory Account
+                  Opening Stock
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -439,7 +440,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Id
+                  Opening Stock Rate
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -462,7 +463,32 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  sales Id
+                  Preferred Vendor
+                  <span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="bankAccNumber"
+                    className={`form-control  ${
+                      formik.touched.bankAccNumber &&
+                      formik.errors.bankAccNumber
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("bankAccNumber")}
+                  />
+                  {formik.touched.bankAccNumber &&
+                    formik.errors.bankAccNumber && (
+                      <div className="invalid-feedback">
+                        {formik.errors.bankAccNumber}
+                      </div>
+                    )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Recorder points
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -485,50 +511,226 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Purchase Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Image
+                  Composite Item Image
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="file"
-                    name="bankAccNumber"
+                    name="bankAccName"
                     className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
+                      formik.touched.bankAccName && formik.errors.bankAccName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    {...formik.getFieldProps("bankAccName")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
+                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.bankAccName}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-12 mb-2 d-flex justify-content-end align-items-end">
+                {/* <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="copyAddress"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        formik.setFieldValue(
+                          "billCountry",
+                          formik.values.deliCountry
+                        );
+                        formik.setFieldValue(
+                          "billAddress",
+                          formik.values.deliAddress
+                        );
+                        formik.setFieldValue(
+                          "billCity",
+                          formik.values.deliCity
+                        );
+                        formik.setFieldValue(
+                          "billState",
+                          formik.values.deliState
+                        );
+                        formik.setFieldValue("billZip", formik.values.deliZip);
+                        formik.setFieldValue(
+                          "billAttention",
+                          formik.values.deliAttention
+                        );
+                      }
+                    }}
+                  />
+                  <label className="form-check-label" htmlFor="copyAddress">
+                    Same as Shipping Address
+                  </label>
+                </div> */}
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <h3 className="my-5">Sales</h3>
+                <label className="form-label">Selling Price</label>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="deliCountry"
+                    className={`form-control`}
+                    {...formik.getFieldProps("deliCountry")}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <h3 className="my-5">Purchase</h3>
+                <label className="form-label">Cost Price</label>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="billCountry"
+                    className={`form-control`}
+                    {...formik.getFieldProps("billCountry")}
+                  />
+                </div>
+              </div>
+
+              <div className="container mb-5">
+                <div className="row py-4">
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">Sales Account</label>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="deliAddress"
+                        className={`form-control ${
+                          formik.touched.deliAddress &&
+                          formik.errors.deliAddress
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("deliAddress")}
+                      />
+                      {formik.touched.deliAddress &&
+                        formik.errors.deliAddress && (
+                          <div className="invalid-feedback">
+                            {formik.errors.deliAddress}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">Purchase Account</label>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="billAddress"
+                        className={`form-control ${
+                          formik.touched.billAddress &&
+                          formik.errors.billAddress
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("billAddress")}
+                      />
+                      {formik.touched.billAddress &&
+                        formik.errors.billAddress && (
+                          <div className="invalid-feedback">
+                            {formik.errors.billAddress}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">Sales Tax</label>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="deliCity"
+                        className={`form-control ${
+                          formik.touched.deliCity && formik.errors.deliCity
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("deliCity")}
+                      />
+                      {formik.touched.deliCity && formik.errors.deliCity && (
+                        <div className="invalid-feedback">
+                          {formik.errors.deliCity}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">Purchase Tax</label>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="billCity"
+                        className={`form-control ${
+                          formik.touched.billCity && formik.errors.billCity
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("billCity")}
+                      />
+                      {formik.touched.billCity && formik.errors.billCity && (
+                        <div className="invalid-feedback">
+                          {formik.errors.billCity}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">
+                      Sales Account Description
+                    </label>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="deliState"
+                        className={`form-control ${
+                          formik.touched.deliState && formik.errors.deliState
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("deliState")}
+                      />
+                      {formik.touched.deliState && formik.errors.deliState && (
+                        <div className="invalid-feedback">
+                          {formik.errors.deliState}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">
+                      Purchase Account Description
+                    </label>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="billState"
+                        className={`form-control ${
+                          formik.touched.billState && formik.errors.billState
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("billState")}
+                      />
+                      {formik.touched.billState && formik.errors.billState && (
+                        <div className="invalid-feedback">
+                          {formik.errors.billState}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -539,4 +741,4 @@ const ItemGroupAdd = () => {
   );
 };
 
-export default ItemGroupAdd;
+export default CompositeItemAdd;

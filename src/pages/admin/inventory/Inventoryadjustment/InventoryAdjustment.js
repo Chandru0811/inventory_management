@@ -89,7 +89,10 @@ const InventoryAdjustment = () => {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div className="card shadow border-0 my-2">
+          <div
+            className="card shadow border-0 mb-2 top-header"
+            style={{ borderRadius: "0" }}
+          >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
@@ -103,7 +106,10 @@ const InventoryAdjustment = () => {
                   <div className="hstack gap-2 justify-content-end">
                     {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/inventoryadjustment/add">
-                      <button type="submit" className="btn btn-sm btn-button">
+                      <button
+                        type="submit"
+                        className="btn btn-sm btn-button btn-primary"
+                      >
                         <span cla>
                           Add <FaPlus className="pb-1" />
                         </span>
@@ -114,8 +120,12 @@ const InventoryAdjustment = () => {
                 </div>
               </div>
             </div>
-
-            <hr className="removeHrMargin"></hr>
+          </div>
+          {/* <hr className="removeHrMargin"></hr> */}
+          <div
+            className="card shadow border-0 my-2"
+            style={{ borderRadius: "0" }}
+          >
             <div className="table-responsive p-2 minHeight">
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
@@ -170,8 +180,8 @@ const InventoryAdjustment = () => {
                 </tbody>
               </table>
             </div>
-            <div className="card-footer border-0 py-5"></div>
           </div>
+          <div className="card-footer border-0 py-5"></div>
         </div>
       )}
     </div>

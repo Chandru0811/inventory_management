@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import api from "../../../config/URL";
+import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-const ItemGroupAdd = () => {
+const VendorEdit = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
 
@@ -16,7 +17,7 @@ const ItemGroupAdd = () => {
     email: Yup.string().required("*Email is required"),
     phone: Yup.number().required("*Phone is required"),
     website: Yup.string().required("*Website is required"),
-    bankAccName: Yup.string().required("*Account Nameis required"),
+    bankAccName: Yup.string().required("*Account Name is required"),
     bankAccNumber: Yup.string().required("*Account Number is required"),
 
     // deliCountry: Yup.number().required("*Country is required"),
@@ -34,6 +35,7 @@ const ItemGroupAdd = () => {
     // billAttention: Yup.number().required("*Attention is required"),
     // notes: Yup.number().required("*Remarks is required"),
   });
+
   const formik = useFormik({
     initialValues: {
       // companyName: "",
@@ -63,24 +65,38 @@ const ItemGroupAdd = () => {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-      try {
-        const response = await api.post("/createMstrCustomer", values, {});
-        if (response.status === 201) {
-          toast.success(response.data.message);
-          navigate("/customer");
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
-      } finally {
-        setLoadIndicator(false);
-      }
+      //   try {
+      //     const response = await api.put(`/updateMstrCustomer/${id}`, values, {});
+      //     if (response.status === 200) {
+      //       toast.success(response.data.message);
+      //       navigate("/customer");
+      //     } else {
+      //       toast.error(response.data.message);
+      //     }
+      //   } catch (e) {
+      //     toast.error("Error fetching data: ", e?.response?.data?.message);
+      //   } finally {
+      //     setLoadIndicator(false);
+      //   }
     },
   });
 
+  useEffect(() => {
+    const getData = async () => {
+      //   try {
+      //     const response = await api.get(`/getMstrCustomerById/${id}`);
+      //     formik.setValues(response.data);
+      //   } catch (e) {
+      //     toast.error("Error fetching data: ", e?.response?.data?.message);
+      //   }
+    };
+
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="container-fluid px-2 minHeight m-0">
+    <div className="container-fluid px-2  minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
           className="card shadow border-0 mb-2 top-header"
@@ -90,24 +106,24 @@ const ItemGroupAdd = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">Add ItemGroup</h1>
+                  <h1 className="h4 ls-tight headingColor">Edit Vendor</h1>
                 </div>
               </div>
               <div className="col-auto">
                 <div className="hstack gap-2 justify-content-end">
-                  <Link to="/itemgroup">
+                  <Link to="/vendor">
                     <button type="submit" className="btn btn-sm btn-light">
                       <span>Back</span>
                     </button>
                   </Link>
                   <button
                     type="submit"
-                    className="btn btn-sm btn-button"
+                    className="btn btn-sm btn-buttonm btn-primary"
                     disabled={loading}
                   >
                     {loading ? (
                       <span
-                        className="spinner-border spinner-border-sm btn-primary"
+                        className="spinner-border spinner-border-sm"
                         aria-hidden="true"
                       ></span>
                     ) : (
@@ -132,7 +148,7 @@ const ItemGroupAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Group Name<span className="text-danger">*</span>
+                  First Name <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -154,7 +170,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Type<span className="text-danger">*</span>
+                  Last Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -177,7 +193,7 @@ const ItemGroupAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Unit<span className="text-danger">*</span>
+                  Company Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -201,7 +217,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Tax<span className="text-danger">*</span>
+                  Vendor Display Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -224,7 +240,7 @@ const ItemGroupAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Manaufacture Name<span className="text-danger">*</span>
+                  Vendor Email<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -247,7 +263,7 @@ const ItemGroupAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Brand Name<span className="text-danger">*</span>
+                  Vendor Mobile<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -271,7 +287,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Multiple Items
+                  Vendor Phone
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -294,56 +310,7 @@ const ItemGroupAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Attribute<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Options
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Type
+                  Salutation
                   <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
@@ -362,173 +329,6 @@ const ItemGroupAdd = () => {
                       {formik.errors.bankAccName}
                     </div>
                   )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Sales Account
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Purchase Account
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Inventory Account
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  sales Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Purchase Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Image
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="file"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
-                  />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
                 </div>
               </div>
             </div>
@@ -539,4 +339,4 @@ const ItemGroupAdd = () => {
   );
 };
 
-export default ItemGroupAdd;
+export default VendorEdit;
