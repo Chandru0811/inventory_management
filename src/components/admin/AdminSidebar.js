@@ -151,6 +151,11 @@ function AdminSidebar({ handleLogout }) {
                       Shipment
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink className="nav-link" to="/challan">
+                      Delivery Challans
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </li>
@@ -177,13 +182,24 @@ function AdminSidebar({ handleLogout }) {
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink className="nav-link" to="/purchase-order">
+                    <NavLink className="nav-link" to="/order">
                       Purchases Order
                     </NavLink>
                   </li>
                   <li>
                     <NavLink className="nav-link" to="/purchasereceive">
                       Purchases Receives
+                    </NavLink>
+                  </li>
+
+                  <li>
+                    <NavLink className="nav-link" to="/bills">
+                      Bills
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/vendorcredit">
+                      Vendor credit
                     </NavLink>
                   </li>
                 </ul>
@@ -216,8 +232,9 @@ function AdminSidebar({ handleLogout }) {
               style={{ width: "100%", color: "#fff" }}
               className="nav-link d-flex justify-content-between"
               onClick={handleLogOutClick}
-            > Logout
-
+            >
+              {" "}
+              Logout
               <BiLogOut />
             </button>
           </div>
