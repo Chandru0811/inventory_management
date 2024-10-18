@@ -16,9 +16,9 @@ const PackagesEdit = () => {
         packageSlip: Yup.string().required("*Reference Number is required"),
         packageDate: Yup.string().required("*Sales Order Date is required"),
         internalNotes: Yup.string().required("*Expected Shipment Date is required"),
-        customerId: Yup.number().required("*Payment Terms Id is required"),
-        salesId: Yup.number().required("*Delivery Method is required"),
-        itemId: Yup.number().required("*Sales Person is required"),
+        customerId: Yup.string().required("*Payment Terms Id is required"),
+        salesId: Yup.string().required("*Delivery Method is required"),
+        itemId: Yup.string().required("*Sales Person is required"),
     });
     const formik = useFormik({
         initialValues: {
@@ -71,7 +71,8 @@ const PackagesEdit = () => {
     return (
         <div className="container-fluid p-2 minHeight m-0">
             <form onSubmit={formik.handleSubmit}>
-                <div className="card shadow border-0 mb-2 top-header">
+                <div className="card shadow border-0 mb-2 top-header"
+                    style={{ borderRadius: "0" }}>
                     <div className="container-fluid py-4">
                         <div className="row align-items-center">
                             <div className="col">
@@ -88,7 +89,7 @@ const PackagesEdit = () => {
                                     </Link>
                                     <button
                                         type="submit"
-                                        className="btn btn-sm btn-button"
+                                        className="btn btn-sm btn-button btn-primary"
                                         disabled={loading}
                                     >
                                         {loading ? (
@@ -99,7 +100,7 @@ const PackagesEdit = () => {
                                         ) : (
                                             <span></span>
                                         )}
-                                        &nbsp;<span>Save</span>
+                                        &nbsp;<span>Update</span>
                                     </button>
                                 </div>
                             </div>
@@ -107,7 +108,8 @@ const PackagesEdit = () => {
                     </div>
                 </div>
 
-                <div className="card shadow border-0 my-2">
+                <div className="card shadow border-0 my-2"
+                    style={{ borderRadius: "0" }}>
                     <div className="row mt-3 me-2">
                         <div className="col-12 text-end"></div>
                     </div>
