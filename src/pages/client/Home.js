@@ -25,12 +25,10 @@ function Home({ handleLogin }) {
     onSubmit: async (values) => {
       try {
         setLoadIndicator(true);
-        handleLogin()
-      }catch (error) {
-        console.error(error.message)
-      }
-      
-       finally {
+        handleLogin();
+      } catch (error) {
+        console.error(error.message);
+      } finally {
         setLoadIndicator(false);
       }
     },
@@ -84,7 +82,11 @@ function Home({ handleLogin }) {
             <Link
               to="/forgot"
               className="ml-auto"
-              style={{ fontSize: "0.9em", textDecoration: "none" ,color:"#181c2e" }}
+              style={{
+                fontSize: "0.9em",
+                textDecoration: "none",
+                color: "#181c2e",
+              }}
             >
               Forgot Password?
             </Link>
@@ -108,7 +110,7 @@ function Home({ handleLogin }) {
                     cursor: "pointer",
                   }}
                 >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  {showPassword ? <FaEye /> : <FaEyeSlash />}
                 </span>
               )}
               {formik.touched.password && formik.errors.password ? (
@@ -119,11 +121,7 @@ function Home({ handleLogin }) {
             </div>
           </Form.Group>
 
-          <Button
-            type="submit"
-            className="w-100 mt-4"
-            disabled={loadIndicator}
-          >
+          <Button type="submit" className="w-100 mt-4" disabled={loadIndicator}>
             {loadIndicator && (
               <span
                 className="spinner-border spinner-border-sm me-2"

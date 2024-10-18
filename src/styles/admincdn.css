@@ -5915,14 +5915,14 @@
   
   .btn-primary {
     color: #fff;
-    background-color: #d64830 !important;
-    border-color: #d64830 !important;
+    background-color: #408dfb !important;
+    border-color: #408dfb !important;
   }
   
   .btn-primary:hover {
     color: #fff;
-    background-color: #f03b1b !important;
-    border-color: #d64830;
+    background-color: #408dfb !important;
+    border-color: #408dfb;
   }
   
   /* .btn-check:focus+.btn-primary,

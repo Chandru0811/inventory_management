@@ -37,8 +37,8 @@ function Register() {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-        console.log(values);
-        navigate("/")
+      console.log(values);
+      navigate("/");
     },
   });
 
@@ -108,7 +108,10 @@ function Register() {
           </Form.Group>
           <div className="mb-3">
             <label className="form-label fw-medium">Password</label>
-            <div className={`input-group mb-3`} style={{outline: "none", boxShadow: "none" }}>
+            <div
+              className={`input-group mb-3`}
+              style={{ outline: "none", boxShadow: "none" }}
+            >
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter password"
@@ -132,18 +135,23 @@ function Register() {
                 onClick={togglePasswordVisibility}
                 style={{ cursor: "pointer", borderRadius: "3px" }}
               >
-                {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
               </span>
               {formik.touched.password && formik.errors.password && (
-                <div className="invalid-feedback" typeof="in">{formik.errors.password}</div>
+                <div className="invalid-feedback" typeof="in">
+                  {formik.errors.password}
+                </div>
               )}
             </div>
           </div>
           <div className="mb-3">
             <label className="form-label fw-medium">Confirm Password</label>
-            <div className={`input-group mb-3`} style={{outline: "none", boxShadow: "none" }}>
+            <div
+              className={`input-group mb-3`}
+              style={{ outline: "none", boxShadow: "none" }}
+            >
               <input
-                type={showPassword ? "text" : "password"}
+                type={showcPassword ? "text" : "password"}
                 placeholder="Enter password"
                 className={`form-control ${
                   formik.touched.cpassword && formik.errors.cpassword
@@ -165,10 +173,12 @@ function Register() {
                 onClick={toggleconfirmPasswordVisibility}
                 style={{ cursor: "pointer", borderRadius: "3px" }}
               >
-                {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
               </span>
               {formik.touched.cpassword && formik.errors.cpassword && (
-                <div className="invalid-feedback">{formik.errors.cpassword}</div>
+                <div className="invalid-feedback">
+                  {formik.errors.cpassword}
+                </div>
               )}
             </div>
           </div>
