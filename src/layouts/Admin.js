@@ -50,7 +50,23 @@ import VendorView from "../pages/admin/purchase/vendor/VendorView";
 import PurchaseReceive from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceive";
 import PurchaseReceiveAdd from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceiveAdd";
 import PurchaseReceiveEdit from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceiveEdit";
-import PurchaseReceiveView from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceiveView"
+import PurchaseReceiveView from "../pages/admin/purchase/vendor/Purchasereceives/PurchaseReceiveView";
+import Bills from "../pages/admin/purchase/vendor/bills/Bills";
+import BillsAdd from "../pages/admin/purchase/vendor/bills/BillsAdd";
+import BillsEdit from "../pages/admin/purchase/vendor/bills/BillsEdit";
+import BillsView from "../pages/admin/purchase/vendor/bills/BillsView";
+import VendorCredit from "../pages/admin/purchase/vendorcredit/VendorCredit";
+import VendorCreditAdd from "../pages/admin/purchase/vendorcredit/VendorCreditAdd";
+import VendorCreditEdit from "../pages/admin/purchase/vendorcredit/VendorCreditEdit";
+import VendorCreditView from "../pages/admin/purchase/vendorcredit/VendorcreditView";
+import ChallanAdd from "../pages/admin/Sales/DeliveryChallans/ChallanAdd";
+import ChallanView from "../pages/admin/Sales/DeliveryChallans/ChallanView";
+import ChallanEdit from "../pages/admin/Sales/DeliveryChallans/ChallanEdit";
+import Challan from "../pages/admin/Sales/DeliveryChallans/Challan";
+import Order from "../pages/admin/purchase/Orders/Order";
+import OrderAdd from "../pages/admin/purchase/Orders/OrderAdd";
+import OrderEdit from "../pages/admin/purchase/Orders/OrderEdit";
+import OrderView from "../pages/admin/purchase/Orders/OrderView";
 
 function Admin({ handleLogout }) {
   return (
@@ -136,6 +152,25 @@ function Admin({ handleLogout }) {
                   <Route path="/vendor/edit" element={<VendorEdit />} />
                   <Route path="/vendor/view" element={<VendorView />} />
 
+                  <Route path="/bills" element={<Bills />} />
+                  <Route path="/bills/add" element={<BillsAdd />} />
+                  <Route path="/bills/edit" element={<BillsEdit />} />
+                  <Route path="/bills/view" element={<BillsView />} />
+
+                  <Route path="/vendorcredit" element={<VendorCredit />} />
+                  <Route
+                    path="/vendorcredit/add"
+                    element={<VendorCreditAdd />}
+                  />
+                  <Route
+                    path="/vendorcredit/edit"
+                    element={<VendorCreditEdit />}
+                  />
+                  <Route
+                    path="/vendorcredit/view"
+                    element={<VendorCreditView />}
+                  />
+
                   <Route
                     path="/purchasereceive"
                     element={<PurchaseReceive />}
@@ -152,6 +187,16 @@ function Admin({ handleLogout }) {
                     path="/purchasereceive/view"
                     element={<PurchaseReceiveView />}
                   />
+
+                  <Route path="/challan" element={<Challan />} />
+                  <Route path="/challan/add" element={<ChallanAdd />} />
+                  <Route path="/challan/edit" element={<ChallanEdit />} />
+                  <Route path="/challan/view" element={<ChallanView />} />
+                  {/* {/ order /} */}
+                  <Route path="/order" element={<Order />} />
+                  <Route path="/order/add" element={<OrderAdd />} />
+                  <Route path="/order/edit" element={<OrderEdit />} />
+                  <Route path="/order/view" element={<OrderView />} />
                 </Routes>
               </div>
             </main>
