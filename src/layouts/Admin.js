@@ -67,6 +67,10 @@ import Order from "../pages/admin/purchase/Orders/Order";
 import OrderAdd from "../pages/admin/purchase/Orders/OrderAdd";
 import OrderEdit from "../pages/admin/purchase/Orders/OrderEdit";
 import OrderView from "../pages/admin/purchase/Orders/OrderView";
+import Invoices from "../pages/admin/Sales/Invoices/Invoices";
+import InvoicesAdd from "../pages/admin/Sales/Invoices/InvoicesAdd";
+import InvoicesEdit from "../pages/admin/Sales/Invoices/InvoicesEdit";
+import InvoicesView from "../pages/admin/Sales/Invoices/InvoicesView";
 
 function Admin({ handleLogout }) {
   return (
@@ -192,6 +196,12 @@ function Admin({ handleLogout }) {
                   <Route path="/challan/add" element={<ChallanAdd />} />
                   <Route path="/challan/edit" element={<ChallanEdit />} />
                   <Route path="/challan/view" element={<ChallanView />} />
+
+                  <Route path="/invoice" element={<Invoices />} />
+                  <Route path="/invoice/add" element={<InvoicesAdd />} />
+                  <Route path="/invoice/edit" element={<InvoicesEdit />} />
+                  <Route path="/invoice/view" element={<InvoicesView />} />
+
                   {/* {/ order /} */}
                   <Route path="/order" element={<Order />} />
                   <Route path="/order/add" element={<OrderAdd />} />

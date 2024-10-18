@@ -156,6 +156,11 @@ function AdminSidebar({ handleLogout }) {
                       Delivery Challans
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink className="nav-link" to="/invoice">
+                      Invoices
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </li>

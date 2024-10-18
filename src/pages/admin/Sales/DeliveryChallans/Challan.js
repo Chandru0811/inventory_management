@@ -133,13 +133,13 @@ const Challan = () => {
                       S.NO
                     </th>
                     <th scope="col" className="text-center">
+                      CUSTOMER NAME
+                    </th>
+                    <th scope="col" className="text-center">
                       DATE
                     </th>
                     <th scope="col" className="text-center">
                       DELIVERY CHALLAN
-                    </th>
-                    <th scope="col" className="text-center">
-                      CUSTOMER NAME
                     </th>
                     <th scope="col" className="text-center">
                       STATUS
