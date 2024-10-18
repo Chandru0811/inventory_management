@@ -15,8 +15,8 @@ const CustomerEdit = () => {
     companyName: Yup.string().required("*Company Name is required"),
     primaryContact: Yup.string().required("*Primary Contact is required"),
     customerEmail: Yup.string().required("*Email is required"),
-    customerPhoneNumber: Yup.number().required("*Phone is required"),
-    customerDisplayName: Yup.number().required("*Display Name is required"),
+    customerPhoneNumber: Yup.string().required("*Phone is required"),
+    customerDisplayName: Yup.string().required("*Display Name is required"),
   });
 
   const formik = useFormik({
@@ -66,7 +66,8 @@ const CustomerEdit = () => {
   return (
     <div className="container-fluid p-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
-        <div className="card shadow border-0 mb-2 top-header">
+        <div className="card shadow border-0 mb-2 top-header"
+          style={{ borderRadius: "0" }}>
           <div className="container-fluid py-4">
             <div className="row align-items-center">
               <div className="col">
@@ -83,7 +84,7 @@ const CustomerEdit = () => {
                   </Link>
                   <button
                     type="submit"
-                    className="btn btn-sm btn-button"
+                    className="btn btn-sm btn-button btn-primary"
                     disabled={loading}
                   >
                     {loading ? (
@@ -102,7 +103,8 @@ const CustomerEdit = () => {
           </div>
         </div>
 
-        <div className="card shadow border-0 my-2">
+        <div className="card shadow border-0 my-2"
+          style={{ borderRadius: "0" }}>
           <div className="row mt-3 me-2">
             <div className="col-12 text-end"></div>
           </div>

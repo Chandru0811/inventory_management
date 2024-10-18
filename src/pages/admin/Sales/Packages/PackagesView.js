@@ -40,7 +40,8 @@ const PackagesView = () => {
                 </div>
             ) : (
                 <div className="container-fluid px-2 minHeight">
-                    <div className="card shadow border-0 mb-2 top-header">
+                    <div className="card shadow border-0 mb-2 top-header"
+                        style={{ borderRadius: "0" }}>
                         <div className="container-fluid py-4">
                             <div className="row align-items-center">
                                 <div className="col">
@@ -60,7 +61,8 @@ const PackagesView = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="card shadow border-0 mb-2 minHeight">
+                    <div className="card shadow border-0 mb-2 minHeight"
+                        style={{ borderRadius: "0" }}>
                         <div className="container">
                             <div className="row mt-2 p-3">
                                 <div className="col-md-6 col-12">

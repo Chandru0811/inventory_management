@@ -16,9 +16,9 @@ const SalesOrderEdit = () => {
         referenceNumber: Yup.string().required("*Reference Number is required"),
         salesOrderDate: Yup.string().required("*Sales Order Date is required"),
         expectedShipmentDate: Yup.string().required("*Expected Shipment Date is required"),
-        paymentTermsId: Yup.number().required("*Payment Terms Id is required"),
-        deliveryMethod: Yup.number().required("*Delivery Method is required"),
-        salesPerson: Yup.number().required("*Sales Person is required"),
+        paymentTermsId: Yup.string().required("*Payment Terms Id is required"),
+        deliveryMethod: Yup.string().required("*Delivery Method is required"),
+        salesPerson: Yup.string().required("*Sales Person is required"),
     });
     const formik = useFormik({
         initialValues: {
@@ -69,7 +69,8 @@ const SalesOrderEdit = () => {
     return (
         <div className="container-fluid p-2 minHeight m-0">
             <form onSubmit={formik.handleSubmit}>
-                <div className="card shadow border-0 mb-2 top-header">
+                <div className="card shadow border-0 mb-2 top-header"
+                    style={{ borderRadius: "0" }}>
                     <div className="container-fluid py-4">
                         <div className="row align-items-center">
                             <div className="col">
@@ -86,7 +87,7 @@ const SalesOrderEdit = () => {
                                     </Link>
                                     <button
                                         type="submit"
-                                        className="btn btn-sm btn-button"
+                                        className="btn btn-sm btn-button btn-primary"
                                         disabled={loading}
                                     >
                                         {loading ? (
@@ -97,7 +98,7 @@ const SalesOrderEdit = () => {
                                         ) : (
                                             <span></span>
                                         )}
-                                        &nbsp;<span>Save</span>
+                                        &nbsp;<span>Update</span>
                                     </button>
                                 </div>
                             </div>
@@ -105,7 +106,8 @@ const SalesOrderEdit = () => {
                     </div>
                 </div>
 
-                <div className="card shadow border-0 my-2">
+                <div className="card shadow border-0 my-2"
+                    style={{ borderRadius: "0" }}>
                     <div className="row mt-3 me-2">
                         <div className="col-12 text-end"></div>
                     </div>

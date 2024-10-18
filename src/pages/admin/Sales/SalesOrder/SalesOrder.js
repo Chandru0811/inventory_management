@@ -89,7 +89,8 @@ const SalesOrder = () => {
                 </div>
             ) : (
                 <div className="container-fluid px-2 minHeight">
-                    <div className="card shadow border-0 my-2">
+                    <div className="card shadow border-0 my-2"
+                        style={{ borderRadius: "0" }}>
                         <div className="container-fluid py-4">
                             <div className="row align-items-center justify-content-between ">
                                 <div className="col">
@@ -101,7 +102,7 @@ const SalesOrder = () => {
                                     <div className="hstack gap-2 justify-content-end">
                                         {/* {storedScreens?.levelCreate && ( */}
                                         <Link to="/salesorder/add">
-                                            <button type="submit" className="btn btn-sm btn-button">
+                                            <button type="submit" className="btn btn-sm btn-button btn-primary">
                                                 <span cla>
                                                     Add <FaPlus className="pb-1" />
                                                 </span>
@@ -112,8 +113,10 @@ const SalesOrder = () => {
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <hr className="removeHrMargin"></hr>
+                    <div className="card shadow border-0 my-2"
+                        style={{ borderRadius: "0" }}>
                         <div className="table-responsive p-2 minHeight">
                             <table ref={tableRef} className="display table ">
                                 <thead className="thead-light">
