@@ -91,23 +91,23 @@ function AdminSidebar({ handleLogout }) {
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink className="nav-link" to="/itemgroup">
-                      Group Items
+                    <NavLink className="nav-link" to="/compositeitem">
+                      Composite Items
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink className="nav-link" to="/inventoryadjustment">
-                      Inventory Adjustment
+                    <NavLink className="nav-link" to="/itemgroup">
+                      Item Groups
                     </NavLink>
                   </li>
                   <li>
                     <NavLink className="nav-link" to="/pricelist">
-                      Price List
+                      Price Lists
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink className="nav-link" to="/compositeitem">
-                      Composite Item
+                    <NavLink className="nav-link" to="/inventoryadjustment">
+                      Inventory Adjustments
                     </NavLink>
                   </li>
                 </ul>
@@ -149,6 +149,16 @@ function AdminSidebar({ handleLogout }) {
                   <li>
                     <NavLink className="nav-link" to="/shipment">
                       Shipment
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/paymentreceived">
+                      Payment Received
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/creditnotes">
+                      Credit Notes
                     </NavLink>
                   </li>
                   <li>
@@ -207,15 +217,49 @@ function AdminSidebar({ handleLogout }) {
                       Vendor credit
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink className="nav-link" to="/paymentmade">
+                      Payment Made
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </li>
 
             <li className="nav-item">
-              <NavLink className="nav-link" to="/integrations">
-                <FiSettings className="me-2" />
-                Integrations
-              </NavLink>
+              <div
+                className="nav-link d-flex justify-content-between align-items-center"
+                onClick={() => toggleSubmenu("integrations")}
+              >
+                <span>
+                  <FiSettings className="me-2" />
+                  Integrations
+                </span>
+                {activeSubmenu === "integrations" ? (
+                  <FaChevronDown />
+                ) : (
+                  <FaChevronRight />
+                )}
+              </div>
+              {activeSubmenu === "integrations" && (
+                <ul className="list-unstyled ps-3">
+                  <li>
+                    <NavLink className="nav-link" to="/warehouse">
+                      Warehouses
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/brand">
+                      Branding
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/currency">
+                      Currencies
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
 
             <li className="nav-item">

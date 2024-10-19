@@ -4,6 +4,9 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
+import api from "../../config/URL";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 function Home({ handleLogin }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +28,15 @@ function Home({ handleLogin }) {
     onSubmit: async (values) => {
       try {
         setLoadIndicator(true);
+        const response = await axios.post(`http://13.213.208.92:7080/ecsinventory/api/user-login`,values);
+        if(response.status === 200){
+          toast.success(response.data.message)
+
+          sessionStorage.setItem("token",response.data.accessToken)
+          sessionStorage.setItem("role",response.data.role)
+          sessionStorage.setItem("roleId",response.data.roleId)
+          sessionStorage.setItem("loginUserId",response.data.loginUserId)
+        }
         handleLogin();
       } catch (error) {
         console.error(error.message);

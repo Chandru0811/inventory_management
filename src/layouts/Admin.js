@@ -71,6 +71,32 @@ import Invoices from "../pages/admin/Sales/Invoices/Invoices";
 import InvoicesAdd from "../pages/admin/Sales/Invoices/InvoicesAdd";
 import InvoicesEdit from "../pages/admin/Sales/Invoices/InvoicesEdit";
 import InvoicesView from "../pages/admin/Sales/Invoices/InvoicesView";
+import PaymentReceived from "../pages/admin/Sales/PaymentReceived/PaymentReceived";
+import PaymentReceivedAdd from "../pages/admin/Sales/PaymentReceived/PaymentReceivedAdd";
+import PaymentReceivedEdit from "../pages/admin/Sales/PaymentReceived/PaymentReceivedEdit";
+import PaymentReceivedView from "../pages/admin/Sales/PaymentReceived/PaymentReceivedView";
+import CreditNotes from "../pages/admin/Sales/CreditNotes/CreditNotes";
+import CreditNotesAdd from "../pages/admin/Sales/CreditNotes/CreditNotesAdd";
+import CreditNotesEdit from "../pages/admin/Sales/CreditNotes/CreditNotesEdit";
+import CreditNotesView from "../pages/admin/Sales/CreditNotes/CreditNotesView";
+
+import PaymentMade from "../pages/admin/purchase/paymentmade/PaymentMade";
+import PaymentMadeAdd from "../pages/admin/purchase/paymentmade/PaymentMadeAdd";
+import PaymentMadeEdit from "../pages/admin/purchase/paymentmade/PaymentMadeEdit";
+import PaymentMadeView from "../pages/admin/purchase/paymentmade/PaymentMadeView";
+import WareHouse from "../pages/admin/integration/warehouse/WareHouse";
+import WareHouseAdd from "../pages/admin/integration/warehouse/WareHouseAdd";
+import WareHouseEdit from "../pages/admin/integration/warehouse/WareHouseEdit";
+import WareHouseView from "../pages/admin/integration/warehouse/WareHouseView";
+import Branding from "../pages/admin/integration/warehouse/branding/Branding";
+import BrandingAdd from "../pages/admin/integration/warehouse/branding/BrandingAdd";
+import BrandingEdit from "../pages/admin/integration/warehouse/branding/BrandingEdit";
+import BrandingView from "../pages/admin/integration/warehouse/branding/BrandingView";
+import CurrencyAdd from "../pages/admin/integration/currencies/CurrencyAdd";
+import Currency from "../pages/admin/integration/currencies/Currency";
+import CurrencyEdit from "../pages/admin/integration/currencies/CurrencyEdit";
+import CurrencyView from "../pages/admin/integration/currencies/CurrencyView";
+
 
 function Admin({ handleLogout }) {
   return (
@@ -94,6 +120,32 @@ function Admin({ handleLogout }) {
                   <Route path="/itemgroup/edit" element={<ItemGroupEdit />} />
                   <Route path="/itemgroup/view" element={<ItemGroupView />} />
 
+
+                  <Route path="/warehouse" element={<WareHouse />} />
+                  <Route path="/warehouse/add" element={<WareHouseAdd />} />
+                  <Route path="/warehouse/edit" element={<WareHouseEdit />} />
+                  <Route path="/warehouse/view" element={<WareHouseView />} />
+
+                  <Route path="/brand" element={<Branding />} />
+                  <Route path="/brand/add" element={<BrandingAdd />} />
+                  <Route path="/brand/edit" element={<BrandingEdit />} />
+                  <Route path="/brand/view" element={<BrandingView />} />
+
+                  <Route path="/currency" element={<Currency />} />
+                  <Route path="/currency/add" element={<CurrencyAdd />} />
+                  <Route path="/currency/edit" element={<CurrencyEdit />} />
+                  <Route path="/currency/view" element={<CurrencyView />} />
+
+                  <Route path="/paymentmade" element={<PaymentMade />} />
+                  <Route path="/paymentmade/add" element={<PaymentMadeAdd />} />
+                  <Route
+                    path="/paymentmade/edit"
+                    element={<PaymentMadeEdit />}
+                  />
+                  <Route
+                    path="/paymentmade/view"
+                    element={<PaymentMadeView />}
+                  />
                   <Route
                     path="/inventoryadjustment"
                     element={<InventoryAdjustment />}
@@ -131,6 +183,16 @@ function Admin({ handleLogout }) {
                   <Route path="/shipment/add" element={<ShipmentAdd />} />
                   <Route path="/shipment/edit" element={<ShipmentEdit />} />
                   <Route path="/shipment/view" element={<ShipmentView />} />
+
+                  <Route path="/paymentreceived" element={<PaymentReceived />} />
+                  <Route path="/paymentreceived/add" element={<PaymentReceivedAdd />} />
+                  <Route path="/paymentreceived/edit" element={<PaymentReceivedEdit />} />
+                  <Route path="/paymentreceived/view" element={<PaymentReceivedView />} />
+
+                  <Route path="/creditnotes" element={<CreditNotes />} />
+                  <Route path="/creditnotes/add" element={<CreditNotesAdd />} />
+                  <Route path="/creditnotes/edit" element={<CreditNotesEdit />} />
+                  <Route path="/creditnotes/view" element={<CreditNotesView />} />
 
                   <Route path="/pricelist" element={<PriceList />} />
                   <Route path="/pricelist/add" element={<PriceListAdd />} />

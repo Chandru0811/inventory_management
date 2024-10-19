@@ -4,7 +4,7 @@ import api from "../../../../config/URL";
 
 import toast from "react-hot-toast";
 
-const ShipmentView = () => {
+const PaymentReceivedView = () => {
     const { id } = useParams();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ const ShipmentView = () => {
         const getData = async () => {
             setLoading(true);
             try {
-                const response = await api.get(`/getShipmentsById/${id}`);
+                const response = await api.get(`/getAllPaymentDetailsById/${id}`);
                 setData(response.data);
             } catch (e) {
                 toast.error("Error fetching data: ", e?.response?.data?.message);
@@ -47,12 +47,12 @@ const ShipmentView = () => {
                             <div className="row align-items-center">
                                 <div className="col">
                                     <div className="d-flex align-items-center gap-4">
-                                        <h1 className="h4 ls-tight headingColor">View Sales Order</h1>
+                                        <h1 className="h4 ls-tight headingColor">View Payment Received</h1>
                                     </div>
                                 </div>
                                 <div className="col-auto">
                                     <div className="hstack gap-2 justify-content-start">
-                                        <Link to="/shipment">
+                                        <Link to="/paymentreceived">
                                             <button type="submit" className="btn btn-sm btn-light">
                                                 <span>Back</span>
                                             </button>
@@ -165,12 +165,12 @@ const ShipmentView = () => {
                                     <div className="row mb-3">
                                         <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>TrackingUrl</b>
+                                                <b>Reference</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
                                             <p className="text-muted text-sm">
-                                                : {data.trackingUrl || ""}
+                                                : {data.reference || ""}
                                             </p>
                                         </div>
                                     </div>
@@ -179,12 +179,12 @@ const ShipmentView = () => {
                                     <div className="row mb-3">
                                         <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>Shipping Charge</b>
+                                                <b>Attach File</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
                                             <p className="text-muted text-sm">
-                                                : {data.shippingCharge || ""}
+                                                : {data.attachFile || ""}
                                             </p>
                                         </div>
                                     </div>
@@ -203,7 +203,6 @@ const ShipmentView = () => {
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -213,4 +212,4 @@ const ShipmentView = () => {
     );
 };
 
-export default ShipmentView;
+export default PaymentReceivedView;
