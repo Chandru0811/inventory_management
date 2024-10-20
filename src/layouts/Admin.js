@@ -9,10 +9,10 @@ import Items from "../pages/admin/inventory/items/Items";
 import ItemsAdd from "../pages/admin/inventory/items/ItemsAdd";
 import ItemsEdit from "../pages/admin/inventory/items/ItemsEdit";
 import ItemsView from "../pages/admin/inventory/items/ItemsView";
-import ItemGroup from "../pages/admin/Itemgroup/ItemGroup";
-import ItemGroupAdd from "../pages/admin/Itemgroup/ItemGroupAdd";
-import ItemGroupEdit from "../pages/admin/Itemgroup/ItemGroupEdit";
-import ItemGroupView from "../pages/admin/Itemgroup/ItemGroupView";
+import ItemGroup from "../pages/admin/inventory/Itemgroup/ItemGroup";
+import ItemGroupAdd from "../pages/admin/inventory/Itemgroup/ItemGroupAdd";
+import ItemGroupEdit from "../pages/admin/inventory/Itemgroup/ItemGroupEdit";
+import ItemGroupView from "../pages/admin/inventory/Itemgroup/ItemGroupView";
 import InventoryAdjustment from "../pages/admin/inventory/Inventoryadjustment/InventoryAdjustment";
 import InventoryAdjustmentAdd from "../pages/admin/inventory/Inventoryadjustment/InventoryAdjustmentAdd";
 import InventoryAdjustmentEdit from "../pages/admin/inventory/Inventoryadjustment/InventoryAdjustmentEdit";
@@ -117,8 +117,8 @@ function Admin({ handleLogout }) {
 
                   <Route path="/itemgroup" element={<ItemGroup />} />
                   <Route path="/itemgroup/add" element={<ItemGroupAdd />} />
-                  <Route path="/itemgroup/edit" element={<ItemGroupEdit />} />
-                  <Route path="/itemgroup/view" element={<ItemGroupView />} />
+                  <Route path="/itemgroup/edit/:id" element={<ItemGroupEdit />} />
+                  <Route path="/itemgroup/view/:id" element={<ItemGroupView />} />
 
 
                   <Route path="/warehouse" element={<WareHouse />} />
@@ -171,8 +171,8 @@ function Admin({ handleLogout }) {
 
                   <Route path="/salesorder" element={<SalesOrder />} />
                   <Route path="/salesorder/add" element={<SalesOrderAdd />} />
-                  <Route path="/salesorder/edit" element={<SalesOrderEdit />} />
-                  <Route path="/salesorder/view" element={<SalesOrderView />} />
+                  <Route path="/salesorder/edit/:id" element={<SalesOrderEdit />} />
+                  <Route path="/salesorder/view/:id" element={<SalesOrderView />} />
 
                   <Route path="/packages" element={<Packages />} />
                   <Route path="/packages/add" element={<PackagesAdd />} />
