@@ -97,7 +97,7 @@ const InventoryAdjustmentEdit = () => {
   }, []);
 
   return (
-    <div className="container-fluid p-2 minHeight m-0">
+    <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
           className="card shadow border-0 mb-2 top-header"
@@ -156,19 +156,21 @@ const InventoryAdjustmentEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="contactName"
+                    name="modeOfAdjustment"
                     className={`form-control ${
-                      formik.touched.contactName && formik.errors.contactName
+                      formik.touched.modeOfAdjustment &&
+                      formik.errors.modeOfAdjustment
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("contactName")}
+                    {...formik.getFieldProps("modeOfAdjustment")}
                   />
-                  {formik.touched.contactName && formik.errors.contactName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.contactName}
-                    </div>
-                  )}
+                  {formik.touched.modeOfAdjustment &&
+                    formik.errors.modeOfAdjustment && (
+                      <div className="invalid-feedback">
+                        {formik.errors.modeOfAdjustment}
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -178,19 +180,21 @@ const InventoryAdjustmentEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="accNumber"
+                    name="reference_number"
                     className={`form-control  ${
-                      formik.touched.accNumber && formik.errors.accNumber
+                      formik.touched.reference_number &&
+                      formik.errors.reference_number
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("accNumber")}
+                    {...formik.getFieldProps("reference_number")}
                   />
-                  {formik.touched.accNumber && formik.errors.accNumber && (
-                    <div className="invalid-feedback">
-                      {formik.errors.accNumber}
-                    </div>
-                  )}
+                  {formik.touched.reference_number &&
+                    formik.errors.reference_number && (
+                      <div className="invalid-feedback">
+                        {formik.errors.reference_number}
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -200,22 +204,18 @@ const InventoryAdjustmentEdit = () => {
                 </lable>
                 <div className="mb-3">
                   <input
-                    type="text"
-                    name="primaryContact"
+                    type="date"
+                    name="date"
                     className={`form-control ${
-                      formik.touched.primaryContact &&
-                      formik.errors.primaryContact
+                      formik.touched.date && formik.errors.date
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("primaryContact")}
+                    {...formik.getFieldProps("date")}
                   />
-                  {formik.touched.primaryContact &&
-                    formik.errors.primaryContact && (
-                      <div className="invalid-feedback">
-                        {formik.errors.primaryContact}
-                      </div>
-                    )}
+                  {formik.touched.date && formik.errors.date && (
+                    <div className="invalid-feedback">{formik.errors.date}</div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -248,17 +248,17 @@ const InventoryAdjustmentEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
+                    name="reason"
                     className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
+                      formik.touched.reason && formik.errors.reason
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    {...formik.getFieldProps("reason")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.reason && formik.errors.reason && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.reason}
                     </div>
                   )}
                 </div>
@@ -271,46 +271,48 @@ const InventoryAdjustmentEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccNumber"
+                    name="descOfAdjustment"
                     className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
+                      formik.touched.descOfAdjustment &&
+                      formik.errors.descOfAdjustment
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    {...formik.getFieldProps("descOfAdjustment")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.descOfAdjustment &&
+                    formik.errors.descOfAdjustment && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.descOfAdjustment}
                       </div>
                     )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Inventory Adjustment File
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="file"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
-                  />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+              {/* <div className="col-md-6 col-12 mb-2">
+              <lable className="form-lable">
+                Inventory Adjustment File
+                <span className="text-danger">*</span>
+              </lable>
+              <div className="mb-3">
+                <input
+                  type="file"
+                  name="inventoryAdjustmentsFile"
+                  className={`form-control  ${
+                    formik.touched.inventoryAdjustmentsFile &&
+                    formik.errors.inventoryAdjustmentsFile
+                      ? "is-invalid"
+                      : ""
+                  }`}
+                  {...formik.getFieldProps("inventoryAdjustmentsFile")}
+                />
+                {formik.touched.inventoryAdjustmentsFile &&
+                  formik.errors.inventoryAdjustmentsFile && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.inventoryAdjustmentsFile}
                     </div>
                   )}
-                </div>
               </div>
+            </div> */}
             </div>
           </div>
         </div>

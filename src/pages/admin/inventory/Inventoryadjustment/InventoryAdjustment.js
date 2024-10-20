@@ -15,7 +15,7 @@ const InventoryAdjustment = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllMstrCustomers");
+        const response = await api.get("/getAllInventoryAdjustments");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -151,9 +151,9 @@ const InventoryAdjustment = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.name}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      <td className="text-center">{data.modeOfAdjustment}</td>
+                      <td className="text-center">{data.reference_number}</td>
+                      <td className="text-center">{data.date}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/customer/view/${data.id}`}>
