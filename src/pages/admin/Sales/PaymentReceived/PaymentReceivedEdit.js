@@ -35,7 +35,7 @@ const PaymentReceivedEdit = () => {
             depositTo: "",
             reference: "",
             notes: "",
-            attachFile: ""
+            attachFile: null,
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
@@ -211,27 +211,26 @@ const PaymentReceivedEdit = () => {
                             </div>
 
                             <div className="col-md-6 col-12 mb-2">
-                                <lable className="form-lable">
+                                <label className="form-label">
                                     Attach File<span className="text-danger">*</span>
-                                </lable>
+                                </label>
                                 <div className="mb-3">
                                     <input
                                         type="file"
                                         name="attachFile"
-                                        className={`form-control  ${formik.touched.attachFile && formik.errors.attachFile
-                                            ? "is-invalid"
-                                            : ""
+                                        className={`form-control ${formik.touched.attachFile && formik.errors.attachFile
+                                                ? "is-invalid"
+                                                : ""
                                             }`}
-                                        {...formik.getFieldProps("attachFile")}
+                                        onChange={(event) => {
+                                            formik.setFieldValue("attachFile", event.target.files[0]); // Manually set file
+                                        }}
                                     />
                                     {formik.touched.attachFile && formik.errors.attachFile && (
-                                        <div className="invalid-feedback">
-                                            {formik.errors.attachFile}
-                                        </div>
+                                        <div className="invalid-feedback">{formik.errors.attachFile}</div>
                                     )}
                                 </div>
                             </div>
-
                             <div className="col-md-6 col-12 mb-2">
                                 <lable className="form-lable">
                                     Tax Deduction<span className="text-danger">*</span>

@@ -151,8 +151,8 @@ const PriceList = () => {
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
                       <td className="text-center">{data.name}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      <td className="text-center">{data.transactionType}</td>
+                      <td className="text-center">{data.priceListType}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/pricelist/view/${data.id}`}>

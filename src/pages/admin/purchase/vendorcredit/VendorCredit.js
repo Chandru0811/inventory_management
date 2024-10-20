@@ -5,6 +5,7 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
+import DeleteModel from "../../../../components/admin/DeleteModel";
 
 const VendorCredit = () => {
   const tableRef = useRef(null);
@@ -15,7 +16,7 @@ const VendorCredit = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllMstrCustomers");
+        const response = await api.get("/getVendorCredits");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,7 +57,7 @@ const VendorCredit = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllItems");
+      const response = await api.get("/getVendorCredits");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -149,28 +150,34 @@ const VendorCredit = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.name}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      <td className="text-center">{data.creditNoteNum}</td>
+                      <td className="text-center">
+                        {data.orderCreditDdate
+                          ? data.orderCreditDdate.substring(8, 10) + "-" +
+                          data.orderCreditDdate.substring(5, 7) + "-" +
+                          data.orderCreditDdate.substring(2, 4)
+                          : ""}
+                      </td>
+                      <td className="text-center">{data.orderNumber}</td>
                       <td className="text-center">
                         <div className="gap-2">
-                          <Link to={`/customer/view/${data.id}`}>
+                          <Link to={`/vendorcredit/view/${data.id}`}>
                             <button className="btn btn-light btn-sm  shadow-none border-none">
                               View
                             </button>
                           </Link>
                           <Link
-                            to={`/customer/edit/${data.id}`}
+                            to={`/vendorcredit/edit/${data.id}`}
                             className="px-2"
                           >
                             <button className="btn btn-light  btn-sm shadow-none border-none">
                               Edit
                             </button>
                           </Link>
-                          {/* <DeleteModel
+                          <DeleteModel
                             onSuccess={refreshData}
-                            path={`/deleteMstrCustomer/${data.id}`}
-                          /> */}
+                            path={`/deleteVendorCredits/${data.id}`}
+                          />
                         </div>
                       </td>
                     </tr>
