@@ -9,7 +9,6 @@ import DeleteModel from "../../../../components/admin/DeleteModel";
 
 const CreditNotes = () => {
     const tableRef = useRef(null);
-    // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
     const [datas, setDatas] = useState([]);
     const [loading, setLoading] = useState(true);
 

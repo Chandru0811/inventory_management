@@ -5,9 +5,6 @@ import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-// import fetchAllCustomerWithIds from "../../List/CustomerList";
-// import fetchAllItemWithIds from "../../List/ItemList";
-
 function CreditNotesEdit() {
 
     const { id } = useParams();
@@ -22,11 +19,11 @@ function CreditNotesEdit() {
         reference: Yup.string().required("*Reference is required"),
         salesPerson: Yup.string().required("*Sales Person is required"),
         subject: Yup.string().required("*subject is required"),
-        txnCreditNotesItemsModels: Yup.array().of(
-            Yup.object({
-                item: Yup.string().required("*Item is required"),
-            })
-        ),
+        // txnCreditNotesItemsModels: Yup.array().of(
+        //     Yup.object({
+        //         item: Yup.string().required("*Item is required"),
+        //     })
+        // ),
     });
 
     const formik = useFormik({
@@ -56,8 +53,8 @@ function CreditNotesEdit() {
             setLoadIndicator(true);
             console.log(values);
             try {
-                const response = await api.put("/updateCreditNotes", values, {});
-                if (response.status === 201) {
+                const response = await api.put(`/updateCreditNotes/${id}`, values);
+                if (response.status === 200) {
                     toast.success(response.data.message);
                     navigate("/creditnotes");
                 } else {
@@ -142,7 +139,7 @@ function CreditNotesEdit() {
 
         updateAndCalculate();
     }, [
-        formik.values.txnCreditNotesItemsModels.map((item) => item.item).join(""),
+        formik.values.txnCreditNotesItemsModels?.map((item) => item.item).join(""),
     ]);
 
     useEffect(() => {
@@ -193,11 +190,11 @@ function CreditNotesEdit() {
 
         updateAndCalculate();
     }, [
-        formik.values.txnCreditNotesItemsModels.map((item) => item.qty).join(""),
-        formik.values.txnCreditNotesItemsModels.map((item) => item.amount).join(""),
-        formik.values.txnCreditNotesItemsModels.map((item) => item.discount).join(""),
+        formik.values.txnCreditNotesItemsModels?.map((item) => item.qty).join(""),
+        formik.values.txnCreditNotesItemsModels?.map((item) => item.amount).join(""),
+        formik.values.txnCreditNotesItemsModels?.map((item) => item.discount).join(""),
         formik.values.txnCreditNotesItemsModels
-            .map((item) => item.taxRate)
+            ?.map((item) => item.taxRate)
             .join(""),
     ]);
 
@@ -294,12 +291,13 @@ function CreditNotesEdit() {
                                             }`}
                                     >
                                         <option selected></option>
-                                        {customerData &&
+                                        <option value="sakthivel">sakthivel</option>
+                                        {/* {customerData &&
                                             customerData.map((customerName) => (
                                                 <option key={customerName.id} value={customerName.id}>
                                                     {customerName.contactName}
                                                 </option>
-                                            ))}
+                                            ))} */}
                                     </select>
                                     {formik.touched.customerName &&
                                         formik.errors.customerName && (
@@ -420,7 +418,7 @@ function CreditNotesEdit() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {formik.values.txnCreditNotesItemsModels.map(
+                                            {formik.values.txnCreditNotesItemsModels?.map(
                                                 (item, index) => (
                                                     <tr key={index}>
                                                         <th scope="row">{index + 1}</th>
@@ -655,7 +653,7 @@ function CreditNotesEdit() {
                                 >
                                     Add row
                                 </button>
-                                {formik.values.txnCreditNotesItemsModels.length > 1 && (
+                                {formik.values.txnCreditNotesItemsModels?.length > 1 && (
                                     <button
                                         className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
                                         onClick={deleteRow}

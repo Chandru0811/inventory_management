@@ -5,9 +5,6 @@ import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-// import fetchAllCustomerWithIds from "../../List/CustomerList";
-// import fetchAllItemWithIds from "../../List/ItemList";
-
 function ChellanAdd() {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
@@ -19,11 +16,11 @@ function ChellanAdd() {
     deliveryChallan: Yup.string().required("*Delivery Challan is required"),
     deliveryChallanDate: Yup.string().required("*Delivery Challan Date is required"),
     challanType: Yup.string().required("*Challan Type is required"),
-    txnInvoiceOrderItemsModels: Yup.array().of(
-      Yup.object({
-        item: Yup.string().required("*Item is required"),
-      })
-    ),
+    // txnInvoiceOrderItemsModels: Yup.array().of(
+    //   Yup.object({
+    //     item: Yup.string().required("*Item is required"),
+    //   })
+    // ),
   });
 
   const formik = useFormik({
@@ -74,15 +71,15 @@ function ChellanAdd() {
         if (values.files) {
           formData.append("files", values.files);
         }
-        const response = await api.post("invoice-invoice-item", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+        const response = await api.post("createDeliveryChallans", values, {
+          // headers: {
+          //   "Content-Type": "multipart/form-data",
+          // },
         });
 
         if (response.status === 201) {
           toast.success(response.data.message);
-          navigate("/invoice");
+          navigate("/challan");
         } else {
           toast.error(response.data.message);
         }
@@ -304,12 +301,13 @@ function ChellanAdd() {
                     }`}
                   >
                     <option selected></option>
-                    {customerData &&
+                    <option value="sakthivel">sakthivel</option>
+                    {/* {customerData &&
                       customerData.map((customerName) => (
                         <option key={customerName.id} value={customerName.id}>
                           {customerName.contactName}
                         </option>
-                      ))}
+                      ))} */}
                   </select>
                   {formik.touched.customerName &&
                     formik.errors.customerName && (

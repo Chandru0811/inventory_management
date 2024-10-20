@@ -5,9 +5,6 @@ import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-// import fetchAllCustomerWithIds from "../../List/CustomerList";
-// import fetchAllItemWithIds from "../../List/ItemList";
-
 function CreditNotesAdd() {
 
     const navigate = useNavigate();
@@ -21,11 +18,11 @@ function CreditNotesAdd() {
         reference: Yup.string().required("*Reference is required"),
         salesPerson: Yup.string().required("*Sales Person is required"),
         subject: Yup.string().required("*subject is required"),
-        txnCreditNotesItemsModels: Yup.array().of(
-            Yup.object({
-                item: Yup.string().required("*Item is required"),
-            })
-        ),
+        // txnCreditNotesItemsModels: Yup.array().of(
+        //     Yup.object({
+        //         item: Yup.string().required("*Item is required"),
+        //     })
+        // ),
     });
 
     const formik = useFormik({
@@ -279,12 +276,13 @@ function CreditNotesAdd() {
                                             }`}
                                     >
                                         <option selected></option>
-                                        {customerData &&
+                                        <option value="sakthivel">sakthivel</option>
+                                        {/* {customerData &&
                                             customerData.map((customerName) => (
                                                 <option key={customerName.id} value={customerName.id}>
                                                     {customerName.contactName}
                                                 </option>
-                                            ))}
+                                            ))} */}
                                     </select>
                                     {formik.touched.customerName &&
                                         formik.errors.customerName && (

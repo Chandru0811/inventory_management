@@ -1,248 +1,226 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-// import fetchAllCustomerWithIds from "../../List/CustomerList";
-// import fetchAllItemWithIds from "../../List/ItemList";
-
 function ChallanEdit() {
-  const navigate = useNavigate();
-  const [loading, setLoadIndicator] = useState(false);
-  const [customerData, setCustomerData] = useState(null);
-  const [itemData, setItemData] = useState(null);
 
-  const validationSchema = Yup.object({
-    customerName: Yup.string().required("*Customer name is required"),
-    deliveryChallan: Yup.string().required("*Delivery Challan is required"),
-    deliveryChallanDate: Yup.string().required("*Delivery Challan Date is required"),
-    challanType: Yup.string().required("*Challan Type is required"),
-    txnInvoiceOrderItemsModels: Yup.array().of(
-      Yup.object({
-        item: Yup.string().required("*Item is required"),
-      })
-    ),
-  });
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [loading, setLoadIndicator] = useState(false);
+    const [customerData, setCustomerData] = useState(null);
+    const [itemData, setItemData] = useState(null);
 
-  const formik = useFormik({
-    initialValues: {
-      customerName: "",
-      deliveryChallan: "",
-      deliveryChallanDate: "",
-      challanType: "",
-      files: null,
-      txnInvoiceOrderItemsModels: [
-        {
-          item: "",
-          qty: "",
-          price: "",
-          amount: "",
-        },
-      ],
-    },
-    validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      setLoadIndicator(true);
-      try {
-        const formData = new FormData();
+    const validationSchema = Yup.object({
+        customerName: Yup.string().required("*Customer name is required"),
+        // txnCreditNotesItemsModels: Yup.array().of(
+        //     Yup.object({
+        //         item: Yup.string().required("*Item is required"),
+        //     })
+        // ),
+    });
 
-        formData.append("customerId", values.customerId);
-        formData.append("issuesDate", values.issuesDate);
-        formData.append("reference", values.reference);
-        formData.append("dueDate", values.dueDate);
-        formData.append("invoiceNumber", values.invoiceNumber);
-        formData.append("AmountsAre", values.amountsAre);
-        formData.append("subTotal", values.subTotal);
-        formData.append("totalTax", values.totalTax);
-        formData.append("discountAmount", values.discountAmount);
-        formData.append("total", values.total);
-        values.txnInvoiceOrderItemsModels.forEach((item) => {
-          formData.append("item", item.item);
-          formData.append("qty", item.qty);
-          formData.append("price", item.price);
-          formData.append("taxRate", item.taxRate);
-          formData.append("disc", item.disc);
-          formData.append("amount", item.amount);
-          formData.append("mstrItemsId", item.item);
-          formData.append("description", "item.item");
-          formData.append("account", "item.item");
-          formData.append("taxAmount", "000");
-          formData.append("project", "000");
-        });
-        if (values.files) {
-          formData.append("files", values.files);
-        }
-        const response = await api.post("invoice-invoice-item", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
+    const formik = useFormik({
+      initialValues: {
+        customerName: "",
+        deliveryChallan: "",
+        deliveryChallanDate: "",
+        challanType: "",
+        files: null,
+        txnInvoiceOrderItemsModels: [
+          {
+            item: "",
+            qty: "",
+            price: "",
+            amount: "",
           },
-        });
-
-        if (response.status === 201) {
-          toast.success(response.data.message);
-          navigate("/invoice");
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        toast.error("Error: Unable to save sales order.");
-      } finally {
-        setLoadIndicator(false);
-      }
-    },
-  });
-
-  useEffect(() => {
-    const updateAndCalculate = async () => {
-      try {
-        let totalRate = 0;
-        let totalAmount = 0;
-        let totalTax = 0;
-        let discAmount = 0;
-        const updatedItems = await Promise.all(
-          formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-            if (item.item) {
-              try {
-                const response = await api.get(`itemsById/${item.item}`);
-                const updatedItem = {
-                  ...item,
-                  price: response.data.salesPrice,
-                  qty: 1,
-                };
-                const amount = calculateAmount(
-                  updatedItem.qty,
-                  updatedItem.price,
-                  updatedItem.disc,
-                  updatedItem.taxRate
-                );
-                const itemTotalRate = updatedItem.qty * updatedItem.price;
-                const itemTotalTax =
-                  itemTotalRate * (updatedItem.taxRate / 100);
-                const itemTotalDisc = itemTotalRate * (updatedItem.disc / 100);
-                discAmount += itemTotalDisc;
-                totalRate += updatedItem.price;
-                totalAmount += amount;
-                totalTax += itemTotalTax;
-                return { ...updatedItem, amount };
-              } catch (error) {
-                toast.error(
-                  "Error fetching data: ",
-                  error?.response?.data?.message
-                );
-              }
-            }
-            return item;
-          })
-        );
-        formik.setValues({
-          ...formik.values,
-          txnInvoiceOrderItemsModels: updatedItems,
-        });
-        formik.setFieldValue("subTotal", totalRate);
-        formik.setFieldValue("total", totalAmount);
-        formik.setFieldValue("totalTax", totalTax);
-        formik.setFieldValue("discountAmount", discAmount);
-      } catch (error) {
-        toast.error("Error updating items: ", error.message);
-      }
-    };
-
-    updateAndCalculate();
-  }, [
-    formik.values.txnInvoiceOrderItemsModels.map((item) => item.item).join(""),
-  ]);
-
-  useEffect(() => {
-    const updateAndCalculate = async () => {
-      try {
-        let totalRate = 0;
-        let totalAmount = 0;
-        let totalTax = 0;
-        let discAmount = 0;
-        const updatedItems = await Promise.all(
-          formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-            if (
-              item.qty &&
-              item.price &&
-              item.disc !== undefined &&
-              item.taxRate !== undefined
-            ) {
-              const amount = calculateAmount(
-                item.qty,
-                item.price,
-                item.disc,
-                item.taxRate
-              );
-              const itemTotalRate = item.qty * item.price;
-              const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-              const itemTotalDisc = itemTotalRate * (item.disc / 100);
-              discAmount += itemTotalDisc;
-              totalRate += item.price;
-              totalAmount += amount;
-              totalTax += itemTotalTax;
-              return { ...item, amount };
-            }
-            return item;
-          })
-        );
-        formik.setValues({
-          ...formik.values,
-          txnInvoiceOrderItemsModels: updatedItems,
-        });
-        formik.setFieldValue("subTotal", totalRate);
-        formik.setFieldValue("total", totalAmount);
-        formik.setFieldValue("totalTax", totalTax);
-        formik.setFieldValue("discountAmount", discAmount);
-      } catch (error) {
-        toast.error("Error updating items: ", error.message);
-      }
-    };
-
-    updateAndCalculate();
-  }, [
-    formik.values.txnInvoiceOrderItemsModels.map((item) => item.qty).join(""),
-    formik.values.txnInvoiceOrderItemsModels.map((item) => item.price).join(""),
-    formik.values.txnInvoiceOrderItemsModels.map((item) => item.disc).join(""),
-    formik.values.txnInvoiceOrderItemsModels
-      .map((item) => item.taxRate)
-      .join(""),
-  ]);
-
-  const calculateAmount = (qty, price, disc, taxRate) => {
-    const totalRate = qty * price;
-    const discountAmount = totalRate * (disc / 100);
-    const taxableAmount = totalRate * (taxRate / 100);
-    const totalAmount = totalRate + taxableAmount - discountAmount;
-    return totalAmount;
-  };
-
-  const AddRowContent = () => {
-    formik.setFieldValue("txnInvoiceOrderItemsModels", [
-      ...formik.values.txnInvoiceOrderItemsModels,
-      {
-        item: "",
-        qty: "",
-        price: "",
-        disc: "",
-        taxRate: "",
-        amount: "",
+        ],
       },
+        validationSchema: validationSchema,
+        onSubmit: async (values) => {
+            setLoadIndicator(true);
+            console.log(values);
+            try {
+                const response = await api.put(`/updateDeliveryChallans/${id}`, values);
+                if (response.status === 200) {
+                    toast.success(response.data.message);
+                    navigate("/challan");
+                } else {
+                    toast.error(response.data.message);
+                }
+            } catch (e) {
+                toast.error("Error fetching data: ", e?.response?.data?.message);
+            } finally {
+                setLoadIndicator(false);
+            }
+        },
+    });
+
+    useEffect(() => {
+        const getData = async () => {
+            try {
+                const response = await api.get(`/getDeliveryChallansById/${id}`);
+                formik.setValues(response.data);
+            } catch (e) {
+                toast.error("Error fetching data: ", e?.response?.data?.message);
+            }
+        };
+
+        getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        const updateAndCalculate = async () => {
+            try {
+                let totalRate = 0;
+                let totalAmount = 0;
+                let totalTax = 0;
+                let discAmount = 0;
+                const updatedItems = await Promise.all(
+                    formik.values.txnCreditNotesItemsModels?.map(async (item, index) => {
+                        if (item.item) {
+                            try {
+                                const response = await api.get(`itemsById/${item.item}`);
+                                const updatedItem = {
+                                    ...item,
+                                    amount: response.data.salesamount,
+                                    qty: 1,
+                                };
+                                const amount = calculateAmount(
+                                    updatedItem.qty,
+                                    updatedItem.amount,
+                                    updatedItem.discount,
+                                    updatedItem.taxRate
+                                );
+                                const itemTotalRate = updatedItem.qty * updatedItem.amount;
+                                const itemTotalTax =
+                                    itemTotalRate * (updatedItem.taxRate / 100);
+                                const itemTotalDisc = itemTotalRate * (updatedItem.discount / 100);
+                                discAmount += itemTotalDisc;
+                                totalRate += updatedItem.amount;
+                                totalAmount += amount;
+                                totalTax += itemTotalTax;
+                                return { ...updatedItem, amount };
+                            } catch (error) {
+                                toast.error(
+                                    "Error fetching data: ",
+                                    error?.response?.data?.message
+                                );
+                            }
+                        }
+                        return item;
+                    })
+                );
+                formik.setValues({
+                    ...formik.values,
+                    txnCreditNotesItemsModels: updatedItems,
+                });
+                formik.setFieldValue("subTotal", totalRate);
+                formik.setFieldValue("total", totalAmount);
+                formik.setFieldValue("totalTax", totalTax);
+                formik.setFieldValue("discountAmount", discAmount);
+            } catch (error) {
+                toast.error("Error updating items: ", error.message);
+            }
+        };
+
+        updateAndCalculate();
+    }, [
+        formik.values.txnCreditNotesItemsModels?.map((item) => item.item).join(""),
     ]);
-  };
 
-  const deleteRow = (index) => {
-    if (formik.values.txnInvoiceOrderItemsModels.length === 1) {
-      return;
-    }
-    const updatedRows = [...formik.values.txnInvoiceOrderItemsModels];
-    updatedRows.pop();
-    formik.setFieldValue("txnInvoiceOrderItemsModels", updatedRows);
-  };
+    useEffect(() => {
+        const updateAndCalculate = async () => {
+            try {
+                let totalRate = 0;
+                let totalAmount = 0;
+                let totalTax = 0;
+                let discAmount = 0;
+                const updatedItems = await Promise.all(
+                    formik.values.txnCreditNotesItemsModels?.map(async (item, index) => {
+                        if (
+                            item.qty &&
+                            item.amount &&
+                            item.discount !== undefined &&
+                            item.taxRate !== undefined
+                        ) {
+                            const amount = calculateAmount(
+                                item.qty,
+                                item.amount,
+                                item.discount,
+                                item.taxRate
+                            );
+                            const itemTotalRate = item.qty * item.amount;
+                            const itemTotalTax = itemTotalRate * (item.taxRate / 100);
+                            const itemTotalDisc = itemTotalRate * (item.discount / 100);
+                            discAmount += itemTotalDisc;
+                            totalRate += item.amount;
+                            totalAmount += amount;
+                            totalTax += itemTotalTax;
+                            return { ...item, amount };
+                        }
+                        return item;
+                    })
+                );
+                formik.setValues({
+                    ...formik.values,
+                    txnCreditNotesItemsModels: updatedItems,
+                });
+                formik.setFieldValue("subTotal", totalRate);
+                formik.setFieldValue("total", totalAmount);
+                formik.setFieldValue("totalTax", totalTax);
+                formik.setFieldValue("discountAmount", discAmount);
+            } catch (error) {
+                toast.error("Error updating items: ", error.message);
+            }
+        };
 
-  return (
-    <div className="container-fluid px-2 minHeight m-0">
+        updateAndCalculate();
+    }, [
+        formik.values.txnCreditNotesItemsModels?.map((item) => item.qty).join(""),
+        formik.values.txnCreditNotesItemsModels?.map((item) => item.amount).join(""),
+        formik.values.txnCreditNotesItemsModels?.map((item) => item.discount).join(""),
+        formik.values.txnCreditNotesItemsModels
+            ?.map((item) => item.taxRate)
+            .join(""),
+    ]);
+
+    const calculateAmount = (qty, amount, discount, taxRate) => {
+        const totalRate = qty * amount;
+        const discountAmount = totalRate * (discount / 100);
+        const taxableAmount = totalRate * (taxRate / 100);
+        const totalAmount = totalRate + taxableAmount - discountAmount;
+        return totalAmount;
+    };
+
+    const AddRowContent = () => {
+        formik.setFieldValue("txnCreditNotesItemsModels", [
+            ...formik.values.txnCreditNotesItemsModels,
+            {
+                item: "",
+                qty: "",
+                amount: "",
+                discount: "",
+                taxRate: "",
+                amount: "",
+            },
+        ]);
+    };
+
+    const deleteRow = (index) => {
+        if (formik.values.txnCreditNotesItemsModels.length === 1) {
+            return;
+        }
+        const updatedRows = [...formik.values.txnCreditNotesItemsModels];
+        updatedRows.pop();
+        formik.setFieldValue("txnCreditNotesItemsModels", updatedRows);
+    };
+
+    return (
+      <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
           className="card shadow border-0 mb-2 top-header"
@@ -304,12 +282,13 @@ function ChallanEdit() {
                     }`}
                   >
                     <option selected></option>
-                    {customerData &&
+                    <option value="sakthivel">sakthivel</option>
+                    {/* {customerData &&
                       customerData.map((customerName) => (
                         <option key={customerName.id} value={customerName.id}>
                           {customerName.contactName}
                         </option>
-                      ))}
+                      ))} */}
                   </select>
                   {formik.touched.customerName &&
                     formik.errors.customerName && (
@@ -478,7 +457,7 @@ function ChallanEdit() {
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.txnInvoiceOrderItemsModels.map(
+                      {formik.values.txnInvoiceOrderItemsModels?.map(
                         (item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
@@ -501,7 +480,7 @@ function ChallanEdit() {
                               >
                                 <option selected> </option>
                                 {itemData &&
-                                  itemData.map((itemId) => (
+                                  itemData?.map((itemId) => (
                                     <option key={itemId.id} value={itemId.id}>
                                       {itemId.itemName}
                                     </option>
@@ -719,7 +698,7 @@ function ChallanEdit() {
                 >
                   Add row
                 </button>
-                {formik.values.txnInvoiceOrderItemsModels.length > 1 && (
+                {formik.values.txnInvoiceOrderItemsModels?.length > 1 && (
                   <button
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
                     onClick={deleteRow}
@@ -872,7 +851,7 @@ function ChallanEdit() {
         </div>
       </form>
     </div>
-  );
+    );
 }
 
 export default ChallanEdit;
