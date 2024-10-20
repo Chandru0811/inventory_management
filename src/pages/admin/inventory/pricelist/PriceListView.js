@@ -11,14 +11,14 @@ const PriceListView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+        try {
+          const response = await api.get(`/getAllPriceListById/${id}`);
+          setData(response.data);
+        } catch (e) {
+          toast.error("Error fetching data: ", e?.response?.data?.message);
+        } finally {
+          setLoading(false);
+        }
     };
     getData();
   }, [id]);

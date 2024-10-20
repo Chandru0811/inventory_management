@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import api from "../../../config/URL";
+import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
 const ItemGroupView = () => {
@@ -11,14 +11,14 @@ const ItemGroupView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+      try {
+        const response = await api.get(`/getAllItemGroupsById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
     getData();
   }, [id]);
@@ -78,7 +78,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.contactName || ""}
+                        : {data.itemGroupName || ""}
                       </p>
                     </div>
                   </div>
@@ -92,7 +92,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.accNumber || ""}
+                        : {data.itemType || ""}
                       </p>
                     </div>
                   </div>
@@ -106,7 +106,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.primaryContact || ""}
+                        : {data.itemUnit || ""}
                       </p>
                     </div>
                   </div>
@@ -119,7 +119,7 @@ const ItemGroupView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.email || ""}</p>
+                      <p className="text-muted text-sm">: {data.tax || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -133,7 +133,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.manufacturerName || ""}
                       </p>
                     </div>
                   </div>
@@ -147,7 +147,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.brandName || ""}
                       </p>
                     </div>
                   </div>
@@ -161,7 +161,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.multipleItems || ""}
                       </p>
                     </div>
                   </div>
@@ -175,7 +175,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.itemAttribute || ""}
                       </p>
                     </div>
                   </div>
@@ -189,7 +189,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.itemOptions || ""}
                       </p>
                     </div>
                   </div>
@@ -203,7 +203,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.itemType || ""}
                       </p>
                     </div>
                   </div>
@@ -217,7 +217,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.salesAccount || ""}
                       </p>
                     </div>
                   </div>
@@ -231,7 +231,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.purchaseAccount || ""}
                       </p>
                     </div>
                   </div>
@@ -245,7 +245,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.inventoryAccount || ""}
                       </p>
                     </div>
                   </div>
@@ -259,7 +259,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.itemId || ""}
                       </p>
                     </div>
                   </div>
@@ -273,7 +273,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.salesId || ""}
                       </p>
                     </div>
                   </div>
@@ -287,7 +287,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.purchaseId || ""}
                       </p>
                     </div>
                   </div>
@@ -301,7 +301,7 @@ const ItemGroupView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.itemImage || ""}
                       </p>
                     </div>
                   </div>

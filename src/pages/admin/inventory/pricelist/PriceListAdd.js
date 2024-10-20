@@ -64,10 +64,10 @@ const PriceListAdd = () => {
       setLoadIndicator(true);
       console.log(values);
       try {
-        const response = await api.post("/createMstrCustomer", values, {});
+        const response = await api.post("/createPriceList", values, {});
         if (response.status === 201) {
           toast.success(response.data.message);
-          navigate("/customer");
+          navigate("/pricelist");
         } else {
           toast.error(response.data.message);
         }
