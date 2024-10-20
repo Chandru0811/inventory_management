@@ -5,6 +5,7 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
+import DeleteModel from "../../../../components/admin/DeleteModel";
 
 const Vendor = () => {
   const tableRef = useRef(null);
@@ -15,7 +16,7 @@ const Vendor = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllMstrCustomers");
+        const response = await api.get("/getAllVendorDetails");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -149,28 +150,25 @@ const Vendor = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.name}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      <td className="text-center">{data.companyName}</td>
+                      <td className="text-center">{data.vendorEmail}</td>
+                      <td className="text-center">{data.vendorMobile}</td>
                       <td className="text-center">
                         <div className="gap-2">
-                          <Link to={`/customer/view/${data.id}`}>
+                          <Link to={`/vendor/view/${data.id}`}>
                             <button className="btn btn-light btn-sm  shadow-none border-none">
                               View
                             </button>
                           </Link>
-                          <Link
-                            to={`/customer/edit/${data.id}`}
-                            className="px-2"
-                          >
+                          <Link to={`/vendor/edit/${data.id}`} className="px-2">
                             <button className="btn btn-light  btn-sm shadow-none border-none">
                               Edit
                             </button>
                           </Link>
-                          {/* <DeleteModel
+                          <DeleteModel
                             onSuccess={refreshData}
-                            path={`/deleteMstrCustomer/${data.id}`}
-                          /> */}
+                            path={`/deleteVendorDetails/${data.id}`}
+                          />
                         </div>
                       </td>
                     </tr>

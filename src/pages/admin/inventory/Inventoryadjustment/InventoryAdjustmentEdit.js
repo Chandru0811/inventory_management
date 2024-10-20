@@ -4,7 +4,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
-import InventoryAdjustment from "./InventoryAdjustment";
 
 const InventoryAdjustmentEdit = () => {
   const { id } = useParams();
@@ -12,89 +11,66 @@ const InventoryAdjustmentEdit = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    contactName: Yup.string().required("*Contact Name is required"),
-    accNumber: Yup.string().required("*Account Number is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    email: Yup.string().required("*Email is required"),
-    phone: Yup.number().required("*Phone is required"),
-    website: Yup.string().required("*Website is required"),
-    bankAccName: Yup.string().required("*Account Name is required"),
-    bankAccNumber: Yup.string().required("*Account Number is required"),
-
-    // deliCountry: Yup.number().required("*Country is required"),
-    // deliAddress: Yup.string().required("*Address is required"),
-    // deliCity: Yup.string().required("*City is required"),
-    // deliState: Yup.string().required("*State is required"),
-    // deliZip: Yup.number().required("*Zip is required"),
-    // deliAttention: Yup.number().required("*Attention is required"),
-
-    // billCountry: Yup.number().required("*Country is required"),
-    // billAddress: Yup.string().required("*Address is required"),
-    // billCity: Yup.string().required("*City is required"),
-    // billState: Yup.string().required("*State is required"),
-    // billZip: Yup.number().required("*Zip is required"),
-    // billAttention: Yup.number().required("*Attention is required"),
-    // notes: Yup.number().required("*Remarks is required"),
+    date: Yup.string().required("*Date is required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
-      contactName: "",
-      accNumber: "",
-      primaryContact: "",
-      email: "",
-      phone: "",
-      website: "",
-      bankAccName: "",
-      bankAccNumber: "",
-      deliCountry: "",
-      deliAddress: "",
-      deliCity: "",
-      deliState: "",
-      deliZip: "",
-      deliAttention: "",
-      billCountry: "",
-      billAddress: "",
-      billCity: "",
-      billState: "",
-      billZip: "",
-      billAttention: "",
-      notes: "",
+      modeOfAdjustment: "",
+      reference_number: "",
+      date: "",
+      reason: "",
+      descOfAdjustment: "",
+      inventoryAdjustmentsFile: null,
+      accountId: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-      //   try {
-      //     const response = await api.put(`/updateMstrCustomer/${id}`, values, {});
-      //     if (response.status === 200) {
-      //       toast.success(response.data.message);
-      //       navigate("/customer");
-      //     } else {
-      //       toast.error(response.data.message);
-      //     }
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoadIndicator(false);
-      //   }
+
+      const payload = {
+        ...values,
+        reference_number: Number(values.reference_number) || 0,
+        accountId: Number(values.accountId) || 0,
+      };
+
+      try {
+        const response = await api.put(
+          `updateInventoryAdjustments/${id}`,
+          payload,
+          {
+            // headers: {
+            //   'Content-Type': 'multipart/form-data',
+            // },
+          }
+        );
+
+        if (response.status === 201) {
+          toast.success(response.data.message);
+          navigate("/inventoryAdjustments");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (e) {
+        toast.error("Error fetching data: " + e?.response?.data?.message);
+      } finally {
+        setLoadIndicator(false);
+      }
     },
   });
 
   useEffect(() => {
     const getData = async () => {
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     formik.setValues(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   }
+      try {
+        const response = await api.get(`getAllInventoryAdjustmentsById/${id}`);
+        formik.setValues(response.data);
+      } catch (error) {
+        toast.error(error.message);
+      }
     };
-
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
   return (
     <div className="container-fluid px-2 minHeight m-0">
@@ -288,31 +264,37 @@ const InventoryAdjustmentEdit = () => {
                     )}
                 </div>
               </div>
-              {/* <div className="col-md-6 col-12 mb-2">
-              <lable className="form-lable">
-                Inventory Adjustment File
-                <span className="text-danger">*</span>
-              </lable>
-              <div className="mb-3">
-                <input
-                  type="file"
-                  name="inventoryAdjustmentsFile"
-                  className={`form-control  ${
-                    formik.touched.inventoryAdjustmentsFile &&
-                    formik.errors.inventoryAdjustmentsFile
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("inventoryAdjustmentsFile")}
-                />
-                {formik.touched.inventoryAdjustmentsFile &&
-                  formik.errors.inventoryAdjustmentsFile && (
-                    <div className="invalid-feedback">
-                      {formik.errors.inventoryAdjustmentsFile}
-                    </div>
-                  )}
+              <div className="col-md-6 col-12 mb-2">
+                <label className="form-label">
+                  Inventory Adjustment File
+                  <span className="text-danger">*</span>
+                </label>
+                <div className="mb-3">
+                  <input
+                    type="file"
+                    name="inventoryAdjustmentsFile"
+                    className={`form-control ${
+                      formik.touched.inventoryAdjustmentsFile &&
+                      formik.errors.inventoryAdjustmentsFile
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    onChange={(event) => {
+                      // Manually handle the file selection
+                      formik.setFieldValue(
+                        "inventoryAdjustmentsFile",
+                        event.currentTarget.files[0]
+                      );
+                    }}
+                  />
+                  {formik.touched.inventoryAdjustmentsFile &&
+                    formik.errors.inventoryAdjustmentsFile && (
+                      <div className="invalid-feedback">
+                        {formik.errors.inventoryAdjustmentsFile}
+                      </div>
+                    )}
+                </div>
               </div>
-            </div> */}
             </div>
           </div>
         </div>

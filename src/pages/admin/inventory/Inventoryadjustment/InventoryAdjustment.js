@@ -5,6 +5,7 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
+import DeleteModel from "../../../../components/admin/DeleteModel";
 
 const InventoryAdjustment = () => {
   const tableRef = useRef(null);
@@ -156,23 +157,23 @@ const InventoryAdjustment = () => {
                       <td className="text-center">{data.date}</td>
                       <td className="text-center">
                         <div className="gap-2">
-                          <Link to={`/customer/view/${data.id}`}>
+                          <Link to={`/inventoryadjustment/view/${data.id}`}>
                             <button className="btn btn-light btn-sm  shadow-none border-none">
                               View
                             </button>
                           </Link>
                           <Link
-                            to={`/customer/edit/${data.id}`}
+                            to={`/inventoryadjustment/edit/${data.id}`}
                             className="px-2"
                           >
                             <button className="btn btn-light  btn-sm shadow-none border-none">
                               Edit
                             </button>
                           </Link>
-                          {/* <DeleteModel
+                          <DeleteModel
                             onSuccess={refreshData}
-                            path={`/deleteMstrCustomer/${data.id}`}
-                          /> */}
+                            path={`/deleteInventoryAdjustments/${data.id}`}
+                          />
                         </div>
                       </td>
                     </tr>

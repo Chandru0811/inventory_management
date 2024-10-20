@@ -19,15 +19,15 @@ function InvoicesView() {
   console.log("invoice", data);
   useEffect(() => {
     const getData = async () => {
-      //   setLoading(true);
-      //   try {
-      //     const response = await api.get(`invoice/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+      setLoading(true);
+      try {
+        const response = await api.get(`getInvoicesById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     getData();
@@ -69,9 +69,7 @@ function InvoicesView() {
                 <div className="row align-items-center">
                   <div className="col">
                     <div className="d-flex align-items-center gap-4">
-                      <h1 className="h4 ls-tight headingColor">
-                        View Invoice
-                      </h1>
+                      <h1 className="h4 ls-tight headingColor">View Invoice</h1>
                     </div>
                   </div>
                   <div className="col-auto">

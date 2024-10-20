@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "../../../../config/URL";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 // import fetchAllItemWithIds from "../../List/ItemList";
 
 function InvoiceEdit() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [customerData, setCustomerData] = useState(null);
@@ -18,11 +19,11 @@ function InvoiceEdit() {
     customerName: Yup.string().required("*Customer name is required"),
     invoiceNumber: Yup.string().required("*Invoice Number is required"),
     invoiceDate: Yup.string().required("*Invoice Date is required"),
-    txnInvoiceOrderItemsModels: Yup.array().of(
-      Yup.object({
-        item: Yup.string().required("*Item is required"),
-      })
-    ),
+    // txnInvoiceOrderItemsModels: Yup.array().of(
+    //   Yup.object({
+    //     item: Yup.string().required("*Item is required"),
+    //   })
+    // ),
   });
 
   const formik = useFormik({
@@ -43,49 +44,46 @@ function InvoiceEdit() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
+
+      // const formData = new FormData();
+
+      // formData.append("customerId", values.customerId);
+      // formData.append("issuesDate", values.issuesDate);
+      // formData.append("reference", values.reference);
+      // formData.append("dueDate", values.dueDate);
+      // formData.append("invoiceNumber", values.invoiceNumber);
+      // formData.append("AmountsAre", values.amountsAre);
+      // formData.append("subTotal", values.subTotal);
+      // formData.append("totalTax", values.totalTax);
+      // formData.append("discountAmount", values.discountAmount);
+      // formData.append("total", values.total);
+      // values.txnInvoiceOrderItemsModels.forEach((item) => {
+      //   formData.append("item", item.item);
+      //   formData.append("qty", item.qty);
+      //   formData.append("price", item.price);
+      //   formData.append("taxRate", item.taxRate);
+      //   formData.append("disc", item.disc);
+      //   formData.append("amount", item.amount);
+      //   formData.append("mstrItemsId", item.item);
+      //   formData.append("description", "item.item");
+      //   formData.append("account", "item.item");
+      //   formData.append("taxAmount", "000");
+      //   formData.append("project", "000");
+      // });
+      // if (values.files) {
+      //   formData.append("files", values.files);
+      // }
+
       try {
-        const formData = new FormData();
-
-        formData.append("customerId", values.customerId);
-        formData.append("issuesDate", values.issuesDate);
-        formData.append("reference", values.reference);
-        formData.append("dueDate", values.dueDate);
-        formData.append("invoiceNumber", values.invoiceNumber);
-        formData.append("AmountsAre", values.amountsAre);
-        formData.append("subTotal", values.subTotal);
-        formData.append("totalTax", values.totalTax);
-        formData.append("discountAmount", values.discountAmount);
-        formData.append("total", values.total);
-        values.txnInvoiceOrderItemsModels.forEach((item) => {
-          formData.append("item", item.item);
-          formData.append("qty", item.qty);
-          formData.append("price", item.price);
-          formData.append("taxRate", item.taxRate);
-          formData.append("disc", item.disc);
-          formData.append("amount", item.amount);
-          formData.append("mstrItemsId", item.item);
-          formData.append("description", "item.item");
-          formData.append("account", "item.item");
-          formData.append("taxAmount", "000");
-          formData.append("project", "000");
-        });
-        if (values.files) {
-          formData.append("files", values.files);
-        }
-        const response = await api.post("invoice-invoice-item", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
-        if (response.status === 201) {
+        const response = await api.put(`/updateInvoices/${id}`, values);
+        if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/invoice");
         } else {
           toast.error(response.data.message);
         }
-      } catch (error) {
-        toast.error("Error: Unable to save sales order.");
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
       } finally {
         setLoadIndicator(false);
       }
@@ -93,120 +91,136 @@ function InvoiceEdit() {
   });
 
   useEffect(() => {
-    const updateAndCalculate = async () => {
+    const getData = async () => {
       try {
-        let totalRate = 0;
-        let totalAmount = 0;
-        let totalTax = 0;
-        let discAmount = 0;
-        const updatedItems = await Promise.all(
-          formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-            if (item.item) {
-              try {
-                const response = await api.get(`itemsById/${item.item}`);
-                const updatedItem = {
-                  ...item,
-                  price: response.data.salesPrice,
-                  qty: 1,
-                };
-                const amount = calculateAmount(
-                  updatedItem.qty,
-                  updatedItem.price,
-                  updatedItem.disc,
-                  updatedItem.taxRate
-                );
-                const itemTotalRate = updatedItem.qty * updatedItem.price;
-                const itemTotalTax =
-                  itemTotalRate * (updatedItem.taxRate / 100);
-                const itemTotalDisc = itemTotalRate * (updatedItem.disc / 100);
-                discAmount += itemTotalDisc;
-                totalRate += updatedItem.price;
-                totalAmount += amount;
-                totalTax += itemTotalTax;
-                return { ...updatedItem, amount };
-              } catch (error) {
-                toast.error(
-                  "Error fetching data: ",
-                  error?.response?.data?.message
-                );
-              }
-            }
-            return item;
-          })
-        );
-        formik.setValues({
-          ...formik.values,
-          txnInvoiceOrderItemsModels: updatedItems,
-        });
-        formik.setFieldValue("subTotal", totalRate);
-        formik.setFieldValue("total", totalAmount);
-        formik.setFieldValue("totalTax", totalTax);
-        formik.setFieldValue("discountAmount", discAmount);
-      } catch (error) {
-        toast.error("Error updating items: ", error.message);
+        const response = await api.get(`/getInvoicesById/${id}`);
+        formik.setValues(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
       }
     };
 
-    updateAndCalculate();
-  }, [
-    formik.values.txnInvoiceOrderItemsModels.map((item) => item.item).join(""),
-  ]);
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  useEffect(() => {
-    const updateAndCalculate = async () => {
-      try {
-        let totalRate = 0;
-        let totalAmount = 0;
-        let totalTax = 0;
-        let discAmount = 0;
-        const updatedItems = await Promise.all(
-          formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-            if (
-              item.qty &&
-              item.price &&
-              item.disc !== undefined &&
-              item.taxRate !== undefined
-            ) {
-              const amount = calculateAmount(
-                item.qty,
-                item.price,
-                item.disc,
-                item.taxRate
-              );
-              const itemTotalRate = item.qty * item.price;
-              const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-              const itemTotalDisc = itemTotalRate * (item.disc / 100);
-              discAmount += itemTotalDisc;
-              totalRate += item.price;
-              totalAmount += amount;
-              totalTax += itemTotalTax;
-              return { ...item, amount };
-            }
-            return item;
-          })
-        );
-        formik.setValues({
-          ...formik.values,
-          txnInvoiceOrderItemsModels: updatedItems,
-        });
-        formik.setFieldValue("subTotal", totalRate);
-        formik.setFieldValue("total", totalAmount);
-        formik.setFieldValue("totalTax", totalTax);
-        formik.setFieldValue("discountAmount", discAmount);
-      } catch (error) {
-        toast.error("Error updating items: ", error.message);
-      }
-    };
+  // useEffect(() => {
+  //   const updateAndCalculate = async () => {
+  //     try {
+  //       let totalRate = 0;
+  //       let totalAmount = 0;
+  //       let totalTax = 0;
+  //       let discAmount = 0;
+  //       const updatedItems = await Promise.all(
+  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
+  //           if (item.item) {
+  //             try {
+  //               const response = await api.get(`itemsById/${item.item}`);
+  //               const updatedItem = {
+  //                 ...item,
+  //                 price: response.data.salesPrice,
+  //                 qty: 1,
+  //               };
+  //               const amount = calculateAmount(
+  //                 updatedItem.qty,
+  //                 updatedItem.price,
+  //                 updatedItem.disc,
+  //                 updatedItem.taxRate
+  //               );
+  //               const itemTotalRate = updatedItem.qty * updatedItem.price;
+  //               const itemTotalTax =
+  //                 itemTotalRate * (updatedItem.taxRate / 100);
+  //               const itemTotalDisc = itemTotalRate * (updatedItem.disc / 100);
+  //               discAmount += itemTotalDisc;
+  //               totalRate += updatedItem.price;
+  //               totalAmount += amount;
+  //               totalTax += itemTotalTax;
+  //               return { ...updatedItem, amount };
+  //             } catch (error) {
+  //               toast.error(
+  //                 "Error fetching data: ",
+  //                 error?.response?.data?.message
+  //               );
+  //             }
+  //           }
+  //           return item;
+  //         })
+  //       );
+  //       formik.setValues({
+  //         ...formik.values,
+  //         txnInvoiceOrderItemsModels: updatedItems,
+  //       });
+  //       formik.setFieldValue("subTotal", totalRate);
+  //       formik.setFieldValue("total", totalAmount);
+  //       formik.setFieldValue("totalTax", totalTax);
+  //       formik.setFieldValue("discountAmount", discAmount);
+  //     } catch (error) {
+  //       toast.error("Error updating items: ", error.message);
+  //     }
+  //   };
 
-    updateAndCalculate();
-  }, [
-    formik.values.txnInvoiceOrderItemsModels.map((item) => item.qty).join(""),
-    formik.values.txnInvoiceOrderItemsModels.map((item) => item.price).join(""),
-    formik.values.txnInvoiceOrderItemsModels.map((item) => item.disc).join(""),
-    formik.values.txnInvoiceOrderItemsModels
-      .map((item) => item.taxRate)
-      .join(""),
-  ]);
+  //   updateAndCalculate();
+  // }, [
+  //   formik?.values?.txnInvoiceOrderItemsModels
+  //     .map((item) => item.item)
+  //     .join(""),
+  // ]);
+
+  // useEffect(() => {
+  //   const updateAndCalculate = async () => {
+  //     try {
+  //       let totalRate = 0;
+  //       let totalAmount = 0;
+  //       let totalTax = 0;
+  //       let discAmount = 0;
+  //       const updatedItems = await Promise.all(
+  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
+  //           if (
+  //             item.qty &&
+  //             item.price &&
+  //             item.disc !== undefined &&
+  //             item.taxRate !== undefined
+  //           ) {
+  //             const amount = calculateAmount(
+  //               item.qty,
+  //               item.price,
+  //               item.disc,
+  //               item.taxRate
+  //             );
+  //             const itemTotalRate = item.qty * item.price;
+  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
+  //             const itemTotalDisc = itemTotalRate * (item.disc / 100);
+  //             discAmount += itemTotalDisc;
+  //             totalRate += item.price;
+  //             totalAmount += amount;
+  //             totalTax += itemTotalTax;
+  //             return { ...item, amount };
+  //           }
+  //           return item;
+  //         })
+  //       );
+  //       formik.setValues({
+  //         ...formik.values,
+  //         txnInvoiceOrderItemsModels: updatedItems,
+  //       });
+  //       formik.setFieldValue("subTotal", totalRate);
+  //       formik.setFieldValue("total", totalAmount);
+  //       formik.setFieldValue("totalTax", totalTax);
+  //       formik.setFieldValue("discountAmount", discAmount);
+  //     } catch (error) {
+  //       toast.error("Error updating items: ", error.message);
+  //     }
+  //   };
+
+  //   updateAndCalculate();
+  // }, [
+  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.qty).join(""),
+  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.price).join(""),
+  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.disc).join(""),
+  //   formik.values.txnInvoiceOrderItemsModels
+  //     .map((item) => item.taxRate)
+  //     .join(""),
+  // ]);
 
   const calculateAmount = (qty, price, disc, taxRate) => {
     const totalRate = qty * price;
@@ -250,9 +264,7 @@ function InvoiceEdit() {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">
-                    Edit Invoice
-                  </h1>
+                  <h1 className="h4 ls-tight headingColor">Edit Invoice</h1>
                 </div>
               </div>
               <div className="col-auto">
@@ -288,26 +300,23 @@ function InvoiceEdit() {
         >
           <div className="container mb-5 mt-5">
             <div className="row py-4">
-              <div className="col-md-6 col-12 mb-3">
+              <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Customer Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("customerName")}
-                    className={`form-select    ${
+                    name="customerName"
+                    className={`form-select  ${
                       formik.touched.customerName && formik.errors.customerName
                         ? "is-invalid"
                         : ""
                     }`}
+                    {...formik.getFieldProps("customerName")}
                   >
-                    <option selected></option>
-                    {customerData &&
-                      customerData.map((customerName) => (
-                        <option key={customerName.id} value={customerName.id}>
-                          {customerName.contactName}
-                        </option>
-                      ))}
+                    <option value=""></option>
+                    <option value="Business">Business</option>
+                    {/* <option value="INDIVITUALS">Individual</option> */}
                   </select>
                   {formik.touched.customerName &&
                     formik.errors.customerName && (
@@ -342,7 +351,7 @@ function InvoiceEdit() {
 
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                Invoice<span className="text-danger">*</span>
+                  Invoice<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -386,31 +395,27 @@ function InvoiceEdit() {
 
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                Invoice Date<span className="text-danger">*</span>
+                  Invoice Date<span className="text-danger">*</span>
                 </lable>
                 <div className="">
                   <input
                     type="date"
                     className={`form-control ${
-                      formik.touched.invoiceDate &&
-                      formik.errors.invoiceDate
+                      formik.touched.invoiceDate && formik.errors.invoiceDate
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("invoiceDate")}
                   />
-                  {formik.touched.invoiceDate &&
-                    formik.errors.invoiceDate && (
-                      <div className="invalid-feedback">
-                        {formik.errors.invoiceDate}
-                      </div>
-                    )}
+                  {formik.touched.invoiceDate && formik.errors.invoiceDate && (
+                    <div className="invalid-feedback">
+                      {formik.errors.invoiceDate}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">
-                Due Date
-                </lable>
+                <lable className="form-lable">Due Date</lable>
                 <div className="">
                   <input
                     type="text"
@@ -430,9 +435,7 @@ function InvoiceEdit() {
               </div>
 
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">
-                Salesperson
-                </lable>
+                <lable className="form-lable">Salesperson</lable>
                 <div className="">
                   <input
                     type="text"
@@ -476,7 +479,7 @@ function InvoiceEdit() {
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.txnInvoiceOrderItemsModels.map(
+                      {formik.values.txnInvoiceOrderItemsModels?.map(
                         (item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
@@ -717,7 +720,7 @@ function InvoiceEdit() {
                 >
                   Add row
                 </button>
-                {formik.values.txnInvoiceOrderItemsModels.length > 1 && (
+                {formik.values.txnInvoiceOrderItemsModels?.length > 1 && (
                   <button
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
                     onClick={deleteRow}

@@ -5,17 +5,17 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../../config/URL";
+import DeleteModel from "../../../../../components/admin/DeleteModel";
 
 const PurchaseReceive = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllMstrCustomers");
+        const response = await api.get("/getPurchaseRecives");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,7 +56,7 @@ const PurchaseReceive = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllItems");
+      const response = await api.get("/getPurchaseRecives");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -72,6 +72,7 @@ const PurchaseReceive = () => {
       table.destroy();
     };
   }, []);
+
   return (
     <div>
       {loading ? (
@@ -104,7 +105,6 @@ const PurchaseReceive = () => {
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/purchasereceive/add">
                       <button
                         type="submit"
@@ -115,13 +115,11 @@ const PurchaseReceive = () => {
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -137,7 +135,10 @@ const PurchaseReceive = () => {
                       VENDOR NAME
                     </th>
                     <th scope="col" className="text-center">
-                      PURCHASE RECEIVE NUMBER
+                      PURCHASE ORDER
+                    </th>
+                    <th scope="col" className="text-center">
+                      PURCHASE RECEIVE
                     </th>
                     <th scope="col" className="text-center">
                       RECEIVED DATE
@@ -151,28 +152,33 @@ const PurchaseReceive = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.name}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      <td className="text-center">{data.vendorName}</td>
+                      <td className="text-center">{data.purchaseOrderId}</td>
+                      <td className="text-center">{data.purchaseReceiveNum}</td>
+                      <td className="text-center">
+                        {data.receivedDate
+                          ? new Date(data.receivedDate).toLocaleDateString()
+                          : ""}
+                      </td>
                       <td className="text-center">
                         <div className="gap-2">
-                          <Link to={`/customer/view/${data.id}`}>
+                          <Link to={`/purchasereceive/view/${data.id}`}>
                             <button className="btn btn-light btn-sm  shadow-none border-none">
                               View
                             </button>
                           </Link>
                           <Link
-                            to={`/customer/edit/${data.id}`}
+                            to={`/purchasereceive/edit/${data.id}`}
                             className="px-2"
                           >
                             <button className="btn btn-light  btn-sm shadow-none border-none">
                               Edit
                             </button>
                           </Link>
-                          {/* <DeleteModel
+                          <DeleteModel
                             onSuccess={refreshData}
-                            path={`/deleteMstrCustomer/${data.id}`}
-                          /> */}
+                            path={`/deletePurchaseReceives/${data.id}`}
+                          />
                         </div>
                       </td>
                     </tr>

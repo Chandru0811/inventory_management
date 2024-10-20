@@ -18,11 +18,11 @@ function InvoicesAdd() {
     customerName: Yup.string().required("*Customer name is required"),
     invoiceNumber: Yup.string().required("*Invoice Number is required"),
     invoiceDate: Yup.string().required("*Invoice Date is required"),
-    txnInvoiceOrderItemsModels: Yup.array().of(
-      Yup.object({
-        item: Yup.string().required("*Item is required"),
-      })
-    ),
+    // txnInvoiceOrderItemsModels: Yup.array().of(
+    //   Yup.object({
+    //     item: Yup.string().required("*Item is required"),
+    //   })
+    // ),
   });
 
   const formik = useFormik({
@@ -44,38 +44,38 @@ function InvoicesAdd() {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        const formData = new FormData();
+        // const formData = new FormData();
 
-        formData.append("customerId", values.customerId);
-        formData.append("issuesDate", values.issuesDate);
-        formData.append("reference", values.reference);
-        formData.append("dueDate", values.dueDate);
-        formData.append("invoiceNumber", values.invoiceNumber);
-        formData.append("AmountsAre", values.amountsAre);
-        formData.append("subTotal", values.subTotal);
-        formData.append("totalTax", values.totalTax);
-        formData.append("discountAmount", values.discountAmount);
-        formData.append("total", values.total);
-        values.txnInvoiceOrderItemsModels.forEach((item) => {
-          formData.append("item", item.item);
-          formData.append("qty", item.qty);
-          formData.append("price", item.price);
-          formData.append("taxRate", item.taxRate);
-          formData.append("disc", item.disc);
-          formData.append("amount", item.amount);
-          formData.append("mstrItemsId", item.item);
-          formData.append("description", "item.item");
-          formData.append("account", "item.item");
-          formData.append("taxAmount", "000");
-          formData.append("project", "000");
-        });
-        if (values.files) {
-          formData.append("files", values.files);
-        }
-        const response = await api.post("invoice-invoice-item", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+        // formData.append("customerId", values.customerId);
+        // formData.append("issuesDate", values.issuesDate);
+        // formData.append("reference", values.reference);
+        // formData.append("dueDate", values.dueDate);
+        // formData.append("invoiceNumber", values.invoiceNumber);
+        // formData.append("AmountsAre", values.amountsAre);
+        // formData.append("subTotal", values.subTotal);
+        // formData.append("totalTax", values.totalTax);
+        // formData.append("discountAmount", values.discountAmount);
+        // formData.append("total", values.total);
+        // values.txnInvoiceOrderItemsModels.forEach((item) => {
+        //   formData.append("item", item.item);
+        //   formData.append("qty", item.qty);
+        //   formData.append("price", item.price);
+        //   formData.append("taxRate", item.taxRate);
+        //   formData.append("disc", item.disc);
+        //   formData.append("amount", item.amount);
+        //   formData.append("mstrItemsId", item.item);
+        //   formData.append("description", "item.item");
+        //   formData.append("account", "item.item");
+        //   formData.append("taxAmount", "000");
+        //   formData.append("project", "000");
+        // });
+        // if (values.files) {
+        //   formData.append("files", values.files);
+        // }
+        const response = await api.post("createInvoices", values, {
+          // headers: {
+          //   "Content-Type": "multipart/form-data",
+          // },
         });
 
         if (response.status === 201) {
@@ -250,9 +250,7 @@ function InvoicesAdd() {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">
-                    Add Invoice
-                  </h1>
+                  <h1 className="h4 ls-tight headingColor">Add Invoice</h1>
                 </div>
               </div>
               <div className="col-auto">
@@ -288,26 +286,23 @@ function InvoicesAdd() {
         >
           <div className="container mb-5 mt-5">
             <div className="row py-4">
-              <div className="col-md-6 col-12 mb-3">
+              <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Customer Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("customerName")}
-                    className={`form-select    ${
+                    name="customerName"
+                    className={`form-select  ${
                       formik.touched.customerName && formik.errors.customerName
                         ? "is-invalid"
                         : ""
                     }`}
+                    {...formik.getFieldProps("customerName")}
                   >
-                    <option selected></option>
-                    {customerData &&
-                      customerData.map((customerName) => (
-                        <option key={customerName.id} value={customerName.id}>
-                          {customerName.contactName}
-                        </option>
-                      ))}
+                    <option value=""></option>
+                    <option value="Business">Business</option>
+                    {/* <option value="INDIVITUALS">Individual</option> */}
                   </select>
                   {formik.touched.customerName &&
                     formik.errors.customerName && (
@@ -342,7 +337,7 @@ function InvoicesAdd() {
 
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                Invoice<span className="text-danger">*</span>
+                  Invoice<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -386,34 +381,30 @@ function InvoicesAdd() {
 
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                Invoice Date<span className="text-danger">*</span>
+                  Invoice Date<span className="text-danger">*</span>
                 </lable>
                 <div className="">
                   <input
                     type="date"
                     className={`form-control ${
-                      formik.touched.invoiceDate &&
-                      formik.errors.invoiceDate
+                      formik.touched.invoiceDate && formik.errors.invoiceDate
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("invoiceDate")}
                   />
-                  {formik.touched.invoiceDate &&
-                    formik.errors.invoiceDate && (
-                      <div className="invalid-feedback">
-                        {formik.errors.invoiceDate}
-                      </div>
-                    )}
+                  {formik.touched.invoiceDate && formik.errors.invoiceDate && (
+                    <div className="invalid-feedback">
+                      {formik.errors.invoiceDate}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">
-                Due Date
-                </lable>
+                <lable className="form-lable">Due Date</lable>
                 <div className="">
                   <input
-                    type="text"
+                    type="date"
                     className={`form-control ${
                       formik.touched.dueDate && formik.errors.dueDate
                         ? "is-invalid"
@@ -430,9 +421,7 @@ function InvoicesAdd() {
               </div>
 
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">
-                Salesperson
-                </lable>
+                <lable className="form-lable">Salesperson</lable>
                 <div className="">
                   <input
                     type="text"
