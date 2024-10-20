@@ -5,6 +5,7 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
+import DeleteModel from "../../../../components/admin/DeleteModel";
 
 const Shipment = () => {
     const tableRef = useRef(null);
@@ -135,10 +136,10 @@ const Shipment = () => {
                                             NAME
                                         </th>
                                         <th scope="col" className="text-center">
-                                            TYPE
+                                            SALES ORDER
                                         </th>
                                         <th scope="col" className="text-center">
-                                            DIMENSION
+                                            SHIPMENT ORDER
                                         </th>
                                         <th scope="col" className="text-center">
                                             ACTION
@@ -149,9 +150,9 @@ const Shipment = () => {
                                     {datas.map((data, index) => (
                                         <tr key={index}>
                                             <td className="text-center">{index + 1}</td>
-                                            <td className="text-center">{data.name}</td>
-                                            <td className="text-center">{data.type}</td>
-                                            <td className="text-center">{data.dimensions}</td>
+                                            <td className="text-center">{data.customerName}</td>
+                                            <td className="text-center">{data.salesOrder}</td>
+                                            <td className="text-center">{data.shipmentOrder}</td>
                                             <td className="text-center">
                                                 <div className="gap-2">
                                                     <Link to={`/shipment/view/${data.id}`}>
@@ -167,11 +168,10 @@ const Shipment = () => {
                                                             Edit
                                                         </button>
                                                     </Link>
-                                                    {/* <DeleteModel
-                            onSuccess={refreshData}
-                            path={`/deleteShipment/${data.id}`}
-                          /> */}
-                                                </div>
+                                                    <DeleteModel
+                                                        onSuccess={refreshData}
+                                                        path={`/deleteShipment/${data.id}`}
+                                                    />                                                </div>
                                             </td>
                                         </tr>
                                     ))}
