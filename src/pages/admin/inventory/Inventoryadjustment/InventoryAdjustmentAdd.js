@@ -11,32 +11,38 @@ const InventoryAdjustmentAdd = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    date: Yup.string().required("*Primary Contact is required"),
+    date: Yup.string().required("*Date is required"),
   });
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
       modeOfAdjustment: "",
       reference_number: "",
       date: "",
       reason: "",
       descOfAdjustment: "",
-      // inventoryAdjustmentsFile: "",
+      inventoryAdjustmentsFile: null,
       accountId: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
+      const payload = {
+        ...values,
+        reference_number: Number(values.reference_number) || 0,
+        accountId: Number(values.accountId) || 0,
+      };
       try {
         const response = await api.post(
           "/createInventoryAdjustments",
+          payload,
+          {},
           values,
           {}
         );
         if (response.status === 201) {
           toast.success(response.data.message);
-          navigate("/customer");
+          navigate("/inventoryadjustment");
         } else {
           toast.error(response.data.message);
         }
@@ -240,7 +246,7 @@ const InventoryAdjustmentAdd = () => {
                     )}
                 </div>
               </div>
-              {/* <div className="col-md-6 col-12 mb-2">
+              <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Inventory Adjustment File
                   <span className="text-danger">*</span>
@@ -264,7 +270,7 @@ const InventoryAdjustmentAdd = () => {
                       </div>
                     )}
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

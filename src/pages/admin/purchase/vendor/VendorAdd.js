@@ -10,64 +10,30 @@ const VendorAdd = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    contactName: Yup.string().required("*Contact Name is required"),
-    accNumber: Yup.string().required("*Account Number is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    email: Yup.string().required("*Email is required"),
-    phone: Yup.number().required("*Phone is required"),
-    website: Yup.string().required("*Website is required"),
-    bankAccName: Yup.string().required("*Account Nameis required"),
-    bankAccNumber: Yup.string().required("*Account Number is required"),
-
-    // deliCountry: Yup.number().required("*Country is required"),
-    // deliAddress: Yup.string().required("*Address is required"),
-    // deliCity: Yup.string().required("*City is required"),
-    // deliState: Yup.string().required("*State is required"),
-    // deliZip: Yup.number().required("*Zip is required"),
-    // deliAttention: Yup.number().required("*Attention is required"),
-
-    // billCountry: Yup.number().required("*Country is required"),
-    // billAddress: Yup.string().required("*Address is required"),
-    // billCity: Yup.string().required("*City is required"),
-    // billState: Yup.string().required("*State is required"),
-    // billZip: Yup.number().required("*Zip is required"),
-    // billAttention: Yup.number().required("*Attention is required"),
-    // notes: Yup.number().required("*Remarks is required"),
+    vendorDisplayName: Yup.string().required(
+      "*Vendor Display Name is required"
+    ),
   });
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
-      contactName: "",
-      accNumber: "",
-      primaryContact: "",
-      email: "",
-      phone: "",
-      website: "",
-      bankAccName: "",
-      bankAccNumber: "",
-      deliCountry: "",
-      deliAddress: "",
-      deliCity: "",
-      deliState: "",
-      deliZip: "",
-      deliAttention: "",
-      billCountry: "",
-      billAddress: "",
-      billCity: "",
-      billState: "",
-      billZip: "",
-      billAttention: "",
-      notes: "",
+      companyName: "",
+      salutation: "",
+      firstName: "",
+      lastName: "",
+      vendorDisplayName: "",
+      vendorEmail: "",
+      vendorMobile: "",
+      vendorPhone: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
       try {
-        const response = await api.post("/createMstrCustomer", values, {});
+        const response = await api.post("/createVendorDetails", values, {});
         if (response.status === 201) {
           toast.success(response.data.message);
-          navigate("/customer");
+          navigate("/vendor");
         } else {
           toast.error(response.data.message);
         }
@@ -137,17 +103,17 @@ const VendorAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="contactName"
+                    name="firstName"
                     className={`form-control ${
-                      formik.touched.contactName && formik.errors.contactName
+                      formik.touched.firstName && formik.errors.firstName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("contactName")}
+                    {...formik.getFieldProps("firstName")}
                   />
-                  {formik.touched.contactName && formik.errors.contactName && (
+                  {formik.touched.firstName && formik.errors.firstName && (
                     <div className="invalid-feedback">
-                      {formik.errors.contactName}
+                      {formik.errors.firstName}
                     </div>
                   )}
                 </div>
@@ -159,17 +125,17 @@ const VendorAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="accNumber"
+                    name="lastName"
                     className={`form-control  ${
-                      formik.touched.accNumber && formik.errors.accNumber
+                      formik.touched.lastName && formik.errors.lastName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("accNumber")}
+                    {...formik.getFieldProps("lastName")}
                   />
-                  {formik.touched.accNumber && formik.errors.accNumber && (
+                  {formik.touched.lastName && formik.errors.lastName && (
                     <div className="invalid-feedback">
-                      {formik.errors.accNumber}
+                      {formik.errors.lastName}
                     </div>
                   )}
                 </div>
@@ -182,21 +148,19 @@ const VendorAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="primaryContact"
+                    name="companyName"
                     className={`form-control ${
-                      formik.touched.primaryContact &&
-                      formik.errors.primaryContact
+                      formik.touched.companyName && formik.errors.companyName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("primaryContact")}
+                    {...formik.getFieldProps("companyName")}
                   />
-                  {formik.touched.primaryContact &&
-                    formik.errors.primaryContact && (
-                      <div className="invalid-feedback">
-                        {formik.errors.primaryContact}
-                      </div>
-                    )}
+                  {formik.touched.companyName && formik.errors.companyName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.companyName}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -206,19 +170,21 @@ const VendorAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="email"
+                    name="vendorDisplayName"
                     className={`form-control  ${
-                      formik.touched.email && formik.errors.email
+                      formik.touched.vendorDisplayName &&
+                      formik.errors.vendorDisplayName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("email")}
+                    {...formik.getFieldProps("vendorDisplayName")}
                   />
-                  {formik.touched.email && formik.errors.email && (
-                    <div className="invalid-feedback">
-                      {formik.errors.email}
-                    </div>
-                  )}
+                  {formik.touched.vendorDisplayName &&
+                    formik.errors.vendorDisplayName && (
+                      <div className="invalid-feedback">
+                        {formik.errors.vendorDisplayName}
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -229,17 +195,17 @@ const VendorAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
+                    name="vendorEmail"
                     className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
+                      formik.touched.vendorEmail && formik.errors.vendorEmail
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    {...formik.getFieldProps("vendorEmail")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.vendorEmail && formik.errors.vendorEmail && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.vendorEmail}
                     </div>
                   )}
                 </div>
@@ -252,19 +218,18 @@ const VendorAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccNumber"
+                    name="vendorMobile"
                     className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
+                      formik.touched.vendorMobile && formik.errors.vendorMobile
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    {...formik.getFieldProps("vendorMobile")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.vendorMobile &&
+                    formik.errors.vendorMobile && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.vendorMobile}
                       </div>
                     )}
                 </div>
@@ -277,17 +242,17 @@ const VendorAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
+                    name="vendorPhone"
                     className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
+                      formik.touched.vendorPhone && formik.errors.vendorPhone
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    {...formik.getFieldProps("vendorPhone")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.vendorPhone && formik.errors.vendorPhone && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.vendorPhone}
                     </div>
                   )}
                 </div>
@@ -300,17 +265,17 @@ const VendorAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
+                    name="salutation"
                     className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
+                      formik.touched.salutation && formik.errors.salutation
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    {...formik.getFieldProps("salutation")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.salutation && formik.errors.salutation && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.salutation}
                     </div>
                   )}
                 </div>

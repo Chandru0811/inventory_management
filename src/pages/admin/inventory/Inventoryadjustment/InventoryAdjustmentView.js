@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
-import InventoryAdjustment from "./InventoryAdjustment";
 
 const InventoryAdjustmentView = () => {
   const { id } = useParams();
@@ -12,14 +11,14 @@ const InventoryAdjustmentView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+      try {
+        const response = await api.get(`/getAllInventoryAdjustmentsById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
     getData();
   }, [id]);
@@ -81,7 +80,7 @@ const InventoryAdjustmentView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.contactName || ""}
+                        : {data.modeOfAdjustment || ""}
                       </p>
                     </div>
                   </div>
@@ -95,7 +94,7 @@ const InventoryAdjustmentView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.accNumber || ""}
+                        : {data.reference_number || ""}
                       </p>
                     </div>
                   </div>
@@ -108,9 +107,7 @@ const InventoryAdjustmentView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.primaryContact || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.date || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -122,7 +119,9 @@ const InventoryAdjustmentView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.email || ""}</p>
+                      <p className="text-muted text-sm">
+                        : {data.accountId || ""}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -136,7 +135,7 @@ const InventoryAdjustmentView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.reason || ""}
                       </p>
                     </div>
                   </div>
@@ -150,7 +149,7 @@ const InventoryAdjustmentView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.descOfAdjustment || ""}
                       </p>
                     </div>
                   </div>
@@ -164,7 +163,7 @@ const InventoryAdjustmentView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.inventoryAdjustmentsFile || ""}
                       </p>
                     </div>
                   </div>

@@ -11,14 +11,14 @@ const VendorView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+      try {
+        const response = await api.get(`/getAllVendorDetailsById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
     getData();
   }, [id]);
@@ -81,7 +81,7 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.contactName || ""}
+                        : {data.firstName || ""}
                       </p>
                     </div>
                   </div>
@@ -95,7 +95,7 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.accNumber || ""}
+                        : {data.lastName || ""}
                       </p>
                     </div>
                   </div>
@@ -109,7 +109,7 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.primaryContact || ""}
+                        : {data.companyName || ""}
                       </p>
                     </div>
                   </div>
@@ -122,7 +122,9 @@ const VendorView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.email || ""}</p>
+                      <p className="text-muted text-sm">
+                        : {data.vendorDisplayName || ""}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -136,7 +138,7 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.vendorEmail || ""}
                       </p>
                     </div>
                   </div>
@@ -150,7 +152,7 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.vendorMobile || ""}
                       </p>
                     </div>
                   </div>
@@ -164,7 +166,7 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.vendorPhone || ""}
                       </p>
                     </div>
                   </div>
@@ -178,14 +180,13 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.salutation || ""}
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            {/* Users Information */}
           </div>
         </div>
       )}
