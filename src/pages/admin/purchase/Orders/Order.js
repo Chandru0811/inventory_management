@@ -5,17 +5,17 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
+import DeleteModel from "../../../../components/admin/DeleteModel";
 
 const Order = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllMstrCustomers");
+        const response = await api.get("/getAllPurchaseOrder");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,9 +56,9 @@ const Order = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllItems");
+      const response = await api.get("/getAllPurchaseOrder");
       setDatas(response.data);
-      initializeDataTable(); // Reinitialize DataTable after successful data update
+      initializeDataTable();
     } catch (error) {
       console.error("Error refreshing data:", error);
     }
@@ -72,6 +72,7 @@ const Order = () => {
       table.destroy();
     };
   }, []);
+
   return (
     <div>
       {loading ? (
@@ -104,24 +105,18 @@ const Order = () => {
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/order/add">
-                      <button
-                        type="submit"
-                        className="btn btn-sm btn-primary"
-                      >
+                      <button type="submit" className="btn btn-sm btn-primary">
                         <span cla>
                           Add <FaPlus className="pb-1" />
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -137,10 +132,13 @@ const Order = () => {
                       VENDOR NAME
                     </th>
                     <th scope="col" className="text-center">
-                      Purchase Order Number
+                      Purchase Order
                     </th>
                     <th scope="col" className="text-center">
                       DATE
+                    </th>
+                    <th scope="col" className="text-center">
+                      STATUS
                     </th>
                     <th scope="col" className="text-center">
                       ACTION
@@ -151,28 +149,32 @@ const Order = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.name}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      <td className="text-center">{data.vendorName}</td>
+                      <td className="text-center">
+                        {data.purchaseOrderNumber}
+                      </td>
+                      <td className="text-center">
+                        {data.date
+                          ? new Date(data.date).toLocaleDateString()
+                          : ""}
+                      </td>
+                      <td className="text-center">{data.status}</td>
                       <td className="text-center">
                         <div className="gap-2">
-                          <Link to={`/customer/view/${data.id}`}>
+                          <Link to={`/order/view/${data.id}`}>
                             <button className="btn btn-light btn-sm  shadow-none border-none">
                               View
                             </button>
                           </Link>
-                          <Link
-                            to={`/customer/edit/${data.id}`}
-                            className="px-2"
-                          >
+                          <Link to={`/order/edit/${data.id}`} className="px-2">
                             <button className="btn btn-light  btn-sm shadow-none border-none">
                               Edit
                             </button>
                           </Link>
-                          {/* <DeleteModel
+                          <DeleteModel
                             onSuccess={refreshData}
-                            path={`/deleteMstrCustomer/${data.id}`}
-                          /> */}
+                            path={`/deletePurchaseOrder/${data.id}`}
+                          />
                         </div>
                       </td>
                     </tr>
