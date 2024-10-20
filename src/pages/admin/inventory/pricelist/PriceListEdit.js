@@ -65,30 +65,30 @@ const PriceListEdit = () => {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-      //   try {
-      //     const response = await api.put(`/updateMstrCustomer/${id}`, values, {});
-      //     if (response.status === 200) {
-      //       toast.success(response.data.message);
-      //       navigate("/customer");
-      //     } else {
-      //       toast.error(response.data.message);
-      //     }
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoadIndicator(false);
-      //   }
+      try {
+        const response = await api.put(`/updatePriceList/${id}`, values, {});
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/pricelist");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoadIndicator(false);
+      }
     },
   });
 
   useEffect(() => {
     const getData = async () => {
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     formik.setValues(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   }
+      try {
+        const response = await api.get(`/getAllPriceListById/${id}`);
+        formik.setValues(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      }
     };
 
     getData();
@@ -154,11 +154,10 @@ const PriceListEdit = () => {
                   <input
                     type="text"
                     name="contactName"
-                    className={`form-control ${
-                      formik.touched.contactName && formik.errors.contactName
+                    className={`form-control ${formik.touched.contactName && formik.errors.contactName
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("contactName")}
                   />
                   {formik.touched.contactName && formik.errors.contactName && (
@@ -176,11 +175,10 @@ const PriceListEdit = () => {
                   <input
                     type="text"
                     name="accNumber"
-                    className={`form-control  ${
-                      formik.touched.accNumber && formik.errors.accNumber
+                    className={`form-control  ${formik.touched.accNumber && formik.errors.accNumber
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("accNumber")}
                   />
                   {formik.touched.accNumber && formik.errors.accNumber && (
@@ -199,12 +197,11 @@ const PriceListEdit = () => {
                   <input
                     type="text"
                     name="primaryContact"
-                    className={`form-control ${
-                      formik.touched.primaryContact &&
-                      formik.errors.primaryContact
+                    className={`form-control ${formik.touched.primaryContact &&
+                        formik.errors.primaryContact
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("primaryContact")}
                   />
                   {formik.touched.primaryContact &&
@@ -223,11 +220,10 @@ const PriceListEdit = () => {
                   <input
                     type="text"
                     name="email"
-                    className={`form-control  ${
-                      formik.touched.email && formik.errors.email
+                    className={`form-control  ${formik.touched.email && formik.errors.email
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("email")}
                   />
                   {formik.touched.email && formik.errors.email && (
@@ -246,11 +242,10 @@ const PriceListEdit = () => {
                   <input
                     type="text"
                     name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
+                    className={`form-control  ${formik.touched.bankAccName && formik.errors.bankAccName
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("bankAccName")}
                   />
                   {formik.touched.bankAccName && formik.errors.bankAccName && (
@@ -269,12 +264,11 @@ const PriceListEdit = () => {
                   <input
                     type="text"
                     name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
+                    className={`form-control  ${formik.touched.bankAccNumber &&
+                        formik.errors.bankAccNumber
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("bankAccNumber")}
                   />
                   {formik.touched.bankAccNumber &&
@@ -294,11 +288,10 @@ const PriceListEdit = () => {
                   <input
                     type="text"
                     name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
+                    className={`form-control  ${formik.touched.bankAccName && formik.errors.bankAccName
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("bankAccName")}
                   />
                   {formik.touched.bankAccName && formik.errors.bankAccName && (
@@ -317,11 +310,10 @@ const PriceListEdit = () => {
                   <input
                     type="text"
                     name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
+                    className={`form-control  ${formik.touched.bankAccName && formik.errors.bankAccName
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("bankAccName")}
                   />
                   {formik.touched.bankAccName && formik.errors.bankAccName && (
@@ -340,11 +332,10 @@ const PriceListEdit = () => {
                   <textarea
                     type="text"
                     name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
+                    className={`form-control  ${formik.touched.bankAccName && formik.errors.bankAccName
                         ? "is-invalid"
                         : ""
-                    }`}
+                      }`}
                     {...formik.getFieldProps("bankAccName")}
                   />
                   {formik.touched.bankAccName && formik.errors.bankAccName && (

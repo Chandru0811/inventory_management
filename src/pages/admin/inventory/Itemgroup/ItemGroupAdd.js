@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import api from "../../../config/URL";
+import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
 const ItemGroupAdd = () => {
@@ -10,64 +10,40 @@ const ItemGroupAdd = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    contactName: Yup.string().required("*Contact Name is required"),
-    accNumber: Yup.string().required("*Account Number is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    email: Yup.string().required("*Email is required"),
-    phone: Yup.number().required("*Phone is required"),
-    website: Yup.string().required("*Website is required"),
-    bankAccName: Yup.string().required("*Account Nameis required"),
-    bankAccNumber: Yup.string().required("*Account Number is required"),
-
-    // deliCountry: Yup.number().required("*Country is required"),
-    // deliAddress: Yup.string().required("*Address is required"),
-    // deliCity: Yup.string().required("*City is required"),
-    // deliState: Yup.string().required("*State is required"),
-    // deliZip: Yup.number().required("*Zip is required"),
-    // deliAttention: Yup.number().required("*Attention is required"),
-
-    // billCountry: Yup.number().required("*Country is required"),
-    // billAddress: Yup.string().required("*Address is required"),
-    // billCity: Yup.string().required("*City is required"),
-    // billState: Yup.string().required("*State is required"),
-    // billZip: Yup.number().required("*Zip is required"),
-    // billAttention: Yup.number().required("*Attention is required"),
-    // notes: Yup.number().required("*Remarks is required"),
+    itemGroupName: Yup.string().required("*Item Group Name Name is required"),
   });
   const formik = useFormik({
     initialValues: {
       // companyName: "",
-      contactName: "",
-      accNumber: "",
-      primaryContact: "",
-      email: "",
-      phone: "",
-      website: "",
-      bankAccName: "",
-      bankAccNumber: "",
-      deliCountry: "",
-      deliAddress: "",
-      deliCity: "",
-      deliState: "",
-      deliZip: "",
-      deliAttention: "",
-      billCountry: "",
-      billAddress: "",
-      billCity: "",
-      billState: "",
-      billZip: "",
-      billAttention: "",
-      notes: "",
+      initialValues: {
+        itemGroupName: "",
+        description: "",
+        itemUnit: "",
+        tax: "",
+        manufacturerName: "",
+        brandName: "",
+        multipleItems: "",
+        itemAttribute: "",
+        itemOptions: "",
+        itemType: "",
+        salesAccount: "",
+        purchaseAccount: "",
+        inventoryAccount: "",
+        itemImage: "",
+        salesId: "",
+        purchaseId: "",
+        itemId: "",
+      },
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
       try {
-        const response = await api.post("/createMstrCustomer", values, {});
+        const response = await api.post("/createItemGroups", values, {});
         if (response.status === 201) {
           toast.success(response.data.message);
-          navigate("/customer");
+          navigate("/itemgroup");
         } else {
           toast.error(response.data.message);
         }
@@ -102,12 +78,12 @@ const ItemGroupAdd = () => {
                   </Link>
                   <button
                     type="submit"
-                    className="btn btn-sm btn-button"
+                    className="btn btn-sm btn-button btn-primary"
                     disabled={loading}
                   >
                     {loading ? (
                       <span
-                        className="spinner-border spinner-border-sm btn-primary"
+                        className="spinner-border spinner-border-sm"
                         aria-hidden="true"
                       ></span>
                     ) : (
@@ -137,17 +113,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="contactName"
-                    className={`form-control ${
-                      formik.touched.contactName && formik.errors.contactName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("contactName")}
+                    name="itemGroupName"
+                    className={`form-control ${formik.touched.itemGroupName && formik.errors.itemGroupName
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("itemGroupName")}
                   />
-                  {formik.touched.contactName && formik.errors.contactName && (
+                  {formik.touched.itemGroupName && formik.errors.itemGroupName && (
                     <div className="invalid-feedback">
-                      {formik.errors.contactName}
+                      {formik.errors.itemGroupName}
                     </div>
                   )}
                 </div>
@@ -159,17 +134,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="accNumber"
-                    className={`form-control  ${
-                      formik.touched.accNumber && formik.errors.accNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("accNumber")}
+                    name="type"
+                    className={`form-control  ${formik.touched.type && formik.errors.type
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("type")}
                   />
-                  {formik.touched.accNumber && formik.errors.accNumber && (
+                  {formik.touched.type && formik.errors.type && (
                     <div className="invalid-feedback">
-                      {formik.errors.accNumber}
+                      {formik.errors.type}
                     </div>
                   )}
                 </div>
@@ -182,19 +156,18 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="primaryContact"
-                    className={`form-control ${
-                      formik.touched.primaryContact &&
-                      formik.errors.primaryContact
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("primaryContact")}
+                    name="itemUnit"
+                    className={`form-control ${formik.touched.itemUnit &&
+                      formik.errors.itemUnit
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("itemUnit")}
                   />
-                  {formik.touched.primaryContact &&
-                    formik.errors.primaryContact && (
+                  {formik.touched.itemUnit &&
+                    formik.errors.itemUnit && (
                       <div className="invalid-feedback">
-                        {formik.errors.primaryContact}
+                        {formik.errors.itemUnit}
                       </div>
                     )}
                 </div>
@@ -206,17 +179,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="email"
-                    className={`form-control  ${
-                      formik.touched.email && formik.errors.email
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("email")}
+                    name="tax"
+                    className={`form-control  ${formik.touched.tax && formik.errors.tax
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("tax")}
                   />
-                  {formik.touched.email && formik.errors.email && (
+                  {formik.touched.tax && formik.errors.tax && (
                     <div className="invalid-feedback">
-                      {formik.errors.email}
+                      {formik.errors.tax}
                     </div>
                   )}
                 </div>
@@ -229,17 +201,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    name="manufacturerName"
+                    className={`form-control  ${formik.touched.manufacturerName && formik.errors.manufacturerName
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("manufacturerName")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.manufacturerName && formik.errors.manufacturerName && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.manufacturerName}
                     </div>
                   )}
                 </div>
@@ -252,19 +223,18 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    name="brandName"
+                    className={`form-control  ${formik.touched.brandName &&
+                      formik.errors.brandName
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("brandName")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.brandName &&
+                    formik.errors.brandName && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.brandName}
                       </div>
                     )}
                 </div>
@@ -277,17 +247,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    name="multipleItems"
+                    className={`form-control  ${formik.touched.multipleItems && formik.errors.multipleItems
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("multipleItems")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.multipleItems && formik.errors.multipleItems && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.multipleItems}
                     </div>
                   )}
                 </div>
@@ -299,19 +268,18 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    name="itemAttribute"
+                    className={`form-control  ${formik.touched.itemAttribute &&
+                      formik.errors.itemAttribute
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("itemAttribute")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.itemAttribute &&
+                    formik.errors.itemAttribute && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.itemAttribute}
                       </div>
                     )}
                 </div>
@@ -324,19 +292,18 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    name="itemOptions"
+                    className={`form-control  ${formik.touched.itemOptions &&
+                      formik.errors.itemOptions
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("itemOptions")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.itemOptions &&
+                    formik.errors.itemOptions && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.itemOptions}
                       </div>
                     )}
                 </div>
@@ -349,17 +316,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    name="itemType"
+                    className={`form-control  ${formik.touched.itemType && formik.errors.itemType
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("itemType")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.itemType && formik.errors.itemType && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.itemType}
                     </div>
                   )}
                 </div>
@@ -372,19 +338,18 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    name="salesAccount"
+                    className={`form-control  ${formik.touched.salesAccount &&
+                      formik.errors.salesAccount
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("salesAccount")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.salesAccount &&
+                    formik.errors.salesAccount && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.salesAccount}
                       </div>
                     )}
                 </div>
@@ -397,17 +362,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    name="purchaseAccount"
+                    className={`form-control  ${formik.touched.purchaseAccount && formik.errors.purchaseAccount
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("purchaseAccount")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.purchaseAccount && formik.errors.purchaseAccount && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.purchaseAccount}
                     </div>
                   )}
                 </div>
@@ -420,19 +384,18 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    name="inventoryAccount"
+                    className={`form-control  ${formik.touched.inventoryAccount &&
+                      formik.errors.inventoryAccount
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("inventoryAccount")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.inventoryAccount &&
+                    formik.errors.inventoryAccount && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.inventoryAccount}
                       </div>
                     )}
                 </div>
@@ -445,17 +408,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    name="itemId"
+                    className={`form-control  ${formik.touched.itemId && formik.errors.itemId
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("itemId")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.itemId && formik.errors.itemId && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.itemId}
                     </div>
                   )}
                 </div>
@@ -468,17 +430,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    name="salesId"
+                    className={`form-control  ${formik.touched.salesId && formik.errors.salesId
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("salesId")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.salesId && formik.errors.salesId && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.salesId}
                     </div>
                   )}
                 </div>
@@ -491,17 +452,16 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${
-                      formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    name="purchaseId"
+                    className={`form-control  ${formik.touched.purchaseId && formik.errors.purchaseId
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("purchaseId")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.purchaseId && formik.errors.purchaseId && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.purchaseId}
                     </div>
                   )}
                 </div>
@@ -514,19 +474,18 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="file"
-                    name="bankAccNumber"
-                    className={`form-control  ${
-                      formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    name="itemImage"
+                    className={`form-control  ${formik.touched.itemImage &&
+                      formik.errors.itemImage
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("itemImage")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.itemImage &&
+                    formik.errors.itemImage && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.itemImage}
                       </div>
                     )}
                 </div>

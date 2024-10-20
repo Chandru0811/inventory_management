@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import toast from "react-hot-toast";
+import api from "../../config/URL";
 
 function DeleteModel({ onSuccess, path}) {
   const [show, setShow] = useState(false);
@@ -10,7 +12,25 @@ function DeleteModel({ onSuccess, path}) {
   const deleteButtonRef = useRef(null);
 
   const handelDelete = async () => {
-    // setLoadIndicator(true);
+    setLoadIndicator(true);
+    try {
+      const response = await api.delete(path);
+      if (response.status === 201 || response.status === 200) {
+        onSuccess();
+        handleClose();
+        toast.success(response.data.message);
+      }else {
+          toast.success(response.data.message);
+        }
+    } catch (error) {
+      if (error?.response?.status === 409) {
+        toast.warning(error?.response?.data?.message);
+        handleClose();
+      } else {
+        toast.error("Error deleting data:", error);
+      }
+      setLoadIndicator(false);
+    }
   };
   useEffect(() => {
     if (show && deleteButtonRef.current) {
