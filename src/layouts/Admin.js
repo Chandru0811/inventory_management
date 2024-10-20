@@ -112,8 +112,8 @@ function Admin({ handleLogout }) {
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/item" element={<Items />} />
                   <Route path="/item/add" element={<ItemsAdd />} />
-                  <Route path="/item/edit" element={<ItemsEdit />} />
-                  <Route path="/item/view" element={<ItemsView />} />
+                  <Route path="/item/edit/:id" element={<ItemsEdit />} />
+                  <Route path="/item/view/:id" element={<ItemsView />} />
 
                   <Route path="/itemgroup" element={<ItemGroup />} />
                   <Route path="/itemgroup/add" element={<ItemGroupAdd />} />
@@ -123,27 +123,27 @@ function Admin({ handleLogout }) {
 
                   <Route path="/warehouse" element={<WareHouse />} />
                   <Route path="/warehouse/add" element={<WareHouseAdd />} />
-                  <Route path="/warehouse/edit" element={<WareHouseEdit />} />
-                  <Route path="/warehouse/view" element={<WareHouseView />} />
+                  <Route path="/warehouse/edit/:id" element={<WareHouseEdit />} />
+                  <Route path="/warehouse/view/:id" element={<WareHouseView />} />
 
                   <Route path="/brand" element={<Branding />} />
                   <Route path="/brand/add" element={<BrandingAdd />} />
-                  <Route path="/brand/edit" element={<BrandingEdit />} />
-                  <Route path="/brand/view" element={<BrandingView />} />
+                  <Route path="/brand/edit/:id" element={<BrandingEdit />} />
+                  <Route path="/brand/view/:id" element={<BrandingView />} />
 
                   <Route path="/currency" element={<Currency />} />
                   <Route path="/currency/add" element={<CurrencyAdd />} />
-                  <Route path="/currency/edit" element={<CurrencyEdit />} />
-                  <Route path="/currency/view" element={<CurrencyView />} />
+                  <Route path="/currency/edit/:id" element={<CurrencyEdit />} />
+                  <Route path="/currency/view/:id" element={<CurrencyView />} />
 
                   <Route path="/paymentmade" element={<PaymentMade />} />
                   <Route path="/paymentmade/add" element={<PaymentMadeAdd />} />
                   <Route
-                    path="/paymentmade/edit"
+                    path="/paymentmade/edit/:id"
                     element={<PaymentMadeEdit />}
                   />
                   <Route
-                    path="/paymentmade/view"
+                    path="/paymentmade/view/:id"
                     element={<PaymentMadeView />}
                   />
                   <Route
@@ -155,19 +155,19 @@ function Admin({ handleLogout }) {
                     element={<InventoryAdjustmentAdd />}
                   />
                   <Route
-                    path="/inventoryadjustment/edit"
+                    path="/inventoryadjustment/edit/:id"
                     element={<InventoryAdjustmentEdit />}
                   />
                   <Route
-                    path="/inventoryadjustment/view"
+                    path="/inventoryadjustment/view/:id"
                     element={<InventoryAdjustmentView />}
                   />
 
                   {/* Sales */}
                   <Route path="/customers" element={<Customer />} />
                   <Route path="/customers/add" element={<CustomerAdd />} />
-                  <Route path="/customers/edit" element={<CustomerEdit />} />
-                  <Route path="/customers/view" element={<CustomerView />} />
+                  <Route path="/customers/edit/:id" element={<CustomerEdit />} />
+                  <Route path="/customers/view/:id" element={<CustomerView />} />
 
                   <Route path="/salesorder" element={<SalesOrder />} />
                   <Route path="/salesorder/add" element={<SalesOrderAdd />} />
@@ -176,28 +176,28 @@ function Admin({ handleLogout }) {
 
                   <Route path="/packages" element={<Packages />} />
                   <Route path="/packages/add" element={<PackagesAdd />} />
-                  <Route path="/packages/edit" element={<PackagesEdit />} />
-                  <Route path="/packages/view" element={<PackagesView />} />
+                  <Route path="/packages/edit/:id" element={<PackagesEdit />} />
+                  <Route path="/packages/view/:id" element={<PackagesView />} />
 
                   <Route path="/shipment" element={<Shipment />} />
                   <Route path="/shipment/add" element={<ShipmentAdd />} />
-                  <Route path="/shipment/edit" element={<ShipmentEdit />} />
-                  <Route path="/shipment/view" element={<ShipmentView />} />
+                  <Route path="/shipment/edit/:id" element={<ShipmentEdit />} />
+                  <Route path="/shipment/view/:id" element={<ShipmentView />} />
 
                   <Route path="/paymentreceived" element={<PaymentReceived />} />
                   <Route path="/paymentreceived/add" element={<PaymentReceivedAdd />} />
-                  <Route path="/paymentreceived/edit" element={<PaymentReceivedEdit />} />
-                  <Route path="/paymentreceived/view" element={<PaymentReceivedView />} />
+                  <Route path="/paymentreceived/edit/:id" element={<PaymentReceivedEdit />} />
+                  <Route path="/paymentreceived/view/:id" element={<PaymentReceivedView />} />
 
                   <Route path="/creditnotes" element={<CreditNotes />} />
                   <Route path="/creditnotes/add" element={<CreditNotesAdd />} />
-                  <Route path="/creditnotes/edit" element={<CreditNotesEdit />} />
-                  <Route path="/creditnotes/view" element={<CreditNotesView />} />
+                  <Route path="/creditnotes/edit/:id" element={<CreditNotesEdit />} />
+                  <Route path="/creditnotes/view/:id" element={<CreditNotesView />} />
 
                   <Route path="/pricelist" element={<PriceList />} />
                   <Route path="/pricelist/add" element={<PriceListAdd />} />
-                  <Route path="/pricelist/edit" element={<PriceListEdit />} />
-                  <Route path="/pricelist/view" element={<PriceListView />} />
+                  <Route path="/pricelist/edit/:id" element={<PriceListEdit />} />
+                  <Route path="/pricelist/view/:id" element={<PriceListView />} />
 
                   <Route path="/compositeitem" element={<CompositeItem />} />
                   <Route
@@ -205,23 +205,23 @@ function Admin({ handleLogout }) {
                     element={<CompositeItemAdd />}
                   />
                   <Route
-                    path="/compositeitem/edit"
+                    path="/compositeitem/edit/:id"
                     element={<CompositeItemEdit />}
                   />
                   <Route
-                    path="/compositeitem/view"
+                    path="/compositeitem/view/:id"
                     element={<CompositeItemView />}
                   />
 
                   <Route path="/vendor" element={<Vendor />} />
                   <Route path="/vendor/add" element={<VendorAdd />} />
-                  <Route path="/vendor/edit" element={<VendorEdit />} />
-                  <Route path="/vendor/view" element={<VendorView />} />
+                  <Route path="/vendor/edit/:id" element={<VendorEdit />} />
+                  <Route path="/vendor/view/:id" element={<VendorView />} />
 
                   <Route path="/bills" element={<Bills />} />
                   <Route path="/bills/add" element={<BillsAdd />} />
-                  <Route path="/bills/edit" element={<BillsEdit />} />
-                  <Route path="/bills/view" element={<BillsView />} />
+                  <Route path="/bills/edit/:id" element={<BillsEdit />} />
+                  <Route path="/bills/view/:id" element={<BillsView />} />
 
                   <Route path="/vendorcredit" element={<VendorCredit />} />
                   <Route
@@ -229,11 +229,11 @@ function Admin({ handleLogout }) {
                     element={<VendorCreditAdd />}
                   />
                   <Route
-                    path="/vendorcredit/edit"
+                    path="/vendorcredit/edit/:id"
                     element={<VendorCreditEdit />}
                   />
                   <Route
-                    path="/vendorcredit/view"
+                    path="/vendorcredit/view/:id"
                     element={<VendorCreditView />}
                   />
 
@@ -246,29 +246,29 @@ function Admin({ handleLogout }) {
                     element={<PurchaseReceiveAdd />}
                   />
                   <Route
-                    path="/purchasereceive/edit"
+                    path="/purchasereceive/edit/:id"
                     element={<PurchaseReceiveEdit />}
                   />
                   <Route
-                    path="/purchasereceive/view"
+                    path="/purchasereceive/view/:id"
                     element={<PurchaseReceiveView />}
                   />
 
                   <Route path="/challan" element={<Challan />} />
                   <Route path="/challan/add" element={<ChallanAdd />} />
-                  <Route path="/challan/edit" element={<ChallanEdit />} />
-                  <Route path="/challan/view" element={<ChallanView />} />
+                  <Route path="/challan/edit/:id" element={<ChallanEdit />} />
+                  <Route path="/challan/view/:id" element={<ChallanView />} />
 
                   <Route path="/invoice" element={<Invoices />} />
                   <Route path="/invoice/add" element={<InvoicesAdd />} />
-                  <Route path="/invoice/edit" element={<InvoicesEdit />} />
-                  <Route path="/invoice/view" element={<InvoicesView />} />
+                  <Route path="/invoice/edit/:id" element={<InvoicesEdit />} />
+                  <Route path="/invoice/view/:id" element={<InvoicesView />} />
 
                   {/* {/ order /} */}
                   <Route path="/order" element={<Order />} />
                   <Route path="/order/add" element={<OrderAdd />} />
-                  <Route path="/order/edit" element={<OrderEdit />} />
-                  <Route path="/order/view" element={<OrderView />} />
+                  <Route path="/order/edit/:id" element={<OrderEdit />} />
+                  <Route path="/order/view/:id" element={<OrderView />} />
                 </Routes>
               </div>
             </main>
