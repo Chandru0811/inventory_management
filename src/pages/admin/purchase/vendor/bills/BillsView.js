@@ -1,42 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { IoCloudDownloadSharp } from "react-icons/io5";
-import { FaTelegramPlane } from "react-icons/fa";
-// import Logo from "../../../assets/AccountsLogo.png";
 import toast from "react-hot-toast";
 import api from "../../../../../config/URL";
-
-// import jsPDF from "jspdf";
-// import "jspdf-autotable";
-// import GeneratePdf from "../../GeneratePdf";
 
 function BillsView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [items, setItems] = useState([]);
-  const [customerData, setCustomerData] = useState([]);
   const [loading, setLoading] = useState(false);
-  console.log("invoice", data);
+
   useEffect(() => {
     const getData = async () => {
-      //   setLoading(true);
-      //   try {
-      //     const response = await api.get(`invoice/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+      setLoading(true);
+      try {
+        const response = await api.get(`getBillsById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
-
     getData();
   }, [id]);
-
-  const customer = (id) => {
-    const name = customerData.find((item) => item.id === id);
-    return name?.contactName;
-  };
 
   const itemName = (id) => {
     const name = items.find((item) => item.id == id);
@@ -60,10 +46,7 @@ function BillsView() {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
-          >
+          <div className="card shadow border-0 mb-2 top-header">
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="row align-items-center">
@@ -76,161 +59,114 @@ function BillsView() {
                     <div className="hstack gap-2 justify-content-start">
                       <Link to="/bills">
                         <button
-                          type="submit"
+                          type="button"
                           className="btn btn-light btn-sm me-1"
                         >
                           <span>Back</span>
                         </button>
                       </Link>
-                      {/* <button
-                        type="submit"
-                        className="btn btn-button rounded-pill p-2"
-                      >
-                        <FaTelegramPlane size={18} />
-                      </button> */}
-                      {/* <button
-                        className="btn btn-button rounded-pill p-2"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <IoCloudDownloadSharp
-                          size={18}
-                          className="mx-1 text-white fs-5"
-                        />
-                      </button> */}
-                      {/* <ul className="dropdown-menu">
-                        <li
-                          className="dropdown-item"
-                          //   onClick={() =>
-                          //     GeneratePdf("download", data, { name: "INVOICE" })
-                          //   }
-                        >
-                          Download PDF
-                        </li>
-                        <li
-                          className="dropdown-item"
-                          //   onClick={() =>
-                          //     GeneratePdf("open", data, { name: "INVOICE" })
-                          //   }
-                        >
-                          Open PDF
-                        </li>
-                        <li
-                          className="dropdown-item"
-                          //   onClick={() =>
-                          //     GeneratePdf("print", data, { name: "INVOICE" })
-                          //   }
-                        >
-                          Print PDF
-                        </li>
-                      </ul>
-                      <Link to="/recordpayment">
-                        <button
-                          type="submit"
-                          className="btn btn-sm btn-primary me-1"
-                        >
-                          <span>Record Payment</span>
-                        </button>
-                      </Link>
-                      <button
-                        type="submit"
-                        className="btn btn-sm btn-primary me-1"
-                      >
-                        <span>Clone</span>
-                      </button> */}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div
-            className="card shadow border-0 mb-2 minHeight"
-            style={{ borderRadius: "0" }}
-          >
+          <div className="card shadow border-0 mb-2 minHeight">
             <div className="container">
-              <div className="row">
+              <div className="row mt-2 p-3">
                 <div className="col-md-6 col-12">
-                  <div className="d-flex justify-content-center flex-column align-items-start">
-                    <div class="d-flex">
-                      {/* <img src={Logo} alt=".." className="mt-3" width={130} /> */}
-                    </div>
-                    <p className="fw-small mt-2">
-                      Cloud ECS Infotech Pte Ltd<br></br>
-                      Anna Salai<br></br>
-                      Chennai - 600002,<br></br>
-                      Tamil Nadu
-                    </p>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12 d-flex justify-end flex-column align-items-end mt-2">
-                  <h1>BILLS</h1>
-                  <h3>#{data.invoiceNumber || "#1234"}</h3>
-                  {/* <span className="text-muted mt-4">Balance Due</span>
-              <h3>₹3000</h3> */}
-                </div>
-              </div>
-              <div className="row mt-5">
-                <div className="col-md-6 col-12">
-                  <div className="d-flex justify-content-center flex-column align-items-start">
-                    <h3>Bill To</h3>
-                    <span style={{ color: "#2196f3" }}>Manikandan</span>
-                    <p className="fw-small">
-                      Purasaiwalkam,<br></br>
-                      Chennai - 600002,<br></br>
-                      Tamil Nadu
-                    </p>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12 text-end">
-                  <div className="row mb-2  d-flex justify-content-end align-items-end">
-                    <div className="col-6">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Issues Date</b>
+                        <b>Vendor Name</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        :{" "}
-                        {data.issuesDate?.split("-").reverse().join("-") || ""}
+                        : {data.vendorName || ""}
                       </p>
                     </div>
                   </div>
-                  <div className="row mb-2 d-flex justify-content-end align-items-end">
-                    <div className="col-6">
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Reference</b>
+                        <b>Bill Number</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.reference}</p>
+                      <p className="text-muted text-sm">
+                        : {data.billNumber || ""}
+                      </p>
                     </div>
                   </div>
-                  <div className="row mb-2 d-flex justify-content-end align-items-end">
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Order Number</b>
+                      </p>
+                    </div>
                     <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.orderNumber || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Subject</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.subject || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Bill Date</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                      :{" "}
+                        {data.billDate
+                          ? new Date(data.billDate).toLocaleDateString()
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
                         <b>Due Date</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.dueDate?.split("-").reverse().join("-") || ""}
+                        :{" "}
+                        {data.dueDate
+                          ? new Date(data.dueDate).toLocaleDateString()
+                          : ""}
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="row mt-5">
-                <div className="col-md-6 col-12">
-                  <div className="d-flex justify-content-center flex-column align-items-start">
-                    <h3>Subject</h3>
-                    <p className="fw-small">
-                      Full Stack Developer Training Program
-                    </p>
-                  </div>
-                </div>
-              </div>
+
               <div className="row mt-5 flex-nowrap">
                 <div className="col-12">
                   <div className="table-responsive ">
@@ -275,10 +211,8 @@ function BillsView() {
               </div>
               <div class="row mt-5">
                 <div className="col-md-6 col-12 mb-3 mt-5">
-                  <lable className="form-lable">Customer Notes</lable>
-                  <div className="mb-3">Thanks For Your Bussiness</div>
-                  <lable className="form-lable mt-2">Terms & Conditions</lable>
-                  <div className="mb-3">{/* <p>{data.}</p> */}</div>
+                  <lable className="form-lable">Customer Notes :</lable>
+                  <div className="mb-3">{data.notes || ""}</div>
                 </div>
                 <div
                   className="col-md-6 col-12 mt-5 mb-3 rounded"
@@ -302,29 +236,6 @@ function BillsView() {
                     <div class="col-sm-4 ">: {data.total}</div>
                   </div>
                 </div>
-                {/* <div className="col-md-6 col-12"></div>
-            <div className="col-md-6 col-12 ">
-              <div class="row mt-2">
-                <label class="col-sm-4 col-form-label">Payment Made</label>
-                <div class="col-sm-4"></div>
-                <div class="col-sm-4 text-danger">
-                  (-)3,500.00
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12"></div>
-            <div className="col-md-6 col-12 mb-3">
-              <div class="row mt-2">
-                <label class="col-sm-4 col-form-label">Balance Due</label>
-                <div class="col-sm-4"></div>
-                <div class="col-sm-4 ">
-                  ₹3000
-                </div>
-              </div>
-            </div> */}
-              </div>
-              <div className="col-md-6 col-12 mb-5">
-                Authorized Signature _____________________________
               </div>
             </div>
           </div>

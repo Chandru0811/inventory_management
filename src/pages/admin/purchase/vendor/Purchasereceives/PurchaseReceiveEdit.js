@@ -11,84 +11,53 @@ const PurchaseReceiveEdit = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    contactName: Yup.string().required("*Contact Name is required"),
-    accNumber: Yup.string().required("*Account Number is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    email: Yup.string().required("*Email is required"),
-    phone: Yup.number().required("*Phone is required"),
-    website: Yup.string().required("*Website is required"),
-    bankAccName: Yup.string().required("*Account Name is required"),
-    bankAccNumber: Yup.string().required("*Account Number is required"),
-
-    // deliCountry: Yup.number().required("*Country is required"),
-    // deliAddress: Yup.string().required("*Address is required"),
-    // deliCity: Yup.string().required("*City is required"),
-    // deliState: Yup.string().required("*State is required"),
-    // deliZip: Yup.number().required("*Zip is required"),
-    // deliAttention: Yup.number().required("*Attention is required"),
-
-    // billCountry: Yup.number().required("*Country is required"),
-    // billAddress: Yup.string().required("*Address is required"),
-    // billCity: Yup.string().required("*City is required"),
-    // billState: Yup.string().required("*State is required"),
-    // billZip: Yup.number().required("*Zip is required"),
-    // billAttention: Yup.number().required("*Attention is required"),
-    // notes: Yup.number().required("*Remarks is required"),
+    vendorName: Yup.string().required("*Vendor Name is required"),
+    // purchaseOrder: Yup.string().required("*Purchase Order is required"),
+    purchaseReceiveNum: Yup.string().required("*Purchase Receive is required"),
+    receivedDate: Yup.string().required("*Received Date is required"),
   });
-
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
-      contactName: "",
-      accNumber: "",
-      primaryContact: "",
-      email: "",
-      phone: "",
-      website: "",
-      bankAccName: "",
-      bankAccNumber: "",
-      deliCountry: "",
-      deliAddress: "",
-      deliCity: "",
-      deliState: "",
-      deliZip: "",
-      deliAttention: "",
-      billCountry: "",
-      billAddress: "",
-      billCity: "",
-      billState: "",
-      billZip: "",
-      billAttention: "",
+      vendorName: "",
+      purchaseOrder: "",
       notes: "",
+      purchaseReceiveNum: "",
+      receivedDate: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
-      console.log(values);
-      //   try {
-      //     const response = await api.put(`/updateMstrCustomer/${id}`, values, {});
-      //     if (response.status === 200) {
-      //       toast.success(response.data.message);
-      //       navigate("/customer");
-      //     } else {
-      //       toast.error(response.data.message);
-      //     }
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoadIndicator(false);
-      //   }
+      try {
+        const response = await api.put(`/updatePurchaseReceives/${id}`, values);
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/purchasereceive");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoadIndicator(false);
+      }
     },
   });
 
   useEffect(() => {
     const getData = async () => {
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     formik.setValues(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   }
+      try {
+        const response = await api.get(`/getAllPurchaseReceivesById/${id}`);
+        const rest = response.data;
+        const formattedData = {
+            ...rest,
+            receivedDate: rest.receivedDate
+              ? new Date(rest.receivedDate).toISOString().split("T")[0]
+              : undefined,
+          };
+          formik.setValues(formattedData);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      }
     };
 
     getData();
@@ -148,71 +117,73 @@ const PurchaseReceiveEdit = () => {
           </div>
           <div className="container mb-5">
             <div className="row py-4">
-              <div className="col-md-6 col-12 mb-2">
+            <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                  Vendor Name <span className="text-danger">*</span>
+                  Vendor Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
-                  <input
-                    type="text"
-                    name="contactName"
-                    className={`form-control ${
-                      formik.touched.contactName && formik.errors.contactName
+                  <select
+                    {...formik.getFieldProps("vendorName")}
+                    className={`form-select    ${
+                      formik.touched.vendorName && formik.errors.vendorName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("contactName")}
-                  />
-                  {formik.touched.contactName && formik.errors.contactName && (
+                  >
+                    <option selected></option>
+                    <option value="John Smith">John Smith</option>
+                    <option value="Emily Johnson">Emily Johnson</option>
+                    <option value="David Williams">David Williams</option>
+                  </select>
+                  {formik.touched.vendorName && formik.errors.vendorName && (
                     <div className="invalid-feedback">
-                      {formik.errors.contactName}
+                      {formik.errors.vendorName}
                     </div>
                   )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
+               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Notes<span className="text-danger">*</span>
+                  Purchase Order Number<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="accNumber"
+                    name="purchaseOrder"
                     className={`form-control  ${
-                      formik.touched.accNumber && formik.errors.accNumber
+                      formik.touched.purchaseOrder && formik.errors.purchaseOrder
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("accNumber")}
+                    {...formik.getFieldProps("purchaseOrder")}
                   />
-                  {formik.touched.accNumber && formik.errors.accNumber && (
+                  {formik.touched.purchaseOrder && formik.errors.purchaseOrder && (
                     <div className="invalid-feedback">
-                      {formik.errors.accNumber}
+                      {formik.errors.purchaseOrder}
                     </div>
                   )}
                 </div>
               </div>
-
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Purchase Reieve Number<span className="text-danger">*</span>
+                  Purchase Receive Number<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="primaryContact"
+                    name="purchaseReceiveNum"
                     className={`form-control ${
-                      formik.touched.primaryContact &&
-                      formik.errors.primaryContact
+                      formik.touched.purchaseReceiveNum &&
+                      formik.errors.purchaseReceiveNum
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("primaryContact")}
+                    {...formik.getFieldProps("purchaseReceiveNum")}
                   />
-                  {formik.touched.primaryContact &&
-                    formik.errors.primaryContact && (
+                  {formik.touched.purchaseReceiveNum &&
+                    formik.errors.purchaseReceiveNum && (
                       <div className="invalid-feedback">
-                        {formik.errors.primaryContact}
+                        {formik.errors.purchaseReceiveNum}
                       </div>
                     )}
                 </div>
@@ -223,18 +194,41 @@ const PurchaseReceiveEdit = () => {
                 </lable>
                 <div className="mb-3">
                   <input
-                    type="text"
-                    name="email"
+                    type="date"
+                    name="receivedDate"
                     className={`form-control  ${
-                      formik.touched.email && formik.errors.email
+                      formik.touched.receivedDate && formik.errors.receivedDate
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("email")}
+                    {...formik.getFieldProps("receivedDate")}
                   />
-                  {formik.touched.email && formik.errors.email && (
+                  {formik.touched.receivedDate && formik.errors.receivedDate && (
                     <div className="invalid-feedback">
-                      {formik.errors.email}
+                      {formik.errors.receivedDate}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Notes
+                </lable>
+                <div className="mb-3">
+                  <textarea
+                    type="text"
+                    name="notes"
+                    className={`form-control  ${
+                      formik.touched.notes && formik.errors.notes
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    rows="4"
+                    {...formik.getFieldProps("notes")}
+                  />
+                  {formik.touched.notes && formik.errors.notes && (
+                    <div className="invalid-feedback">
+                      {formik.errors.notes}
                     </div>
                   )}
                 </div>

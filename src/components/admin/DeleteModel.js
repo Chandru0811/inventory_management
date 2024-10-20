@@ -4,7 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import toast from "react-hot-toast";
 import api from "../../config/URL";
 
-function DeleteModel({ onSuccess, path}) {
+function DeleteModel({ onSuccess, path }) {
   const [show, setShow] = useState(false);
   const [loadIndicator, setLoadIndicator] = useState(false);
   const handleClose = () => setShow(false);
@@ -19,9 +19,9 @@ function DeleteModel({ onSuccess, path}) {
         onSuccess();
         handleClose();
         toast.success(response.data.message);
-      }else {
-          toast.success(response.data.message);
-        }
+      } else {
+        toast.success(response.data.message);
+      }
     } catch (error) {
       if (error?.response?.status === 409) {
         toast.warning(error?.response?.data?.message);
@@ -55,7 +55,10 @@ function DeleteModel({ onSuccess, path}) {
 
   return (
     <>
-      <button className="button-btn btn-sm m-2" onClick={handleShow}>
+      <button
+        className="btn btn-light  btn-sm shadow-none border-none"
+        onClick={handleShow}
+      >
         Delete
       </button>
 
@@ -63,8 +66,7 @@ function DeleteModel({ onSuccess, path}) {
         <Modal.Header closeButton>
           <Modal.Title>Delete</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this item?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
@@ -72,8 +74,7 @@ function DeleteModel({ onSuccess, path}) {
           <Button
             variant="danger"
             onClick={handelDelete}
-            className={show ? "focused-button" : ""
-            }
+            className={show ? "focused-button" : ""}
             disable={loadIndicator}
           >
             {loadIndicator && (
@@ -85,7 +86,7 @@ function DeleteModel({ onSuccess, path}) {
             Delete
           </Button>
         </Modal.Footer>
-      </Modal >
+      </Modal>
     </>
   );
 }

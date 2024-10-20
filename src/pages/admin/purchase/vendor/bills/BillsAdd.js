@@ -14,31 +14,24 @@ function BillsAdd() {
   const [itemData, setItemData] = useState(null);
 
   const validationSchema = Yup.object({
-    customerId: Yup.string().required("*Customer name is required"),
-    invoiceNumber: Yup.string().required("*Invoice Number is required"),
-    issuesDate: Yup.string().required("*Issues Date is required"),
-    dueDate: Yup.string().required("*Due Date is required"),
-    amountsAre: Yup.string().required("*Amount Are is required"),
-    txnInvoiceOrderItemsModels: Yup.array().of(
-      Yup.object({
-        item: Yup.string().required("item is required"),
-      })
-    ),
+    vendorName: Yup.string().required("*Vendor name is required"),
+    billNumber: Yup.string().required("*Bill Number is required"),
+    billDate: Yup.string().required("*Bill Date is required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      customerId: "",
-      issuesDate: "",
+      vendorName: "",
+      billNumber: "",
+      orderNumber: "",
+      billDate: "",
       dueDate: "",
-      invoiceNumber: "",
-      reference: "",
-      amountsAre: "",
+      subject: "",
       subTotal: "",
-      totalTax: "",
-      discountAmount: "",
+      discount: "",
+      adjustments: "",
       total: "",
-      files: null,
+      notes: "",
       txnInvoiceOrderItemsModels: [
         {
           item: "",
@@ -54,43 +47,10 @@ function BillsAdd() {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        const formData = new FormData();
-
-        formData.append("customerId", values.customerId);
-        formData.append("issuesDate", values.issuesDate);
-        formData.append("reference", values.reference);
-        formData.append("dueDate", values.dueDate);
-        formData.append("invoiceNumber", values.invoiceNumber);
-        formData.append("AmountsAre", values.amountsAre);
-        formData.append("subTotal", values.subTotal);
-        formData.append("totalTax", values.totalTax);
-        formData.append("discountAmount", values.discountAmount);
-        formData.append("total", values.total);
-        values.txnInvoiceOrderItemsModels.forEach((item) => {
-          formData.append("item", item.item);
-          formData.append("qty", item.qty);
-          formData.append("price", item.price);
-          formData.append("taxRate", item.taxRate);
-          formData.append("disc", item.disc);
-          formData.append("amount", item.amount);
-          formData.append("mstrItemsId", item.item);
-          formData.append("description", "item.item");
-          formData.append("account", "item.item");
-          formData.append("taxAmount", "000");
-          formData.append("project", "000");
-        });
-        if (values.files) {
-          formData.append("files", values.files);
-        }
-        const response = await api.post("invoice-invoice-item", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
+        const response = await api.post("/createBills", values);
         if (response.status === 201) {
           toast.success(response.data.message);
-          navigate("/invoice");
+          navigate("/bills");
         } else {
           toast.error(response.data.message);
         }
@@ -296,30 +256,27 @@ function BillsAdd() {
         >
           <div className="container mb-5 mt-5">
             <div className="row py-4">
-              <div className="col-md-6 col-12 mb-3">
+            <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
                   Vendor Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("customerId")}
+                    {...formik.getFieldProps("vendorName")}
                     className={`form-select    ${
-                      formik.touched.customerId && formik.errors.customerId
+                      formik.touched.vendorName && formik.errors.vendorName
                         ? "is-invalid"
                         : ""
                     }`}
                   >
                     <option selected></option>
-                    {customerData &&
-                      customerData.map((customerId) => (
-                        <option key={customerId.id} value={customerId.id}>
-                          {customerId.contactName}
-                        </option>
-                      ))}
+                    <option value="John Smith">John Smith</option>
+                    <option value="Emily Johnson">Emily Johnson</option>
+                    <option value="David Williams">David Williams</option>
                   </select>
-                  {formik.touched.customerId && formik.errors.customerId && (
+                  {formik.touched.vendorName && formik.errors.vendorName && (
                     <div className="invalid-feedback">
-                      {formik.errors.customerId}
+                      {formik.errors.vendorName}
                     </div>
                   )}
                 </div>
@@ -355,17 +312,17 @@ function BillsAdd() {
                   <input
                     type="text"
                     className={`form-control  ${
-                      formik.touched.invoiceNumber &&
-                      formik.errors.invoiceNumber
+                      formik.touched.billNumber &&
+                      formik.errors.billNumber
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("invoiceNumber")}
+                    {...formik.getFieldProps("billNumber")}
                   />
-                  {formik.touched.invoiceNumber &&
-                    formik.errors.invoiceNumber && (
+                  {formik.touched.billNumber &&
+                    formik.errors.billNumber && (
                       <div className="invalid-feedback">
-                        {formik.errors.invoiceNumber}
+                        {formik.errors.billNumber}
                       </div>
                     )}
                 </div>
@@ -373,37 +330,45 @@ function BillsAdd() {
 
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                  order Number<span className="text-danger">*</span>
+                  Order Number
                 </lable>
                 <div className="">
                   <input
                     type="text"
                     className={`form-control ${
-                      formik.touched.issuesDate && formik.errors.issuesDate
+                      formik.touched.orderNumber && formik.errors.orderNumber
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("issuesDate")}
+                    {...formik.getFieldProps("orderNumber")}
                   />
-                  {formik.touched.issuesDate && formik.errors.issuesDate && (
+                  {formik.touched.orderNumber && formik.errors.orderNumber && (
                     <div className="invalid-feedback">
-                      {formik.errors.issuesDate}
+                      {formik.errors.orderNumber}
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">Subject</label>
+                <lable className="form-lable">
+                  Subject
+                </lable>
                 <div className="">
                   <input
                     type="text"
-                    className="form-control"
-                    onChange={(event) => {
-                      formik.setFieldValue("files", event.target.files[0]);
-                    }}
-                    onBlur={formik.handleBlur}
+                    className={`form-control ${
+                      formik.touched.subject && formik.errors.subject
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("subject")}
                   />
+                  {formik.touched.subject && formik.errors.subject && (
+                    <div className="invalid-feedback">
+                      {formik.errors.subject}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -415,22 +380,22 @@ function BillsAdd() {
                   <input
                     type="date"
                     className={`form-control ${
-                      formik.touched.dueDate && formik.errors.dueDate
+                      formik.touched.billDate && formik.errors.billDate
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("dueDate")}
+                    {...formik.getFieldProps("billDate")}
                   />
-                  {formik.touched.dueDate && formik.errors.dueDate && (
+                  {formik.touched.billDate && formik.errors.billDate && (
                     <div className="invalid-feedback">
-                      {formik.errors.dueDate}
+                      {formik.errors.billDate}
                     </div>
                   )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                  Due Date<span className="text-danger">*</span>
+                  Due Date
                 </lable>
                 <div className="">
                   <input
@@ -465,7 +430,7 @@ function BillsAdd() {
                       <tr>
                         <th>S.NO</th>
                         <th style={{ width: "25%" }}>
-                          Item<span className="text-danger">*</span>
+                          Item
                         </th>
                         <th style={{ width: "10%" }}>Quantity</th>
                         <th style={{ width: "15%" }}>Rate</th>
@@ -729,21 +694,21 @@ function BillsAdd() {
                 <div className="col-md-6 col-12 mb-3 pt-0">
                   <lable className="form-lable">Customer Notes</lable>
                   <div className="mb-3">
-                    <input
+                    <textarea
                       type="text"
-                      placeholder="Will be display on the Invoice"
                       className={`form-control  ${
-                        formik.touched.customerNotes &&
-                        formik.errors.customerNotes
+                        formik.touched.notes &&
+                        formik.errors.notes
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("customerNotes")}
+                      rows="4"
+                      {...formik.getFieldProps("notes")}
                     />
-                    {formik.touched.customerNotes &&
-                      formik.errors.customerNotes && (
+                    {formik.touched.notes &&
+                      formik.errors.notes && (
                         <div className="invalid-feedback">
-                          {formik.errors.customerNotes}
+                          {formik.errors.notes}
                         </div>
                       )}
                   </div>
@@ -839,27 +804,6 @@ function BillsAdd() {
                         </div>
                       )}
                     </div>
-                  </div>
-                </div>
-
-                <div className="col-md-6 col-12 mb-3">
-                  <lable className="form-lable">Terms & Conditions</lable>
-                  <div className="mb-3">
-                    <textarea
-                      className={`form-control  ${
-                        formik.touched.termsAndconditions &&
-                        formik.errors.termsAndconditions
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      {...formik.getFieldProps("termsAndconditions")}
-                    />
-                    {formik.touched.termsAndconditions &&
-                      formik.errors.termsAndconditions && (
-                        <div className="invalid-feedback">
-                          {formik.errors.termsAndconditions}
-                        </div>
-                      )}
                   </div>
                 </div>
               </div>

@@ -11,14 +11,14 @@ const PurchaseReceiveView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+      try {
+        const response = await api.get(`/getAllPurchaseReceivesById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
     getData();
   }, [id]);
@@ -83,7 +83,7 @@ const PurchaseReceiveView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.contactName || ""}
+                        : {data.vendorName || ""}
                       </p>
                     </div>
                   </div>
@@ -92,12 +92,12 @@ const PurchaseReceiveView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Notes </b>
+                        <b>Purchase Order</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.accNumber || ""}
+                        : {data.purchaseOrder || ""}
                       </p>
                     </div>
                   </div>
@@ -111,7 +111,7 @@ const PurchaseReceiveView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.primaryContact || ""}
+                        : {data.purchaseReceiveNum || ""}
                       </p>
                     </div>
                   </div>
@@ -120,17 +120,33 @@ const PurchaseReceiveView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Received Date </b>
+                        <b>Received Date</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.email || ""}</p>
+                      <p className="text-muted text-sm">
+                        :{" "}
+                        {data.receivedDate
+                          ? new Date(data.receivedDate).toLocaleDateString()
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Notes</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">: {data.notes || ""}</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            {/* Users Information */}
           </div>
         </div>
       )}

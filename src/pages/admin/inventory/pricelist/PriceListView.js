@@ -11,14 +11,14 @@ const PriceListView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-        try {
-          const response = await api.get(`/getAllPriceListById/${id}`);
-          setData(response.data);
-        } catch (e) {
-          toast.error("Error fetching data: ", e?.response?.data?.message);
-        } finally {
-          setLoading(false);
-        }
+      try {
+        const response = await api.get(`/getAllPriceListById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
     getData();
   }, [id]);
@@ -83,7 +83,7 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.contactName || ""}
+                        : {data.name || ""}
                       </p>
                     </div>
                   </div>
@@ -97,7 +97,7 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.accNumber || ""}
+                        : {data.transactionType || ""}
                       </p>
                     </div>
                   </div>
@@ -111,7 +111,7 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.primaryContact || ""}
+                        : {data.priceListType || ""}
                       </p>
                     </div>
                   </div>
@@ -124,7 +124,7 @@ const PriceListView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.email || ""}</p>
+                      <p className="text-muted text-sm">: {data.percentage || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -138,7 +138,7 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.roundOffTo || ""}
                       </p>
                     </div>
                   </div>
@@ -152,7 +152,7 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.pricingScheme || ""}
                       </p>
                     </div>
                   </div>
@@ -166,7 +166,7 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.currency || ""}
                       </p>
                     </div>
                   </div>
@@ -180,7 +180,7 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.discount || ""}
                       </p>
                     </div>
                   </div>
@@ -194,7 +194,7 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.description || ""}
                       </p>
                     </div>
                   </div>

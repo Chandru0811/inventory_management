@@ -11,55 +11,26 @@ const PriceListEdit = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    contactName: Yup.string().required("*Contact Name is required"),
-    accNumber: Yup.string().required("*Account Number is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    email: Yup.string().required("*Email is required"),
-    phone: Yup.number().required("*Phone is required"),
-    website: Yup.string().required("*Website is required"),
-    bankAccName: Yup.string().required("*Account Name is required"),
-    bankAccNumber: Yup.string().required("*Account Number is required"),
-
-    // deliCountry: Yup.number().required("*Country is required"),
-    // deliAddress: Yup.string().required("*Address is required"),
-    // deliCity: Yup.string().required("*City is required"),
-    // deliState: Yup.string().required("*State is required"),
-    // deliZip: Yup.number().required("*Zip is required"),
-    // deliAttention: Yup.number().required("*Attention is required"),
-
-    // billCountry: Yup.number().required("*Country is required"),
-    // billAddress: Yup.string().required("*Address is required"),
-    // billCity: Yup.string().required("*City is required"),
-    // billState: Yup.string().required("*State is required"),
-    // billZip: Yup.number().required("*Zip is required"),
-    // billAttention: Yup.number().required("*Attention is required"),
-    // notes: Yup.number().required("*Remarks is required"),
+    name: Yup.string().required("*Name is required"),
+    roundOffTo: Yup.string().required("*Round Off To is required"),
+    percentage: Yup.string().required("*Percentage is required"),
   });
 
   const formik = useFormik({
     initialValues: {
       // companyName: "",
-      contactName: "",
-      accNumber: "",
-      primaryContact: "",
-      email: "",
-      phone: "",
-      website: "",
-      bankAccName: "",
-      bankAccNumber: "",
-      deliCountry: "",
-      deliAddress: "",
-      deliCity: "",
-      deliState: "",
-      deliZip: "",
-      deliAttention: "",
-      billCountry: "",
-      billAddress: "",
-      billCity: "",
-      billState: "",
-      billZip: "",
-      billAttention: "",
-      notes: "",
+      itemId: "",
+      salesId: "",
+      purchaseId: "",
+      name: "",
+      transactionType: "",
+      priceListType: "",
+      description: "",
+      percentage: "",
+      roundOffTo: "",
+      pricingScheme: "",
+      currency: "",
+      // discount: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -67,7 +38,7 @@ const PriceListEdit = () => {
       console.log(values);
       try {
         const response = await api.put(`/updatePriceList/${id}`, values, {});
-        if (response.status === 200) {
+        if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/pricelist");
         } else {
@@ -129,7 +100,7 @@ const PriceListEdit = () => {
                     ) : (
                       <span></span>
                     )}
-                    &nbsp;<span>Save</span>
+                    &nbsp;<span>Update</span>
                   </button>
                 </div>
               </div>
@@ -153,16 +124,16 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="contactName"
-                    className={`form-control ${formik.touched.contactName && formik.errors.contactName
-                        ? "is-invalid"
-                        : ""
+                    name="name"
+                    className={`form-control ${formik.touched.name && formik.errors.name
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("contactName")}
+                    {...formik.getFieldProps("name")}
                   />
-                  {formik.touched.contactName && formik.errors.contactName && (
+                  {formik.touched.name && formik.errors.name && (
                     <div className="invalid-feedback">
-                      {formik.errors.contactName}
+                      {formik.errors.name}
                     </div>
                   )}
                 </div>
@@ -174,16 +145,16 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="accNumber"
-                    className={`form-control  ${formik.touched.accNumber && formik.errors.accNumber
-                        ? "is-invalid"
-                        : ""
+                    name="transactionType"
+                    className={`form-control  ${formik.touched.transactionType && formik.errors.transactionType
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("accNumber")}
+                    {...formik.getFieldProps("transactionType")}
                   />
-                  {formik.touched.accNumber && formik.errors.accNumber && (
+                  {formik.touched.transactionType && formik.errors.transactionType && (
                     <div className="invalid-feedback">
-                      {formik.errors.accNumber}
+                      {formik.errors.transactionType}
                     </div>
                   )}
                 </div>
@@ -196,18 +167,18 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="primaryContact"
-                    className={`form-control ${formik.touched.primaryContact &&
-                        formik.errors.primaryContact
-                        ? "is-invalid"
-                        : ""
+                    name="priceListType"
+                    className={`form-control ${formik.touched.priceListType &&
+                      formik.errors.priceListType
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("primaryContact")}
+                    {...formik.getFieldProps("priceListType")}
                   />
-                  {formik.touched.primaryContact &&
-                    formik.errors.primaryContact && (
+                  {formik.touched.priceListType &&
+                    formik.errors.priceListType && (
                       <div className="invalid-feedback">
-                        {formik.errors.primaryContact}
+                        {formik.errors.priceListType}
                       </div>
                     )}
                 </div>
@@ -219,16 +190,16 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="email"
-                    className={`form-control  ${formik.touched.email && formik.errors.email
-                        ? "is-invalid"
-                        : ""
+                    name="percentage"
+                    className={`form-control  ${formik.touched.percentage && formik.errors.percentage
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("email")}
+                    {...formik.getFieldProps("percentage")}
                   />
-                  {formik.touched.email && formik.errors.email && (
+                  {formik.touched.percentage && formik.errors.percentage && (
                     <div className="invalid-feedback">
-                      {formik.errors.email}
+                      {formik.errors.percentage}
                     </div>
                   )}
                 </div>
@@ -241,16 +212,16 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
+                    name="roundOffTo"
+                    className={`form-control  ${formik.touched.roundOffTo && formik.errors.roundOffTo
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    {...formik.getFieldProps("roundOffTo")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.roundOffTo && formik.errors.roundOffTo && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.roundOffTo}
                     </div>
                   )}
                 </div>
@@ -263,18 +234,18 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccNumber"
-                    className={`form-control  ${formik.touched.bankAccNumber &&
-                        formik.errors.bankAccNumber
-                        ? "is-invalid"
-                        : ""
+                    name="pricingScheme"
+                    className={`form-control  ${formik.touched.pricingScheme &&
+                      formik.errors.pricingScheme
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    {...formik.getFieldProps("pricingScheme")}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
+                  {formik.touched.pricingScheme &&
+                    formik.errors.pricingScheme && (
                       <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
+                        {formik.errors.pricingScheme}
                       </div>
                     )}
                 </div>
@@ -287,21 +258,21 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
+                    name="currency"
+                    className={`form-control  ${formik.touched.currency && formik.errors.currency
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    {...formik.getFieldProps("currency")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.currency && formik.errors.currency && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.currency}
                     </div>
                   )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
+              {/* <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Discount
                   <span className="text-danger">*</span>
@@ -309,20 +280,20 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
+                    name="discount"
+                    className={`form-control  ${formik.touched.discount && formik.errors.discount
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    {...formik.getFieldProps("discount")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.discount && formik.errors.discount && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.discount}
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Description
@@ -331,16 +302,16 @@ const PriceListEdit = () => {
                 <div className="mb-3">
                   <textarea
                     type="text"
-                    name="bankAccName"
-                    className={`form-control  ${formik.touched.bankAccName && formik.errors.bankAccName
-                        ? "is-invalid"
-                        : ""
+                    name="description"
+                    className={`form-control  ${formik.touched.description && formik.errors.description
+                      ? "is-invalid"
+                      : ""
                       }`}
-                    {...formik.getFieldProps("bankAccName")}
+                    {...formik.getFieldProps("description")}
                   />
-                  {formik.touched.bankAccName && formik.errors.bankAccName && (
+                  {formik.touched.description && formik.errors.description && (
                     <div className="invalid-feedback">
-                      {formik.errors.bankAccName}
+                      {formik.errors.description}
                     </div>
                   )}
                 </div>

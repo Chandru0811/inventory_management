@@ -5,17 +5,17 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../../config/URL";
+import DeleteModel from "../../../../../components/admin/DeleteModel";
 
 const Bills = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllMstrCustomers");
+        const response = await api.get("/getBills");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,9 +56,9 @@ const Bills = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllItems");
+      const response = await api.get("/getBills");
       setDatas(response.data);
-      initializeDataTable(); // Reinitialize DataTable after successful data update
+      initializeDataTable();
     } catch (error) {
       console.error("Error refreshing data:", error);
     }
@@ -72,6 +72,7 @@ const Bills = () => {
       table.destroy();
     };
   }, []);
+
   return (
     <div>
       {loading ? (
@@ -102,7 +103,6 @@ const Bills = () => {
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/bills/add">
                       <button
                         type="submit"
@@ -113,13 +113,11 @@ const Bills = () => {
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -141,6 +139,9 @@ const Bills = () => {
                       ORDER NUMBER
                     </th>
                     <th scope="col" className="text-center">
+                      DUE DATE
+                    </th>
+                    <th scope="col" className="text-center">
                       ACTION
                     </th>
                   </tr>
@@ -149,28 +150,33 @@ const Bills = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.name}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      <td className="text-center">{data.vendorName}</td>
+                      <td className="text-center">{data.billNumber}</td>
+                      <td className="text-center">{data.orderNumber}</td>
+                      <td className="text-center">
+                        {data.dueDate
+                          ? new Date(data.dueDate).toLocaleDateString()
+                          : ""}
+                      </td>
                       <td className="text-center">
                         <div className="gap-2">
-                          <Link to={`/customer/view/${data.id}`}>
+                          <Link to={`/bills/view/${data.id}`}>
                             <button className="btn btn-light btn-sm  shadow-none border-none">
                               View
                             </button>
                           </Link>
                           <Link
-                            to={`/customer/edit/${data.id}`}
+                            to={`/bills/edit/${data.id}`}
                             className="px-2"
                           >
                             <button className="btn btn-light  btn-sm shadow-none border-none">
                               Edit
                             </button>
                           </Link>
-                          {/* <DeleteModel
+                          <DeleteModel
                             onSuccess={refreshData}
-                            path={`/deleteMstrCustomer/${data.id}`}
-                          /> */}
+                            path={`/deleteBills/${data.id}`}
+                          />
                         </div>
                       </td>
                     </tr>

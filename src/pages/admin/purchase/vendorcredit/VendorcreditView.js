@@ -16,18 +16,18 @@ function VendorCreditView() {
   const [items, setItems] = useState([]);
   const [customerData, setCustomerData] = useState([]);
   const [loading, setLoading] = useState(false);
-  console.log("invoice", data);
+
   useEffect(() => {
     const getData = async () => {
-      //   setLoading(true);
-      //   try {
-      //     const response = await api.get(`invoice/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+      setLoading(true);
+      try {
+        const response = await api.get(`getAllVendorCreditsById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     getData();
@@ -76,7 +76,7 @@ function VendorCreditView() {
                   </div>
                   <div className="col-auto">
                     <div className="hstack gap-2 justify-content-start">
-                      <Link to="/bills">
+                      <Link to="/vendorcredit">
                         <button
                           type="submit"
                           className="btn btn-light btn-sm me-1"
@@ -84,63 +84,6 @@ function VendorCreditView() {
                           <span>Back</span>
                         </button>
                       </Link>
-                      {/* <button
-                        type="submit"
-                        className="btn btn-button rounded-pill p-2"
-                      >
-                        <FaTelegramPlane size={18} />
-                      </button> */}
-                      {/* <button
-                        className="btn btn-button rounded-pill p-2"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <IoCloudDownloadSharp
-                          size={18}
-                          className="mx-1 text-white fs-5"
-                        />
-                      </button> */}
-                      {/* <ul className="dropdown-menu">
-                        <li
-                          className="dropdown-item"
-                          //   onClick={() =>
-                          //     GeneratePdf("download", data, { name: "INVOICE" })
-                          //   }
-                        >
-                          Download PDF
-                        </li>
-                        <li
-                          className="dropdown-item"
-                          //   onClick={() =>
-                          //     GeneratePdf("open", data, { name: "INVOICE" })
-                          //   }
-                        >
-                          Open PDF
-                        </li>
-                        <li
-                          className="dropdown-item"
-                          //   onClick={() =>
-                          //     GeneratePdf("print", data, { name: "INVOICE" })
-                          //   }
-                        >
-                          Print PDF
-                        </li>
-                      </ul>
-                      <Link to="/recordpayment">
-                        <button
-                          type="submit"
-                          className="btn btn-sm btn-primary me-1"
-                        >
-                          <span>Record Payment</span>
-                        </button>
-                      </Link>
-                      <button
-                        type="submit"
-                        className="btn btn-sm btn-primary me-1"
-                      >
-                        <span>Clone</span>
-                      </button> */}
                     </div>
                   </div>
                 </div>
@@ -168,7 +111,7 @@ function VendorCreditView() {
                 </div>
                 <div className="col-md-6 col-12 d-flex justify-end flex-column align-items-end mt-2">
                   <h1>VENDORCREDIT</h1>
-                  <h3>#{data.invoiceNumber || "#1234"}</h3>
+                  <h3>#{data.orderNumber || "#1234"}</h3>
                   {/* <span className="text-muted mt-4">Balance Due</span>
               <h3>₹3000</h3> */}
                 </div>
@@ -189,24 +132,14 @@ function VendorCreditView() {
                   <div className="row mb-2  d-flex justify-content-end align-items-end">
                     <div className="col-6">
                       <p className="text-sm">
-                        <b>Issues Date</b>
+                        <b>Order Credit Date</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         :{" "}
-                        {data.issuesDate?.split("-").reverse().join("-") || ""}
+                        {data.orderCreditDdate?.split("-").reverse().join("-") || ""}
                       </p>
-                    </div>
-                  </div>
-                  <div className="row mb-2 d-flex justify-content-end align-items-end">
-                    <div className="col-6">
-                      <p className="text-sm">
-                        <b>Reference</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">: {data.reference}</p>
                     </div>
                   </div>
                   <div className="row mb-2 d-flex justify-content-end align-items-end">
@@ -277,7 +210,7 @@ function VendorCreditView() {
               </div>
               <div class="row mt-5">
                 <div className="col-md-6 col-12 mb-3 mt-5">
-                  <lable className="form-lable">Customer Notes</lable>
+                  <lable className="form-lable">Customer Notes : {data.notes}</lable>
                   <div className="mb-3">Thanks For Your Bussiness</div>
                   <lable className="form-lable mt-2">Terms & Conditions</lable>
                   <div className="mb-3">{/* <p>{data.}</p> */}</div>
