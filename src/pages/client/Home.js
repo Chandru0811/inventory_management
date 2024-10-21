@@ -28,7 +28,7 @@ function Home({ handleLogin }) {
     onSubmit: async (values) => {
       try {
         setLoadIndicator(true);
-        const response = await axios.post(`http://13.213.208.92:7080/ecsinventory/api/user-login`,values);
+        const response = await api.post(`user-login`,values);
         if(response.status === 200){
           toast.success(response.data.message)
 

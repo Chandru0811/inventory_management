@@ -13,3 +13,9 @@
   --admin-background-color: #ad8c5c;
   --admin-text-color: #fff;
 }
+
+
+.reg_btn{
+  padding-left: 5%;
+  padding-right: 5%;
+}
