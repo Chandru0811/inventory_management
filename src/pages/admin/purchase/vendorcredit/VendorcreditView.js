@@ -129,7 +129,7 @@ function VendorCreditView() {
                   </div>
                 </div>
                 <div className="col-md-6 col-12 text-end">
-                  <div className="row mb-2  d-flex justify-content-end align-items-end">
+                  <div className="row mb-2 d-flex justify-content-end align-items-end">
                     <div className="col-6">
                       <p className="text-sm">
                         <b>Order Credit Date</b>
@@ -138,10 +138,15 @@ function VendorCreditView() {
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         :{" "}
-                        {data.orderCreditDdate?.split("-").reverse().join("-") || ""}
+                        {data.orderCreditDdate
+                          ?.split("T")[0] // Splitting at "T" to remove the time part
+                          .split("-")
+                          .reverse()
+                          .join("-") || ""}
                       </p>
                     </div>
                   </div>
+
                   <div className="row mb-2 d-flex justify-content-end align-items-end">
                     <div className="col-6">
                       <p className="text-sm">
@@ -163,6 +168,36 @@ function VendorCreditView() {
                     <p className="fw-small">
                       Full Stack Developer Training Program
                     </p>
+                  </div>
+                </div>
+              </div>
+              <div className="row mt-2 p-3">
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Credit Note Number </b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.creditNoteNum || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Order Number</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.creditNoteNum || ""}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -210,7 +245,9 @@ function VendorCreditView() {
               </div>
               <div class="row mt-5">
                 <div className="col-md-6 col-12 mb-3 mt-5">
-                  <lable className="form-lable">Customer Notes : {data.notes}</lable>
+                  <lable className="form-lable">
+                    Customer Notes : {data.notes}
+                  </lable>
                   <div className="mb-3">Thanks For Your Bussiness</div>
                   <lable className="form-lable mt-2">Terms & Conditions</lable>
                   <div className="mb-3">{/* <p>{data.}</p> */}</div>

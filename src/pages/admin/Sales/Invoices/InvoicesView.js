@@ -215,7 +215,12 @@ function InvoicesView() {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.dueDate?.split("-").reverse().join("-") || ""}
+                        :{" "}
+                        {data.dueDate
+                          ?.split("T")[0]
+                          .split("-")
+                          .reverse()
+                          .join("-") || ""}
                       </p>
                     </div>
                   </div>
@@ -228,6 +233,36 @@ function InvoicesView() {
                     <p className="fw-small">
                       Full Stack Developer Training Program
                     </p>
+                  </div>
+                </div>
+              </div>
+              <div className="row mt-2 p-3">
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Invoice </b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.invoiceNumber || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Sales Person</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.salesperson || ""}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

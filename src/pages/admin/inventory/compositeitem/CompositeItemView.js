@@ -7,21 +7,26 @@ const CompositeItemView = () => {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-        try {
-          const response = await api.get(`/getAllCompositeItemsById/${id}`);
-          setData(response.data);
-        } catch (e) {
-          toast.error("Error fetching data: ", e?.response?.data?.message);
-        } finally {
-          setLoading(false);
-        }
+      try {
+        const response = await api.get(`/getAllCompositeItemsById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
     getData();
   }, [id]);
+  const itemName = (id) => {
+    const name = items.find((item) => item.id == id);
+    return name?.itemName;
+  };
 
   return (
     <div>
@@ -77,9 +82,7 @@ const CompositeItemView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.name || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.name || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -91,9 +94,7 @@ const CompositeItemView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.type || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.type || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -119,7 +120,9 @@ const CompositeItemView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.itemUnit || ""}</p>
+                      <p className="text-muted text-sm">
+                        : {data.itemUnit || ""}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -131,7 +134,9 @@ const CompositeItemView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.dimensions || ""}</p>
+                      <p className="text-muted text-sm">
+                        : {data.dimensions || ""}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -412,6 +417,76 @@ const CompositeItemView = () => {
                       <p className="text-muted text-sm">
                         : {data.purchaseAccountDescription || ""}
                       </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="row mt-5 flex-nowrap">
+                  <div className="col-12">
+                    <div className="table-responsive ">
+                      <div className="">
+                        <h3
+                          style={{ background: "#4066D5" }}
+                          className="text-light p-2"
+                        >
+                          Item Table
+                        </h3>
+                      </div>
+                      <table class="table">
+                        <thead className="thead-light">
+                          <tr>
+                            <th>S.NO</th>
+                            <th>ITEM DETAILS</th>
+                            <th>QUANTITY</th>
+                            <th>RATE</th>
+                            <th>DISCOUNT</th>
+                            <th>TAX</th>
+                            <th>AMOUNT</th>
+                          </tr>
+                        </thead>
+                        <tbody className="table-group">
+                          {data &&
+                            data.invoiceItemsModels &&
+                            data.invoiceItemsModels.map((item, index) => (
+                              <tr key={index}>
+                                <th scope="row">{index + 1}</th>
+                                <td>{itemName(item.item)}</td>
+                                <td>{item.qty}</td>
+                                <td>{item.price}</td>
+                                <td>{item.disc}</td>
+                                <td>{item.taxRate}</td>
+                                <td>{item.amount}</td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-5">
+                  <div className="col-md-6 col-12 mb-3 mt-5">
+                    <lable className="form-lable">Customer Notes :</lable>
+                    <div className="mb-3">{data.notes || ""}</div>
+                  </div>
+                  <div
+                    className="col-md-6 col-12 mt-5 mb-3 rounded"
+                    style={{ border: "1px solid lightgrey" }}
+                  >
+                    <div class="row mb-3 mt-2">
+                      <label class="col-sm-4 col-form-label">Sub Total</label>
+                      <div class="col-sm-4"></div>
+                      <div class="col-sm-4 ">: {data.subTotal || ""}</div>
+                    </div>
+                    <div class="row mb-3">
+                      <label class="col-sm-4 col-form-label">Total Tax</label>
+                      <div class="col-sm-4"></div>
+                      <div class="col-sm-4">: {data.totalTax || ""}</div>
+                      <div class="col-sm-4 "></div>
+                    </div>
+                    <hr></hr>
+                    <div class="row mb-3">
+                      <label class="col-sm-4 col-form-label">Total ( ₹ )</label>
+                      <div class="col-sm-4"></div>
+                      <div class="col-sm-4 ">: {data.total}</div>
                     </div>
                   </div>
                 </div>
