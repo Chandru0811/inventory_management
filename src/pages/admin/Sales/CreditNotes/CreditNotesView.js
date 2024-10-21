@@ -59,8 +59,7 @@ function CreditNotesView() {
                 <div className="container-fluid px-2 minHeight">
                     <div
                         className="card shadow border-0 mb-2 top-header"
-                        style={{ borderRadius: "0" }}
-                    >
+                        style={{ borderRadius: "0" }}>
                         <div className="container-fluid py-4">
                             <div className="row align-items-center">
                                 <div className="row align-items-center">
@@ -87,90 +86,82 @@ function CreditNotesView() {
                             </div>
                         </div>
                     </div>
-                    <div
-                        className="card shadow border-0 mb-2 minHeight"
-                        style={{ borderRadius: "0" }}
-                    >
+                    <div className="card shadow border-0 mb-2 minHeight"
+                        style={{ borderRadius: "0" }}>
                         <div className="container">
-                            <div className="row">
+                            <div className="row mt-2 p-3">
                                 <div className="col-md-6 col-12">
-                                    <div className="d-flex justify-content-center flex-column align-items-start">
-                                        <div class="d-flex">
-                                            {/* <img src={Logo} alt=".." className="mt-3" width={130} /> */}
-                                        </div>
-                                        <p className="fw-small mt-2">
-                                            Cloud ECS Infotech Pte Ltd<br></br>
-                                            Anna Salai<br></br>
-                                            Chennai - 600002,<br></br>
-                                            Tamil Nadu
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="col-md-6 col-12 d-flex justify-end flex-column align-items-end mt-2">
-                                    <h1>Credit Notes</h1>
-                                    <h3>#{data.creditNotesNUmber || "#1234"}</h3>
-                                </div>
-                            </div>
-                            <div className="row mt-5">
-                                <div className="col-md-6 col-12">
-                                    <div className="d-flex justify-content-center flex-column align-items-start">
-                                        <h3>Bill To</h3>
-                                        <span style={{ color: "#2196f3" }}>Manikandan</span>
-                                        <p className="fw-small">
-                                            Purasaiwalkam,<br></br>
-                                            Chennai - 600002,<br></br>
-                                            Tamil Nadu
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="col-md-6 col-12 text-end">
-                                    <div className="row mb-2  d-flex justify-content-end align-items-end">
-                                        <div className="col-6">
+                                    <div className="row mb-3">
+                                        <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>Issues Date</b>
+                                                <b>Customer Name</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
                                             <p className="text-muted text-sm">
-                                                :{" "}
-                                                {data.issuesDate?.split("-").reverse().join("-") || ""}
+                                                : {data.customerName || ""}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="row mb-2 d-flex justify-content-end align-items-end">
+                                </div>
+                                <div className="col-md-6 col-12">
+                                    <div className="row mb-3">
+                                        <div className="col-6 d-flex justify-content-start align-items-center">
+                                            <p className="text-sm">
+                                                <b>Credit Note</b>
+                                            </p>
+                                        </div>
                                         <div className="col-6">
+                                            <p className="text-muted text-sm">
+                                                : {data.creditNote || ""}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6 col-12">
+                                    <div className="row mb-3">
+                                        <div className="col-6 d-flex justify-content-start align-items-center">
+                                            <p className="text-sm">
+                                                <b>Sales Person</b>
+                                            </p>
+                                        </div>
+                                        <div className="col-6">
+                                            <p className="text-muted text-sm">
+                                                : {data.salesPerson || ""}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6 col-12">
+                                    <div className="row mb-3">
+                                        <div className="col-6 d-flex justify-content-start align-items-center">
+                                            <p className="text-sm">
+                                                <b>Subject</b>
+                                            </p>
+                                        </div>
+                                        <div className="col-6">
+                                            <p className="text-muted text-sm">
+                                                : {data.subject || ""}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6 col-12">
+                                    <div className="row mb-3">
+                                        <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
                                                 <b>Reference</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
-                                            <p className="text-muted text-sm">: {data.reference}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-2 d-flex justify-content-end align-items-end">
-                                        <div className="col-6">
-                                            <p className="text-sm">
-                                                <b>Due Date</b>
-                                            </p>
-                                        </div>
-                                        <div className="col-6">
                                             <p className="text-muted text-sm">
-                                                : {data.dueDate?.split("-").reverse().join("-") || ""}
+                                                : {data.reference || ""}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="row mt-5">
-                                <div className="col-md-6 col-12">
-                                    <div className="d-flex justify-content-center flex-column align-items-start">
-                                        <h3>Subject</h3>
-                                        <p className="fw-small">
-                                            Full Stack Developer Training Program
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+
                             <div className="row mt-5 flex-nowrap">
                                 <div className="col-12">
                                     <div className="table-responsive ">
@@ -203,7 +194,7 @@ function CreditNotesView() {
                                                             <td>{itemName(item.item)}</td>
                                                             <td>{item.qty}</td>
                                                             <td>{item.price}</td>
-                                                            <td>{item.discount}</td>
+                                                            <td>{item.disc}</td>
                                                             <td>{item.taxRate}</td>
                                                             <td>{item.amount}</td>
                                                         </tr>
@@ -215,10 +206,10 @@ function CreditNotesView() {
                             </div>
                             <div class="row mt-5">
                                 <div className="col-md-6 col-12 mb-3 mt-5">
-                                    <lable className="form-lable">Customer Notes</lable>
-                                    <div className="mb-3">Thanks For Your Bussiness</div>
-                                    <lable className="form-lable mt-2">Terms & Conditions</lable>
-                                    <div className="mb-3">{/* <p>{data.}</p> */}</div>
+                                    <lable className="form-lable">Customer Notes :</lable>
+                                    <div className="mb-3">{data.customerNotes || ""}</div>
+                                    <lable className="form-lable">Terms Condition :</lable>
+                                    <div className="mb-3">{data.customerNotes || ""}</div>
                                 </div>
                                 <div
                                     className="col-md-6 col-12 mt-5 mb-3 rounded"
@@ -242,9 +233,6 @@ function CreditNotesView() {
                                         <div class="col-sm-4 ">: {data.total}</div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="col-md-6 col-12 mb-5">
-                                Authorized Signature _____________________________
                             </div>
                         </div>
                     </div>

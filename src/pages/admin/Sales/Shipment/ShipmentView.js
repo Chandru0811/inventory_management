@@ -128,7 +128,9 @@ const ShipmentView = () => {
                                             </p>
                                         </div>
                                         <div className="col-6">
-                                            <p className="text-muted text-sm">: {data.shipDate || ""}</p>
+                                            <p className="text-muted text-sm">
+                                                : {data.shipDate ? new Date(data.shipDate).toLocaleDateString('en-GB') : ""}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>

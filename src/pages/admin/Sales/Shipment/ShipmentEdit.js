@@ -11,16 +11,11 @@ const ShipmentEdit = () => {
     const [loading, setLoadIndicator] = useState(false);
 
     const validationSchema = Yup.object({
-        customerName: Yup.string().required("*Customer Name is required"),
         salesOrder: Yup.string().required("*Sales Order is required"),
         packageNumber: Yup.string().required("*Package Number is required"),
         shipmentOrder: Yup.string().required("*Shipment Order is required"),
         shipDate: Yup.string().required("*Ship Date is required"),
         carrier: Yup.string().required("*Carrier is required"),
-        trackingNumber: Yup.string().required("*Tracking Number is required"),
-        trackingUrl: Yup.string().required("*Tracking Url is required"),
-        shippingCharge: Yup.string().required("*Shipping Charge is required"),
-        notes: Yup.string().required("*notes is required"),
         // shipmentDeliver: Yup.string().required("*Shipment Deliver is required"),
         // statusNotification: Yup.string().required("*Status Notification is required"),
     });
@@ -50,7 +45,7 @@ const ShipmentEdit = () => {
                 const response = await api.put(`/updateShipment/${id}`, values, {});
                 if (response.status === 200) {
                     toast.success(response.data.message);
-                    navigate("/salesorder");
+                    navigate("/shipment");
                 } else {
                     toast.error(response.data.message);
                 }
@@ -67,6 +62,9 @@ const ShipmentEdit = () => {
             try {
                 const response = await api.get(`/getShipmentsById/${id}`);
                 formik.setValues(response.data);
+                // formik.setValues({
+                //     shipDate: data.shipDate ? data.shipDate.split("T")[0] : "",
+                // });
             } catch (e) {
                 toast.error("Error fetching data: ", e?.response?.data?.message);
             }
@@ -125,7 +123,7 @@ const ShipmentEdit = () => {
                         <div className="row py-4">
                             <div className="col-md-6 col-12 mb-2">
                                 <lable className="form-lable">
-                                    Customer Name<span className="text-danger">*</span>
+                                    Customer Name
                                 </lable>
                                 <div className="mb-3">
                                     <input
@@ -149,7 +147,7 @@ const ShipmentEdit = () => {
 
                             <div className="col-md-6 col-12 mb-2">
                                 <lable className="form-lable">
-                                    salesOrder<span className="text-danger">*</span>
+                                    Sales Order<span className="text-danger">*</span>
                                 </lable>
                                 <div className="mb-3">
                                     <input
@@ -223,11 +221,9 @@ const ShipmentEdit = () => {
                                     <input
                                         type="date"
                                         name="shipDate"
-                                        className={`form-control  ${formik.touched.shipDate && formik.errors.shipDate
-                                            ? "is-invalid"
-                                            : ""
-                                            }`}
-                                        {...formik.getFieldProps("shipDate")}
+                                        className={`form-control ${formik.touched.shipDate && formik.errors.shipDate ? "is-invalid" : ""}`}
+                                        value={formik.values.shipDate ? new Date(formik.values.shipDate).toISOString().substring(0, 10) : ""}
+                                        onChange={formik.handleChange}
                                     />
                                     {formik.touched.shipDate && formik.errors.shipDate && (
                                         <div className="invalid-feedback">
@@ -235,6 +231,7 @@ const ShipmentEdit = () => {
                                         </div>
                                     )}
                                 </div>
+
                             </div>
 
                             <div className="col-md-6 col-12 mb-2">
@@ -260,7 +257,7 @@ const ShipmentEdit = () => {
                             </div>
                             <div className="col-md-6 col-12 mb-2">
                                 <lable className="form-lable">
-                                    Tracking Number<span className="text-danger">*</span>
+                                    Tracking Number
                                 </lable>
                                 <div className="mb-3">
                                     <input
@@ -281,7 +278,7 @@ const ShipmentEdit = () => {
                             </div>
                             <div className="col-md-6 col-12 mb-2">
                                 <lable className="form-lable">
-                                    TrackingUrl<span className="text-danger">*</span>
+                                    TrackingUrl
                                 </lable>
                                 <div className="mb-3">
                                     <input
@@ -302,7 +299,7 @@ const ShipmentEdit = () => {
                             </div>
                             <div className="col-md-6 col-12 mb-2">
                                 <lable className="form-lable">
-                                    Shipping Charge<span className="text-danger">*</span>
+                                    Shipping Charge
                                 </lable>
                                 <div className="mb-3">
                                     <input
@@ -323,7 +320,7 @@ const ShipmentEdit = () => {
                             </div>
                             <div className="col-md-6 col-12 mb-2">
                                 <lable className="form-lable">
-                                    Notes<span className="text-danger">*</span>
+                                    Notes
                                 </lable>
                                 <div className="mb-3">
                                     <input
@@ -343,20 +340,21 @@ const ShipmentEdit = () => {
                                 </div>
                             </div>
                             <div className="col-md-6 col-12 mb-2">
-                                <lable className="form-lable">
-                                    Shipment Deliver<span className="text-danger">*</span>
+                                <lable className="form-lable"
+                                    for="shipmentDeliver">
+                                    Shipment Deliver
                                 </lable>
                                 <div className="mb-3">
                                     <input
-                                        type="radio"
+                                        type="checkbox"
                                         name="shipmentDeliver"
                                         className={`form-check-input  ${formik.touched.shipmentDeliver && formik.errors.shipmentDeliver
                                             ? "is-invalid"
                                             : ""
                                             }`}
                                         {...formik.getFieldProps("shipmentDeliver")}
-                                        id="flexRadioDefault1"
-                                        checked
+                                        id="shipmentDeliver"
+                                        value="true"
                                     />
                                     {formik.touched.shipmentDeliver && formik.errors.shipmentDeliver && (
                                         <div className="invalid-feedback">
@@ -366,19 +364,21 @@ const ShipmentEdit = () => {
                                 </div>
                             </div>
                             <div className="col-md-6 col-12 mb-2">
-                                <lable className="form-lable">
-                                    Status Notification<span className="text-danger">*</span>
+                                <lable className="form-check-lable"
+                                    for="statusNotification">
+                                    Status Notification
                                 </lable>
                                 <div className="mb-3">
                                     <input
-                                        type="radio"
+                                        type="checkbox"
                                         name="statusNotification"
                                         className={`form-check-input  ${formik.touched.statusNotification && formik.errors.statusNotification
                                             ? "is-invalid"
                                             : ""
                                             }`}
                                         {...formik.getFieldProps("statusNotification")}
-                                        id="flexRadioDefault1"
+                                        id="statusNotification"
+                                        value="true"
                                     />
                                     {formik.touched.statusNotification && formik.errors.statusNotification && (
                                         <div className="invalid-feedback">

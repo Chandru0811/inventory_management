@@ -15,9 +15,6 @@ function CreditNotesAdd() {
     const validationSchema = Yup.object({
         customerName: Yup.string().required("*Customer name is required"),
         creditNote: Yup.string().required("*Credit Note is required"),
-        reference: Yup.string().required("*Reference is required"),
-        salesPerson: Yup.string().required("*Sales Person is required"),
-        subject: Yup.string().required("*subject is required"),
         // txnCreditNotesItemsModels: Yup.array().of(
         //     Yup.object({
         //         item: Yup.string().required("*Item is required"),
