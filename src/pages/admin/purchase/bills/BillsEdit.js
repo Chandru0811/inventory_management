@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import api from "../../../../../config/URL";
+import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 // import fetchAllCustomerWithIds from "../../List/CustomerList";
 // import fetchAllItemWithIds from "../../List/ItemList";

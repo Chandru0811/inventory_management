@@ -4,8 +4,8 @@ import "datatables.net-responsive-dt";
 import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
-import api from "../../../../../config/URL";
-import DeleteModel from "../../../../../components/admin/DeleteModel";
+import api from "../../../../config/URL";
+import DeleteModel from "../../../../components/admin/DeleteModel";
 
 const PurchaseReceive = () => {
   const tableRef = useRef(null);
