@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/admin/Dashboard";
 import "../styles/admin.css";
 import "../styles/admincdn.css";
+import "../styles/custom.css";
 import AdminSidebar from "../components/admin/AdminSidebar";
 import AdminHeader from "../components/admin/AdminHeader";
 import Items from "../pages/admin/inventory/items/Items";

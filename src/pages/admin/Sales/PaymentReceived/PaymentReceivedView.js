@@ -84,12 +84,12 @@ const PaymentReceivedView = () => {
                                     <div className="row mb-3">
                                         <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>Sales Order</b>
+                                                <b>Payment</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
                                             <p className="text-muted text-sm">
-                                                : {data.salesOrder || ""}
+                                                : {data.payment || ""}
                                             </p>
                                         </div>
                                     </div>
@@ -98,12 +98,12 @@ const PaymentReceivedView = () => {
                                     <div className="row mb-3">
                                         <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>Package Number</b>
+                                                <b>Amount Receive</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
                                             <p className="text-muted text-sm">
-                                                : {data.packageNumber || ""}
+                                                : {data.amountReceive || ""}
                                             </p>
                                         </div>
                                     </div>
@@ -112,11 +112,11 @@ const PaymentReceivedView = () => {
                                     <div className="row mb-3">
                                         <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>Shipment Order</b>
+                                                <b>Payment Charges</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
-                                            <p className="text-muted text-sm">: {data.shipmentOrder || ""}</p>
+                                            <p className="text-muted text-sm">: {data.paymentCharges || ""}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -124,11 +124,11 @@ const PaymentReceivedView = () => {
                                     <div className="row mb-3">
                                         <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>Ship Date</b>
+                                                <b>Tax Deduction</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
-                                            <p className="text-muted text-sm">: {data.shipDate || ""}</p>
+                                            <p className="text-muted text-sm">: {data.taxDeduction || ""}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -137,12 +137,12 @@ const PaymentReceivedView = () => {
                                     <div className="row mb-3">
                                         <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>Carrier</b>
+                                                <b>Payment Mode</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
                                             <p className="text-muted text-sm">
-                                                : {data.carrier || ""}
+                                                : {data.paymentMode || ""}
                                             </p>
                                         </div>
                                     </div>
@@ -151,12 +151,12 @@ const PaymentReceivedView = () => {
                                     <div className="row mb-3">
                                         <div className="col-6 d-flex justify-content-start align-items-center">
                                             <p className="text-sm">
-                                                <b>Tracking Number</b>
+                                                <b>Deposit To</b>
                                             </p>
                                         </div>
                                         <div className="col-6">
                                             <p className="text-muted text-sm">
-                                                : {data.trackingNumber || ""}
+                                                : {data.depositTo || ""}
                                             </p>
                                         </div>
                                     </div>

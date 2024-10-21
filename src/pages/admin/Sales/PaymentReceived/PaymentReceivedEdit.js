@@ -12,16 +12,9 @@ const PaymentReceivedEdit = () => {
 
     const validationSchema = Yup.object({
         customerName: Yup.string().required("*Customer Name is required"),
-        payment: Yup.string().required("*Payment is required"),
         amountReceive: Yup.string().required("*Amount Receive is required"),
-        paymentCharges: Yup.string().required("*Payment Charges is required"),
-        taxDeduction: Yup.string().required("*Tax Deduction is required"),
-        taxDeduction: Yup.string().required("*Tax Deduction is required"),
-        paymentMode: Yup.string().required("*Payment Mode is required"),
+        payment: Yup.string().required("*Payment is required"),
         depositTo: Yup.string().required("*Deposit To is required"),
-        reference: Yup.string().required("*Reference is required"),
-        attachFile: Yup.string().required("*File is required"),
-        notes: Yup.string().required("*notes is required"),
     });
     const formik = useFormik({
         initialValues: {
@@ -219,11 +212,11 @@ const PaymentReceivedEdit = () => {
                                         type="file"
                                         name="attachFile"
                                         className={`form-control ${formik.touched.attachFile && formik.errors.attachFile
-                                                ? "is-invalid"
-                                                : ""
+                                            ? "is-invalid"
+                                            : ""
                                             }`}
                                         onChange={(event) => {
-                                            formik.setFieldValue("attachFile", event.target.files[0]); // Manually set file
+                                            formik.setFieldValue("attachFile", event.target.files[0]);
                                         }}
                                     />
                                     {formik.touched.attachFile && formik.errors.attachFile && (
