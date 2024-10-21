@@ -187,6 +187,76 @@ const PackagesView = () => {
                 </div> */}
               </div>
             </div>
+            <div className="row mt-5 flex-nowrap container-fluid">
+                <div className="col-12">
+                  <div className="table-responsive ">
+                    <div className="">
+                      <h3
+                        style={{ background: "#4066D5" }}
+                        className="text-light p-2"
+                      >
+                        Item Table
+                      </h3>
+                    </div>
+                    <table class="table">
+                      <thead className="thead-light">
+                        <tr>
+                          <th>S.NO</th>
+                          <th>ITEM DETAILS</th>
+                          <th>QUANTITY</th>
+                          <th>RATE</th>
+                          <th>DISCOUNT</th>
+                          <th>TAX</th>
+                          <th>AMOUNT</th>
+                        </tr>
+                      </thead>
+                      <tbody className="table-group">
+                        {data &&
+                          data.invoiceItemsModels &&
+                          data.invoiceItemsModels.map((item, index) => (
+                            <tr key={index}>
+                              <th scope="row">{index + 1}</th>
+                              <td>(item.item)</td>
+                              <td>{item.qty}</td>
+                              <td>{item.price}</td>
+                              <td>{item.disc}</td>
+                              <td>{item.taxRate}</td>
+                              <td>{item.amount}</td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-5 container-fluid">
+                <div className="col-md-6 col-12 mb-3 mt-5">
+                  <lable className="form-lable">Customer Notes :</lable>
+                  <div className="mb-3">{data.notes || ""}</div>
+                </div>
+                <div
+                  className="col-md-6 col-12 mt-5 mb-3 rounded"
+                  style={{ border: "1px solid lightgrey" }}
+                >
+                  <div class="row mb-3 mt-2">
+                    <label class="col-sm-4 col-form-label">Sub Total</label>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4 ">: {data.subTotal || ""}</div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Total Tax</label>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">: {data.totalTax || ""}</div>
+                    <div class="col-sm-4 "></div>
+                  </div>
+                  <hr></hr>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Total ( ₹ )</label>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4 ">: {data.total}</div>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
       )}

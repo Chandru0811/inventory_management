@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
-import WareHouse from "./WareHouse";
 
 const WareHouseView = () => {
   const { id } = useParams();
@@ -12,14 +11,14 @@ const WareHouseView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+        try {
+          const response = await api.get(`/getAllWarehousesById/${id}`);
+          setData(response.data);
+        } catch (e) {
+          toast.error("Error fetching data: ", e?.response?.data?.message);
+        } finally {
+          setLoading(false);
+        }
     };
     getData();
   }, [id]);
@@ -71,7 +70,7 @@ const WareHouseView = () => {
           </div>
           <div
             className="card shadow border-0 mb-2 minHeight"
-            style={{ borderRadius: "0" }}
+            style={{ borderRadius: "0",minHeight:"80vh" }}
           >
             <div className="container">
               <div className="row mt-2 p-3">
@@ -84,7 +83,7 @@ const WareHouseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.contactName || ""}
+                        : {data.warehouseName || ""}
                       </p>
                     </div>
                   </div>
@@ -98,7 +97,21 @@ const WareHouseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.accNumber || ""}
+                        : {data.email || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Phone</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.phone || ""}
                       </p>
                     </div>
                   </div>
@@ -112,7 +125,7 @@ const WareHouseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.primaryContact || ""}
+                        : {data.attention || ""}
                       </p>
                     </div>
                   </div>
@@ -125,7 +138,7 @@ const WareHouseView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.email || ""}</p>
+                      <p className="text-muted text-sm">: {data.street1 || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -139,7 +152,7 @@ const WareHouseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.street2 || ""}
                       </p>
                     </div>
                   </div>
@@ -153,7 +166,7 @@ const WareHouseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.city || ""}
                       </p>
                     </div>
                   </div>
@@ -167,7 +180,7 @@ const WareHouseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.country || ""}
                       </p>
                     </div>
                   </div>
@@ -181,7 +194,7 @@ const WareHouseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.state || ""}
                       </p>
                     </div>
                   </div>
@@ -195,7 +208,7 @@ const WareHouseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.zipCode || ""}
                       </p>
                     </div>
                   </div>
