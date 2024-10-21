@@ -24,7 +24,7 @@ function AdminSidebar({ handleLogout }) {
 
   return (
     <nav
-      className="navbar show navbar-vertical h-screen navbar-expand-lg p-0 navbar-light border-bottom border-bottom-lg-0 border-end-lg"
+      className="navbar show navbar-vertical max-h-screen navbar-expand-lg p-0 navbar-light border-bottom border-bottom-lg-0 border-end-lg"
       id="navbarVertical"
     >
       <div className="container-fluid">

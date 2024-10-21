@@ -7,6 +7,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
 import api from "../../config/URL";
+import "../../styles/client.css";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -53,14 +54,14 @@ function Register() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       console.log(values);
-      values.role = "INV_ADMIN"
+      values.role = "INV_ADMIN";
       try {
         const response = await api.post("user-register", values, {
           // headers: {
-          //   'Content-Type': 'multipart/form-data', 
+          //   'Content-Type': 'multipart/form-data',
           // },
         });
-  
+
         if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/");
@@ -125,20 +126,28 @@ function Register() {
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group controlId="companyName" className="mb-3 pt-4 col-md-6 col-12">
+            <Form.Group
+              controlId="companyName"
+              className="mb-3 pt-4 col-md-6 col-12"
+            >
               <Form.Label>Company Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Company Name"
                 {...formik.getFieldProps("companyName")}
-                isInvalid={formik.touched.companyName && formik.errors.companyName}
+                isInvalid={
+                  formik.touched.companyName && formik.errors.companyName
+                }
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.companyName}
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group controlId="formEmail" className="mb-3 pt-4 col-md-6 col-12">
+            <Form.Group
+              controlId="formEmail"
+              className="mb-3 pt-4 col-md-6 col-12"
+            >
               <Form.Label>Email Address</Form.Label>
               <Form.Control
                 type="email"
@@ -156,7 +165,9 @@ function Register() {
               <div className="input-group">
                 <Form.Select
                   {...formik.getFieldProps("countryCode")}
-                  isInvalid={formik.touched.countryCode && formik.errors.countryCode}
+                  isInvalid={
+                    formik.touched.countryCode && formik.errors.countryCode
+                  }
                   className="form-select"
                   style={{ maxWidth: "120px" }}
                 >
@@ -177,7 +188,9 @@ function Register() {
 
             <Form.Group controlId="password" className="mb-3 col-md-6 col-12">
               <Form.Label>Password</Form.Label>
-              <div className="input-group">
+              <div
+                className="input-group"
+              >
                 <Form.Control
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter password"
@@ -197,14 +210,20 @@ function Register() {
               </div>
             </Form.Group>
 
-            <Form.Group controlId="actualPassword" className="mb-3 col-md-6 col-12">
+            <Form.Group
+              controlId="actualPassword"
+              className="mb-3 col-md-6 col-12"
+            >
               <Form.Label>Confirm Password</Form.Label>
               <div className="input-group">
                 <Form.Control
                   type={showactualPassword ? "text" : "password"}
                   placeholder="Confirm password"
                   {...formik.getFieldProps("actualPassword")}
-                  isInvalid={formik.touched.actualPassword && formik.errors.actualPassword}
+                  isInvalid={
+                    formik.touched.actualPassword &&
+                    formik.errors.actualPassword
+                  }
                 />
                 <span
                   className="input-group-text"
@@ -300,7 +319,7 @@ function Register() {
           <Button
             variant="primary"
             type="submit"
-            className="w-100 my-3"
+            className="my-5 mx-auto d-block reg_btn"
             disabled={loadIndicator}
           >
             {loadIndicator ? "Please Wait..." : "Register"}
