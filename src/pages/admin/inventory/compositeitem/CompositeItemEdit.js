@@ -50,16 +50,7 @@ const CompositeItemEdit = () => {
       openingStockRate: "",
       reorderPoint: "",
       compositeItemImage: null,
-      txnInvoiceOrderItemsModels: [
-        {
-          item: "",
-          qty: "",
-          price: "",
-          disc: "",
-          taxRate: "",
-          amount: "",
-        },
-    ],
+      txnInvoiceOrderItemsModels: [],
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -189,8 +180,9 @@ const CompositeItemEdit = () => {
   };
 
   const AddRowContent = () => {
+    console.log("Current txnInvoiceOrderItemsModels:", formik.values.txnInvoiceOrderItemsModels);
     formik.setFieldValue("txnInvoiceOrderItemsModels", [
-      ...formik.values.txnInvoiceOrderItemsModels,
+      ...(formik.values.txnInvoiceOrderItemsModels || []),
       {
         item: "",
         qty: "",
@@ -201,6 +193,7 @@ const CompositeItemEdit = () => {
       },
     ]);
   };
+  
 
   const deleteRow = (index) => {
     if (formik.values.txnInvoiceOrderItemsModels.length === 1) {
