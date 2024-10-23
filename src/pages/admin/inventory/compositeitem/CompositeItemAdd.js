@@ -49,6 +49,16 @@ const CompositeItemAdd = () => {
       openingStockRate: "",
       reorderPoint: "",
       compositeItemImage: null,
+      txnInvoiceOrderItemsModels: [
+        {
+          item: "",
+          qty: "",
+          price: "",
+          disc: "",
+          taxRate: "",
+          amount: "",
+        },
+    ],
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -99,63 +109,63 @@ const CompositeItemAdd = () => {
       }
     },
   });
-  useEffect(() => {
-    const updateAndCalculate = async () => {
-      try {
-        let totalRate = 0;
-        let totalAmount = 0;
-        let totalTax = 0;
-        let discAmount = 0;
-        const updatedItems = await Promise.all(
-          formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-            if (
-              item.qty &&
-              item.price &&
-              item.disc !== undefined &&
-              item.taxRate !== undefined
-            ) {
-              const amount = calculateAmount(
-                item.qty,
-                item.price,
-                item.disc,
-                item.taxRate
-              );
-              const itemTotalRate = item.qty * item.price;
-              const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-              const itemTotalDisc = itemTotalRate * (item.disc / 100);
-              discAmount += itemTotalDisc;
-              totalRate += item.price;
-              totalAmount += amount;
-              totalTax += itemTotalTax;
-              return { ...item, amount };
-            }
-            return item;
-          })
-        );
-        formik.setValues({
-          ...formik.values,
-          txnInvoiceOrderItemsModels: updatedItems,
-        });
-        formik.setFieldValue("subTotal", totalRate);
-        formik.setFieldValue("total", totalAmount);
-        formik.setFieldValue("totalTax", totalTax);
-        formik.setFieldValue("discountAmount", discAmount);
-      } catch (error) {
-        toast.error("Error updating items: ", error.message);
-      }
-    };
+  // useEffect(() => {
+  //   const updateAndCalculate = async () => {
+  //     try {
+  //       let totalRate = 0;
+  //       let totalAmount = 0;
+  //       let totalTax = 0;
+  //       let discAmount = 0;
+  //       const updatedItems = await Promise.all(
+  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
+  //           if (
+  //             item.qty &&
+  //             item.price &&
+  //             item.disc !== undefined &&
+  //             item.taxRate !== undefined
+  //           ) {
+  //             const amount = calculateAmount(
+  //               item.qty,
+  //               item.price,
+  //               item.disc,
+  //               item.taxRate
+  //             );
+  //             const itemTotalRate = item.qty * item.price;
+  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
+  //             const itemTotalDisc = itemTotalRate * (item.disc / 100);
+  //             discAmount += itemTotalDisc;
+  //             totalRate += item.price;
+  //             totalAmount += amount;
+  //             totalTax += itemTotalTax;
+  //             return { ...item, amount };
+  //           }
+  //           return item;
+  //         })
+  //       );
+  //       formik.setValues({
+  //         ...formik.values,
+  //         txnInvoiceOrderItemsModels: updatedItems,
+  //       });
+  //       formik.setFieldValue("subTotal", totalRate);
+  //       formik.setFieldValue("total", totalAmount);
+  //       formik.setFieldValue("totalTax", totalTax);
+  //       formik.setFieldValue("discountAmount", discAmount);
+  //     } catch (error) {
+  //       toast.error("Error updating items: ", error.message);
+  //     }
+  //   };
 
-    updateAndCalculate();
-  }, [
-    formik.values.txnInvoiceOrderItemsModels?.map((item) => item.qty).join(""),
-    formik.values.txnInvoiceOrderItemsModels
-      ?.map((item) => item.price)
-      .join(""),
-    formik.values.txnInvoiceOrderItemsModels?.map((item) => item.disc).join(""),
-    formik.values.txnInvoiceOrderItemsModels
-      ?.map((item) => item.taxRate)
-      .join(""),
-  ]);
+  //   updateAndCalculate();
+  // }, [
+  //   formik.values.txnInvoiceOrderItemsModels?.map((item) => item.qty).join(""),
+  //   formik.values.txnInvoiceOrderItemsModels
+  //     ?.map((item) => item.price)
+  //     .join(""),
+  //   formik.values.txnInvoiceOrderItemsModels?.map((item) => item.disc).join(""),
+  //   formik.values.txnInvoiceOrderItemsModels
+  //     ?.map((item) => item.taxRate)
+  //     .join(""),
+  // ]);
 
   const calculateAmount = (qty, price, disc, taxRate) => {
     const totalRate = qty * price;
@@ -302,7 +312,7 @@ const CompositeItemAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">compositeItemImage</lable>
+                <lable className="form-lable">Composite Item Image</lable>
                 <div className="mb-3">
                   <input
                     type="file"
