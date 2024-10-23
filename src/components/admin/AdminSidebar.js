@@ -6,7 +6,7 @@ import { BiLogOut, BiSolidCategory } from "react-icons/bi";
 import { MdCategory } from "react-icons/md";
 import { FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { AiOutlineBarChart, AiOutlineShoppingCart } from "react-icons/ai";
-import { FiSettings } from "react-icons/fi";
+import { FiSettings, FiTool } from "react-icons/fi";
 import { RiFileList3Line } from "react-icons/ri";
 
 function AdminSidebar({ handleLogout }) {
@@ -24,7 +24,7 @@ function AdminSidebar({ handleLogout }) {
 
   return (
     <nav
-      className="navbar show navbar-vertical max-h-screen navbar-expand-lg p-0 navbar-light border-bottom border-bottom-lg-0 border-end-lg"
+      className="navbar max-h-screen overflow-y-auto show navbar-vertical navbar-expand-lg p-0 navbar-light border-bottom border-bottom-lg-0 border-end-lg"
       id="navbarVertical"
     >
       <div className="container-fluid">
@@ -40,18 +40,16 @@ function AdminSidebar({ handleLogout }) {
           <span className="navbar-toggler-icon"></span>
         </button>
         <NavLink
-          className="nav-logo py-lg-2 px-lg-6 m-0 d-flex align-items-center justify-content-start gap-3"
+          className="nav-logo py-2 px-lg-6 m-0 d-flex align-items-center justify-content-start gap-3"
           to="/"
         >
           <img
             src={deals}
             alt="deals"
-            className="img-fluid sidebar-logo rounded-circle"
+            className="img-fluid sidebar-logo rounded-circle "
             style={{
               background: "#fff",
               borderRadius: "5px",
-              width: "50px",
-              height: "50px",
             }}
           />
           <p className="text-white">Inventory</p>
@@ -70,7 +68,9 @@ function AdminSidebar({ handleLogout }) {
 
             <li className="nav-item">
               <div
-                className="nav-link d-flex justify-content-between align-items-center"
+                className={`nav-link submenu d-flex justify-content-between align-items-center ${
+                  activeSubmenu === "inventory" ? "active" : ""
+                }`}
                 onClick={() => toggleSubmenu("inventory")}
               >
                 <span>
@@ -78,34 +78,34 @@ function AdminSidebar({ handleLogout }) {
                   Inventory
                 </span>
                 {activeSubmenu === "inventory" ? (
-                  <FaChevronDown />
+                  <FaChevronDown className="chevron-icon" />
                 ) : (
-                  <FaChevronRight />
+                  <FaChevronRight className="chevron-icon" />
                 )}
               </div>
               {activeSubmenu === "inventory" && (
-                <ul className="list-unstyled ps-3">
-                  <li>
+                <ul className="list-unstyled navbar-nav ps-3">
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/item">
                       Items
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/compositeitem">
                       Composite Items
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/itemgroup">
                       Item Groups
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/pricelist">
                       Price Lists
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/inventoryadjustment">
                       Inventory Adjustments
                     </NavLink>
@@ -116,7 +116,9 @@ function AdminSidebar({ handleLogout }) {
 
             <li className="nav-item">
               <div
-                className="nav-link d-flex justify-content-between align-items-center"
+                className={`nav-link submenu d-flex justify-content-between align-items-center ${
+                  activeSubmenu === "sales" ? "active" : ""
+                }`}
                 onClick={() => toggleSubmenu("sales")}
               >
                 <span>
@@ -124,49 +126,49 @@ function AdminSidebar({ handleLogout }) {
                   Sales
                 </span>
                 {activeSubmenu === "sales" ? (
-                  <FaChevronDown />
+                 <FaChevronDown className="chevron-icon" />
                 ) : (
-                  <FaChevronRight />
+                  <FaChevronRight className="chevron-icon" />
                 )}
               </div>
               {activeSubmenu === "sales" && (
-                <ul className="list-unstyled ps-3">
-                  <li>
+                <ul className="list-unstyled navbar-nav ps-3">
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/customers">
                       Customers
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/salesorder">
                       Sales Order
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/packages">
                       Packages
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/shipment">
                       Shipment
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/paymentreceived">
                       Payment Received
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/creditnotes">
                       Credit Notes
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/challan">
                       Delivery Challans
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/invoice">
                       Invoices
                     </NavLink>
@@ -176,7 +178,9 @@ function AdminSidebar({ handleLogout }) {
             </li>
             <li className="nav-item">
               <div
-                className="nav-link d-flex justify-content-between align-items-center"
+                className={`nav-link submenu d-flex justify-content-between align-items-center ${
+                  activeSubmenu === "purchases" ? "active" : ""
+                }`}
                 onClick={() => toggleSubmenu("purchases")}
               >
                 <span>
@@ -184,40 +188,40 @@ function AdminSidebar({ handleLogout }) {
                   Purchases
                 </span>
                 {activeSubmenu === "purchases" ? (
-                  <FaChevronDown />
+                 <FaChevronDown className="chevron-icon" />
                 ) : (
-                  <FaChevronRight />
+                  <FaChevronRight className="chevron-icon" />
                 )}
               </div>
               {activeSubmenu === "purchases" && (
-                <ul className="list-unstyled ps-3">
-                  <li>
+                <ul className="list-unstyled navbar-nav ps-3">
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/vendor">
                       Vendors
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/order">
                       Purchases Order
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/purchasereceive">
                       Purchases Receives
                     </NavLink>
                   </li>
 
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/bills">
                       Bills
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/vendorcredit">
                       Vendor credit
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/paymentmade">
                       Payment Made
                     </NavLink>
@@ -228,34 +232,63 @@ function AdminSidebar({ handleLogout }) {
 
             <li className="nav-item">
               <div
-                className="nav-link d-flex justify-content-between align-items-center"
+                   className={`nav-link submenu d-flex justify-content-between align-items-center ${
+                    activeSubmenu === "integrations" ? "active" : ""
+                  }`}
                 onClick={() => toggleSubmenu("integrations")}
               >
                 <span>
-                  <FiSettings className="me-2" />
+                <FiTool className="me-2" />
                   Integrations
                 </span>
                 {activeSubmenu === "integrations" ? (
-                  <FaChevronDown />
+                 <FaChevronDown className="chevron-icon" />
                 ) : (
-                  <FaChevronRight />
+                  <FaChevronRight className="chevron-icon" />
                 )}
               </div>
               {activeSubmenu === "integrations" && (
-                <ul className="list-unstyled ps-3">
-                  <li>
+                <ul className="list-unstyled navbar-nav ps-3">
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/warehouse">
                       Warehouses
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/brand">
                       Branding
                     </NavLink>
                   </li>
-                  <li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/currency">
                       Currencies
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
+            </li>
+            <li className="nav-item">
+              <div
+                   className={`nav-link submenu d-flex justify-content-between align-items-center ${
+                    activeSubmenu === "settings" ? "active" : ""
+                  }`}
+                onClick={() => toggleSubmenu("settings")}
+              >
+                <span>
+                  <FiSettings className="me-2" />
+                  Settings
+                </span>
+                {activeSubmenu === "settings" ? (
+                 <FaChevronDown className="chevron-icon" />
+                ) : (
+                  <FaChevronRight className="chevron-icon" />
+                )}
+              </div>
+              {activeSubmenu === "settings" && (
+                <ul className="list-unstyled navbar-nav ps-3">
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/salesPersons">
+                      Sales Persons
                     </NavLink>
                   </li>
                 </ul>
