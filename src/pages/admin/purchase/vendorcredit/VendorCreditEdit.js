@@ -134,7 +134,7 @@ function VendorCreditEdit() {
         formik.setFieldValue("totalTax", totalTax);
         formik.setFieldValue("discountAmount", discAmount);
       } catch (error) {
-        toast.error("Error updating items: ", error.message);
+        // toast.error("Error updating items: ", error.message);
       }
     };
 
@@ -186,7 +186,7 @@ function VendorCreditEdit() {
         formik.setFieldValue("totalTax", totalTax);
         formik.setFieldValue("discountAmount", discAmount);
       } catch (error) {
-        toast.error("Error updating items: ", error.message);
+        // toast.error("Error updating items: ", error.message);
       }
     };
 

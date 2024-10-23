@@ -123,7 +123,7 @@ function ChallanEdit() {
                 formik.setFieldValue("totalTax", totalTax);
                 formik.setFieldValue("discountAmount", discAmount);
             } catch (error) {
-                toast.error("Error updating items: ", error.message);
+                // toast.error("Error updating items: ", error.message);
             }
         };
 
@@ -174,7 +174,7 @@ function ChallanEdit() {
                 formik.setFieldValue("totalTax", totalTax);
                 formik.setFieldValue("discountAmount", discAmount);
             } catch (error) {
-                toast.error("Error updating items: ", error.message);
+                // toast.error("Error updating items: ", error.message);
             }
         };
 
