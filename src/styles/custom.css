@@ -5,27 +5,6 @@
   font-family: "Nunito Sans", sans-serif;
 }
 
-.nav-link.active {
-  color: #6182e6 !important;
-}
-
-.navbar-vertical.navbar-light .navbar-nav>.nav-item>.nav-link:hover {
-  background-color: #d8e1ff;
-  color: #000;
-  cursor: pointer;
-}
-
-.navbar-vertical.navbar-light .navbar-nav>.nav-item>.nav-link:hover i,
-.navbar-vertical.navbar-light .navbar-nav>.nav-item>.nav-link.active i {
-  color: #000;
-  cursor: pointer;
-}
-
-
-.nav-link {
-  font-weight: small !important;
-}
-
 .minHeight {
   min-height: 85vh;
 }

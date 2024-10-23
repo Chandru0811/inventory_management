@@ -97,6 +97,7 @@ import CurrencyAdd from "../pages/admin/integration/currencies/CurrencyAdd";
 import Currency from "../pages/admin/integration/currencies/Currency";
 import CurrencyEdit from "../pages/admin/integration/currencies/CurrencyEdit";
 import CurrencyView from "../pages/admin/integration/currencies/CurrencyView";
+import SalesPersons from "../pages/admin/Settings/SalesPersons";
 
 
 function Admin({ handleLogout }) {
@@ -270,6 +271,9 @@ function Admin({ handleLogout }) {
                   <Route path="/order/add" element={<OrderAdd />} />
                   <Route path="/order/edit/:id" element={<OrderEdit />} />
                   <Route path="/order/view/:id" element={<OrderView />} />
+
+                  {/* {/ sales persons /} */}
+                  <Route path="/salesPersons" element={<SalesPersons />} />
                 </Routes>
               </div>
             </main>

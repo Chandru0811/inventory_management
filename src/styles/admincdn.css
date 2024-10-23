@@ -10919,6 +10919,21 @@
     background-color: #181c2e;
     color: #fff;
   }
+  .submenu.active {
+    background-color: #181c2e !important;
+    color: #007bff !important;  
+  }
+  
+  .submenu.active span {
+    color: #007bff !important; 
+  }
+  .submenu.active .chevron-icon {
+    color: #007bff;
+  }
+  
+  .submenu .chevron-icon {
+    color: inherit; 
+  }
   
   .navbar-vertical.navbar-light .navbar-nav .list-unstyled .nav-link:hover::after {
     content: "+";
@@ -10935,7 +10950,22 @@
     font-size: 14px;
     transition: transform 0.3s;
   }
-  
+  .navbar-vertical.navbar-light .navbar-nav .list-unstyled .nav-link.active::after {
+    content: "+";
+    position: absolute;
+    right: 10px;
+    background-color: #fff;
+    color: #181c2e;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 14px;
+    transition: transform 0.3s;
+  }
+   
   
   .navbar-vertical.navbar-light .navbar-nav>.nav-item>.nav-link.active {
     background-color: #408dfb;
