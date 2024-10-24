@@ -11,14 +11,14 @@ const CurrencyView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     setData(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoading(false);
-      //   }
+        try {
+          const response = await api.get(`/getAllCurrencyById/${id}`);
+          setData(response.data);
+        } catch (e) {
+          toast.error("Error fetching data: ", e?.response?.data?.message);
+        } finally {
+          setLoading(false);
+        }
     };
     getData();
   }, [id]);

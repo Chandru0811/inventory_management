@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "../../../../config/URL";
+import toast from "react-hot-toast";
 
 const CurrencyEdit = () => {
   const { id } = useParams();
@@ -10,88 +11,47 @@ const CurrencyEdit = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    currencyCode: Yup.string().required("*Contact Name is required"),
-    accNumber: Yup.string().required("*Account Number is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    email: Yup.string().required("*Email is required"),
-    phone: Yup.number().required("*Phone is required"),
-    website: Yup.string().required("*Website is required"),
-    bankAccName: Yup.string().required("*Account Name is required"),
-    bankAccNumber: Yup.string().required("*Account Number is required"),
-
-    // deliCountry: Yup.number().required("*Country is required"),
-    // deliAddress: Yup.string().required("*Address is required"),
-    // deliCity: Yup.string().required("*City is required"),
-    // deliState: Yup.string().required("*State is required"),
-    // deliZip: Yup.number().required("*Zip is required"),
-    // deliAttention: Yup.number().required("*Attention is required"),
-
-    // billCountry: Yup.number().required("*Country is required"),
-    // billAddress: Yup.string().required("*Address is required"),
-    // billCity: Yup.string().required("*City is required"),
-    // billState: Yup.string().required("*State is required"),
-    // billZip: Yup.number().required("*Zip is required"),
-    // billAttention: Yup.number().required("*Attention is required"),
-    // notes: Yup.number().required("*Remarks is required"),
+    currencyName: Yup.string().required("*Currency Name is required"),
   });
-
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
-      contactName: "",
-      accNumber: "",
-      primaryContact: "",
-      email: "",
-      phone: "",
-      website: "",
-      bankAccName: "",
-      bankAccNumber: "",
-      deliCountry: "",
-      deliAddress: "",
-      deliCity: "",
-      deliState: "",
-      deliZip: "",
-      deliAttention: "",
-      billCountry: "",
-      billAddress: "",
-      billCity: "",
-      billState: "",
-      billZip: "",
-      billAttention: "",
-      notes: "",
+      currencyName: "",
+      currencyCode: "",
+      currencySymbol: "",
+      decimalPlaces: "",
+      format: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-      //   try {
-      //     const response = await api.put(`/updateMstrCustomer/${id}`, values, {});
-      //     if (response.status === 200) {
-      //       toast.success(response.data.message);
-      //       navigate("/customer");
-      //     } else {
-      //       toast.error(response.data.message);
-      //     }
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   } finally {
-      //     setLoadIndicator(false);
-      //   }
+        try {
+          const response = await api.put(`/updateCurrency/${id}`, values);
+          if (response.status === 200) {
+            toast.success(response.data.message);
+            navigate("/currency");
+          } else {
+            toast.error(response.data.message);
+          }
+        } catch (e) {
+          toast.error("Error fetching data: ", e?.response?.data?.message);
+        } finally {
+          setLoadIndicator(false);
+        }
     },
   });
 
   useEffect(() => {
     const getData = async () => {
-      //   try {
-      //     const response = await api.get(`/getMstrCustomerById/${id}`);
-      //     formik.setValues(response.data);
-      //   } catch (e) {
-      //     toast.error("Error fetching data: ", e?.response?.data?.message);
-      //   }
+        try {
+          const response = await api.get(`/getAllCurrencyById/${id}`);
+          formik.setValues(response.data);
+        } catch (e) {
+          toast.error("Error fetching data: ", e?.response?.data?.message);
+        }
     };
 
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -128,7 +88,7 @@ const CurrencyEdit = () => {
                     ) : (
                       <span></span>
                     )}
-                    &nbsp;<span>Save</span>
+                    &nbsp;<span>Update</span>
                   </button>
                 </div>
               </div>
@@ -138,7 +98,7 @@ const CurrencyEdit = () => {
 
         <div
           className="card shadow border-0 my-2"
-          style={{ borderRadius: "0" }}
+          style={{ borderRadius: "0",minHeight:"70vh" }}
         >
           <div className="row mt-3 me-2">
             <div className="col-12 text-end"></div>

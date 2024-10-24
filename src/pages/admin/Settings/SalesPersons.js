@@ -7,6 +7,7 @@ import SalesPersonsAdd from "./SalesPersonsAdd";
 import api from "../../../config/URL";
 import DeleteModel from "../../../components/admin/DeleteModel";
 import SalesOrderEdit from "../Sales/SalesOrder/SalesOrderEdit";
+import SalesPersonsEdit from "./SalesPersonsEdit";
 
 const SalesPersons = () => {
   const tableRef = useRef(null);
@@ -16,7 +17,7 @@ const SalesPersons = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/salesPersons");
+        const response = await api.get("/getSalesPerson");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -57,7 +58,7 @@ const SalesPersons = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/salesPersons");
+      const response = await api.get("/getSalesPerson");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -104,7 +105,9 @@ const SalesPersons = () => {
                   </div>
                   <div className="col-auto">
                     <div className="hstack gap-2 justify-content-end">
-                   <SalesPersonsAdd />
+                   <SalesPersonsAdd 
+                     onSuccess={refreshData}
+                     />
                     </div>
                   </div>
                 </div>
@@ -137,19 +140,17 @@ const SalesPersons = () => {
                     {datas.map((data, index) => (
                       <tr key={index}>
                         <td className="text-center">{index + 1}</td>
-                        <td className="text-center">{data.Name}</td>
-                        <td className="text-center">{data.Email}</td>
-                        <td className="text-center">
-                          <div className="gap-2">
-                            <Link to={`/customers/view/${data.id}`}>
-                              <button className="btn btn-light btn-sm  shadow-none border-none">
-                                View
-                              </button>
-                            </Link>
-                            <SalesOrderEdit />
+                        <td className="text-center">{data.name}</td>
+                        <td className="text-center">{data.email}</td>
+                        <td className="">
+                          <div className="d-flex justify-content-center gap-2">
+                            <SalesPersonsEdit 
+                              onSuccess={refreshData}
+                              id={data.id}
+                              />
                             <DeleteModel
                               onSuccess={refreshData}
-                              path={`/deleteCustomers/${data.id}`}
+                              path={`/deleteSalesPerson/${data.id}`}
                             />
                           </div>
                         </td>
