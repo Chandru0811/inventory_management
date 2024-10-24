@@ -5,17 +5,17 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
+import DeleteModel from "../../../../components/admin/DeleteModel";
 
 const Currency = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllMstrCustomers");
+        const response = await api.get("/getAllCurrency");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,7 +56,7 @@ const Currency = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllItems");
+      const response = await api.get("/getAllCurrency");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -154,23 +154,23 @@ const Currency = () => {
                       <td className="text-center">{data.currencySymbol}</td>
                       <td className="text-center">
                         <div className="gap-2">
-                          <Link to={`/customer/view/${data.id}`}>
+                          <Link to={`/currency/view/${data.id}`}>
                             <button className="btn btn-light btn-sm  shadow-none border-none">
                               View
                             </button>
                           </Link>
                           <Link
-                            to={`/customer/edit/${data.id}`}
+                            to={`/currency/edit/${data.id}`}
                             className="px-2"
                           >
                             <button className="btn btn-light  btn-sm shadow-none border-none">
                               Edit
                             </button>
                           </Link>
-                          {/* <DeleteModel
+                          <DeleteModel
                             onSuccess={refreshData}
-                            path={`/deleteMstrCustomer/${data.id}`}
-                          /> */}
+                            path={`/deleteCurrency/${data.id}`}
+                          /> 
                         </div>
                       </td>
                     </tr>

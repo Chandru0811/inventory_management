@@ -10,64 +10,25 @@ const CurrencyAdd = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    contactName: Yup.string().required("*Contact Name is required"),
-    accNumber: Yup.string().required("*Account Number is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    email: Yup.string().required("*Email is required"),
-    phone: Yup.number().required("*Phone is required"),
-    website: Yup.string().required("*Website is required"),
-    bankAccName: Yup.string().required("*Account Nameis required"),
-    bankAccNumber: Yup.string().required("*Account Number is required"),
-
-    // deliCountry: Yup.number().required("*Country is required"),
-    // deliAddress: Yup.string().required("*Address is required"),
-    // deliCity: Yup.string().required("*City is required"),
-    // deliState: Yup.string().required("*State is required"),
-    // deliZip: Yup.number().required("*Zip is required"),
-    // deliAttention: Yup.number().required("*Attention is required"),
-
-    // billCountry: Yup.number().required("*Country is required"),
-    // billAddress: Yup.string().required("*Address is required"),
-    // billCity: Yup.string().required("*City is required"),
-    // billState: Yup.string().required("*State is required"),
-    // billZip: Yup.number().required("*Zip is required"),
-    // billAttention: Yup.number().required("*Attention is required"),
-    // notes: Yup.number().required("*Remarks is required"),
+    currencyName: Yup.string().required("*Currency Name is required"),
   });
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
-      contactName: "",
-      accNumber: "",
-      primaryContact: "",
-      email: "",
-      phone: "",
-      website: "",
-      bankAccName: "",
-      bankAccNumber: "",
-      deliCountry: "",
-      deliAddress: "",
-      deliCity: "",
-      deliState: "",
-      deliZip: "",
-      deliAttention: "",
-      billCountry: "",
-      billAddress: "",
-      billCity: "",
-      billState: "",
-      billZip: "",
-      billAttention: "",
-      notes: "",
+      currencyName: "",
+      currencyCode: "",
+      currencySymbol: "",
+      decimalPlaces: "",
+      format: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
       try {
-        const response = await api.post("/createMstrCustomer", values, {});
+        const response = await api.post("/createCurrency", values);
         if (response.status === 201) {
           toast.success(response.data.message);
-          navigate("/customer");
+          navigate("/currency");
         } else {
           toast.error(response.data.message);
         }
@@ -123,7 +84,7 @@ const CurrencyAdd = () => {
 
         <div
           className="card shadow border-0 my-2"
-          style={{ borderRadius: "0" }}
+          style={{ borderRadius: "0",minHeight:"70vh" }}
         >
           <div className="row mt-3 me-2">
             <div className="col-12 text-end"></div>

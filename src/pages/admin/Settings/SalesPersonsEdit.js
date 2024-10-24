@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import api from "../../../config/URL";
 
-function SalesPersonsEdit() {
+function SalesPersonsEdit({ onSuccess, id }) {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoadIndicator] = useState(false);
   const navigate = useNavigate();
@@ -26,11 +26,11 @@ function SalesPersonsEdit() {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        const response = await api.post("/createCustomers", values);
-        if (response.status === 201) {
+        const response = await api.put(`updateSalesPerson/${id}`, values);
+        if (response.status === 200) {
           setShowModal(false);
+          onSuccess();
           toast.success(response.data.message);
-          navigate("/salesPersons");
         } else {
           toast.error(response.data.message);
         }
@@ -41,11 +41,23 @@ function SalesPersonsEdit() {
       }
     },
   });
+  const handleShowModal = async () => {
+    setShowModal(true);
+    try {
+      const response = await api.get(`/getSalesPerosnById/${id}`);
+      formik.setValues(response.data);
+    } catch (e) {
+      toast.error("Error fetching data: " + e?.response?.data?.message);
+    }
+  };
 
   return (
     <div>
-      <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-        Edit Salesperson
+      <button
+        className="btn btn-light btn-sm  shadow-none border-none"
+        onClick={handleShowModal}
+      >
+        Edit
       </button>
 
       {showModal && (
@@ -70,45 +82,47 @@ function SalesPersonsEdit() {
               </div>
               <div className="modal-body">
                 <form onSubmit={formik.handleSubmit}>
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Name<span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      className={`form-control ${
-                        formik.touched.name && formik.errors.name
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      {...formik.getFieldProps("name")}
-                    />
-                    {formik.touched.name && formik.errors.name && (
-                      <div className="invalid-feedback">
-                        {formik.errors.name}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Email<span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      className={`form-control ${
-                        formik.touched.email && formik.errors.email
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      {...formik.getFieldProps("email")}
-                    />
-                    {formik.touched.email && formik.errors.email && (
-                      <div className="invalid-feedback">
-                        {formik.errors.email}
-                      </div>
-                    )}
+                  <div className="row">
+                    <div className="col-12 mb-3">
+                      <label className="form-label">
+                        Name<span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        className={`form-control ${
+                          formik.touched.name && formik.errors.name
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("name")}
+                      />
+                      {formik.touched.name && formik.errors.name && (
+                        <div className="invalid-feedback">
+                          {formik.errors.name}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-12 mb-3">
+                      <label className="form-label">
+                        Email<span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        className={`form-control ${
+                          formik.touched.email && formik.errors.email
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("email")}
+                      />
+                      {formik.touched.email && formik.errors.email && (
+                        <div className="invalid-feedback">
+                          {formik.errors.email}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="modal-footer">
                     <button

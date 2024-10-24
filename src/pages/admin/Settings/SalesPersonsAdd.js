@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import api from "../../../config/URL";
 
-function SalesPersonsAdd() {
+function SalesPersonsAdd({onSuccess}) {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoadIndicator] = useState(false);
   const navigate = useNavigate();
@@ -27,11 +27,11 @@ function SalesPersonsAdd() {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        const response = await api.post("/createCustomers", values);
+        const response = await api.post("/createSalesPerson", values);
         if (response.status === 201) {
           setShowModal(false);
+          onSuccess();
           toast.success(response.data.message);
-          navigate("/salesPersons");
         } else {
           toast.error(response.data.message);
         }
