@@ -224,7 +224,7 @@ const ItemsView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>International Standard BookNumber</b>
+                        <b>International Standard Book Number</b>
                       </p>
                     </div>
                     <div className="col-6">

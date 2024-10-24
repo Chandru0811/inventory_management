@@ -18,6 +18,7 @@ const ItemsEdit = () => {
     salesAccount: Yup.string().required("*Sales Account is required"),
     purchaseAccount: Yup.string().required("*Purchase Account is required"),
   });
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -120,7 +121,7 @@ const ItemsEdit = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">Add Items</h1>
+                  <h1 className="h4 ls-tight headingColor">Edit Items</h1>
                 </div>
               </div>
               <div className="col-auto">
@@ -419,7 +420,7 @@ const ItemsEdit = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  International Standard BookNumber
+                  International Standard Book Number
                 </lable>
                 <div className="mb-3">
                   <input
@@ -528,7 +529,7 @@ const ItemsEdit = () => {
                 </div>
               </div>
               <div className="col-12 mb-2 d-flex justify-content-end align-items-end">
-                <div className="form-check">
+                {/* <div className="form-check">
                   <input
                     type="checkbox"
                     className="form-check-input"
@@ -557,11 +558,13 @@ const ItemsEdit = () => {
                   <label className="form-check-label" htmlFor="copyAddress">
                     Same as Sales
                   </label>
-                </div>
+                </div> */}
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <h3 className="my-5">Sales</h3>
-                <label className="form-label">Selling Price</label>
+                <label className="form-label">
+                  Selling Price<span className="text-danger">*</span>
+                </label>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -584,7 +587,9 @@ const ItemsEdit = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <h3 className="my-5">Purchase</h3>
-                <label className="form-label">Cost Price</label>
+                <label className="form-label">
+                  Cost Price<span className="text-danger">*</span>
+                </label>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -607,7 +612,9 @@ const ItemsEdit = () => {
               <div className="container mb-5">
                 <div className="row py-4">
                   <div className="col-md-6 col-12 mb-2">
-                    <label className="form-label">Sales Account</label>
+                    <label className="form-label">
+                      Sales Account<span className="text-danger">*</span>
+                    </label>
                     <div className="mb-3">
                       <input
                         type="text"
@@ -630,7 +637,9 @@ const ItemsEdit = () => {
                   </div>
 
                   <div className="col-md-6 col-12 mb-2">
-                    <label className="form-label">Purchase Account</label>
+                    <label className="form-label">
+                      Purchase Account<span className="text-danger">*</span>
+                    </label>
                     <div className="mb-3">
                       <input
                         type="text"

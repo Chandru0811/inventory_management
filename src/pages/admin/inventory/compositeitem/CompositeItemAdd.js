@@ -17,7 +17,9 @@ const CompositeItemAdd = () => {
     costPrice: Yup.string().required("*Cost Price is required"),
     salesAccount: Yup.string().required("*Sales Account is required"),
     purchaseAccount: Yup.string().required("*Purchase Account is required"),
+    inventoryAccount: Yup.string().required("*Inventory Account is required"),
   });
+
   const formik = useFormik({
     initialValues: {
       salesId: "",
@@ -44,7 +46,7 @@ const CompositeItemAdd = () => {
       salesTax: "",
       purchaseTax: "",
       preferredVendor: "",
-      inventoryAccount: "FinishedGoods",
+      inventoryAccount: "",
       openingStock: "",
       openingStockRate: "",
       reorderPoint: "",
@@ -58,7 +60,7 @@ const CompositeItemAdd = () => {
           taxRate: "",
           amount: "",
         },
-    ],
+      ],
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -209,7 +211,7 @@ const CompositeItemAdd = () => {
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
                   <h1 className="h4 ls-tight headingColor">
-                    Add CompositeItem
+                    Add Composite Item
                   </h1>
                 </div>
               </div>
@@ -513,7 +515,7 @@ const CompositeItemAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  International Standard BookNumber
+                  International Standard Book Number
                 </lable>
                 <div className="mb-3">
                   <input
@@ -531,6 +533,30 @@ const CompositeItemAdd = () => {
                     formik.errors.internationalStandardBookNumber && (
                       <div className="invalid-feedback">
                         {formik.errors.internationalStandardBookNumber}
+                      </div>
+                    )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Inventory Account<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="inventoryAccount"
+                    className={`form-control  ${
+                      formik.touched.inventoryAccount &&
+                      formik.errors.inventoryAccount
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("inventoryAccount")}
+                  />
+                  {formik.touched.inventoryAccount &&
+                    formik.errors.inventoryAccount && (
+                      <div className="invalid-feedback">
+                        {formik.errors.inventoryAccount}
                       </div>
                     )}
                 </div>
@@ -621,10 +647,11 @@ const CompositeItemAdd = () => {
                     )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2"> </div>
               <div className="col-md-6 col-12 mb-2">
                 <h3 className="my-5">Sales</h3>
-                <label className="form-label">Selling Price</label>
+                <label className="form-label">
+                  Selling Price<span className="text-danger">*</span>
+                </label>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -647,7 +674,9 @@ const CompositeItemAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <h3 className="my-5">Purchase</h3>
-                <label className="form-label">Cost Price</label>
+                <label className="form-label">
+                  Cost Price<span className="text-danger">*</span>
+                </label>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -670,7 +699,9 @@ const CompositeItemAdd = () => {
               <div className="container mb-5">
                 <div className="row py-4">
                   <div className="col-md-6 col-12 mb-2">
-                    <label className="form-label">Sales Account</label>
+                    <label className="form-label">
+                      Sales Account<span className="text-danger">*</span>
+                    </label>
                     <div className="mb-3">
                       <input
                         type="text"
@@ -693,7 +724,9 @@ const CompositeItemAdd = () => {
                   </div>
 
                   <div className="col-md-6 col-12 mb-2">
-                    <label className="form-label">Purchase Account</label>
+                    <label className="form-label">
+                      Purchase Account<span className="text-danger">*</span>
+                    </label>
                     <div className="mb-3">
                       <input
                         type="text"
@@ -1112,11 +1145,8 @@ const CompositeItemAdd = () => {
                           )}
                       </div>
                     </div>
-                    <div
-                      className="col-md-6 col-12 mt-5 rounded"
-                      style={{ border: "1px solid lightgrey" }}
-                    >
-                      <div className="row mb-3 mt-2">
+                    <div className="col-md-6 col-12 mt-5 rounded">
+                      {/* <div className="row mb-3 mt-2">
                         <label className="col-sm-4 col-form-label">
                           Sub Total<span className="text-danger">*</span>
                         </label>
@@ -1207,7 +1237,7 @@ const CompositeItemAdd = () => {
                             </div>
                           )}
                         </div>
-                      </div>
+                      </div> */}
                     </div>
 
                     <div className="col-md-6 col-12 mb-3">

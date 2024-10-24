@@ -4,12 +4,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
+import { TbXboxX } from "react-icons/tb";
 
 const CustomerEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
-  const [activeTab, setActiveTab] = useState(false);
+  const [activeTab, setActiveTab] = useState("otherDetails");
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -1065,7 +1066,6 @@ const CustomerEdit = () => {
                   <table className="table table-bordered">
                     <thead>
                       <tr>
-                        <th>S.No</th>
                         <th>Salutation</th>
                         <th>First Name</th>
                         <th>Last Name</th>
@@ -1081,11 +1081,11 @@ const CustomerEdit = () => {
                     <tbody>
                       {rows.map((row, index) => (
                         <tr key={row.id}>
-                          <td>{index + 1}</td>
                           <td>
                             <input
                               type="text"
                               value={row.salutation}
+                              className="form-control"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1099,6 +1099,7 @@ const CustomerEdit = () => {
                             <input
                               type="text"
                               value={row.firstName}
+                              className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1112,6 +1113,7 @@ const CustomerEdit = () => {
                             <input
                               type="text"
                               value={row.lastName}
+                              className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1125,6 +1127,7 @@ const CustomerEdit = () => {
                             <input
                               type="email"
                               value={row.email}
+                              className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1138,6 +1141,7 @@ const CustomerEdit = () => {
                             <input
                               type="text"
                               value={row.workPhone}
+                              className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1151,6 +1155,7 @@ const CustomerEdit = () => {
                             <input
                               type="text"
                               value={row.mobile}
+                              className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1164,6 +1169,7 @@ const CustomerEdit = () => {
                             <input
                               type="text"
                               value={row.skype}
+                              className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1177,6 +1183,7 @@ const CustomerEdit = () => {
                             <input
                               type="text"
                               value={row.designation}
+                              className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1190,6 +1197,7 @@ const CustomerEdit = () => {
                             <input
                               type="text"
                               value={row.department}
+                              className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
@@ -1202,10 +1210,10 @@ const CustomerEdit = () => {
                           <td>
                             {index === 1 && (
                               <button
-                                className="btn btn-danger"
+                                className="btn"
                                 onClick={() => deleteRow(index)}
                               >
-                                Delete
+                                <TbXboxX style={{ fontSize: "25px", color: "red"}}/>
                               </button>
                             )}
                           </td>

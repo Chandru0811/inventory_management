@@ -361,3 +361,10 @@ svg polygon {
     stroke-dashoffset: 136;
   }
 }
+
+
+/* Customer Add  */
+
+.input-wide {
+  width: 150px; 
+}
