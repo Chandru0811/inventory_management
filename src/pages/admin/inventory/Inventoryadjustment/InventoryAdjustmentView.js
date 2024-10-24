@@ -107,7 +107,7 @@ const InventoryAdjustmentView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.date || ""}</p>
+                      <p className="text-muted text-sm">: {data.date.slice(0,10) || ""}</p>
                     </div>
                   </div>
                 </div>

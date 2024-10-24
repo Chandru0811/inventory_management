@@ -154,7 +154,7 @@ const InventoryAdjustment = () => {
                       <td className="text-center">{index + 1}</td>
                       <td className="text-center">{data.modeOfAdjustment}</td>
                       <td className="text-center">{data.reference_number}</td>
-                      <td className="text-center">{data.date}</td>
+                      <td className="text-center">{data.date.slice(0,10)}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/inventoryadjustment/view/${data.id}`}>
