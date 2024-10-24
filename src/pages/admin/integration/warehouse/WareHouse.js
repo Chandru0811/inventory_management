@@ -98,7 +98,7 @@ const WareHouse = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">WareHouse</h1>
+                    <h1 className="h4 ls-tight headingColor ">Warehouses</h1>
                   </div>
                 </div>
                 <div className="col-auto">

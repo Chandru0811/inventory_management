@@ -267,7 +267,7 @@ function AdminSidebar({ handleLogout }) {
                 </ul>
               )}
             </li>
-            {/* <li className="nav-item">
+            <li className="nav-item">
               <div
                    className={`nav-link submenu d-flex justify-content-between align-items-center ${
                     activeSubmenu === "settings" ? "active" : ""
@@ -293,7 +293,7 @@ function AdminSidebar({ handleLogout }) {
                   </li>
                 </ul>
               )}
-            </li> */}
+            </li>
 
             <li className="nav-item">
               <NavLink className="nav-link" to="/reports">
