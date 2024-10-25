@@ -382,22 +382,18 @@ const InventoryAdjustmentAdd = () => {
                       <table className="table table-sm table-nowrap">
                         <thead>
                           <tr>
-                            <th>S.NO</th>
-                            <th style={{ width: "25%" }}>
-                              Item<span className="text-danger">*</span>
+                            <th style={{ width: "15%" }}>
+                              Item Details<span className="text-danger text-center" >*</span>
                             </th>
-                            <th style={{ width: "10%" }}>Quantity</th>
-                            <th style={{ width: "15%" }}>Rate</th>
-                            <th style={{ width: "15%" }}>Discount(%)</th>
-                            <th style={{ width: "15%" }}>Tax (%)</th>
-                            <th style={{ width: "15%" }}>Amount</th>
+                            <th style={{ width: "10%" }}>Quantity Available</th>
+                            <th style={{ width: "15%" }}>New Quantity on hand</th>
+                            <th style={{ width: "15%" }}>Quantity Adjusted</th>
                           </tr>
                         </thead>
                         <tbody>
                           {formik.values.txnInvoiceOrderItemsModels?.map(
                             (item, index) => (
                               <tr key={index}>
-                                <th scope="row">{index + 1}</th>
                                 <td>
                                   <select
                                     name={`txnInvoiceOrderItemsModels[${index}].item`}
@@ -483,7 +479,6 @@ const InventoryAdjustmentAdd = () => {
                                 </td>
                                 <td>
                                   <input
-                                    readOnly
                                     type="text"
                                     name={`txnInvoiceOrderItemsModels[${index}].price`}
                                     className={`form-control ${
@@ -549,78 +544,6 @@ const InventoryAdjustmentAdd = () => {
                                           formik.errors
                                             .txnInvoiceOrderItemsModels[index]
                                             .disc
-                                        }
-                                      </div>
-                                    )}
-                                </td>
-                                <td>
-                                  <input
-                                    onInput={(event) => {
-                                      event.target.value = event.target.value
-                                        .replace(/[^0-9]/g, "")
-                                        .slice(0, 2);
-                                    }}
-                                    type="text"
-                                    name={`txnInvoiceOrderItemsModels[${index}].taxRate`}
-                                    className={`form-control ${
-                                      formik.touched
-                                        .txnInvoiceOrderItemsModels?.[index]
-                                        ?.taxRate &&
-                                      formik.errors
-                                        .txnInvoiceOrderItemsModels?.[index]
-                                        ?.taxRate
-                                        ? "is-invalid"
-                                        : ""
-                                    }`}
-                                    {...formik.getFieldProps(
-                                      `txnInvoiceOrderItemsModels[${index}].taxRate`
-                                    )}
-                                  />
-                                  {formik.touched.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.taxRate &&
-                                    formik.errors.txnInvoiceOrderItemsModels?.[
-                                      index
-                                    ]?.taxRate && (
-                                      <div className="invalid-feedback">
-                                        {
-                                          formik.errors
-                                            .txnInvoiceOrderItemsModels[index]
-                                            .taxRate
-                                        }
-                                      </div>
-                                    )}
-                                </td>
-                                <td>
-                                  <input
-                                    readOnly
-                                    type="text"
-                                    name={`txnInvoiceOrderItemsModels[${index}].amount`}
-                                    className={`form-control ${
-                                      formik.touched
-                                        .txnInvoiceOrderItemsModels?.[index]
-                                        ?.amount &&
-                                      formik.errors
-                                        .txnInvoiceOrderItemsModels?.[index]
-                                        ?.amount
-                                        ? "is-invalid"
-                                        : ""
-                                    }`}
-                                    {...formik.getFieldProps(
-                                      `txnInvoiceOrderItemsModels[${index}].amount`
-                                    )}
-                                  />
-                                  {formik.touched.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.amount &&
-                                    formik.errors.txnInvoiceOrderItemsModels?.[
-                                      index
-                                    ]?.amount && (
-                                      <div className="invalid-feedback">
-                                        {
-                                          formik.errors
-                                            .txnInvoiceOrderItemsModels[index]
-                                            .amount
                                         }
                                       </div>
                                     )}

@@ -37,7 +37,6 @@ const Packages = () => {
 
   const initializeDataTable = () => {
     if ($.fn.DataTable.isDataTable(tableRef.current)) {
-      // DataTable already initialized, no need to initialize again
       return;
     }
     $(tableRef.current).DataTable({
@@ -65,24 +64,16 @@ const Packages = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    const table = $(tableRef.current).DataTable();
-
-    return () => {
-      table.destroy();
-    };
-  }, []);
-
   return (
     <div>
       {loading ? (
         <div className="loader-container">
-          <div class="Loader-Div">
+          <div className="Loader-Div">
             <svg id="triangle" width="50px" height="50px" viewBox="-3 -4 39 39">
               <polygon
                 fill="transparent"
                 stroke="blue"
-                stroke-width="1.3"
+                strokeWidth="1.3"
                 points="16,0 32,32 0,32"
               ></polygon>
             </svg>
@@ -90,25 +81,19 @@ const Packages = () => {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div
-            className="card shadow border-0 my-2"
-            style={{ borderRadius: "0" }}
-          >
+          <div className="card shadow border-0 my-2" style={{ borderRadius: "0" }}>
             <div className="container-fluid py-4">
-              <div className="row align-items-center justify-content-between ">
+              <div className="row align-items-center justify-content-between">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Packages</h1>
+                    <h1 className="h4 ls-tight headingColor">Packages</h1>
                   </div>
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
                     <Link to="/packages/add">
-                      <button
-                        type="submit"
-                        className="btn btn-sm btn-button btn-primary"
-                      >
-                        <span cla>
+                      <button type="submit" className="btn btn-sm btn-button btn-primary">
+                        <span>
                           Add <FaPlus className="pb-1" />
                         </span>
                       </button>
@@ -118,32 +103,17 @@ const Packages = () => {
               </div>
             </div>
           </div>
-          <div
-            className="card shadow border-0 my-2"
-            style={{ borderRadius: "0" }}
-          >
+          <div className="card shadow border-0 my-2" style={{ borderRadius: "0" }}>
             <div className="table-responsive p-2 minHeight">
-              <table ref={tableRef} className="display table ">
+              <table ref={tableRef} className="display table">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
-                      S.NO
-                    </th>
-                    <th scope="col" className="text-center">
-                      CUSTOMER NAME
-                    </th>
-                    <th scope="col" className="text-center">
-                      SALES ORDER
-                    </th>
-                    <th scope="col" className="text-center">
-                      PACKAGE DATE
-                    </th>
-                    <th scope="col" className="text-center">
-                      PACKAGE SLIP
-                    </th>
-                    <th scope="col" className="text-center">
-                      ACTION
-                    </th>
+                    <th scope="col" style={{ whiteSpace: "nowrap" }}>S.NO</th>
+                    <th scope="col" className="text-center">CUSTOMER NAME</th>
+                    <th scope="col" className="text-center">SALES ORDER</th>
+                    <th scope="col" className="text-center">PACKAGE DATE</th>
+                    <th scope="col" className="text-center">Status</th>
+                    <th scope="col" className="text-center">ACTION</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -157,19 +127,26 @@ const Packages = () => {
                           ? new Date(data.packageDate).toLocaleDateString()
                           : ""}
                       </td>
-                      <td className="text-center">{data.packageSlip}</td>
+                      <td className="text-center">
+                        {data.status === "Shipped" &&(
+                          <span className="badge bg-success text-white">Shipped</span>
+                        )}
+                        {data.status === "Not Shipped" && (
+                          <span className="badge bg-warning text-dark">Not Shipped</span>
+                        )}
+                        {data.status === "Delivered" || (
+                          <span className="badge bg-primary text-white">Delivered</span>
+                        )}
+                      </td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/packages/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
+                            <button className="btn btn-light btn-sm shadow-none border-none">
                               View
                             </button>
                           </Link>
-                          <Link
-                            to={`/packages/edit/${data.id}`}
-                            className="px-2"
-                          >
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
+                          <Link to={`/packages/edit/${data.id}`} className="px-2">
+                            <button className="btn btn-light btn-sm shadow-none border-none">
                               Edit
                             </button>
                           </Link>
@@ -185,8 +162,7 @@ const Packages = () => {
               </table>
             </div>
             <div className="card-footer border-0 py-5"></div>
-          </div>{" "}
-          {/* HI */}
+          </div>
         </div>
       )}
     </div>
