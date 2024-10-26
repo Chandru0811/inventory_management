@@ -76,8 +76,8 @@ function OrderAdd() {
     //     //   if (values.purchaseOrderRef) {
     //     //   formData.append("purchaseOrderRef", values.purchaseOrderRef);
     //     //   }
-    //     //   const response = await api.post(
-    //     //     "invoice-invoice-item",
+    //     //   const response = await api.put(
+    //     //     `/updatePurchaseOrder/${id}`,
     //     //     formData,
     //     //     {
     //     //       headers: {

@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-// import api from "../../config/URL";
 import toast from "react-hot-toast";
 import api from "../../../../config/URL";
 
 function OrderAdd() {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
-  const [customerData, setCustomerData] = useState(null);
   const [itemData, setItemData] = useState(null);
 
   const validationSchema = Yup.object({
@@ -54,10 +52,16 @@ function OrderAdd() {
     //     //   formData.append("deliveryAddress", values.deliveryAddress);
     //     //   formData.append("date", values.date);
     //     //   formData.append("purchaseOrderNumber", values.purchaseOrderNumber);
+    //     //   formData.append("purchaseOrderRef", values.purchaseOrderRef);
     //     //   formData.append("deliveryAddressCategory", values.deliveryAddressCategory);
+    //     //   formData.append("deliveryDate", values.deliveryDate);
+    //     //   formData.append("shipmentPreference", values.shipmentPreference);
+    //     //   formData.append("notes", values.notes);
+    //     //   formData.append("termsCondition", values.termsCondition);
+    //     //   formData.append("purchaseOrderFile", values.purchaseOrderFile);
     //     //   formData.append("subTotal", values.subTotal);
-    //     //   formData.append("totalTax", values.totalTax);
-    //     //   formData.append("discountAmount", values.discountAmount);
+    //     //   formData.append("discount", values.discount);
+    //     //   formData.append("adjustment", values.adjustment);
     //     //   formData.append("total", values.total);
     //     //  values.txnInvoiceOrderItemsModels.forEach((item) => {
     //     //     formData.append("item", item.item);
@@ -72,11 +76,8 @@ function OrderAdd() {
     //     //     formData.append("taxAmount", "000");
     //     //     formData.append("project", "000");
     //     //   });
-    //     //   if (values.purchaseOrderRef) {
-    //     //   formData.append("purchaseOrderRef", values.purchaseOrderRef);
-    //     //   }
     //     //   const response = await api.post(
-    //     //     "invoice-invoice-item",
+    //     //     "createPurchaseOrder",
     //     //     formData,
     //     //     {
     //     //       headers: {
@@ -87,7 +88,7 @@ function OrderAdd() {
 
     //     //   if (response.status === 201) {
     //     //     toast.success(response.data.message);
-    //     //     navigate("/invoice");
+    //     //     navigate("/order");
     //     //   } else {
     //     //     toast.error(response.data.message);
     //     //   }
@@ -116,65 +117,6 @@ function OrderAdd() {
       }
     },
   });
-
-  //   const fetchData = async () => {
-  //     try {
-  //       const customerData = await fetchAllCustomerWithIds();
-  //       const itemData = await fetchAllItemWithIds();
-  //       setCustomerData(customerData);
-  //       setItemData(itemData);
-  //     } catch (error) {
-  //       toast.error(error.message);
-  //     }
-  //   };
-  //   useEffect(() => {
-  //     fetchData();
-  //   }, []);
-
-  //   useEffect(() => {
-  //     const updateAndCalculate = async () => {
-  //       try {
-  //         let totalRate = 0;
-  //         let totalAmount = 0;
-  //         let totalTax = 0;
-  //         let discAmount=0;
-  //         const updatedItems = await Promise.all(
-  //           formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-  //             if (item.item) {
-  //               try {
-  //                 const response = await api.get(`itemsById/${item.item}`);
-  //                 const updatedItem = { ...item, price: response.data.salesPrice, qty:1 };
-  //                 const amount = calculateAmount(updatedItem.qty, updatedItem.price, updatedItem.disc, updatedItem.taxRate);
-  //                 const itemTotalRate = updatedItem.qty * updatedItem.price;
-  //                 const itemTotalTax = itemTotalRate * (updatedItem.taxRate / 100);
-  //                 const itemTotalDisc =
-  //                   itemTotalRate * (updatedItem.disc / 100);
-  //                   discAmount +=itemTotalDisc
-  //                 totalRate += updatedItem.price;
-  //                 totalAmount += amount;
-  //                 totalTax += itemTotalTax;
-  //                 return { ...updatedItem, amount };
-  //               } catch (error) {
-  //                 toast.error("Error fetching data: ", error?.response?.data?.message);
-  //               }
-  //             }
-  //             return item;
-  //           })
-  //         );
-  //         formik.setValues({ ...formik.values, txnInvoiceOrderItemsModels: updatedItems });
-  //         formik.setFieldValue("subTotal", totalRate);
-  //         formik.setFieldValue("total", totalAmount);
-  //         formik.setFieldValue("totalTax", totalTax);
-  //         formik.setFieldValue("discountAmount", discAmount);
-  //       } catch (error) {
-  //         toast.error("Error updating items: ", error.message);
-  //       }
-  //     };
-
-  //     updateAndCalculate();
-  //   }, [
-  //     formik.values.txnInvoiceOrderItemsModels.map((item) => item.item).join(""),
-  //   ]);
 
   useEffect(() => {
     const updateAndCalculate = async () => {

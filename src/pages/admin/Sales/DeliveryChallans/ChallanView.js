@@ -11,14 +11,16 @@ function ChallanView() {
   const [data, setData] = useState([]);
   const [items, setItems] = useState([]);
   const [customerData, setCustomerData] = useState({
-    customerName: "John Doe",
-    salesOrder: "SO12345",
-    packageSlip: "PS98765",
-    packageDate: new Date(),
-    internalNotes: "Please deliver on time.",
     invoiceItemsModels: [
       { item: "Item 1", qty: 2, price: 100, disc: 10, taxRate: 5, amount: 190 },
-      { item: "Item 2", qty: 1, price: 200, disc: 20, taxRate: 10, amount: 180 },
+      {
+        item: "Item 2",
+        qty: 1,
+        price: 200,
+        disc: 20,
+        taxRate: 10,
+        amount: 180,
+      },
     ],
     subTotal: 370,
     totalTax: 15,
@@ -54,19 +56,23 @@ function ChallanView() {
 
     // Add customer details
     doc.setFontSize(12);
-    doc.text(`Customer Name: ${customerData.customerName || ""}`, 14, 30);
-    doc.text(`Sales Order: ${customerData.salesOrder || ""}`, 14, 40);
-    doc.text(`Package Slip: ${customerData.packageSlip || ""}`, 14, 50);
+    doc.text(`Customer Name: ${data.customerName || ""}`, 14, 40);
+    doc.text(`Delivery Challan: ${data.deliveryChallan || ""}`, 14, 50);
     doc.text(
-      `Package Date: ${
-        customerData.packageDate ? new Date(customerData.packageDate).toLocaleDateString() : ""
+      `Delivery Challan Date: ${
+        data.deliveryChallanDate
+          ? new Date(data.deliveryChallanDate).toLocaleDateString("en-GB")
+          : ""
       }`,
       14,
       60
     );
-    doc.text(`Internal Notes: ${customerData.internalNotes || ""}`, 14, 70);
+    doc.text(`Reference: ${data.reference || ""}`, 14, 70);
 
-    if (customerData.invoiceItemsModels && customerData.invoiceItemsModels.length > 0) {
+    if (
+      customerData.invoiceItemsModels &&
+      customerData.invoiceItemsModels.length > 0
+    ) {
       const tableColumn = [
         "S.No",
         "Item Details",
@@ -147,7 +153,10 @@ function ChallanView() {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div className="card shadow border-0 mb-2 top-header" style={{ borderRadius: "0" }}>
+          <div
+            className="card shadow border-0 mb-2 top-header"
+            style={{ borderRadius: "0" }}
+          >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="row align-items-center">
@@ -177,7 +186,10 @@ function ChallanView() {
                         >
                           <BsThreeDotsVertical />
                         </button>
-                        <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
+                        <ul
+                          className="dropdown-menu"
+                          aria-labelledby="pdfDropdown"
+                        >
                           <li>
                             <button
                               className="dropdown-item"
@@ -211,8 +223,10 @@ function ChallanView() {
             </div>
           </div>
 
-          <div className="card shadow border-0 mb-2 minHeight"
-            style={{ borderRadius: "0" }}>
+          <div
+            className="card shadow border-0 mb-2 minHeight"
+            style={{ borderRadius: "0" }}
+          >
             <div className="container">
               <div className="row mt-2 p-3">
                 <div className="col-md-6 col-12">
@@ -252,7 +266,12 @@ function ChallanView() {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.deliveryChallanDate ? new Date(data.deliveryChallanDate).toLocaleDateString('en-GB') : ""}
+                        :{" "}
+                        {data.deliveryChallanDate
+                          ? new Date(
+                              data.deliveryChallanDate
+                            ).toLocaleDateString("en-GB")
+                          : ""}
                       </p>
                     </div>
                   </div>

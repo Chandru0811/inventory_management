@@ -11,11 +11,6 @@ const SalesOrderView = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [customerData, setCustomerData] = useState({
-    customerName: "John Doe",
-    salesOrder: "SO12345",
-    packageSlip: "PS98765",
-    packageDate: new Date(),
-    internalNotes: "Please deliver on time.",
     invoiceItemsModels: [
       { item: "Item 1", qty: 2, price: 100, disc: 10, taxRate: 5, amount: 190 },
       { item: "Item 2", qty: 1, price: 200, disc: 20, taxRate: 10, amount: 180 },
@@ -48,17 +43,10 @@ const SalesOrderView = () => {
 
     // Add customer details
     doc.setFontSize(12);
-    doc.text(`Customer Name: ${customerData.customerName || ""}`, 14, 30);
-    doc.text(`Sales Order: ${customerData.salesOrder || ""}`, 14, 40);
-    doc.text(`Package Slip: ${customerData.packageSlip || ""}`, 14, 50);
-    doc.text(
-      `Package Date: ${
-        customerData.packageDate ? new Date(customerData.packageDate).toLocaleDateString() : ""
-      }`,
-      14,
-      60
-    );
-    doc.text(`Internal Notes: ${customerData.internalNotes || ""}`, 14, 70);
+    doc.text(`Customer Name: ${data.customerName || ""}`, 14, 40);
+    doc.text(`Reference Number: ${data.referenceNumber || ""}`, 14, 50);
+    doc.text(`Sales Order: ${data.salesOrder || ""}`, 14, 60);
+    doc.text(`Delivery Method: ${data.deliveryMethod || ""}`, 14, 70);
 
     if (customerData.invoiceItemsModels && customerData.invoiceItemsModels.length > 0) {
       const tableColumn = [
@@ -156,7 +144,7 @@ const SalesOrderView = () => {
                 </div>
                 <div className="col-auto d-flex gap-4">
                     <div className="hstack gap-2 justify-content-start">
-                      <Link to="/challan">
+                      <Link to="/salesorder">
                         <button type="submit" className="btn btn-sm btn-light">
                           <span>Back</span>
                         </button>

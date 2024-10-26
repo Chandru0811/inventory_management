@@ -2,11 +2,30 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const InventoryAdjustmentView = () => {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [customerData, setCustomerData] = useState({
+    invoiceItemsModels: [
+      { item: "Item 1", qty: 2, price: 100, disc: 10, taxRate: 5, amount: 190 },
+      {
+        item: "Item 2",
+        qty: 1,
+        price: 200,
+        disc: 20,
+        taxRate: 10,
+        amount: 180,
+      },
+    ],
+    subTotal: 370,
+    totalTax: 15,
+    total: 385,
+  });
 
   useEffect(() => {
     const getData = async () => {
@@ -22,6 +41,93 @@ const InventoryAdjustmentView = () => {
     };
     getData();
   }, [id]);
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Inventory Adjustment", 14, 20);
+
+    // Add customer details
+    doc.setFontSize(12);
+    doc.text(`Mode of Adjustment: ${data.modeOfAdjustment || ""}`, 14, 40);
+    doc.text(`Reference Number: ${data.reference_number || ""}`, 14, 50);
+    doc.text(
+      `Date: ${
+        data.date
+          ? new Date(data.date).toLocaleDateString("en-GB")
+          : ""
+      }`,
+      14,
+      60
+    );
+
+    if (
+      customerData.invoiceItemsModels &&
+      customerData.invoiceItemsModels.length > 0
+    ) {
+      const tableColumn = [
+        "S.No",
+        "Item Details",
+        "Quantity",
+        "Rate",
+        "Discount",
+        "Tax",
+        "Amount",
+      ];
+      const tableRows = [];
+
+      customerData.invoiceItemsModels.forEach((item, index) => {
+        const rowData = [
+          index + 1,
+          item.item || "",
+          item.qty || "",
+          item.price || "",
+          item.discount || "",
+          item.taxRate || "",
+          item.amount || "",
+        ];
+        tableRows.push(rowData);
+      });
+
+      doc.autoTable({
+        startY: 80,
+        head: [tableColumn],
+        body: tableRows,
+        theme: "grid",
+      });
+    }
+
+    const finalY = doc.lastAutoTable?.finalY || 80;
+    doc.text(`Sub Total: ${customerData.subTotal || ""}`, 14, finalY + 10);
+    doc.text(`Total Tax: ${customerData.totalTax || ""}`, 14, finalY + 20);
+    doc.text(`Total:  ${customerData.total || ""}`, 14, finalY + 30);
+
+    return doc;
+  };
+
+  const handlePDFAction = (action) => {
+    const doc = generatePDF();
+
+    if (action === "open") {
+      const pdfBlob = doc.output("blob");
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl, "_blank");
+    } else if (action === "download") {
+      doc.save("packages.pdf");
+    } else if (action === "print") {
+      const pdfBlob = doc.output("blob");
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const printWindow = window.open(pdfUrl);
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      } else {
+        console.error("Unable to open print window.");
+      }
+    }
+  };
 
   return (
     <div>
@@ -53,15 +159,57 @@ const InventoryAdjustmentView = () => {
                     </h1>
                   </div>
                 </div>
-                <div className="col-auto">
-                  <div className="hstack gap-2 justify-content-start">
-                    <Link to="/inventoryadjustment">
-                      <button type="submit" className="btn btn-sm btn-light">
-                        <span>Back</span>
-                      </button>
-                    </Link>
+                <div className="col-auto d-flex gap-4">
+                    <div className="hstack gap-2 justify-content-start">
+                      <Link to="/inventoryadjustment">
+                        <button type="submit" className="btn btn-sm btn-light">
+                          <span>Back</span>
+                        </button>
+                      </Link>
+                    </div>
+                    <div className="hstack gap-2 justify-content-start">
+                      <div className="dropdown">
+                        <button
+                          className="btn btn-sm btn-light"
+                          type="button"
+                          id="pdfDropdown"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+                        <ul
+                          className="dropdown-menu"
+                          aria-labelledby="pdfDropdown"
+                        >
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("open")}
+                            >
+                              Open PDF
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("download")}
+                            >
+                              Download PDF
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("print")}
+                            >
+                              Print PDF
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
-                </div>
               </div>
             </div>
           </div>
@@ -107,7 +255,12 @@ const InventoryAdjustmentView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.date.slice(0,10) || ""}</p>
+                      <p className="text-muted text-sm">
+                        :{" "}
+                        {data.date
+                          ? new Date(data.date).toLocaleDateString("en-GB")
+                          : ""}
+                      </p>
                     </div>
                   </div>
                 </div>

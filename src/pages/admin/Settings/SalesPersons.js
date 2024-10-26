@@ -125,10 +125,10 @@ const SalesPersons = () => {
                       <th scope="col" style={{ whiteSpace: "nowrap" }}>
                         S.NO
                       </th>
-                      <th scope="col" className="text-center">
+                      <th scope="col">
                         Name
                       </th>
-                      <th scope="col" className="text-center">
+                      <th scope="col">
                         Email
                       </th>
                       <th scope="col" className="text-center">
@@ -140,8 +140,8 @@ const SalesPersons = () => {
                     {datas.map((data, index) => (
                       <tr key={index}>
                         <td className="text-center">{index + 1}</td>
-                        <td className="text-center">{data.name}</td>
-                        <td className="text-center">{data.email}</td>
+                        <td>{data.name}</td>
+                        <td>{data.email}</td>
                         <td className="">
                           <div className="d-flex justify-content-center gap-2">
                             <SalesPersonsEdit 
