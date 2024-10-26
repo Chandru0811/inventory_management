@@ -48,6 +48,57 @@ function VendorCreditEdit() {
       ],
     },
     validationSchema: validationSchema,
+        // onSubmit: async (values) => {
+    //     setLoadIndicator(true);
+    //     // try {
+    //     //   const formData = new FormData();
+
+    //     //   formData.append("creditNoteNum", values.creditNoteNum);
+    //     //   formData.append("orderNumber", values.orderNumber);
+    //     //   formData.append("orderCreditDdate", values.orderCreditDdate);
+    //     //   formData.append("subject", values.subject);
+    //     //   formData.append("notes", values.notes);
+    //     //   formData.append("vendorCreditsFile", values.vendorCreditsFile);
+    //     //   formData.append("subTotal", values.subTotal);
+    //     //   formData.append("discount", values.discount);
+    //     //   formData.append("adjustment", values.adjustment);
+    //     //   formData.append("total", values.total);
+    //     //  values.txnInvoiceOrderItemsModels.forEach((item) => {
+    //     //     formData.append("item", item.item);
+    //     //     formData.append("qty", item.qty);
+    //     //     formData.append("price", item.price);
+    //     //     formData.append("taxRate", item.taxRate);
+    //     //     formData.append("disc", item.disc);
+    //     //     formData.append("amount", item.amount);
+    //     //     formData.append("mstrItemsId", item.item);
+    //     //     formData.append("description", "item.item");
+    //     //     formData.append("account", "item.item");
+    //     //     formData.append("taxAmount", "000");
+    //     //     formData.append("project", "000");
+    //     //   });
+    //     //   const response = await api.put(
+    //     //     `updateVendorCredits/${id}`,
+    //     //     formData,
+    //     //     {
+    //     //       headers: {
+    //     //         "Content-Type": "multipart/form-data",
+    //     //       },
+    //     //     }
+    //     //   );
+
+    //     //   if (response.status === 201) {
+    //     //     toast.success(response.data.message);
+    //     //     navigate("/vendorcredit");
+    //     //   } else {
+    //     //     toast.error(response.data.message);
+    //     //   }
+    //     // } catch (error) {
+    //     //   toast.error("Error: Unable to save sales order.");
+    //     // } finally {
+    //     //   setLoadIndicator(false);
+    //     // }
+    //   },
+
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
@@ -65,6 +116,7 @@ function VendorCreditEdit() {
       }
     },
   });
+  
   useEffect(() => {
     const getData = async () => {
       try {

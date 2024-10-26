@@ -56,7 +56,7 @@ const WareHouseAdd = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">Add Ware House</h1>
+                  <h1 className="h4 ls-tight headingColor">Add Warehouse</h1>
                 </div>
               </div>
               <div className="col-auto">
@@ -98,7 +98,7 @@ const WareHouseAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  WareHouse Name <span className="text-danger">*</span>
+                  Warehouse Name <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -164,7 +164,7 @@ const WareHouseAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  phone<span className="text-danger">*</span>
+                  Phone<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
