@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { IoCloudDownloadSharp } from "react-icons/io5";
+import { FaFilePdf, FaTelegramPlane } from "react-icons/fa";
+// import Logo from "../../../assets/AccountsLogo.png";
 import toast from "react-hot-toast";
 import api from "../../../../config/URL";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import "jspdf-autotable";
 
-function ChallanView() {
+// import jsPDF from "jspdf";
+// import "jspdf-autotable";
+// import GeneratePdf from "../../GeneratePdf";
+
+function VendorCreditView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
-  const [items, setItems] = useState([]);
-  const [customerData, setCustomerData] = useState({
+  const [data1, setData1] = useState({
     customerName: "John Doe",
     salesOrder: "SO12345",
     packageSlip: "PS98765",
@@ -24,73 +30,74 @@ function ChallanView() {
     totalTax: 15,
     total: 385,
   });
+  const [items, setItems] = useState([]);
+  const [customerData, setCustomerData] = useState([]);
   const [loading, setLoading] = useState(false);
+  console.log("invoice", data);
 
   useEffect(() => {
     const getData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(`getDeliveryChallansById/${id}`);
-        setData(response.data);
-      } catch (e) {
-        toast.error("Error fetching data");
-      } finally {
-        setLoading(false);
-      }
+        setLoading(true);
+        try {
+          const response = await api.get(`invoice/${id}`);
+          setData(response.data);
+        } catch (e) {
+          // toast.error("Error fetching data: ", e?.response?.data?.message);
+        } finally {
+          setLoading(false);
+        }
     };
+
     getData();
   }, [id]);
 
+  const customer = (id) => {
+    const name = customerData.find((item) => item.id === id);
+    return name?.contactName;
+  };
+
   const itemName = (id) => {
-    const name = items.find((item) => item.id === id);
-    return name?.itemName || "";
+    const name = items.find((item) => item.id == id);
+    return name?.itemName;
   };
 
   const generatePDF = () => {
     const doc = new jsPDF();
-
+  
+    // Add title to the PDF
     doc.setFontSize(18);
-    doc.text("Delivery Challan", 14, 20);
-
+    doc.text("View Packages", 14, 20);
+  
     // Add customer details
     doc.setFontSize(12);
-    doc.text(`Customer Name: ${customerData.customerName || ""}`, 14, 30);
-    doc.text(`Sales Order: ${customerData.salesOrder || ""}`, 14, 40);
-    doc.text(`Package Slip: ${customerData.packageSlip || ""}`, 14, 50);
+    doc.text(`Customer Name: ${data1.customerName || ""}`, 14, 30);
+    doc.text(`Sales Order: ${data1.salesOrder || ""}`, 14, 40);
+    doc.text(`Package Slip: ${data1.packageSlip || ""}`, 14, 50);
     doc.text(
-      `Package Date: ${
-        customerData.packageDate ? new Date(customerData.packageDate).toLocaleDateString() : ""
-      }`,
+      `Package Date: ${data1.packageDate ? new Date(data1.packageDate).toLocaleDateString() : ""}`,
       14,
       60
     );
-    doc.text(`Internal Notes: ${customerData.internalNotes || ""}`, 14, 70);
-
-    if (customerData.invoiceItemsModels && customerData.invoiceItemsModels.length > 0) {
-      const tableColumn = [
-        "S.No",
-        "Item Details",
-        "Quantity",
-        "Rate",
-        "Discount",
-        "Tax",
-        "Amount",
-      ];
+    doc.text(`Internal Notes: ${data1.internalNotes || ""}`, 14, 70);
+  
+    // Check if invoiceItemsModels has valid data
+    if (data1.invoiceItemsModels && data1.invoiceItemsModels.length > 0) {
+      const tableColumn = ["S.No", "Item Details", "Quantity", "Rate", "Discount", "Tax", "Amount"];
       const tableRows = [];
-
-      customerData.invoiceItemsModels.forEach((item, index) => {
+  
+      data.invoiceItemsModels.forEach((item, index) => {
         const rowData = [
           index + 1,
           item.item || "",
           item.qty || "",
           item.price || "",
-          item.discount || "",
+          item.disc || "",
           item.taxRate || "",
           item.amount || "",
         ];
         tableRows.push(rowData);
       });
-
+  
       doc.autoTable({
         startY: 80,
         head: [tableColumn],
@@ -98,18 +105,19 @@ function ChallanView() {
         theme: "grid",
       });
     }
-
-    const finalY = doc.lastAutoTable?.finalY || 80;
-    doc.text(`Sub Total: ${customerData.subTotal || ""}`, 14, finalY + 10);
-    doc.text(`Total Tax: ${customerData.totalTax || ""}`, 14, finalY + 20);
-    doc.text(`Total:  ${customerData.total || ""}`, 14, finalY + 30);
-
+  
+    // Add the summary section
+    const finalY = doc.lastAutoTable?.finalY || 80; // use default startY if no table was generated
+    doc.text(`Sub Total: ${data1.subTotal || ""}`, 14, finalY + 10);
+    doc.text(`Total Tax: ${data1.totalTax || ""}`, 14, finalY + 20);
+    doc.text(`Total (₹): ${data1.total || ""}`, 14, finalY + 30);
+  
     return doc;
   };
-
+  
   const handlePDFAction = (action) => {
     const doc = generatePDF();
-
+  
     if (action === "open") {
       const pdfBlob = doc.output("blob");
       const pdfUrl = URL.createObjectURL(pdfBlob);
@@ -129,17 +137,18 @@ function ChallanView() {
       }
     }
   };
+  
 
   return (
     <div>
       {loading ? (
         <div className="loader-container">
-          <div className="Loader-Div">
+          <div class="Loader-Div">
             <svg id="triangle" width="50px" height="50px" viewBox="-3 -4 39 39">
               <polygon
                 fill="transparent"
                 stroke="blue"
-                strokeWidth="1.3"
+                stroke-width="1.3"
                 points="16,0 32,32 0,32"
               ></polygon>
             </svg>
@@ -147,7 +156,10 @@ function ChallanView() {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div className="card shadow border-0 mb-2 top-header" style={{ borderRadius: "0" }}>
+          <div
+            className="card shadow border-0 mb-2 top-header"
+            style={{ borderRadius: "0" }}
+          >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="row align-items-center">
@@ -159,58 +171,57 @@ function ChallanView() {
                     </div>
                   </div>
                   <div className="col-auto d-flex gap-4">
-                    <div className="hstack gap-2 justify-content-start">
-                      <Link to="/challan">
-                        <button type="submit" className="btn btn-sm btn-light">
-                          <span>Back</span>
-                        </button>
-                      </Link>
-                    </div>
-                    <div className="hstack gap-2 justify-content-start">
-                      <div className="dropdown">
-                        <button
-                          className="btn btn-sm btn-light"
-                          type="button"
-                          id="pdfDropdown"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <BsThreeDotsVertical />
-                        </button>
-                        <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("open")}
-                            >
-                              Open PDF
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("download")}
-                            >
-                              Download PDF
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("print")}
-                            >
-                              Print PDF
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
+                  <div className="hstack gap-2 justify-content-start">
+                    <Link to="/challan">
+                      <button type="submit" className="btn btn-sm btn-light">
+                        <span>Back</span>
+                      </button>
+                    </Link>
                   </div>
+                  <div className="hstack gap-2 justify-content-start">
+                  <div className="dropdown">
+                    <button
+                      className="btn btn-sm btn-light"
+                      type="button"
+                      id="pdfDropdown"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <BsThreeDotsVertical />
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => handlePDFAction("open")}
+                        >
+                          Open PDF
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => handlePDFAction("download")}
+                        >
+                          Download PDF
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => handlePDFAction("print")}
+                        >
+                          Print PDF
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                  </div>
+                </div>
                 </div>
               </div>
             </div>
           </div>
-
           <div className="card shadow border-0 mb-2 minHeight"
             style={{ borderRadius: "0" }}>
             <div className="container">
@@ -353,4 +364,4 @@ function ChallanView() {
   );
 }
 
-export default ChallanView;
+export default VendorCreditView;
