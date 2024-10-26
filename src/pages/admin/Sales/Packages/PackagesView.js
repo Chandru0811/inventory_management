@@ -5,6 +5,7 @@ import "jspdf-autotable";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 import { FaFilePdf } from "react-icons/fa";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const PackagesView = () => {
   const { id } = useParams();
@@ -137,79 +138,59 @@ const PackagesView = () => {
                   </div>
                 </div>
                 <div className="col-auto d-flex gap-4">
-                  <div className="hstack gap-2 justify-content-start">
-                  <div className="dropdown">
-                    <button
-                      className="btn btn-sm btn-primary dropdown-toggle"
-                      type="button"
-                      id="pdfDropdown"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      <FaFilePdf className="me-2" />
-                    </button>
-                    <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
-                      <li>
-                        <button
-                          className="dropdown-item"
-                          onClick={() => handlePDFAction("open")}
-                        >
-                          Open PDF
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          className="dropdown-item"
-                          onClick={() => handlePDFAction("download")}
-                        >
-                          Download PDF
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          className="dropdown-item"
-                          onClick={() => handlePDFAction("print")}
-                        >
-                          Print PDF
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                  </div>
-                  <div className="hstack gap-2 justify-content-start">
+                <div className="hstack gap-2 justify-content-start">
                     <Link to="/packages">
                       <button type="submit" className="btn btn-sm btn-light">
                         <span>Back</span>
                       </button>
                     </Link>
                   </div>
+                <div className="hstack gap-2 justify-content-start">
+                      <div className="dropdown">
+                        <button
+                          className="btn btn-sm btn-light"
+                          type="button"
+                          id="pdfDropdown"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+                        <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("open")}
+                            >
+                              Open PDF
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("download")}
+                            >
+                              Download PDF
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("print")}
+                            >
+                              Print PDF
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                
                 </div>
               </div>
             </div>
+            
           <div className="card shadow border-0 mb-2 minHeight" style={{ borderRadius: "0" }}>
             <div className="container-fluid">
-              <div className="d-flex justify-content-between my-5">
-                <div className="">
-                  <p>23188-1941</p>
-                  <p>U.S.A</p>
-                </div>
-                <div className="">
-                  <h1>PACKAGE</h1>
-                  <p>package# Pck-01</p>
-                </div>
-              </div>
-              <div className="row mt-5">
-                <div className="col-12">
-                  <div className="d-flex">
-                  <p><strong>Name:</strong> {data.customerName}</p>
-                  <p><strong>Sales Order:</strong> {data.salesOrder}</p>
-                  <p><strong>Package Slip:</strong> {data.packageSlip}</p>
-                  <p><strong>Package Date:</strong> {new Date(data.packageDate).toLocaleDateString()}</p>
-                  <p><strong>Internal Notes:</strong> {data.internalNotes}</p>
-                </div>
-                </div>
-              </div>
-
               <div className="table-responsive my-5">
                 <h3 className="text-light p-2" style={{ background: "#4066D5" }}>Item Table</h3>
                 <table className="table">
@@ -225,7 +206,7 @@ const PackagesView = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.invoiceItemsModels && data.invoiceItemsModels.map((item, index) => (
+                    {/* {data.invoiceItemsModels && data.invoiceItemsModels.map((item, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
                         <td>{item.item}</td>
@@ -235,7 +216,7 @@ const PackagesView = () => {
                         <td>{item.taxRate}</td>
                         <td>{item.amount}</td>
                       </tr>
-                    ))}
+                    ))} */}
                   </tbody>
                 </table>
               </div>

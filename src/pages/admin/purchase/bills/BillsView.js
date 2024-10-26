@@ -2,12 +2,35 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../../../../config/URL";
+import jsPDF from "jspdf";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 function BillsView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [customerData, setCustomerData] = useState({
+    customerName: "John Doe",
+    salesOrder: "SO12345",
+    packageSlip: "PS98765",
+    packageDate: new Date(),
+    internalNotes: "Please deliver on time.",
+    invoiceItemsModels: [
+      { item: "Item 1", qty: 2, price: 100, disc: 10, taxRate: 5, amount: 190 },
+      {
+        item: "Item 2",
+        qty: 1,
+        price: 200,
+        disc: 20,
+        taxRate: 10,
+        amount: 180,
+      },
+    ],
+    subTotal: 370,
+    totalTax: 15,
+    total: 385,
+  });
 
   useEffect(() => {
     const getData = async () => {
@@ -27,6 +50,89 @@ function BillsView() {
   const itemName = (id) => {
     const name = items.find((item) => item.id == id);
     return name?.itemName;
+  };
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Shipment", 14, 20);
+
+    // Add customer details
+    doc.setFontSize(12);
+    doc.text(`Customer Name: ${customerData.customerName || ""}`, 14, 30);
+    doc.text(`Sales Order: ${customerData.salesOrder || ""}`, 14, 40);
+    doc.text(`Package Slip: ${customerData.packageSlip || ""}`, 14, 50);
+    doc.text(
+      `Package Date: ${
+        customerData.packageDate ? new Date(customerData.packageDate).toLocaleDateString() : ""
+      }`,
+      14,
+      60
+    );
+    doc.text(`Internal Notes: ${customerData.internalNotes || ""}`, 14, 70);
+
+    if (customerData.invoiceItemsModels && customerData.invoiceItemsModels.length > 0) {
+      const tableColumn = [
+        "S.No",
+        "Item Details",
+        "Quantity",
+        "Rate",
+        "Discount",
+        "Tax",
+        "Amount",
+      ];
+      const tableRows = [];
+
+      customerData.invoiceItemsModels.forEach((item, index) => {
+        const rowData = [
+          index + 1,
+          item.item || "",
+          item.qty || "",
+          item.price || "",
+          item.discount || "",
+          item.taxRate || "",
+          item.amount || "",
+        ];
+        tableRows.push(rowData);
+      });
+
+      doc.autoTable({
+        startY: 80,
+        head: [tableColumn],
+        body: tableRows,
+        theme: "grid",
+      });
+    }
+
+    const finalY = doc.lastAutoTable?.finalY || 80;
+    doc.text(`Sub Total: ${customerData.subTotal || ""}`, 14, finalY + 10);
+    doc.text(`Total Tax: ${customerData.totalTax || ""}`, 14, finalY + 20);
+    doc.text(`Total:  ${customerData.total || ""}`, 14, finalY + 30);
+
+    return doc;
+  };
+
+  const handlePDFAction = (action) => {
+    const doc = generatePDF();
+
+    if (action === "open") {
+      const pdfBlob = doc.output("blob");
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl, "_blank");
+    } else if (action === "download") {
+      doc.save("packages.pdf");
+    } else if (action === "print") {
+      const pdfBlob = doc.output("blob");
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const printWindow = window.open(pdfUrl);
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      } else {
+        console.error("Unable to open print window.");
+      }
+    }
   };
 
   return (
@@ -55,16 +161,52 @@ function BillsView() {
                       <h1 className="h4 ls-tight headingColor">View Bills</h1>
                     </div>
                   </div>
-                  <div className="col-auto">
+                  <div className="col-auto d-flex gap-4">
                     <div className="hstack gap-2 justify-content-start">
                       <Link to="/bills">
-                        <button
-                          type="button"
-                          className="btn btn-light btn-sm me-1"
-                        >
+                        <button type="submit" className="btn btn-sm btn-light">
                           <span>Back</span>
                         </button>
                       </Link>
+                    </div>
+                    <div className="hstack gap-2 justify-content-start">
+                      <div className="dropdown">
+                        <button
+                          className="btn btn-sm btn-light"
+                          type="button"
+                          id="pdfDropdown"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+                        <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("open")}
+                            >
+                              Open PDF
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("download")}
+                            >
+                              Download PDF
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handlePDFAction("print")}
+                            >
+                              Print PDF
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>

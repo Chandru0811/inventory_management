@@ -132,10 +132,10 @@ const Packages = () => {
                           <span className="badge bg-success text-white">Shipped</span>
                         )}
                         {data.status === "Not Shipped" && (
-                          <span className="badge bg-warning text-dark">Not Shipped</span>
+                          <span className="badge text-dark" style={{background:"#e9e943"}}>Not Shipped</span>
                         )}
                         {data.status === "Delivered" || (
-                          <span className="badge bg-primary text-white">Delivered</span>
+                          <span className="badge text-white" style={{background:"green"}}>Delivered</span>
                         )}
                       </td>
                       <td className="text-center">

@@ -38,8 +38,19 @@ const ItemGroupEdit = () => {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
+         // const formData = new FormData();
+      // // Append each value to the FormData instance
+      // for (const key in values) {
+      //   if (values.hasOwnProperty(key)) {
+      //     formData.append(key, values[key]);
+      //   }
+      // }
       try {
-        const response = await api.put(`/updateItemGroups/${id}`, values, {});
+        const response = await api.put(`/updateItemGroups/${id}`, values, {
+            // headers: {
+          //   'Content-Type': 'multipart/form-data',
+          // },
+        });
         if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/itemgroup");
