@@ -330,7 +330,7 @@ const CustomerAdd = () => {
                   Contact Persons
                 </span>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <span
                   className={`nav-link ${
                     activeTab === "customFields" ? "active" : ""
@@ -349,7 +349,7 @@ const CustomerAdd = () => {
                 >
                   Reporting Tags
                 </span>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <span
                   className={`nav-link ${

@@ -345,7 +345,7 @@ const CustomerEdit = () => {
                   Contact Persons
                 </span>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <span
                   className={`nav-link ${
                     activeTab === "customFields" ? "active" : ""
@@ -364,7 +364,7 @@ const CustomerEdit = () => {
                 >
                   Reporting Tags
                 </span>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <span
                   className={`nav-link ${
