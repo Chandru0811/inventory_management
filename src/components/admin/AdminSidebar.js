@@ -201,6 +201,11 @@ function AdminSidebar({ handleLogout }) {
                     </NavLink>
                   </li>
                   <li className="nav-item">
+                    <NavLink className="nav-link" to="/expense">
+                      Expense
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/order">
                       Purchases Order
                     </NavLink>

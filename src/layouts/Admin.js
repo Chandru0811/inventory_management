@@ -98,6 +98,10 @@ import Currency from "../pages/admin/integration/currencies/Currency";
 import CurrencyEdit from "../pages/admin/integration/currencies/CurrencyEdit";
 import CurrencyView from "../pages/admin/integration/currencies/CurrencyView";
 import SalesPersons from "../pages/admin/Settings/SalesPersons";
+import Expense from "../pages/admin/purchase/Expense/Expense";
+import ExpenseAdd from "../pages/admin/purchase/Expense/ExpenseAdd";
+import ExpenseEdit from "../pages/admin/purchase/Expense/ExpenseEdit ";
+import ExpenseView from "../pages/admin/purchase/Expense/ExpenseView";
 
 
 function Admin({ handleLogout }) {
@@ -274,6 +278,12 @@ function Admin({ handleLogout }) {
 
                   {/* {/ sales persons /} */}
                   <Route path="/salesPersons" element={<SalesPersons />} />
+
+                  {/* {/ Expenses /} */}
+                  <Route path="/expense" element={<Expense />} />
+                  <Route path="/expense/add" element={<ExpenseAdd />} />
+                  <Route path="/expense/edit/:id" element={<ExpenseEdit />} />
+                  <Route path="/expense/view/:id" element={<ExpenseView />} />
                 </Routes>
               </div>
             </main>
