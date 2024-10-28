@@ -181,23 +181,41 @@ const ItemsEdit = () => {
                   )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Type</lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="type"
-                    className={`form-control  ${
-                      formik.touched.type && formik.errors.type
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("type")}
-                  />
-                  {formik.touched.type && formik.errors.type && (
-                    <div className="invalid-feedback">{formik.errors.type}</div>
-                  )}
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                  Type<span className="text-danger">*</span>
+                  </label>
                 </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="type"
+                    id="Goods"
+                    value="Goods"
+                    onChange={formik.handleChange}
+                    checked={formik.values.type === "Goods"}
+                  />
+                  <label className="form-check-label">Goods</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="type"
+                    id="Service"
+                    value="Service"
+                    onChange={formik.handleChange}
+                    checked={formik.values.type === "Service"}
+                  />
+                  <label className="form-check-label">Service</label>
+                </div>
+                {formik.errors.type && formik.touched.type && (
+                  <div className="text-danger" style={{ fontSize: ".875em" }}>
+                    {formik.errors.type}
+                  </div>
+                )}
               </div>
 
               <div className="col-md-6 col-12 mb-2">

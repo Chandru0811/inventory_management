@@ -60,7 +60,7 @@ function AdminSidebar({ handleLogout }) {
         >
           <ul className="navbar-nav">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/">
+              <NavLink className="nav-link" to="/dashboard">
                 <BsBarChartFill className="me-2" />
                 Home
               </NavLink>

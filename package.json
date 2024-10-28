@@ -1,6 +1,7 @@
 {
   "name": "inventory_management",
   "version": "0.1.0",
+  "homepage": "/wms",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

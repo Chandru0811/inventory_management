@@ -3,7 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../config/URL";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -11,6 +11,7 @@ import axios from "axios";
 function Home({ handleLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loadIndicator, setLoadIndicator] = useState(false);
+  const navigate = useNavigate();
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -36,6 +37,7 @@ function Home({ handleLogin }) {
           sessionStorage.setItem("role",response.data.role)
           sessionStorage.setItem("roleId",response.data.roleId)
           sessionStorage.setItem("loginUserId",response.data.loginUserId)
+          navigate("/dashboard");
         }
         handleLogin();
       } catch (error) {

@@ -15,9 +15,9 @@ function Client({
   return (
     <div>
       <div>
-        <BrowserRouter>
+        <BrowserRouter basename="/wms">
           <Routes>
-            <Route path="/" element={<Home handleLogin={handleLogin} />} />
+            <Route path="/login" element={<Home handleLogin={handleLogin} />} />
             <Route path="*" element={<Home handleLogin={handleLogin} />} />
             <Route path="/forgotsuccess" element={<ForgotSuccess />} />
             <Route path="/register" element={<Register />} />

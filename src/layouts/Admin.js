@@ -107,7 +107,7 @@ import ExpenseView from "../pages/admin/purchase/Expense/ExpenseView";
 function Admin({ handleLogout }) {
   return (
     <div>
-      <BrowserRouter>
+      <BrowserRouter basename="/wms">
         <div className="d-flex flex-column flex-lg-row bg-surface-secondary">
           <AdminSidebar handleLogout={handleLogout} />
           <div className="flex-grow-1 h-screen overflow-y-auto">
@@ -115,7 +115,7 @@ function Admin({ handleLogout }) {
             <main className="pt-3 bg-surface-secondary">
               <div style={{ minHeight: "90vh" }}>
                 <Routes>
-                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/item" element={<Items />} />
                   <Route path="/item/add" element={<ItemsAdd />} />
                   <Route path="/item/edit/:id" element={<ItemsEdit />} />
