@@ -223,7 +223,7 @@ const InventoryAdjustmentView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Mode Of Adjustment</b>
+                        <b>Mode of Adjustment</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -242,7 +242,7 @@ const InventoryAdjustmentView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.reference_number || ""}
+                        : {data.referenceNumber || ""}
                       </p>
                     </div>
                   </div>
@@ -268,7 +268,7 @@ const InventoryAdjustmentView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Account Id </b>
+                        <b>Account</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -297,7 +297,7 @@ const InventoryAdjustmentView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Descending Of Adjustment</b>
+                        <b>Descending of Adjustment</b>
                       </p>
                     </div>
                     <div className="col-6">

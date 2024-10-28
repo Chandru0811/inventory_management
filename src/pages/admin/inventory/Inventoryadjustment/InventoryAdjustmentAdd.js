@@ -12,8 +12,12 @@ const InventoryAdjustmentAdd = () => {
   const [itemData, setItemData] = useState(null);
 
   const validationSchema = Yup.object({
+    modeOfAdjustment: Yup.string().required("*Mode of Adjustment is required"),
     date: Yup.string().required("*Date is required"),
+    accountId: Yup.string().required("*Account is required"),
+    reason: Yup.string().required("*Reason is required"),
   });
+
   const formik = useFormik({
     initialValues: {
       modeOfAdjustment: "",
@@ -217,33 +221,45 @@ const InventoryAdjustmentAdd = () => {
         >
           <div className="container mb-5">
             <div className="row py-4">
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Mode Of Adjustment <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="modeOfAdjustment"
-                    className={`form-control ${
-                      formik.touched.modeOfAdjustment &&
-                      formik.errors.modeOfAdjustment
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("modeOfAdjustment")}
-                  />
-                  {formik.touched.modeOfAdjustment &&
-                    formik.errors.modeOfAdjustment && (
-                      <div className="invalid-feedback">
-                        {formik.errors.modeOfAdjustment}
-                      </div>
-                    )}
+               <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                  Mode of Adjustment<span className="text-danger">*</span>
+                  </label>
                 </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="modeOfAdjustment"
+                    id="Quantity Adjustment"
+                    value="Quantity Adjustment"
+                    onChange={formik.handleChange}
+                    checked={formik.values.modeOfAdjustment === "Quantity Adjustment"}
+                  />
+                  <label className="form-check-label">Quantity Adjustment</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="modeOfAdjustment"
+                    id="Value Adjustment"
+                    value="Value Adjustment"
+                    onChange={formik.handleChange}
+                    checked={formik.values.modeOfAdjustment === "Value Adjustment"}
+                  />
+                  <label className="form-check-label">Value Adjustment</label>
+                </div>
+                {formik.errors.modeOfAdjustment && formik.touched.modeOfAdjustment && (
+                  <div className="text-danger" style={{ fontSize: ".875em" }}>
+                    {formik.errors.modeOfAdjustment}
+                  </div>
+                )}
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Reference Number<span className="text-danger">*</span>
+                  Reference Number
                 </lable>
                 <div className="mb-3">
                   <input
@@ -288,22 +304,22 @@ const InventoryAdjustmentAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Account Id<span className="text-danger">*</span>
+                  Account<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="email"
+                    name="accountId"
                     className={`form-control  ${
-                      formik.touched.email && formik.errors.email
+                      formik.touched.accountId && formik.errors.accountId
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("email")}
+                    {...formik.getFieldProps("accountId")}
                   />
-                  {formik.touched.email && formik.errors.email && (
+                  {formik.touched.accountId && formik.errors.accountId && (
                     <div className="invalid-feedback">
-                      {formik.errors.email}
+                      {formik.errors.accountId}
                     </div>
                   )}
                 </div>
@@ -334,7 +350,7 @@ const InventoryAdjustmentAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Descending Of Adjustment<span className="text-danger">*</span>
+                  Descending of Adjustment
                 </lable>
                 <div className="mb-3">
                   <input
@@ -359,7 +375,6 @@ const InventoryAdjustmentAdd = () => {
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Inventory Adjustment File
-                  <span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input

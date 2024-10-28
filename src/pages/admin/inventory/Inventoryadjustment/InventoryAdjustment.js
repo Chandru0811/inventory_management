@@ -57,7 +57,7 @@ const InventoryAdjustment = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllItems");
+      const response = await api.get("/getAllInventoryAdjustments");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -153,7 +153,7 @@ const InventoryAdjustment = () => {
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
                       <td className="text-center">{data.modeOfAdjustment}</td>
-                      <td className="text-center">{data.reference_number}</td>
+                      <td className="text-center">{data.referenceNumber}</td>
                       <td className="text-center">{data.date?.slice(0,10)}</td>
                       <td className="text-center">
                         <div className="gap-2">
