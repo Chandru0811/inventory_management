@@ -57,7 +57,7 @@ const PaymentReceived = () => {
         destroyDataTable();
         setLoading(true);
         try {
-            const response = await api.get("/getShipment");
+            const response = await api.get("/getAllPaymentDetails");
             setDatas(response.data);
             initializeDataTable(); // Reinitialize DataTable after successful data update
         } catch (error) {
@@ -170,7 +170,7 @@ const PaymentReceived = () => {
                                                     </Link>
                                                     <DeleteModel
                                                         onSuccess={refreshData}
-                                                        path={`/deleteShipment/${data.id}`}
+                                                        path={`/deletePaymentDetails/${data.id}`}
                                                     />
                                                 </div>
                                             </td>

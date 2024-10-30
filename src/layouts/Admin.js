@@ -115,7 +115,7 @@ function Admin({ handleLogout }) {
             <main className="pt-3 bg-surface-secondary">
               <div style={{ minHeight: "90vh" }}>
                 <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="*" element={<Dashboard />} />
                   <Route path="/item" element={<Items />} />
                   <Route path="/item/add" element={<ItemsAdd />} />
                   <Route path="/item/edit/:id" element={<ItemsEdit />} />
@@ -284,7 +284,6 @@ function Admin({ handleLogout }) {
                   <Route path="/expense/add" element={<ExpenseAdd />} />
                   <Route path="/expense/edit/:id" element={<ExpenseEdit />} />
                   <Route path="/expense/view/:id" element={<ExpenseView />} />
-                  <Route path="*" element={<Dashboard />}/>
                 </Routes>
               </div>
             </main>

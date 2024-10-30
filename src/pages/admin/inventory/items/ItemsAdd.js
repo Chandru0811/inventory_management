@@ -11,11 +11,13 @@ const ItemsAdd = () => {
 
   const validationSchema = Yup.object({
     name: Yup.string().required("*Name is required"),
+    type: Yup.string().required("*Type is required"),
     itemUnit: Yup.string().required("*Item Unit is required"),
     sellingPrice: Yup.string().required("*Selling Price is required"),
     costPrice: Yup.string().required("*Cost Price is required"),
     salesAccount: Yup.string().required("*Sales Account is required"),
     purchaseAccount: Yup.string().required("*Purchase Account is required"),
+    inventoryAccount: Yup.string().required("*Inventory Account is required"),
   });
 
   const formik = useFormik({
@@ -41,46 +43,82 @@ const ItemsAdd = () => {
       salesTax: "",
       purchaseTax: "",
       preferredVendor: "",
-      inventoryAccount: "FinishedGoods",
+      inventoryAccount: "",
       openingStock: "",
       openingStockRate: "",
       reorderPoint: "",
-      image: null,
+      file: null,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
 
-      const payload = {
-        ...values,
-        universalProductCode: Number(values.universalProductCode) || 0,
-        internationalArticleNumber:
-          Number(values.internationalArticleNumber) || 0,
-        internationalStandardBookNumber:
-          Number(values.internationalStandardBookNumber) || 0,
-        salesTax: Number(values.salesTax) || 0,
-        purchaseTax: Number(values.purchaseTax) || 0,
-        weight: Number(values.weight) || 0,
-        sellingPrice: Number(values.sellingPrice) || 0,
-        costPrice: Number(values.costPrice) || 0,
-        openingStock: Number(values.openingStock) || 0,
-        openingStockRate: Number(values.openingStockRate) || 0,
-        reorderPoint: Number(values.reorderPoint) || 0,
-      };
-      // const formData = new FormData();
-      // // Append each value to the FormData instance
-      // for (const key in values) {
-      //   if (values.hasOwnProperty(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // }
+      // const payload = {
+      //   ...values,
+      //   universalProductCode: Number(values.universalProductCode) || 0,
+      //   internationalArticleNumber:
+      //     Number(values.internationalArticleNumber) || 0,
+      //   internationalStandardBookNumber:
+      //     Number(values.internationalStandardBookNumber) || 0,
+      //   salesTax: Number(values.salesTax) || 0,
+      //   purchaseTax: Number(values.purchaseTax) || 0,
+      //   weight: Number(values.weight) || 0,
+      //   sellingPrice: Number(values.sellingPrice) || 0,
+      //   costPrice: Number(values.costPrice) || 0,
+      //   openingStock: Number(values.openingStock) || 0,
+      //   openingStockRate: Number(values.openingStockRate) || 0,
+      //   reorderPoint: Number(values.reorderPoint) || 0,
+      // };
+
+      const formData = new FormData();
+      formData.append("type", values.type);
+      formData.append("name", values.name);
+      formData.append("stockKeepingUnit", values.stockKeepingUnit);
+      formData.append("itemUnit", values.itemUnit);
+      formData.append("dimensions", values.dimensions);
+      formData.append("weight", values.weight);
+      formData.append("manufacturerName", values.manufacturerName);
+      formData.append("brandName", values.brandName);
+      formData.append("universalProductCode", values.universalProductCode);
+      formData.append(
+        "manufacturingPartNumber",
+        values.manufacturingPartNumber
+      );
+      formData.append(
+        "internationalArticleNumber",
+        values.internationalArticleNumber
+      );
+      formData.append(
+        "internationalStandardBookNumber",
+        values.internationalStandardBookNumber
+      );
+      formData.append("sellingPrice", values.sellingPrice);
+      formData.append("costPrice", values.costPrice);
+      formData.append("salesAccount", values.salesAccount);
+      formData.append("purchaseAccount  ", values.purchaseAccount || " ");
+      formData.append(
+        "salesAccountDescription",
+        values.salesAccountDescription
+      );
+      formData.append(
+        "purchaseAccountDescription",
+        values.purchaseAccountDescription
+      );
+      formData.append("salesTax", values.salesTax);
+      formData.append("purchaseTax", values.purchaseTax);
+      formData.append("preferredVendor", values.preferredVendor);
+      formData.append("inventoryAccount", values.inventoryAccount);
+      formData.append("openingStock", values.openingStock);
+      formData.append("openingStockRate", values.openingStockRate);
+      formData.append("reorderPoint", values.reorderPoint);
+      formData.append("file", values.file);
 
       try {
-        const response = await api.post("createItems", payload, {
-          // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
+        const response = await api.post("createItem", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
 
         if (response.status === 201) {
@@ -171,7 +209,7 @@ const ItemsAdd = () => {
               <div className="col-md-6 col-12 mb-3">
                 <div>
                   <label for="exampleFormControlInput1" className="form-label">
-                  Type<span className="text-danger">*</span>
+                    Type<span className="text-danger">*</span>
                   </label>
                 </div>
                 <div className="form-check form-check-inline">
@@ -234,18 +272,16 @@ const ItemsAdd = () => {
                     type="file"
                     className="form-control"
                     onChange={(event) => {
-                      formik.setFieldValue("image", event.target.files[0]);
+                      formik.setFieldValue("file", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.touched.image && formik.errors.image && (
-                    <div className="invalid-feedback">
-                      {formik.errors.image}
-                    </div>
+                  {formik.touched.file && formik.errors.file && (
+                    <div className="invalid-feedback">{formik.errors.file}</div>
                   )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
+              {/* <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Item Unit<span className="text-danger">*</span>
                 </lable>
@@ -265,6 +301,37 @@ const ItemsAdd = () => {
                       {formik.errors.itemUnit}
                     </div>
                   )}
+                </div>
+              </div> */}
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                Item Unit<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <select
+                    name="itemUnit"
+                    className={`form-select  ${
+                      formik.touched.itemUnit && formik.errors.itemUnit
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("itemUnit")}
+                  >
+                    <option value=""></option>
+                    <option value="dz">DOZEN</option>
+                    <option value="box">BOX</option>
+                    <option value="g">GRAMS</option>
+                    <option value="kg">KILOGRAMS</option>
+                    <option value="m">METERS</option>
+                    <option value="pcs">PIECES</option>
+                  </select>
+                  {formik.touched.itemUnit &&
+                    formik.errors.itemUnit && (
+                      <div className="invalid-feedback">
+                        {formik.errors.itemUnit}
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -443,6 +510,33 @@ const ItemsAdd = () => {
                     formik.errors.internationalStandardBookNumber && (
                       <div className="invalid-feedback">
                         {formik.errors.internationalStandardBookNumber}
+                      </div>
+                    )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                Inventory Account<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <select
+                    name="inventoryAccount"
+                    className={`form-select  ${
+                      formik.touched.inventoryAccount && formik.errors.inventoryAccount
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("inventoryAccount")}
+                  >
+                    <option value=""></option>
+                    <option value="FinishedGoods">Finished Goods</option>
+                    <option value="InventoryAsset">Inventory Asset</option>
+                    <option value="WorkInProgress">Work In Progress</option>
+                  </select>
+                  {formik.touched.inventoryAccount &&
+                    formik.errors.inventoryAccount && (
+                      <div className="invalid-feedback">
+                        {formik.errors.inventoryAccount}
                       </div>
                     )}
                 </div>
@@ -716,7 +810,7 @@ const ItemsAdd = () => {
                       Sales Account Description
                     </label>
                     <div className="mb-3">
-                      <input
+                      <textarea
                         type="text"
                         name="salesAccountDescription"
                         className={`form-control ${
@@ -725,6 +819,7 @@ const ItemsAdd = () => {
                             ? "is-invalid"
                             : ""
                         }`}
+                        rows="4"
                         {...formik.getFieldProps("salesAccountDescription")}
                       />
                       {formik.touched.salesAccountDescription &&
@@ -741,7 +836,7 @@ const ItemsAdd = () => {
                       Purchase Account Description
                     </label>
                     <div className="mb-3">
-                      <input
+                      <textarea
                         type="text"
                         name="purchaseAccountDescription"
                         className={`form-control ${
@@ -750,6 +845,7 @@ const ItemsAdd = () => {
                             ? "is-invalid"
                             : ""
                         }`}
+                        rows="4"
                         {...formik.getFieldProps("purchaseAccountDescription")}
                       />
                       {formik.touched.purchaseAccountDescription &&

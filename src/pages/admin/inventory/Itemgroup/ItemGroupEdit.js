@@ -9,6 +9,7 @@ const ItemGroupEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
+  const [data, setData] = useState([]);
 
   const validationSchema = Yup.object({
     itemGroupName: Yup.string().required("*Contact Name is required"),
@@ -45,11 +46,54 @@ const ItemGroupEdit = () => {
       //     formData.append(key, values[key]);
       //   }
       // }
+
+      const formData = new FormData();
+      formData.append("type", values.type);
+      formData.append("name", values.name);
+      formData.append("stockKeepingUnit", values.stockKeepingUnit);
+      formData.append("itemUnit", values.itemUnit);
+      formData.append("dimensions", values.dimensions);
+      formData.append("weight", values.weight);
+      formData.append("manufacturerName", values.manufacturerName);
+      formData.append("brandName", values.brandName);
+      formData.append("universalProductCode", values.universalProductCode);
+      formData.append(
+        "manufacturingPartNumber",
+        values.manufacturingPartNumber
+      );
+      formData.append(
+        "internationalArticleNumber",
+        values.internationalArticleNumber
+      );
+      formData.append(
+        "internationalStandardBookNumber",
+        values.internationalStandardBookNumber
+      );
+      formData.append("sellingPrice", values.sellingPrice);
+      formData.append("costPrice", values.costPrice);
+      formData.append("salesAccount", values.salesAccount);
+      formData.append("purchaseAccount  ", values.purchaseAccount || " ");
+      formData.append(
+        "salesAccountDescription",
+        values.salesAccountDescription
+      );
+      formData.append(
+        "purchaseAccountDescription",
+        values.purchaseAccountDescription
+      );
+      formData.append("salesTax", values.salesTax);
+      formData.append("purchaseTax", values.purchaseTax);
+      formData.append("preferredVendor", values.preferredVendor);
+      formData.append("inventoryAccount", values.inventoryAccount || "");
+      formData.append("openingStock", values.openingStock);
+      formData.append("openingStockRate", values.openingStockRate);
+      formData.append("reorderPoint", values.reorderPoint);
+      formData.append("file", values.file);
       try {
-        const response = await api.put(`/updateItemGroups/${id}`, values, {
-            // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
+        const response = await api.put(`/updateItemGroup/${id}`, values, {
+            headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         });
         if (response.status === 201) {
           toast.success(response.data.message);
@@ -70,6 +114,7 @@ const ItemGroupEdit = () => {
       try {
         const response = await api.get(`/getAllItemGroupsById/${id}`);
         formik.setValues(response.data);
+        setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
       }
@@ -151,26 +196,41 @@ const ItemGroupEdit = () => {
                   )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Type<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="type"
-                    className={`form-control  ${formik.touched.type && formik.errors.type
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("type")}
-                  />
-                  {formik.touched.type && formik.errors.type && (
-                    <div className="invalid-feedback">
-                      {formik.errors.type}
-                    </div>
-                  )}
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                    Type<span className="text-danger">*</span>
+                  </label>
                 </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="type"
+                    id="Goods"
+                    value="Goods"
+                    onChange={formik.handleChange}
+                    checked={formik.values.type === "Goods"}
+                  />
+                  <label className="form-check-label">Goods</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="type"
+                    id="Service"
+                    value="Service"
+                    onChange={formik.handleChange}
+                    checked={formik.values.type === "Service"}
+                  />
+                  <label className="form-check-label">Service</label>
+                </div>
+                {formik.errors.type && formik.touched.type && (
+                  <div className="text-danger" style={{ fontSize: ".875em" }}>
+                    {formik.errors.type}
+                  </div>
+                )}
               </div>
 
               <div className="col-md-6 col-12 mb-2">
@@ -332,7 +392,7 @@ const ItemGroupEdit = () => {
                     )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
+              {/* <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Item Type
                   <span className="text-danger">*</span>
@@ -353,7 +413,7 @@ const ItemGroupEdit = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Sales Account
@@ -425,94 +485,27 @@ const ItemGroupEdit = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="itemId"
-                    className={`form-control  ${formik.touched.itemId && formik.errors.itemId
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("itemId")}
-                  />
-                  {formik.touched.itemId && formik.errors.itemId && (
-                    <div className="invalid-feedback">
-                      {formik.errors.itemId}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  sales Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="salesId"
-                    className={`form-control  ${formik.touched.salesId && formik.errors.salesId
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("salesId")}
-                  />
-                  {formik.touched.salesId && formik.errors.salesId && (
-                    <div className="invalid-feedback">
-                      {formik.errors.salesId}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Purchase Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="purchaseId"
-                    className={`form-control  ${formik.touched.purchaseId && formik.errors.purchaseId
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("purchaseId")}
-                  />
-                  {formik.touched.purchaseId && formik.errors.purchaseId && (
-                    <div className="invalid-feedback">
-                      {formik.errors.purchaseId}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Image
-                  <span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Image</lable>
                 <div className="mb-3">
                   <input
                     type="file"
-                    name="bankAccNumber"
-                    className={`form-control  ${formik.touched.bankAccNumber &&
-                      formik.errors.bankAccNumber
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("bankAccNumber")}
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("file", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
                   />
-                  {formik.touched.bankAccNumber &&
-                    formik.errors.bankAccNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.bankAccNumber}
-                      </div>
-                    )}
+                  {formik.touched.file && formik.errors.file && (
+                    <div className="invalid-feedback">
+                      {formik.errors.file}
+                    </div>
+                  )}
                 </div>
+                <img
+                src={data.itemImage}
+                className="img-fluid ms-2 w-50 rounded mt-2"
+                alt="Profile Image"
+              />
               </div>
             </div>
           </div>

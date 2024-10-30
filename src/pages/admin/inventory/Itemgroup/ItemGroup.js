@@ -133,7 +133,7 @@ const ItemGroup = () => {
                       S.NO
                     </th>
                     <th scope="col" className="text-center">
-                      ITEMGROUP NAME
+                      ITEM GROUP NAME
                     </th>
                     <th scope="col" className="text-center">
                       TYPE

@@ -320,7 +320,7 @@ const SalesOrderView = () => {
                       <p className="text-muted text-sm">
                         :{" "}
                         {data.salesOrderDate
-                          ? new Date(data.salesOrderDate).toLocaleDateString()
+                          ? new Date(data.salesOrderDate).toLocaleDateString("en-GB")
                           : ""}
                       </p>
                     </div>
@@ -339,7 +339,7 @@ const SalesOrderView = () => {
                         {data.expectedShipmentDate
                           ? new Date(
                               data.expectedShipmentDate
-                            ).toLocaleDateString()
+                            ).toLocaleDateString("en-GB")
                           : ""}
                       </p>
                     </div>

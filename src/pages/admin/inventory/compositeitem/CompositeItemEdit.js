@@ -10,6 +10,8 @@ const CompositeItemEdit = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [itemData, setItemData] = useState(null);
+  const [data, setData] = useState([]);
+
 
   const validationSchema = Yup.object({
     name: Yup.string().required("*Name is required"),
@@ -45,7 +47,7 @@ const CompositeItemEdit = () => {
       salesTax: "",
       purchaseTax: "",
       preferredVendor: "",
-      inventoryAccount: "FinishedGoods",
+      inventoryAccount: "",
       openingStock: "",
       openingStockRate: "",
       reorderPoint: "",
@@ -57,35 +59,71 @@ const CompositeItemEdit = () => {
       setLoadIndicator(true);
       console.log(values);
 
-      const payload = {
-        ...values,
-        universalProductCode: Number(values.universalProductCode) || 0,
-        internationalArticleNumber:
-          Number(values.internationalArticleNumber) || 0,
-        internationalStandardBookNumber:
-          Number(values.internationalStandardBookNumber) || 0,
-        salesTax: Number(values.salesTax) || 0,
-        purchaseTax: Number(values.purchaseTax) || 0,
-        weight: Number(values.weight) || 0,
-        sellingPrice: Number(values.sellingPrice) || 0,
-        costPrice: Number(values.costPrice) || 0,
-        openingStock: Number(values.openingStock) || 0,
-        openingStockRate: Number(values.openingStockRate) || 0,
-        reorderPoint: Number(values.reorderPoint) || 0,
-      };
-      // const formData = new FormData();
-      // // Append each value to the FormData instance
-      // for (const key in values) {
-      //   if (values.hasOwnProperty(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // }
+      // const payload = {
+      //   ...values,
+      //   universalProductCode: Number(values.universalProductCode) || 0,
+      //   internationalArticleNumber:
+      //     Number(values.internationalArticleNumber) || 0,
+      //   internationalStandardBookNumber:
+      //     Number(values.internationalStandardBookNumber) || 0,
+      //   salesTax: Number(values.salesTax) || 0,
+      //   purchaseTax: Number(values.purchaseTax) || 0,
+      //   weight: Number(values.weight) || 0,
+      //   sellingPrice: Number(values.sellingPrice) || 0,
+      //   costPrice: Number(values.costPrice) || 0,
+      //   openingStock: Number(values.openingStock) || 0,
+      //   openingStockRate: Number(values.openingStockRate) || 0,
+      //   reorderPoint: Number(values.reorderPoint) || 0,
+      // };
+
+      const formData = new FormData();
+      formData.append("type", values.type);
+      formData.append("name", values.name);
+      formData.append("stockKeepingUnit", values.stockKeepingUnit);
+      formData.append("itemUnit", values.itemUnit);
+      formData.append("dimensions", values.dimensions);
+      formData.append("weight", values.weight);
+      formData.append("manufacturerName", values.manufacturerName);
+      formData.append("brandName", values.brandName);
+      formData.append("universalProductCode", values.universalProductCode);
+      formData.append(
+        "manufacturingPartNumber",
+        values.manufacturingPartNumber
+      );
+      formData.append(
+        "internationalArticleNumber",
+        values.internationalArticleNumber
+      );
+      formData.append(
+        "internationalStandardBookNumber",
+        values.internationalStandardBookNumber
+      );
+      formData.append("sellingPrice", values.sellingPrice);
+      formData.append("costPrice", values.costPrice);
+      formData.append("salesAccount", values.salesAccount);
+      formData.append("purchaseAccount  ", values.purchaseAccount || " ");
+      formData.append(
+        "salesAccountDescription",
+        values.salesAccountDescription
+      );
+      formData.append(
+        "purchaseAccountDescription",
+        values.purchaseAccountDescription
+      );
+      formData.append("salesTax", values.salesTax);
+      formData.append("purchaseTax", values.purchaseTax);
+      formData.append("preferredVendor", values.preferredVendor);
+      // formData.append("inventoryAccount", values.inventoryAccount);
+      formData.append("openingStock", values.openingStock);
+      formData.append("openingStockRate", values.openingStockRate);
+      formData.append("reorderPoint", values.reorderPoint);
+      formData.append("images", values.images);
 
       try {
-        const response = await api.put(`updateCompositeItems/${id}`, payload, {
-          // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
+        const response = await api.put(`update-composite-attach/${id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         });
 
         if (response.status === 201) {
@@ -106,6 +144,7 @@ const CompositeItemEdit = () => {
       try {
         const response = await api.get(`getAllCompositeItemsById/${id}`);
         formik.setValues(response.data);
+        setData(response.data);
       } catch (error) {
         toast.error(error.message);
       }
@@ -215,7 +254,7 @@ const CompositeItemEdit = () => {
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
                   <h1 className="h4 ls-tight headingColor">
-                    Edit CompositeItem
+                    Edit Composite Item
                   </h1>
                 </div>
               </div>
@@ -239,7 +278,7 @@ const CompositeItemEdit = () => {
                     ) : (
                       <span></span>
                     )}
-                    &nbsp;<span>update</span>
+                    &nbsp;<span>Update</span>
                   </button>
                 </div>
               </div>
@@ -276,23 +315,41 @@ const CompositeItemEdit = () => {
                   )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Type</lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="type"
-                    className={`form-control  ${
-                      formik.touched.type && formik.errors.type
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("type")}
-                  />
-                  {formik.touched.type && formik.errors.type && (
-                    <div className="invalid-feedback">{formik.errors.type}</div>
-                  )}
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                    Type
+                  </label>
                 </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="type"
+                    id="Goods"
+                    value="Goods"
+                    onChange={formik.handleChange}
+                    checked={formik.values.type === "Goods"}
+                  />
+                  <label className="form-check-label">Goods</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="type"
+                    id="Service"
+                    value="Service"
+                    onChange={formik.handleChange}
+                    checked={formik.values.type === "Service"}
+                  />
+                  <label className="form-check-label">Service</label>
+                </div>
+                {formik.errors.type && formik.touched.type && (
+                  <div className="text-danger" style={{ fontSize: ".875em" }}>
+                    {formik.errors.type}
+                  </div>
+                )}
               </div>
 
               <div className="col-md-6 col-12 mb-2">
@@ -324,20 +381,19 @@ const CompositeItemEdit = () => {
                     type="file"
                     className="form-control"
                     onChange={(event) => {
-                      formik.setFieldValue(
-                        "compositeItemImage",
-                        event.target.files[0]
-                      );
+                      formik.setFieldValue("images", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.touched.compositeItemImage &&
-                    formik.errors.compositeItemImage && (
-                      <div className="invalid-feedback">
-                        {formik.errors.compositeItemImage}
-                      </div>
-                    )}
+                  {formik.touched.images && formik.errors.images && (
+                    <div className="invalid-feedback">{formik.errors.images}</div>
+                  )}
                 </div>
+                <img
+                src={data.compositeItemImage}
+                className="img-fluid ms-2 w-50 rounded mt-2"
+                alt="Profile Image"
+              />
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
@@ -541,6 +597,33 @@ const CompositeItemEdit = () => {
                     )}
                 </div>
               </div>
+              {/* <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                Inventory Account<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <select
+                    name="inventoryAccount"
+                    className={`form-select  ${
+                      formik.touched.inventoryAccount && formik.errors.inventoryAccount
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("inventoryAccount")}
+                  >
+                    <option value=""></option>
+                    <option value="FinishedGoods">Finished Goods</option>
+                    <option value="InventoryAsset">Inventory Asset</option>
+                    <option value="WorkInProgress">Work In Progress</option>
+                  </select>
+                  {formik.touched.inventoryAccount &&
+                    formik.errors.inventoryAccount && (
+                      <div className="invalid-feedback">
+                        {formik.errors.inventoryAccount}
+                      </div>
+                    )}
+                </div>
+              </div> */}
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">Opening Stock</lable>
                 <div className="mb-3">

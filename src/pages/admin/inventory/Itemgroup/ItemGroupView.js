@@ -48,7 +48,7 @@ const ItemGroupView = () => {
               <div className="row align-items-center">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor">View ItemGroup</h1>
+                    <h1 className="h4 ls-tight headingColor">View Item Group</h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -254,54 +254,21 @@ const ItemGroupView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Item Id</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.itemId || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Sales Id</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.salesId || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Purchase Id</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.purchaseId || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
                         <b>Image</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.itemImage || ""}
+                        :{" "}
+                        {data.inventoryAdjustmentsFile ? (
+                          <img
+                            src={data.inventoryAdjustmentsFile}
+                            className="img-fluid ms-2 w-100 rounded"
+                            alt="Profile Image"
+                          />
+                        ) : (
+                          <></>
+                        )}
                       </p>
                     </div>
                   </div>

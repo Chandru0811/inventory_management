@@ -21,7 +21,7 @@ const InventoryAdjustmentAdd = () => {
   const formik = useFormik({
     initialValues: {
       modeOfAdjustment: "",
-      reference_number: "",
+      referenceNumber: "",
       date: "",
       reason: "",
       descOfAdjustment: "",
@@ -48,7 +48,6 @@ const InventoryAdjustmentAdd = () => {
       //   accountId: Number(values.accountId) || 0,
       // };
 
-
       // const formData = new FormData();
       // // Append each value to the FormData instance
       // for (const key in values) {
@@ -56,18 +55,21 @@ const InventoryAdjustmentAdd = () => {
       //     formData.append(key, values[key]);
       //   }
       // }
+
+      const formData = new FormData();
+      formData.append("modeOfAdjustment", values.modeOfAdjustment);
+      formData.append("referenceNumber", values.referenceNumber);
+      formData.append("date", values.date);
+      formData.append("accountId", values.accountId);
+      formData.append("reason", values.reason);
+      formData.append("descOfAdjustment", values.descOfAdjustment);
+      formData.append("file", values.file);
       try {
-        const response = await api.post(
-          "/createInventoryAdjustments",
-          values,
-          {
-              // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
+        const response = await api.post("createInventoryAdjustment", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
-          values,
-          {}
-        );
+        });
         if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/inventoryadjustment");
@@ -221,10 +223,10 @@ const InventoryAdjustmentAdd = () => {
         >
           <div className="container mb-5">
             <div className="row py-4">
-               <div className="col-md-6 col-12 mb-3">
+              <div className="col-md-6 col-12 mb-3">
                 <div>
                   <label for="exampleFormControlInput1" className="form-label">
-                  Mode of Adjustment<span className="text-danger">*</span>
+                    Mode of Adjustment<span className="text-danger">*</span>
                   </label>
                 </div>
                 <div className="form-check form-check-inline">
@@ -235,9 +237,13 @@ const InventoryAdjustmentAdd = () => {
                     id="Quantity Adjustment"
                     value="Quantity Adjustment"
                     onChange={formik.handleChange}
-                    checked={formik.values.modeOfAdjustment === "Quantity Adjustment"}
+                    checked={
+                      formik.values.modeOfAdjustment === "Quantity Adjustment"
+                    }
                   />
-                  <label className="form-check-label">Quantity Adjustment</label>
+                  <label className="form-check-label">
+                    Quantity Adjustment
+                  </label>
                 </div>
                 <div className="form-check form-check-inline">
                   <input
@@ -247,36 +253,37 @@ const InventoryAdjustmentAdd = () => {
                     id="Value Adjustment"
                     value="Value Adjustment"
                     onChange={formik.handleChange}
-                    checked={formik.values.modeOfAdjustment === "Value Adjustment"}
+                    checked={
+                      formik.values.modeOfAdjustment === "Value Adjustment"
+                    }
                   />
                   <label className="form-check-label">Value Adjustment</label>
                 </div>
-                {formik.errors.modeOfAdjustment && formik.touched.modeOfAdjustment && (
-                  <div className="text-danger" style={{ fontSize: ".875em" }}>
-                    {formik.errors.modeOfAdjustment}
-                  </div>
-                )}
+                {formik.errors.modeOfAdjustment &&
+                  formik.touched.modeOfAdjustment && (
+                    <div className="text-danger" style={{ fontSize: ".875em" }}>
+                      {formik.errors.modeOfAdjustment}
+                    </div>
+                  )}
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Reference Number
-                </lable>
+                <lable className="form-lable">Reference Number</lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="reference_number"
+                    name="referenceNumber"
                     className={`form-control  ${
-                      formik.touched.reference_number &&
-                      formik.errors.reference_number
+                      formik.touched.referenceNumber &&
+                      formik.errors.referenceNumber
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("reference_number")}
+                    {...formik.getFieldProps("referenceNumber")}
                   />
-                  {formik.touched.reference_number &&
-                    formik.errors.reference_number && (
+                  {formik.touched.referenceNumber &&
+                    formik.errors.referenceNumber && (
                       <div className="invalid-feedback">
-                        {formik.errors.reference_number}
+                        {formik.errors.referenceNumber}
                       </div>
                     )}
                 </div>
@@ -349,9 +356,7 @@ const InventoryAdjustmentAdd = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Descending of Adjustment
-                </lable>
+                <lable className="form-lable">Descending of Adjustment</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -373,27 +378,19 @@ const InventoryAdjustmentAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Inventory Adjustment File
-                </lable>
+                <lable className="form-lable">Attach File</lable>
                 <div className="mb-3">
                   <input
                     type="file"
-                    name="inventoryAdjustmentsFile"
-                    className={`form-control  ${
-                      formik.touched.inventoryAdjustmentsFile &&
-                      formik.errors.inventoryAdjustmentsFile
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("inventoryAdjustmentsFile")}
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("file", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
                   />
-                  {formik.touched.inventoryAdjustmentsFile &&
-                    formik.errors.inventoryAdjustmentsFile && (
-                      <div className="invalid-feedback">
-                        {formik.errors.inventoryAdjustmentsFile}
-                      </div>
-                    )}
+                  {formik.touched.file && formik.errors.file && (
+                    <div className="invalid-feedback">{formik.errors.file}</div>
+                  )}
                 </div>
               </div>
             </div>

@@ -10,8 +10,9 @@ const ItemGroupAdd = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    itemGroupName: Yup.string().required("*Item Group Name Name is required"),
+    itemGroupName: Yup.string().required("*Item Group Name is required"),
   });
+
   const formik = useFormik({
     initialValues: {
       // companyName: "",
@@ -29,28 +30,34 @@ const ItemGroupAdd = () => {
         salesAccount: "",
         purchaseAccount: "",
         inventoryAccount: "",
-        itemImage: "",
-        salesId: "",
-        purchaseId: "",
-        itemId: "",
+        file: null,
       },
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
-      console.log(values);
-         // const formData = new FormData();
-      // // Append each value to the FormData instance
-      // for (const key in values) {
-      //   if (values.hasOwnProperty(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // }
+      // console.log(values);
+
+      const formData = new FormData();
+      formData.append("type", values.type);
+      formData.append("itemGroupName", values.itemGroupName);
+      formData.append("description", values.description);
+      formData.append("itemUnit", values.itemUnit);
+      formData.append("tax", values.tax);
+      formData.append("manufacturerName", values.manufacturerName);
+      formData.append("brandName", values.brandName);
+      formData.append("multipleItems", values.multipleItems);
+      formData.append("itemAttribute", values.itemAttribute);
+      formData.append("itemOptions", values.itemOptions);
+      formData.append("salesAccount", values.salesAccount);
+      formData.append("purchaseAccount", values.purchaseAccount);
+      formData.append("inventoryAccount", values.inventoryAccount);
+      formData.append("file", values.file);
       try {
-        const response = await api.post("/createItemGroups", values, {
-            // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
+        const response = await api.post("/createItemGroup", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
         if (response.status === 201) {
           toast.success(response.data.message);
@@ -77,7 +84,7 @@ const ItemGroupAdd = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">Add ItemGroup</h1>
+                  <h1 className="h4 ls-tight headingColor">Add Item Group</h1>
                 </div>
               </div>
               <div className="col-auto">
@@ -125,39 +132,57 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="itemGroupName"
-                    className={`form-control ${formik.touched.itemGroupName && formik.errors.itemGroupName
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control ${
+                      formik.touched.itemGroupName &&
+                      formik.errors.itemGroupName
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("itemGroupName")}
                   />
-                  {formik.touched.itemGroupName && formik.errors.itemGroupName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.itemGroupName}
-                    </div>
-                  )}
+                  {formik.touched.itemGroupName &&
+                    formik.errors.itemGroupName && (
+                      <div className="invalid-feedback">
+                        {formik.errors.itemGroupName}
+                      </div>
+                    )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Type<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="type"
-                    className={`form-control  ${formik.touched.type && formik.errors.type
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("type")}
-                  />
-                  {formik.touched.type && formik.errors.type && (
-                    <div className="invalid-feedback">
-                      {formik.errors.type}
-                    </div>
-                  )}
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                    Type<span className="text-danger">*</span>
+                  </label>
                 </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="type"
+                    id="Goods"
+                    value="Goods"
+                    onChange={formik.handleChange}
+                    checked={formik.values.type === "Goods"}
+                  />
+                  <label className="form-check-label">Goods</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="type"
+                    id="Service"
+                    value="Service"
+                    onChange={formik.handleChange}
+                    checked={formik.values.type === "Service"}
+                  />
+                  <label className="form-check-label">Service</label>
+                </div>
+                {formik.errors.type && formik.touched.type && (
+                  <div className="text-danger" style={{ fontSize: ".875em" }}>
+                    {formik.errors.type}
+                  </div>
+                )}
               </div>
 
               <div className="col-md-6 col-12 mb-2">
@@ -165,89 +190,90 @@ const ItemGroupAdd = () => {
                   Item Unit<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
-                  <input
-                    type="text"
+                  <select
                     name="itemUnit"
-                    className={`form-control ${formik.touched.itemUnit &&
-                      formik.errors.itemUnit
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-select  ${
+                      formik.touched.itemUnit && formik.errors.itemUnit
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("itemUnit")}
-                  />
-                  {formik.touched.itemUnit &&
-                    formik.errors.itemUnit && (
-                      <div className="invalid-feedback">
-                        {formik.errors.itemUnit}
-                      </div>
-                    )}
+                  >
+                    <option value=""></option>
+                    <option value="dz">DOZEN</option>
+                    <option value="box">BOX</option>
+                    <option value="g">GRAMS</option>
+                    <option value="kg">KILOGRAMS</option>
+                    <option value="m">METERS</option>
+                    <option value="pcs">PIECES</option>
+                  </select>
+                  {formik.touched.itemUnit && formik.errors.itemUnit && (
+                    <div className="invalid-feedback">
+                      {formik.errors.itemUnit}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Tax<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Tax</lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="tax"
-                    className={`form-control  ${formik.touched.tax && formik.errors.tax
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control  ${
+                      formik.touched.tax && formik.errors.tax
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("tax")}
                   />
                   {formik.touched.tax && formik.errors.tax && (
-                    <div className="invalid-feedback">
-                      {formik.errors.tax}
-                    </div>
+                    <div className="invalid-feedback">{formik.errors.tax}</div>
                   )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Manaufacture Name<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Manaufacture Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="manufacturerName"
-                    className={`form-control  ${formik.touched.manufacturerName && formik.errors.manufacturerName
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control  ${
+                      formik.touched.manufacturerName &&
+                      formik.errors.manufacturerName
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("manufacturerName")}
                   />
-                  {formik.touched.manufacturerName && formik.errors.manufacturerName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.manufacturerName}
-                    </div>
-                  )}
+                  {formik.touched.manufacturerName &&
+                    formik.errors.manufacturerName && (
+                      <div className="invalid-feedback">
+                        {formik.errors.manufacturerName}
+                      </div>
+                    )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Brand Name<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Brand Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="brandName"
-                    className={`form-control  ${formik.touched.brandName &&
-                      formik.errors.brandName
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control  ${
+                      formik.touched.brandName && formik.errors.brandName
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("brandName")}
                   />
-                  {formik.touched.brandName &&
-                    formik.errors.brandName && (
-                      <div className="invalid-feedback">
-                        {formik.errors.brandName}
-                      </div>
-                    )}
+                  {formik.touched.brandName && formik.errors.brandName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.brandName}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -259,17 +285,20 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="multipleItems"
-                    className={`form-control  ${formik.touched.multipleItems && formik.errors.multipleItems
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control  ${
+                      formik.touched.multipleItems &&
+                      formik.errors.multipleItems
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("multipleItems")}
                   />
-                  {formik.touched.multipleItems && formik.errors.multipleItems && (
-                    <div className="invalid-feedback">
-                      {formik.errors.multipleItems}
-                    </div>
-                  )}
+                  {formik.touched.multipleItems &&
+                    formik.errors.multipleItems && (
+                      <div className="invalid-feedback">
+                        {formik.errors.multipleItems}
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -280,11 +309,12 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="itemAttribute"
-                    className={`form-control  ${formik.touched.itemAttribute &&
+                    className={`form-control  ${
+                      formik.touched.itemAttribute &&
                       formik.errors.itemAttribute
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("itemAttribute")}
                   />
                   {formik.touched.itemAttribute &&
@@ -304,57 +334,31 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="itemOptions"
-                    className={`form-control  ${formik.touched.itemOptions &&
-                      formik.errors.itemOptions
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control  ${
+                      formik.touched.itemOptions && formik.errors.itemOptions
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("itemOptions")}
                   />
-                  {formik.touched.itemOptions &&
-                    formik.errors.itemOptions && (
-                      <div className="invalid-feedback">
-                        {formik.errors.itemOptions}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Type
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="itemType"
-                    className={`form-control  ${formik.touched.itemType && formik.errors.itemType
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("itemType")}
-                  />
-                  {formik.touched.itemType && formik.errors.itemType && (
+                  {formik.touched.itemOptions && formik.errors.itemOptions && (
                     <div className="invalid-feedback">
-                      {formik.errors.itemType}
+                      {formik.errors.itemOptions}
                     </div>
                   )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Sales Account
-                  <span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Sales Account</lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="salesAccount"
-                    className={`form-control  ${formik.touched.salesAccount &&
-                      formik.errors.salesAccount
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control  ${
+                      formik.touched.salesAccount && formik.errors.salesAccount
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("salesAccount")}
                   />
                   {formik.touched.salesAccount &&
@@ -366,43 +370,47 @@ const ItemGroupAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Purchase Account
-                  <span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Purchase Account</lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="purchaseAccount"
-                    className={`form-control  ${formik.touched.purchaseAccount && formik.errors.purchaseAccount
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control  ${
+                      formik.touched.purchaseAccount &&
+                      formik.errors.purchaseAccount
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("purchaseAccount")}
                   />
-                  {formik.touched.purchaseAccount && formik.errors.purchaseAccount && (
-                    <div className="invalid-feedback">
-                      {formik.errors.purchaseAccount}
-                    </div>
-                  )}
+                  {formik.touched.purchaseAccount &&
+                    formik.errors.purchaseAccount && (
+                      <div className="invalid-feedback">
+                        {formik.errors.purchaseAccount}
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Inventory Account
-                  <span className="text-danger">*</span>
+                  Inventory Account<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
-                  <input
-                    type="text"
+                  <select
                     name="inventoryAccount"
-                    className={`form-control  ${formik.touched.inventoryAccount &&
+                    className={`form-select  ${
+                      formik.touched.inventoryAccount &&
                       formik.errors.inventoryAccount
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("inventoryAccount")}
-                  />
+                  >
+                    <option value=""></option>
+                    <option value="FinishedGoods">Finished Goods</option>
+                    <option value="InventoryAsset">Inventory Asset</option>
+                    <option value="WorkInProgress">Work In Progress</option>
+                  </select>
                   {formik.touched.inventoryAccount &&
                     formik.errors.inventoryAccount && (
                       <div className="invalid-feedback">
@@ -412,93 +420,19 @@ const ItemGroupAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="itemId"
-                    className={`form-control  ${formik.touched.itemId && formik.errors.itemId
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("itemId")}
-                  />
-                  {formik.touched.itemId && formik.errors.itemId && (
-                    <div className="invalid-feedback">
-                      {formik.errors.itemId}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  sales Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="salesId"
-                    className={`form-control  ${formik.touched.salesId && formik.errors.salesId
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("salesId")}
-                  />
-                  {formik.touched.salesId && formik.errors.salesId && (
-                    <div className="invalid-feedback">
-                      {formik.errors.salesId}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Purchase Id
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="purchaseId"
-                    className={`form-control  ${formik.touched.purchaseId && formik.errors.purchaseId
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("purchaseId")}
-                  />
-                  {formik.touched.purchaseId && formik.errors.purchaseId && (
-                    <div className="invalid-feedback">
-                      {formik.errors.purchaseId}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Image
-                  <span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Image</lable>
                 <div className="mb-3">
                   <input
                     type="file"
-                    name="itemImage"
-                    className={`form-control  ${formik.touched.itemImage &&
-                      formik.errors.itemImage
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("itemImage")}
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("file", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
                   />
-                  {formik.touched.itemImage &&
-                    formik.errors.itemImage && (
-                      <div className="invalid-feedback">
-                        {formik.errors.itemImage}
-                      </div>
-                    )}
+                  {formik.touched.file && formik.errors.file && (
+                    <div className="invalid-feedback">{formik.errors.file}</div>
+                  )}
                 </div>
               </div>
             </div>

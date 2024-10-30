@@ -33,7 +33,7 @@ const PaymentReceivedAdd = () => {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-      
+
       // const formData = new FormData();
       // // Append each value to the FormData instance
       // for (const key in values) {
@@ -42,12 +42,28 @@ const PaymentReceivedAdd = () => {
       //   }
       // }
 
+      const formData = new FormData();
+      formData.append("customerName", values.customerName);
+      formData.append("payment", values.payment);
+      formData.append("amountReceive", values.amountReceive);
+      formData.append("paymentCharges", values.paymentCharges);
+      formData.append("taxDeduction", values.taxDeduction);
+      formData.append("paymentMode", values.paymentMode);
+      formData.append("depositTo", values.depositTo);
+      formData.append("reference", values.reference);
+      formData.append("notes", values.notes);
+      formData.append("file", values.file);
+
       try {
-        const response = await api.post("/createPaymentDetails", values, {
-          // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
-        });
+        const response = await api.post(
+          "/createPaymentDetailsProfileImage",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/paymentreceived");
@@ -188,9 +204,7 @@ const PaymentReceivedAdd = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Payment Charges<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Payment Charges</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -212,68 +226,65 @@ const PaymentReceivedAdd = () => {
                 </div>
               </div>
 
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Attach File<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="file"
-                    name="attachFile"
-                    className={`form-control  ${
-                      formik.touched.attachFile && formik.errors.attachFile
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("attachFile")}
-                  />
-                  {formik.touched.attachFile && formik.errors.attachFile && (
-                    <div className="invalid-feedback">
-                      {formik.errors.attachFile}
-                    </div>
-                  )}
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                    Tax Deduction<span className="text-danger">*</span>
+                  </label>
                 </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Tax Deduction<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
+                <div className="form-check form-check-inline">
                   <input
-                    type="text"
+                    className="form-check-input"
+                    type="radio"
                     name="taxDeduction"
-                    className={`form-control  ${
-                      formik.touched.taxDeduction && formik.errors.taxDeduction
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("taxDeduction")}
+                    id="NO_TAX"
+                    value="NO_TAX"
+                    onChange={formik.handleChange}
+                    checked={formik.values.taxDeduction === "NO_TAX"}
                   />
-                  {formik.touched.taxDeduction &&
-                    formik.errors.taxDeduction && (
-                      <div className="invalid-feedback">
-                        {formik.errors.taxDeduction}
-                      </div>
-                    )}
+                  <label className="form-check-label">No Tax deducted</label>
                 </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="taxDeduction"
+                    id="YES_TDS"
+                    value="YES_TDS"
+                    onChange={formik.handleChange}
+                    checked={formik.values.taxDeduction === "YES_TDS"}
+                  />
+                  <label className="form-check-label">
+                    Yes, TDS (Income Tax)
+                  </label>
+                </div>
+                {formik.errors.taxDeduction && formik.touched.taxDeduction && (
+                  <div className="text-danger" style={{ fontSize: ".875em" }}>
+                    {formik.errors.taxDeduction}
+                  </div>
+                )}
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Payment Mode<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Payment Mode</lable>
                 <div className="mb-3">
-                  <input
-                    type="text"
+                  <select
                     name="paymentMode"
-                    className={`form-control  ${
+                    className={`form-select  ${
                       formik.touched.paymentMode && formik.errors.paymentMode
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("paymentMode")}
-                  />
+                  >
+                    <option value=""></option>
+                    <option value="CASH">Cash</option>
+                    <option value="BANK_REMITTANCE">Bank Remittance</option>
+                    <option value="CHEQUE">Check</option>
+                    <option value="CREDIT_CARD">Credit Card</option>
+                    <option value="UPI">UPI</option>
+                    <option value="BANK_TRANSFER">Bank Transfer</option>
+                  </select>
                   {formik.touched.paymentMode && formik.errors.paymentMode && (
                     <div className="invalid-feedback">
                       {formik.errors.paymentMode}
@@ -282,9 +293,9 @@ const PaymentReceivedAdd = () => {
                 </div>
               </div>
 
-              <div className="col-md-6 col-12 mb-2">
+              {/* <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  DepositTo<span className="text-danger">*</span>
+                  Deposit To<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -300,6 +311,34 @@ const PaymentReceivedAdd = () => {
                   {formik.touched.depositTo && formik.errors.depositTo && (
                     <div className="invalid-feedback">
                       {formik.errors.depositTo}
+                    </div>
+                  )}
+                </div>
+              </div> */}
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Payment Mode</lable>
+                <div className="mb-3">
+                  <select
+                    name="paymentMode"
+                    className={`form-select  ${
+                      formik.touched.paymentMode && formik.errors.paymentMode
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("paymentMode")}
+                  >
+                    <option value=""></option>
+                    <option value="CASH">Cash</option>
+                    <option value="BANK_REMITTANCE">Bank Remittance</option>
+                    <option value="CHEQUE">Check</option>
+                    <option value="CREDIT_CARD">Credit Card</option>
+                    <option value="UPI">UPI</option>
+                    <option value="BANK_TRANSFER">Bank Transfer</option>
+                  </select>
+                  {formik.touched.paymentMode && formik.errors.paymentMode && (
+                    <div className="invalid-feedback">
+                      {formik.errors.paymentMode}
                     </div>
                   )}
                 </div>
@@ -329,9 +368,24 @@ const PaymentReceivedAdd = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Notes<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Attach File</lable>
+                <div className="mb-3">
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("file", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.file && formik.errors.file && (
+                    <div className="invalid-feedback">{formik.errors.file}</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Notes</lable>
                 <div className="mb-3">
                   <textarea
                     type="text"
@@ -341,6 +395,7 @@ const PaymentReceivedAdd = () => {
                         ? "is-invalid"
                         : ""
                     }`}
+                    rows="4"
                     {...formik.getFieldProps("notes")}
                   />
                   {formik.touched.notes && formik.errors.notes && (

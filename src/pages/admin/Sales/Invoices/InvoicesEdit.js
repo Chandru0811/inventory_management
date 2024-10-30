@@ -94,6 +94,11 @@ function InvoiceEdit() {
     const getData = async () => {
       try {
         const response = await api.get(`/getInvoicesById/${id}`);
+        const rest = response.data;
+
+        const formattedData = {
+          ...rest,
+        invoiceDate: rest.invoiceDate ? new Date(rest.invoiceDate).toLocaleDateString("en-GB") : ""        }
         formik.setValues(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
@@ -418,7 +423,7 @@ function InvoiceEdit() {
                 <lable className="form-lable">Due Date</lable>
                 <div className="">
                   <input
-                    type="text"
+                    type="date"
                     className={`form-control ${
                       formik.touched.dueDate && formik.errors.dueDate
                         ? "is-invalid"
@@ -449,6 +454,28 @@ function InvoiceEdit() {
                   {formik.touched.salesperson && formik.errors.salesperson && (
                     <div className="invalid-feedback">
                       {formik.errors.salesperson}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-3">
+                <lable className="form-lable">
+                  Attach File
+                </lable>
+                <div className="">
+                  <input
+                    type="file"
+                    className={`form-control ${
+                      formik.touched.attachFile && formik.errors.attachFile
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("attachFile")}
+                  />
+                  {formik.touched.attachFile && formik.errors.attachFile && (
+                    <div className="invalid-feedback">
+                      {formik.errors.attachFile}
                     </div>
                   )}
                 </div>
