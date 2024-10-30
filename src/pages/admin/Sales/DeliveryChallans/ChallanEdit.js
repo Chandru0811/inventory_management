@@ -11,10 +11,14 @@ function ChallanEdit() {
   const [loading, setLoadIndicator] = useState(false);
   const [customerData, setCustomerData] = useState(null);
   const [itemData, setItemData] = useState(null);
+  const [data, setData] = useState([]);
+
 
   const validationSchema = Yup.object({
     customerName: Yup.string().required("*Customer name is required"),
-    // txnCreditNotesItemsModels: Yup.array().of(
+    deliveryChallan: Yup.string().required("*Delivery Challan is required"),
+    deliveryChallanDate: Yup.string().required("*Delivery Challan Date is required"),
+    // challanType: Yup.string().required("*Challan Type is required"),    // txnCreditNotesItemsModels: Yup.array().of(
     //     Yup.object({
     //         item: Yup.string().required("*Item is required"),
     //     })
@@ -26,8 +30,8 @@ function ChallanEdit() {
       customerName: "",
       deliveryChallan: "",
       deliveryChallanDate: "",
-      challanType: "",
-      files: null,
+      // challanType: "",
+      attachFile: null,
       txnInvoiceOrderItemsModels: [
         {
           item: "",
@@ -42,21 +46,21 @@ function ChallanEdit() {
       setLoadIndicator(true);
       console.log(values);
 
-      // const formData = new FormData();
-      // // Append each value to the FormData instance
-      // for (const key in values) {
-      //   if (values.hasOwnProperty(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // }
+      const formData = new FormData();
+      // Append each value to the FormData instance
+      for (const key in values) {
+        if (values.hasOwnProperty(key)) {
+          formData.append(key, values[key]);
+        }
+      }
       try {
         const response = await api.put(
-          `/updateDeliveryChallans/${id}`,
+          `/chellan-attach-update/${id}`,
           values,
           {
-            // headers: {
-            //   "Content-Type": "multipart/form-data",
-            // },
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           }
         );
         if (response.status === 200) {
@@ -77,7 +81,16 @@ function ChallanEdit() {
     const getData = async () => {
       try {
         const response = await api.get(`/getDeliveryChallansById/${id}`);
-        formik.setValues(response.data);
+        const rest = response.data;
+
+        const formattedData = {
+          ...rest,
+          deliveryChallanDate: rest.deliveryChallanDate
+            ? new Date(rest.deliveryChallanDate).toISOString().split("T")[0]
+            : undefined,
+        };
+        formik.setValues(formattedData);
+        setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
       }
@@ -288,7 +301,7 @@ function ChallanEdit() {
         >
           <div className="container mb-5 mt-5">
             <div className="row py-4">
-              <div className="col-md-6 col-12 mb-3">
+            <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
                   Customer Name<span className="text-danger">*</span>
                 </lable>
@@ -302,7 +315,9 @@ function ChallanEdit() {
                     }`}
                   >
                     <option selected></option>
-                    <option value="sakthivel">sakthivel</option>
+                    <option value="Sakthivel">Sakthivel</option>
+                    <option value="Suriya">Suriya</option>
+                    <option value="Chandru">Chandru</option>
                     {/* {customerData &&
                       customerData.map((customerName) => (
                         <option key={customerName.id} value={customerName.id}>
@@ -430,17 +445,16 @@ function ChallanEdit() {
                 </div>
               </div>
 
-              <div className="col-md-6 col-12 mb-3">
+              <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">Attach File</lable>
-                <div className="">
+                <div className="mb-3">
                   <input
                     type="file"
-                    className={`form-control ${
-                      formik.touched.attachFile && formik.errors.attachFile
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("attachFile")}
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("attachFile", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
                   />
                   {formik.touched.attachFile && formik.errors.attachFile && (
                     <div className="invalid-feedback">
@@ -448,6 +462,11 @@ function ChallanEdit() {
                     </div>
                   )}
                 </div>
+                <img
+                src={data.attachFile}
+                className="img-fluid ms-2 w-50 rounded mt-2"
+                alt="Profile Image"
+              />
               </div>
 
               <div className="row mt-5">
@@ -776,44 +795,44 @@ function ChallanEdit() {
                   </div>
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">
-                      Total Discount<span className="text-danger">*</span>
+                      Discount<span className="text-danger">*</span>
                     </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
                         className={`form-control ${
-                          formik.touched.discountAmount &&
-                          formik.errors.discountAmount
+                          formik.touched.discount &&
+                          formik.errors.discount
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("discountAmount")}
+                        {...formik.getFieldProps("discount")}
                       />
-                      {formik.touched.discountAmount &&
-                        formik.errors.discountAmount && (
+                      {formik.touched.discount &&
+                        formik.errors.discount && (
                           <div className="invalid-feedback">
-                            {formik.errors.discountAmount}
+                            {formik.errors.discount}
                           </div>
                         )}
                     </div>
                   </div>
                   <div className="row mb-3">
-                    <label className="col-sm-4 col-form-label">Total Tax</label>
+                    <label className="col-sm-4 col-form-label">Adjustment</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
                         className={`form-control ${
-                          formik.touched.totalTax && formik.errors.totalTax
+                          formik.touched.adjustment && formik.errors.adjustment
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("totalTax")}
+                        {...formik.getFieldProps("adjustment")}
                       />
-                      {formik.touched.totalTax && formik.errors.totalTax && (
+                      {formik.touched.adjustment && formik.errors.adjustment && (
                         <div className="invalid-feedback">
-                          {formik.errors.totalTax}
+                          {formik.errors.adjustment}
                         </div>
                       )}
                     </div>
@@ -847,18 +866,18 @@ function ChallanEdit() {
                   <div className="mb-3">
                     <textarea
                       className={`form-control  ${
-                        formik.touched.termsAndconditions &&
-                        formik.errors.termsAndconditions
+                        formik.touched.termsAndCondition &&
+                        formik.errors.termsAndCondition
                           ? "is-invalid"
                           : ""
                       }`}
                       rows="4"
-                      {...formik.getFieldProps("termsAndconditions")}
+                      {...formik.getFieldProps("termsAndCondition")}
                     />
-                    {formik.touched.termsAndconditions &&
-                      formik.errors.termsAndconditions && (
+                    {formik.touched.termsAndCondition &&
+                      formik.errors.termsAndCondition && (
                         <div className="invalid-feedback">
-                          {formik.errors.termsAndconditions}
+                          {formik.errors.termsAndCondition}
                         </div>
                       )}
                   </div>

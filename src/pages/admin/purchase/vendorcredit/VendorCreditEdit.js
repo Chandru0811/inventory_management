@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 
 const validationSchema = Yup.object({
   creditNoteNum: Yup.string().required("*Credit Note Number is required"),
-  orderCreditDdate: Yup.string().required("*Order Creditd Date is required"),
   // txnVendorCreditItemsModels: Yup.array().of(
   //   Yup.object({
   //     item: Yup.string().required("item is required"),
@@ -22,23 +21,19 @@ function VendorCreditEdit() {
   const [loading, setLoadIndicator] = useState(false);
   const [customerData, setCustomerData] = useState(null);
   const [itemData, setItemData] = useState(null);
+  const [data, setData] = useState([]);
 
   const formik = useFormik({
     initialValues: {
-      customerId: "",
-      issuesDate: "",
-      dueDate: "",
-      invoiceNumber: "",
-      reference: "",
-      amountsAre: "",
-      subTotal: "",
-      totalTax: "",
-      discountAmount: "",
-      total: "",
-      files: null,
+      creditNoteNum: "",
+      orderNumber: "",
+      orderCreditDdate: "",
+      subject: "",
+      notes: "",
+      file: "",
       txnVendorCreditItemsModels: [
         {
-          item: "",
+          itemDetailsId: "",
           qty: "",
           price: "",
           disc: "",
@@ -48,73 +43,40 @@ function VendorCreditEdit() {
       ],
     },
     validationSchema: validationSchema,
-        // onSubmit: async (values) => {
-    //     setLoadIndicator(true);
-    //     // try {
-    //     //   const formData = new FormData();
+        onSubmit: async (values) => {
+        setLoadIndicator(true);
+        try {
+          const formData = new FormData();
 
-    //     //   formData.append("creditNoteNum", values.creditNoteNum);
-    //     //   formData.append("orderNumber", values.orderNumber);
-    //     //   formData.append("orderCreditDdate", values.orderCreditDdate);
-    //     //   formData.append("subject", values.subject);
-    //     //   formData.append("notes", values.notes);
-    //     //   formData.append("vendorCreditsFile", values.vendorCreditsFile);
-    //     //   formData.append("subTotal", values.subTotal);
-    //     //   formData.append("discount", values.discount);
-    //     //   formData.append("adjustment", values.adjustment);
-    //     //   formData.append("total", values.total);
-    //     //  values.txnInvoiceOrderItemsModels.forEach((item) => {
-    //     //     formData.append("item", item.item);
-    //     //     formData.append("qty", item.qty);
-    //     //     formData.append("price", item.price);
-    //     //     formData.append("taxRate", item.taxRate);
-    //     //     formData.append("disc", item.disc);
-    //     //     formData.append("amount", item.amount);
-    //     //     formData.append("mstrItemsId", item.item);
-    //     //     formData.append("description", "item.item");
-    //     //     formData.append("account", "item.item");
-    //     //     formData.append("taxAmount", "000");
-    //     //     formData.append("project", "000");
-    //     //   });
-    //     //   const response = await api.put(
-    //     //     `updateVendorCredits/${id}`,
-    //     //     formData,
-    //     //     {
-    //     //       headers: {
-    //     //         "Content-Type": "multipart/form-data",
-    //     //       },
-    //     //     }
-    //     //   );
+          formData.append("creditNoteNum", values.creditNoteNum);
+          formData.append("orderNumber", values.orderNumber);
+          formData.append("orderCreditDdate", values.orderCreditDdate);
+          formData.append("subject", values.subject || "");
+          formData.append("notes", values.notes);
+          formData.append("file", values.file);
+          const response = await api.put(
+            `updateVendorCreditsProfileImage/${id}`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
 
-    //     //   if (response.status === 201) {
-    //     //     toast.success(response.data.message);
-    //     //     navigate("/vendorcredit");
-    //     //   } else {
-    //     //     toast.error(response.data.message);
-    //     //   }
-    //     // } catch (error) {
-    //     //   toast.error("Error: Unable to save sales order.");
-    //     // } finally {
-    //     //   setLoadIndicator(false);
-    //     // }
-    //   },
-
-    onSubmit: async (values) => {
-      setLoadIndicator(true);
-      try {
-        const response = await api.put(`updateVendorCredits/${id}`, values,);
-        if (response.status === 200) {
-          toast.success(response.data.message);
-          navigate("/vendorcredit");
-        } else {
-          toast.error(response.data.message);
+          if (response.status === 201) {
+            toast.success(response.data.message);
+            navigate("/vendorcredit");
+          } else {
+            toast.error(response.data.message);
+          }
+        } catch (error) {
+          toast.error("Error: Unable to save sales order.");
+        } finally {
+          setLoadIndicator(false);
         }
-      } catch (error) {
-        toast.error("Error: Unable to save.");
-      } finally {
-        setLoadIndicator(false);
-      }
-    },
+      },
+
   });
   
   useEffect(() => {
@@ -122,11 +84,20 @@ function VendorCreditEdit() {
       try {
         const response = await api.get(`getAllVendorCreditsById/${id}`);
         console.log(response.data);
-        formik.setValues(response.data);
-        formik.setFieldValue(
-          "txnVendorCreditItemsModels",
-          response.data.invoiceItemsModels
-        );
+        const rest = response.data;
+
+        const formattedData = {
+          ...rest,
+          orderCreditDdate: rest.orderCreditDdate
+            ? new Date(rest.orderCreditDdate).toISOString().split("T")[0]
+            : undefined,
+        };
+        formik.setValues(formattedData);
+        // formik.setFieldValue(
+        //   "txnVendorCreditItemsModels",
+        //   response.data.invoiceItemsModels
+        // );
+        setData(response.data);
       } catch (error) {
         toast.error("Error: Unable to Data");
       }
@@ -355,7 +326,7 @@ function VendorCreditEdit() {
               </div>
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                  Order Number<span className="text-danger">*</span>
+                  Order Number
                 </lable>
                 <div className="mb-3">
                   <input
@@ -378,7 +349,7 @@ function VendorCreditEdit() {
 
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                  order Credit Date<span className="text-danger">*</span>
+                  Order Credit Date
                 </lable>
                 <div className="">
                   <input
@@ -398,17 +369,50 @@ function VendorCreditEdit() {
               </div>
 
               <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">Vendor Credit File</label>
-                <div className="">
+                <lable className="form-lable">
+                  Subject
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className={`form-control  ${formik.touched.subject &&
+                      formik.errors.subject
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("subject")}
+                  />
+                  {formik.touched.subject &&
+                    formik.errors.subject && (
+                      <div className="invalid-feedback">
+                        {formik.errors.subject}
+                      </div>
+                    )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Vendor Credit File</lable>
+                <div className="mb-3">
                   <input
                     type="file"
                     className="form-control"
                     onChange={(event) => {
-                      formik.setFieldValue("files", event.target.files[0]);
+                      formik.setFieldValue("file", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
+                  {formik.touched.file && formik.errors.file && (
+                    <div className="invalid-feedback">
+                      {formik.errors.file}
+                    </div>
+                  )}
                 </div>
+                <img
+                src={data.vendorCreditsFile}
+                className="img-fluid ms-2 w-50 rounded mt-2"
+                alt="Profile Image"
+              />
               </div>
 
               <div className="row">
@@ -684,20 +688,20 @@ function VendorCreditEdit() {
                 <div className="col-md-6 col-12 mb-3 pt-0">
                   <lable className="form-lable">Customer Notes</lable>
                   <div className="mb-3">
-                    <input
+                    <textarea
                       type="text"
-                      placeholder="Will be display on the Invoice"
-                      className={`form-control  ${formik.touched.customerNotes &&
-                        formik.errors.customerNotes
+                      className={`form-control  ${formik.touched.notes &&
+                        formik.errors.notes
                         ? "is-invalid"
                         : ""
                         }`}
-                      {...formik.getFieldProps("customerNotes")}
+                        rows="4"
+                      {...formik.getFieldProps("notes")}
                     />
-                    {formik.touched.customerNotes &&
-                      formik.errors.customerNotes && (
+                    {formik.touched.notes &&
+                      formik.errors.notes && (
                         <div className="invalid-feedback">
-                          {formik.errors.customerNotes}
+                          {formik.errors.notes}
                         </div>
                       )}
                   </div>
@@ -789,26 +793,6 @@ function VendorCreditEdit() {
                         </div>
                       )}
                     </div>
-                  </div>
-                </div>
-
-                <div className="col-md-6 col-12 mb-3">
-                  <lable className="form-lable">Terms & Conditions</lable>
-                  <div className="mb-3">
-                    <textarea
-                      className={`form-control  ${formik.touched.termsAndconditions &&
-                        formik.errors.termsAndconditions
-                        ? "is-invalid"
-                        : ""
-                        }`}
-                      {...formik.getFieldProps("termsAndconditions")}
-                    />
-                    {formik.touched.termsAndconditions &&
-                      formik.errors.termsAndconditions && (
-                        <div className="invalid-feedback">
-                          {formik.errors.termsAndconditions}
-                        </div>
-                      )}
                   </div>
                 </div>
               </div>

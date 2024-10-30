@@ -22,15 +22,17 @@ function OrderAdd() {
   const formik = useFormik({
     initialValues: {
       vendorName: "",
+      deliveryAddressCategory: "",
       deliveryAddress: "",
       purchaseOrderNumber: "",
-      deliveryAddressCategory: "",
+      purchaseOrderRef: "",
       date: "",
-      subTotal: "",
-      totalTax: "",
-      discountAmount: "",
-      total: "",
-      purchaseOrderRef: null,
+      deliveryDate: "",
+      paymentTerm: "",
+      shipmentPreference: "",
+      notes: "",
+      termsCondition: "",
+      file: null,
       txnInvoiceOrderItemsModels: [
         {
           item: "",
@@ -43,75 +45,35 @@ function OrderAdd() {
       ],
     },
     validationSchema: validationSchema,
-    // onSubmit: async (values) => {
-    //     setLoadIndicator(true);
-    //     // try {
-    //     //   const formData = new FormData();
-
-    //     //   formData.append("vendorName", values.vendorName);
-    //     //   formData.append("deliveryAddress", values.deliveryAddress);
-    //     //   formData.append("date", values.date);
-    //     //   formData.append("purchaseOrderNumber", values.purchaseOrderNumber);
-    //     //   formData.append("purchaseOrderRef", values.purchaseOrderRef);
-    //     //   formData.append("deliveryAddressCategory", values.deliveryAddressCategory);
-    //     //   formData.append("deliveryDate", values.deliveryDate);
-    //     //   formData.append("shipmentPreference", values.shipmentPreference);
-    //     //   formData.append("notes", values.notes);
-    //     //   formData.append("termsCondition", values.termsCondition);
-    //     //   formData.append("purchaseOrderFile", values.purchaseOrderFile);
-    //     //   formData.append("subTotal", values.subTotal);
-    //     //   formData.append("discount", values.discount);
-    //     //   formData.append("adjustment", values.adjustment);
-    //     //   formData.append("total", values.total);
-    //     //  values.txnInvoiceOrderItemsModels.forEach((item) => {
-    //     //     formData.append("item", item.item);
-    //     //     formData.append("qty", item.qty);
-    //     //     formData.append("price", item.price);
-    //     //     formData.append("taxRate", item.taxRate);
-    //     //     formData.append("disc", item.disc);
-    //     //     formData.append("amount", item.amount);
-    //     //     formData.append("mstrItemsId", item.item);
-    //     //     formData.append("description", "item.item");
-    //     //     formData.append("account", "item.item");
-    //     //     formData.append("taxAmount", "000");
-    //     //     formData.append("project", "000");
-    //     //   });
-    //     //   const response = await api.post(
-    //     //     "createPurchaseOrder",
-    //     //     formData,
-    //     //     {
-    //     //       headers: {
-    //     //         "Content-Type": "multipart/form-data",
-    //     //       },
-    //     //     }
-    //     //   );
-
-    //     //   if (response.status === 201) {
-    //     //     toast.success(response.data.message);
-    //     //     navigate("/order");
-    //     //   } else {
-    //     //     toast.error(response.data.message);
-    //     //   }
-    //     // } catch (error) {
-    //     //   toast.error("Error: Unable to save sales order.");
-    //     // } finally {
-    //     //   setLoadIndicator(false);
-    //     // }
-    //   },
-
     onSubmit: async (values) => {
       setLoadIndicator(true);
-      console.log(values);
       try {
-        const response = await api.post("/createPurchaseOrder", values, {});
+        const formData = new FormData();
+        // Append each value to the FormData instance
+        for (const key in values) {
+          if (values.hasOwnProperty(key)) {
+            formData.append(key, values[key]);
+          }
+        }
+
+        const response = await api.post(
+          "createPurchaseOrderProfileImage",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
         if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/order");
         } else {
           toast.error(response.data.message);
         }
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } catch (error) {
+        toast.error("Error: Unable to save sales order.");
       } finally {
         setLoadIndicator(false);
       }
@@ -277,7 +239,8 @@ function OrderAdd() {
               <div className="col-md-6 col-12 mb-3">
                 <div>
                   <label for="exampleFormControlInput1" className="form-label">
-                  Delivery Address Category <span className="text-danger">*</span>
+                    Delivery Address Category{" "}
+                    <span className="text-danger">*</span>
                   </label>
                 </div>
                 <div className="form-check form-check-inline">
@@ -288,7 +251,9 @@ function OrderAdd() {
                     id="ORGANIZATION"
                     value="ORGANIZATION"
                     onChange={formik.handleChange}
-                    checked={formik.values.deliveryAddressCategory === "ORGANIZATION"}
+                    checked={
+                      formik.values.deliveryAddressCategory === "ORGANIZATION"
+                    }
                   />
                   <label className="form-check-label">Organization</label>
                 </div>
@@ -300,15 +265,21 @@ function OrderAdd() {
                     id="CUSTOMER"
                     value="CUSTOMER"
                     onChange={formik.handleChange}
-                    checked={formik.values.deliveryAddressCategory === "CUSTOMER"}
+                    checked={
+                      formik.values.deliveryAddressCategory === "CUSTOMER"
+                    }
                   />
                   <label className="form-check-label">Customer</label>
                 </div>
-                {formik.errors.deliveryAddressCategory && formik.touched.deliveryAddressCategory && (
-                  <div className="text-danger  " style={{ fontSize: ".875em" }}>
-                    {formik.errors.deliveryAddressCategory}
-                  </div>
-                )}
+                {formik.errors.deliveryAddressCategory &&
+                  formik.touched.deliveryAddressCategory && (
+                    <div
+                      className="text-danger  "
+                      style={{ fontSize: ".875em" }}
+                    >
+                      {formik.errors.deliveryAddressCategory}
+                    </div>
+                  )}
               </div>
 
               <div className="col-md-6 col-12 mb-3">
@@ -454,16 +425,13 @@ function OrderAdd() {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">Purchase Order File</lable>
+                <lable className="form-lable">Attach File</lable>
                 <div className="mb-3">
                   <input
                     type="file"
                     className="form-control"
                     onChange={(event) => {
-                      formik.setFieldValue(
-                        "purchaseOrderFile",
-                        event.target.files[0]
-                      );
+                      formik.setFieldValue("file", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
@@ -750,18 +718,18 @@ function OrderAdd() {
                     <textarea
                       type="text"
                       className={`form-control  ${
-                        formik.touched.customerNotes &&
-                        formik.errors.customerNotes
+                        formik.touched.notes &&
+                        formik.errors.notes
                           ? "is-invalid"
                           : ""
                       }`}
                       rows="4"
-                      {...formik.getFieldProps("customerNotes")}
+                      {...formik.getFieldProps("notes")}
                     />
-                    {formik.touched.customerNotes &&
-                      formik.errors.customerNotes && (
+                    {formik.touched.notes &&
+                      formik.errors.notes && (
                         <div className="invalid-feedback">
-                          {formik.errors.customerNotes}
+                          {formik.errors.notes}
                         </div>
                       )}
                   </div>
@@ -865,18 +833,18 @@ function OrderAdd() {
                   <div className="mb-3">
                     <textarea
                       className={`form-control  ${
-                        formik.touched.termsAndconditions &&
-                        formik.errors.termsAndconditions
+                        formik.touched.termsCondition &&
+                        formik.errors.termsCondition
                           ? "is-invalid"
                           : ""
                       }`}
                       rows="4"
-                      {...formik.getFieldProps("termsAndconditions")}
+                      {...formik.getFieldProps("termsCondition")}
                     />
-                    {formik.touched.termsAndconditions &&
-                      formik.errors.termsAndconditions && (
+                    {formik.touched.termsCondition &&
+                      formik.errors.termsCondition && (
                         <div className="invalid-feedback">
-                          {formik.errors.termsAndconditions}
+                          {formik.errors.termsCondition}
                         </div>
                       )}
                   </div>

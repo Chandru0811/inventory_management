@@ -9,9 +9,12 @@ const ExpenseEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
+  const [data, setData] = useState([]);
 
   const validationSchema = Yup.object({
+    date: Yup.string().required("*Date is required"),
     categoryName: Yup.string().required("*Category Name is required"),
+    amount: Yup.string().required("*Amount is required"),
   });
 
   const formik = useFormik({
@@ -32,20 +35,25 @@ const ExpenseEdit = () => {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-      // const formData = new FormData();
-      // // Append each value to the FormData instance
-      // for (const key in values) {
-      //   if (values.hasOwnProperty(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // }
+
+      const formData = new FormData();
+      // Append each value to the FormData instance
+      for (const key in values) {
+        if (values.hasOwnProperty(key)) {
+          formData.append(key, values[key]);
+        }
+      }
 
       try {
-        const response = await api.put(`updateExpenses/${id}`, values, {
-          // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
-        });
+        const response = await api.put(
+          `update-expense-attach/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
         if (response.status === 200) {
           toast.success(response.data.message);
@@ -65,6 +73,7 @@ const ExpenseEdit = () => {
       try {
         const response = await api.get(`getAllExpensesById/${id}`);
         formik.setValues(response.data);
+        setData(response.data);
       } catch (error) {
         toast.error(error.message);
       }
@@ -122,16 +131,15 @@ const ExpenseEdit = () => {
             <div className="col-12 text-end"></div>
           </div>
           <div className="container mb-5">
-          <div className="row py-4">
-            <div className="col-md-6 col-12 mb-2">
+            <div className="row py-4">
+              <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">Customer Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="customerName"
                     className={`form-control  ${
-                      formik.touched.customerName &&
-                      formik.errors.customerName
+                      formik.touched.customerName && formik.errors.customerName
                         ? "is-invalid"
                         : ""
                     }`}
@@ -147,7 +155,7 @@ const ExpenseEdit = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                Category Name<span className="text-danger">*</span>
+                  Category Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -160,9 +168,12 @@ const ExpenseEdit = () => {
                     }`}
                     {...formik.getFieldProps("categoryName")}
                   />
-                  {formik.touched.categoryName && formik.errors.categoryName && (
-                    <div className="invalid-feedback">{formik.errors.categoryName}</div>
-                  )}
+                  {formik.touched.categoryName &&
+                    formik.errors.categoryName && (
+                      <div className="invalid-feedback">
+                        {formik.errors.categoryName}
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -178,64 +189,41 @@ const ExpenseEdit = () => {
                     }`}
                     {...formik.getFieldProps("currency")}
                   >
-                    <option ></option>
-                    <option value="INR">INR</option>
+                    <option></option>
+                    <option value="INR">Indian Rupee</option>
+                    <option value="SGD">Singapore Dollar</option>
                   </select>
                   {formik.touched.currency && formik.errors.currency && (
-                    <div className="invalid-feedback">{formik.errors.currency}</div>
+                    <div className="invalid-feedback">
+                      {formik.errors.currency}
+                    </div>
                   )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Date</lable>
+                <lable className="form-lable">
+                  Date<span className="text-danger">*</span>
+                </lable>
                 <div className="mb-3">
                   <input
                     type="date"
                     name="date"
                     className={`form-control ${
-                      formik.touched.date &&
-                      formik.errors.date
+                      formik.touched.date && formik.errors.date
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("date")}
                   />
-                  {formik.touched.date &&
-                    formik.errors.date && (
-                      <div className="invalid-feedback">
-                        {formik.errors.date}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Receipt Pic</lable>
-                <div className="mb-3">
-                  <input
-                    type="file"
-                    onChange={(event) => {
-                      formik.setFieldValue("receiptPic", event.target.files[0]);
-                    }}
-                    onBlur={formik.handleBlur}
-                    className={`form-control ${
-                        formik.touched.receiptPic &&
-                        formik.errors.receiptPic
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                    //   {...formik.getFieldProps("receiptPic")}
-                  />
-                  {formik.touched.receiptPic && formik.errors.receiptPic && (
-                    <div className="invalid-feedback">
-                      {formik.errors.receiptPic}
-                    </div>
+                  {formik.touched.date && formik.errors.date && (
+                    <div className="invalid-feedback">{formik.errors.date}</div>
                   )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Amount <span className="text-danger">*</span>
+                  Amount<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -305,24 +293,22 @@ const ExpenseEdit = () => {
                     type="text"
                     name="vendorName"
                     className={`form-control  ${
-                      formik.touched.vendorName &&
-                      formik.errors.vendorName
+                      formik.touched.vendorName && formik.errors.vendorName
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("vendorName")}
                   />
-                  {formik.touched.vendorName &&
-                    formik.errors.vendorName && (
-                      <div className="invalid-feedback">
-                        {formik.errors.vendorName}
-                      </div>
-                    )}
+                  {formik.touched.vendorName && formik.errors.vendorName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.vendorName}
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Vendor Ref</lable>
+                <lable className="form-lable">Vendor Reference</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -341,29 +327,72 @@ const ExpenseEdit = () => {
                   )}
                 </div>
               </div>
-           
+
+              {/* <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Receipt</lable>
+                <div className="mb-3">
+                  <input
+                    type="file"
+                    // onChange={(event) => {
+                    //   formik.setFieldValue("receiptPic", event.target.files[0]);
+                    // }}
+                    // onBlur={formik.handleBlur}
+                    className={`form-control ${
+                      formik.touched.receiptPic && formik.errors.receiptPic
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("receiptPic")}
+                  />
+                  {formik.touched.receiptPic && formik.errors.receiptPic && (
+                    <div className="invalid-feedback">
+                      {formik.errors.receiptPic}
+                    </div>
+                  )}
+                </div>
+              </div> */}
+
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Notes<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Receipt</lable>
+                <div className="mb-3">
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("receiptPic", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.receiptPic && formik.errors.receiptPic && (
+                    <div className="invalid-feedback">{formik.errors.receiptPic}</div>
+                  )}
+                </div>
+                <img
+                  src={data.receiptPic}
+                  className="img-fluid ms-2 w-50 rounded mt-2"
+                  alt="Profile Image"
+                />
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Notes</lable>
                 <div className="mb-3">
                   <textarea
                     type="text"
                     name="notes"
                     className={`form-control  ${
-                      formik.touched.notes &&
-                      formik.errors.notes
+                      formik.touched.notes && formik.errors.notes
                         ? "is-invalid"
                         : ""
                     }`}
+                    rows="4"
                     {...formik.getFieldProps("notes")}
                   />
-                  {formik.touched.notes &&
-                    formik.errors.notes && (
-                      <div className="invalid-feedback">
-                        {formik.errors.notes}
-                      </div>
-                    )}
+                  {formik.touched.notes && formik.errors.notes && (
+                    <div className="invalid-feedback">
+                      {formik.errors.notes}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

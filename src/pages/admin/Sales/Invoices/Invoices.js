@@ -142,9 +142,9 @@ const Invoices = () => {
                     <th scope="col" className="text-center">
                       STATUS
                     </th>
-                    <th scope="col" className="text-center">
+                    {/* <th scope="col" className="text-center">
                       AMOUNT
-                    </th>
+                    </th> */}
                     <th scope="col" className="text-center">
                       Action
                     </th>
@@ -157,7 +157,7 @@ const Invoices = () => {
                       <td className="text-center">{data.customerName}</td>
                       <td className="text-center">{data.invoiceNumber}</td>
                       <td className="text-center">{data.dimensions}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      {/* <td className="text-center">{data.dimensions}</td> */}
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/invoice/view/${data.id}`}>

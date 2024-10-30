@@ -349,6 +349,29 @@ function OrderView() {
                     </div>
                   </div>
                 </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Attach File</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        :{" "}
+                        {data.purchaseOrderFile ? (
+                          <img
+                            src={data.purchaseOrderFile}
+                            className="img-fluid ms-2 w-100 rounded"
+                            alt="Profile Image"
+                          />
+                        ) : (
+                          <></>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="row mt-5 flex-nowrap">

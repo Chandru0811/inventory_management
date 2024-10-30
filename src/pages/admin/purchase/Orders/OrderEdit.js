@@ -12,6 +12,7 @@ function OrderAdd() {
   const [loading, setLoadIndicator] = useState(false);
   const [customerData, setCustomerData] = useState(null);
   const [itemData, setItemData] = useState(null);
+  const [data, setData] = useState([]);
 
   const validationSchema = Yup.object({
     vendorName: Yup.string().required("*Vendor name is required"),
@@ -25,104 +26,78 @@ function OrderAdd() {
   const formik = useFormik({
     initialValues: {
       vendorName: "",
+      deliveryAddressCategory: "",
       deliveryAddress: "",
       purchaseOrderNumber: "",
-      deliveryAddressCategory: "",
+      purchaseOrderRef: "",
       date: "",
-      subTotal: "",
-      totalTax: "",
-      discountAmount: "",
-      total: "",
-      purchaseOrderRef: null,
-      txnInvoiceOrderItemsModels: [
-        {
-          item: "",
-          qty: "",
-          price: "",
-          disc: "",
-          taxRate: "",
-          amount: "",
-        },
-      ],
+      deliveryDate: "",
+      paymentTerm: "",
+      shipmentPreference: "",
+      notes: "",
+      termsCondition: "",
+      file: null,
     },
     validationSchema: validationSchema,
-    // onSubmit: async (values) => {
-    //     setLoadIndicator(true);
-    //     // try {
-    //     //   const formData = new FormData();
-
-    //     //   formData.append("vendorName", values.vendorName);
-    //     //   formData.append("deliveryAddress", values.deliveryAddress);
-    //     //   formData.append("date", values.date);
-    //     //   formData.append("purchaseOrderNumber", values.purchaseOrderNumber);
-    //     //   formData.append("deliveryAddressCategory", values.deliveryAddressCategory);
-    //     //   formData.append("subTotal", values.subTotal);
-    //     //   formData.append("totalTax", values.totalTax);
-    //     //   formData.append("discountAmount", values.discountAmount);
-    //     //   formData.append("total", values.total);
-    //     //  values.txnInvoiceOrderItemsModels.forEach((item) => {
-    //     //     formData.append("item", item.item);
-    //     //     formData.append("qty", item.qty);
-    //     //     formData.append("price", item.price);
-    //     //     formData.append("taxRate", item.taxRate);
-    //     //     formData.append("disc", item.disc);
-    //     //     formData.append("amount", item.amount);
-    //     //     formData.append("mstrItemsId", item.item);
-    //     //     formData.append("description", "item.item");
-    //     //     formData.append("account", "item.item");
-    //     //     formData.append("taxAmount", "000");
-    //     //     formData.append("project", "000");
-    //     //   });
-    //     //   if (values.purchaseOrderRef) {
-    //     //   formData.append("purchaseOrderRef", values.purchaseOrderRef);
-    //     //   }
-    //     //   const response = await api.put(
-    //     //     `/updatePurchaseOrder/${id}`,
-    //     //     formData,
-    //     //     {
-    //     //       headers: {
-    //     //         "Content-Type": "multipart/form-data",
-    //     //       },
-    //     //     }
-    //     //   );
-
-    //     //   if (response.status === 201) {
-    //     //     toast.success(response.data.message);
-    //     //     navigate("/invoice");
-    //     //   } else {
-    //     //     toast.error(response.data.message);
-    //     //   }
-    //     // } catch (error) {
-    //     //   toast.error("Error: Unable to save sales order.");
-    //     // } finally {
-    //     //   setLoadIndicator(false);
-    //     // }
-    //   },
-
     onSubmit: async (values) => {
-      setLoadIndicator(true);
-      console.log(values);
-      try {
-        const response = await api.put(`/updatePurchaseOrder/${id}`, values);
-        if (response.status === 200) {
-          toast.success(response.data.message);
-          navigate("/order");
-        } else {
-          toast.error(response.data.message);
+        setLoadIndicator(true);
+        try {
+          const formData = new FormData();
+          formData.append("vendorName", values.vendorName);
+          formData.append("deliveryAddressCategory", values.deliveryAddressCategory);
+          formData.append("deliveryAddress", values.deliveryAddress);
+          formData.append("purchaseOrderNumber", values.purchaseOrderNumber);
+          formData.append("purchaseOrderRef", values.purchaseOrderRef);
+          formData.append("date", values.date);
+          formData.append("deliveryDate", values.deliveryDate);
+          formData.append("paymentTerm", values.paymentTerm);
+          formData.append("shipmentPreference", values.shipmentPreference);
+          formData.append("notes", values.notes);
+          formData.append("termsCondition", values.termsCondition);
+          formData.append("file", values.file);
+          const response = await api.put(
+            `/updatePurchaseOrderProfileImage/${id}`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          if (response.status === 201) {
+            toast.success(response.data.message);
+            navigate("/order");
+          } else {
+            toast.error(response.data.message);
+          }
+        } catch (error) {
+          toast.error("Error: Unable to save sales order.");
+        } finally {
+          setLoadIndicator(false);
         }
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
-      } finally {
-        setLoadIndicator(false);
-      }
-    },
+      },
+
+
   });
 
   useEffect(() => {
     const getData = async () => {
       try {
         const response = await api.get(`/getAllPurchaseOrderById/${id}`);
-          formik.setValues(response.data);
+        const rest = response.data;
+
+        const formattedData = {
+          ...rest,
+          date: rest.date
+            ? new Date(rest.date).toISOString().split("T")[0]
+            : undefined,
+            deliveryDate: rest.deliveryDate
+            ? new Date(rest.deliveryDate).toISOString().split("T")[0]
+            : undefined,
+        };
+        formik.setValues(formattedData);
+        setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
       }
@@ -527,20 +502,25 @@ function OrderAdd() {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">Purchase Order File</lable>
+                <lable className="form-lable">Attach File</lable>
                 <div className="mb-3">
                   <input
                     type="file"
                     className="form-control"
                     onChange={(event) => {
                       formik.setFieldValue(
-                        "purchaseOrderFile",
+                        "file",
                         event.target.files[0]
                       );
                     }}
                     onBlur={formik.handleBlur}
                   />
                 </div>
+                <img
+                src={data.purchaseOrderFile}
+                className="img-fluid ms-2 w-50 rounded mt-2"
+                alt="Profile Image"
+              />
               </div>
 
               {/* <div className="row">

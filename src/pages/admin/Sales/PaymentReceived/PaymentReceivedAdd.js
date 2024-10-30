@@ -10,14 +10,15 @@ const PaymentReceivedAdd = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    customerName: Yup.string().required("*Customer Name is required"),
-    amountReceive: Yup.string().required("*Amount Receive is required"),
+    customerName: Yup.string().required("*Customer name is required"),
+    amountReceive: Yup.string().required("*Amount receive is required"),
     payment: Yup.string().required("*Payment is required"),
-    depositTo: Yup.string().required("*Deposit To is required"),
+    depositTo: Yup.string().required("*Deposit to is required"),
+    taxDeduction: Yup.string().required("*Tax deduction is required"),
   });
+
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
       customerName: "",
       payment: "",
       amountReceive: "",
@@ -27,32 +28,20 @@ const PaymentReceivedAdd = () => {
       depositTo: "",
       reference: "",
       notes: "",
-      attachFile: "",
+      file: null,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
 
-      // const formData = new FormData();
-      // // Append each value to the FormData instance
-      // for (const key in values) {
-      //   if (values.hasOwnProperty(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // }
-
       const formData = new FormData();
-      formData.append("customerName", values.customerName);
-      formData.append("payment", values.payment);
-      formData.append("amountReceive", values.amountReceive);
-      formData.append("paymentCharges", values.paymentCharges);
-      formData.append("taxDeduction", values.taxDeduction);
-      formData.append("paymentMode", values.paymentMode);
-      formData.append("depositTo", values.depositTo);
-      formData.append("reference", values.reference);
-      formData.append("notes", values.notes);
-      formData.append("file", values.file);
+      // Append each value to the FormData instance
+      for (const key in values) {
+        if (values.hasOwnProperty(key)) {
+          formData.append(key, values[key]);
+        }
+      }
 
       try {
         const response = await api.post(
@@ -317,28 +306,29 @@ const PaymentReceivedAdd = () => {
               </div> */}
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Payment Mode</lable>
+                <lable className="form-lable">
+                  Deposit To<span className="text-danger">*</span>
+                </lable>
                 <div className="mb-3">
                   <select
-                    name="paymentMode"
+                    name="depositTo"
                     className={`form-select  ${
-                      formik.touched.paymentMode && formik.errors.paymentMode
+                      formik.touched.depositTo && formik.errors.depositTo
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("paymentMode")}
+                    {...formik.getFieldProps("depositTo")}
                   >
                     <option value=""></option>
-                    <option value="CASH">Cash</option>
-                    <option value="BANK_REMITTANCE">Bank Remittance</option>
-                    <option value="CHEQUE">Check</option>
-                    <option value="CREDIT_CARD">Credit Card</option>
-                    <option value="UPI">UPI</option>
-                    <option value="BANK_TRANSFER">Bank Transfer</option>
+                    <option value="PETTY_CASH">Petty Cash</option>
+                    <option value="UNDEPOSITED_FUND">Undeposited Fund</option>
+                    <option value="EMPLOYEE_REIMBURSEMENTS">Employee Reimbursements</option>
+                    <option value="OPENING_BALANCE_ADJUSTMENTS">Opening Balance Adjustments</option>
+                    <option value="TDS_PAYABLE">TDS Payable</option>
                   </select>
-                  {formik.touched.paymentMode && formik.errors.paymentMode && (
+                  {formik.touched.depositTo && formik.errors.depositTo && (
                     <div className="invalid-feedback">
-                      {formik.errors.paymentMode}
+                      {formik.errors.depositTo}
                     </div>
                   )}
                 </div>
@@ -346,7 +336,7 @@ const PaymentReceivedAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Reference<span className="text-danger">*</span>
+                  Reference
                 </lable>
                 <div className="mb-3">
                   <input

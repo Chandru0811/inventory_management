@@ -11,14 +11,14 @@ const ExpenseView = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(false);
-        try {
-          const response = await api.get(`/getAllExpensesById/${id}`);
-          setData(response.data);
-        } catch (e) {
-          toast.error("Error fetching data: ", e?.response?.data?.message);
-        } finally {
-          setLoading(false);
-        }
+      try {
+        const response = await api.get(`/getAllExpensesById/${id}`);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     };
     getData();
   }, [id]);
@@ -134,21 +134,7 @@ const ExpenseView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data?.date?.slice(0,10) || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Receipt Pic </b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.receiptPic || ""}
+                        : {data?.date?.slice(0, 10) || ""}
                       </p>
                     </div>
                   </div>
@@ -217,14 +203,34 @@ const ExpenseView = () => {
                       </p>
                     </div>
                     <div className="col-6">
+                      <p className="text-muted text-sm">: {data.notes || ""}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Receipt</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.notes || ""}
+                        :{" "}
+                        {data.receiptPic ? (
+                          <img
+                            src={data.receiptPic}
+                            className="img-fluid ms-2 w-100 rounded"
+                            alt="Profile Image"
+                          />
+                        ) : (
+                          <></>
+                        )}
                       </p>
                     </div>
                   </div>
                 </div>
-                </div>
-           
+              </div>
             </div>
           </div>
         </div>

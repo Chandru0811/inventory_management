@@ -10,7 +10,9 @@ const ExpenseAdd = () => {
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
+    date: Yup.string().required("*Date is required"),
     categoryName: Yup.string().required("*Category Name is required"),
+    amount: Yup.string().required("*Amount is required"),
   });
 
   const formik = useFormik({
@@ -31,22 +33,23 @@ const ExpenseAdd = () => {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-      // const formData = new FormData();
-      // // Append each value to the FormData instance
-      // for (const key in values) {
-      //   if (values.hasOwnProperty(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // }
+
+      const formData = new FormData();
+      // Append each value to the FormData instance
+      for (const key in values) {
+        if (values.hasOwnProperty(key)) {
+          formData.append(key, values[key]);
+        }
+      }
 
       try {
-        const response = await api.post("createExpenses", values, {
-          // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
+        const response = await api.post("create-expense-attach", values, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         });
 
-        if (response.status === 201) {
+        if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/expense");
         } else {
@@ -111,15 +114,14 @@ const ExpenseAdd = () => {
           </div>
           <div className="container mb-5">
             <div className="row py-4">
-            <div className="col-md-6 col-12 mb-2">
+              <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">Customer Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="customerName"
                     className={`form-control  ${
-                      formik.touched.customerName &&
-                      formik.errors.customerName
+                      formik.touched.customerName && formik.errors.customerName
                         ? "is-invalid"
                         : ""
                     }`}
@@ -135,7 +137,7 @@ const ExpenseAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                Category Name<span className="text-danger">*</span>
+                  Category Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -148,9 +150,12 @@ const ExpenseAdd = () => {
                     }`}
                     {...formik.getFieldProps("categoryName")}
                   />
-                  {formik.touched.categoryName && formik.errors.categoryName && (
-                    <div className="invalid-feedback">{formik.errors.categoryName}</div>
-                  )}
+                  {formik.touched.categoryName &&
+                    formik.errors.categoryName && (
+                      <div className="invalid-feedback">
+                        {formik.errors.categoryName}
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -166,64 +171,41 @@ const ExpenseAdd = () => {
                     }`}
                     {...formik.getFieldProps("currency")}
                   >
-                    <option ></option>
-                    <option value="INR">INR</option>
+                    <option></option>
+                    <option value="INR">Indian Rupee</option>
+                    <option value="SGD">Singapore Dollar</option>
                   </select>
                   {formik.touched.currency && formik.errors.currency && (
-                    <div className="invalid-feedback">{formik.errors.currency}</div>
+                    <div className="invalid-feedback">
+                      {formik.errors.currency}
+                    </div>
                   )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Date</lable>
+                <lable className="form-lable">
+                  Date<span className="text-danger">*</span>
+                </lable>
                 <div className="mb-3">
                   <input
                     type="date"
                     name="date"
                     className={`form-control ${
-                      formik.touched.date &&
-                      formik.errors.date
+                      formik.touched.date && formik.errors.date
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("date")}
                   />
-                  {formik.touched.date &&
-                    formik.errors.date && (
-                      <div className="invalid-feedback">
-                        {formik.errors.date}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Receipt Pic</lable>
-                <div className="mb-3">
-                  <input
-                    type="file"
-                    // onChange={(event) => {
-                    //   formik.setFieldValue("receiptPic", event.target.files[0]);
-                    // }}
-                    // onBlur={formik.handleBlur}
-                    className={`form-control ${
-                        formik.touched.receiptPic &&
-                        formik.errors.receiptPic
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      {...formik.getFieldProps("receiptPic")}
-                  />
-                  {formik.touched.receiptPic && formik.errors.receiptPic && (
-                    <div className="invalid-feedback">
-                      {formik.errors.receiptPic}
-                    </div>
+                  {formik.touched.date && formik.errors.date && (
+                    <div className="invalid-feedback">{formik.errors.date}</div>
                   )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Amount <span className="text-danger">*</span>
+                  Amount<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -293,24 +275,22 @@ const ExpenseAdd = () => {
                     type="text"
                     name="vendorName"
                     className={`form-control  ${
-                      formik.touched.vendorName &&
-                      formik.errors.vendorName
+                      formik.touched.vendorName && formik.errors.vendorName
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("vendorName")}
                   />
-                  {formik.touched.vendorName &&
-                    formik.errors.vendorName && (
-                      <div className="invalid-feedback">
-                        {formik.errors.vendorName}
-                      </div>
-                    )}
+                  {formik.touched.vendorName && formik.errors.vendorName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.vendorName}
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Vendor Ref</lable>
+                <lable className="form-lable">Vendor Reference</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -329,29 +309,45 @@ const ExpenseAdd = () => {
                   )}
                 </div>
               </div>
-           
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Receipt</lable>
+                <div className="mb-3">
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("receiptPic", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.receiptPic && formik.errors.receiptPic && (
+                    <div className="invalid-feedback">{formik.errors.receiptPic}</div>
+                  )}
+                </div>
+              </div>
+
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Notes<span className="text-danger">*</span>
+                  Notes
                 </lable>
                 <div className="mb-3">
                   <textarea
                     type="text"
                     name="notes"
                     className={`form-control  ${
-                      formik.touched.notes &&
-                      formik.errors.notes
+                      formik.touched.notes && formik.errors.notes
                         ? "is-invalid"
                         : ""
                     }`}
+                    rows="4"
                     {...formik.getFieldProps("notes")}
                   />
-                  {formik.touched.notes &&
-                    formik.errors.notes && (
-                      <div className="invalid-feedback">
-                        {formik.errors.notes}
-                      </div>
-                    )}
+                  {formik.touched.notes && formik.errors.notes && (
+                    <div className="invalid-feedback">
+                      {formik.errors.notes}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

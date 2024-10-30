@@ -56,23 +56,6 @@ const ItemsEdit = () => {
       setLoadIndicator(true);
       console.log(values);
 
-      // const payload = {
-      //   ...values,
-      //   universalProductCode: Number(values.universalProductCode) || 0,
-      //   internationalArticleNumber:
-      //     Number(values.internationalArticleNumber) || 0,
-      //   internationalStandardBookNumber:
-      //     Number(values.internationalStandardBookNumber) || 0,
-      //   salesTax: Number(values.salesTax) || 0,
-      //   purchaseTax: Number(values.purchaseTax) || 0,
-      //   weight: Number(values.weight) || 0,
-      //   sellingPrice: Number(values.sellingPrice) || 0,
-      //   costPrice: Number(values.costPrice) || 0,
-      //   openingStock: Number(values.openingStock) || 0,
-      //   openingStockRate: Number(values.openingStockRate) || 0,
-      //   reorderPoint: Number(values.reorderPoint) || 0,
-      // };
-
 
       const formData = new FormData();
       formData.append("type", values.type);

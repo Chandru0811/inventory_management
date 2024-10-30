@@ -136,7 +136,7 @@ const PaymentReceived = () => {
                                             CUSTOMER NAME
                                         </th>
                                         <th scope="col" className="text-center">
-                                            AMOUNTRECEIVE
+                                            AMOUNT RECEIVE
                                         </th>
                                         <th scope="col" className="text-center">
                                             DEPOSIT TO

@@ -15,7 +15,7 @@ function ChellanAdd() {
     customerName: Yup.string().required("*Customer name is required"),
     deliveryChallan: Yup.string().required("*Delivery Challan is required"),
     deliveryChallanDate: Yup.string().required("*Delivery Challan Date is required"),
-    challanType: Yup.string().required("*Challan Type is required"),
+    // challanType: Yup.string().required("*Challan Type is required"),
     // txnInvoiceOrderItemsModels: Yup.array().of(
     //   Yup.object({
     //     item: Yup.string().required("*Item is required"),
@@ -28,8 +28,8 @@ function ChellanAdd() {
       customerName: "",
       deliveryChallan: "",
       deliveryChallanDate: "",
-      challanType: "",
-      files: null,
+      // challanType: "",
+      attachFile: null,
       txnInvoiceOrderItemsModels: [
         {
           item: "",
@@ -45,39 +45,40 @@ function ChellanAdd() {
       try {
         const formData = new FormData();
 
-        formData.append("customerId", values.customerId);
-        formData.append("issuesDate", values.issuesDate);
+        formData.append("customerName", values.customerName);
+        formData.append("deliveryChallan", values.deliveryChallan);
         formData.append("reference", values.reference);
-        formData.append("dueDate", values.dueDate);
-        formData.append("invoiceNumber", values.invoiceNumber);
-        formData.append("AmountsAre", values.amountsAre);
+        formData.append("deliveryChallanDate", values.deliveryChallanDate);
         formData.append("subTotal", values.subTotal);
-        formData.append("totalTax", values.totalTax);
-        formData.append("discountAmount", values.discountAmount);
+        formData.append("discount", values.discount);
+        formData.append("adjustment", values.adjustment);
         formData.append("total", values.total);
-        values.txnInvoiceOrderItemsModels.forEach((item) => {
-          formData.append("item", item.item);
-          formData.append("qty", item.qty);
-          formData.append("price", item.price);
-          formData.append("taxRate", item.taxRate);
-          formData.append("disc", item.disc);
-          formData.append("amount", item.amount);
-          formData.append("mstrItemsId", item.item);
-          formData.append("description", "item.item");
-          formData.append("account", "item.item");
-          formData.append("taxAmount", "000");
-          formData.append("project", "000");
-        });
+        formData.append("customerNotes", values.customerNotes);
+        formData.append("termsAndCondition", values.termsAndCondition);
+        formData.append("attachFile", values.attachFile);
+        // values.txnInvoiceOrderItemsModels.forEach((item) => {
+        //   formData.append("item", item.item);
+        //   formData.append("qty", item.qty);
+        //   formData.append("price", item.price);
+        //   formData.append("taxRate", item.taxRate);
+        //   formData.append("disc", item.disc);
+        //   formData.append("amount", item.amount);
+        //   formData.append("mstrItemsId", item.item);
+        //   formData.append("description", "item.item");
+        //   formData.append("account", "item.item");
+        //   formData.append("taxAmount", "000");
+        //   formData.append("project", "000");
+        // });
         if (values.files) {
           formData.append("files", values.files);
         }
-        const response = await api.post("createDeliveryChallans", values, {
-          // headers: {
-          //   "Content-Type": "multipart/form-data",
-          // },
+        const response = await api.post("chellan-attach", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
 
-        if (response.status === 201) {
+        if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/challan");
         } else {
@@ -301,7 +302,9 @@ function ChellanAdd() {
                     }`}
                   >
                     <option selected></option>
-                    <option value="sakthivel">sakthivel</option>
+                    <option value="Sakthivel">Sakthivel</option>
+                    <option value="Suriya">Suriya</option>
+                    <option value="Chandru">Chandru</option>
                     {/* {customerData &&
                       customerData.map((customerName) => (
                         <option key={customerName.id} value={customerName.id}>
@@ -429,24 +432,19 @@ function ChellanAdd() {
                 </div>
               </div>
 
-              <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">
-                  Attach File
-                </lable>
-                <div className="">
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Attach File</lable>
+                <div className="mb-3">
                   <input
                     type="file"
-                    className={`form-control ${
-                      formik.touched.attachFile && formik.errors.attachFile
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("attachFile")}
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("attachFile", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
                   />
                   {formik.touched.attachFile && formik.errors.attachFile && (
-                    <div className="invalid-feedback">
-                      {formik.errors.attachFile}
-                    </div>
+                    <div className="invalid-feedback">{formik.errors.attachFile}</div>
                   )}
                 </div>
               </div>
@@ -777,44 +775,44 @@ function ChellanAdd() {
                   </div>
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">
-                      Total Discount<span className="text-danger">*</span>
+                      Discount<span className="text-danger">*</span>
                     </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
                         className={`form-control ${
-                          formik.touched.discountAmount &&
-                          formik.errors.discountAmount
+                          formik.touched.discount &&
+                          formik.errors.discount
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("discountAmount")}
+                        {...formik.getFieldProps("discount")}
                       />
-                      {formik.touched.discountAmount &&
-                        formik.errors.discountAmount && (
+                      {formik.touched.discount &&
+                        formik.errors.discount && (
                           <div className="invalid-feedback">
-                            {formik.errors.discountAmount}
+                            {formik.errors.discount}
                           </div>
                         )}
                     </div>
                   </div>
                   <div className="row mb-3">
-                    <label className="col-sm-4 col-form-label">Total Tax</label>
+                    <label className="col-sm-4 col-form-label">Adjustment<span className="text-danger">*</span></label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
                         className={`form-control ${
-                          formik.touched.totalTax && formik.errors.totalTax
+                          formik.touched.adjustment && formik.errors.adjustment
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("totalTax")}
+                        {...formik.getFieldProps("adjustment")}
                       />
-                      {formik.touched.totalTax && formik.errors.totalTax && (
+                      {formik.touched.adjustment && formik.errors.adjustment && (
                         <div className="invalid-feedback">
-                          {formik.errors.totalTax}
+                          {formik.errors.adjustment}
                         </div>
                       )}
                     </div>
@@ -848,18 +846,18 @@ function ChellanAdd() {
                   <div className="mb-3">
                     <textarea
                       className={`form-control  ${
-                        formik.touched.termsAndconditions &&
-                        formik.errors.termsAndconditions
+                        formik.touched.termsAndCondition &&
+                        formik.errors.termsAndCondition
                           ? "is-invalid"
                           : ""
                       }`}
                       rows="4"
-                      {...formik.getFieldProps("termsAndconditions")}
+                      {...formik.getFieldProps("termsAndCondition")}
                     />
-                    {formik.touched.termsAndconditions &&
-                      formik.errors.termsAndconditions && (
+                    {formik.touched.termsAndCondition &&
+                      formik.errors.termsAndCondition && (
                         <div className="invalid-feedback">
-                          {formik.errors.termsAndconditions}
+                          {formik.errors.termsAndCondition}
                         </div>
                       )}
                   </div>

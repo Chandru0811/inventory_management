@@ -14,6 +14,7 @@ function InvoiceEdit() {
   const [loading, setLoadIndicator] = useState(false);
   const [customerData, setCustomerData] = useState(null);
   const [itemData, setItemData] = useState(null);
+  const [data, setData] = useState([]);
 
   const validationSchema = Yup.object({
     customerName: Yup.string().required("*Customer name is required"),
@@ -31,7 +32,7 @@ function InvoiceEdit() {
       customerName: "",
       invoiceNumber: "",
       invoiceDate: "",
-      files: null,
+      file: null,
       txnInvoiceOrderItemsModels: [
         {
           item: "",
@@ -45,18 +46,18 @@ function InvoiceEdit() {
     onSubmit: async (values) => {
       setLoadIndicator(true);
 
-      // const formData = new FormData();
+      const formData = new FormData();
 
-      // formData.append("customerId", values.customerId);
-      // formData.append("issuesDate", values.issuesDate);
-      // formData.append("reference", values.reference);
-      // formData.append("dueDate", values.dueDate);
-      // formData.append("invoiceNumber", values.invoiceNumber);
-      // formData.append("AmountsAre", values.amountsAre);
-      // formData.append("subTotal", values.subTotal);
-      // formData.append("totalTax", values.totalTax);
-      // formData.append("discountAmount", values.discountAmount);
-      // formData.append("total", values.total);
+      formData.append("customerName", values.customerName);
+      formData.append("invoiceNumber", values.invoiceNumber);
+      formData.append("orderNumber", values.orderNumber);
+      formData.append("invoiceDate", values.invoiceDate);
+      formData.append("dueDate", values.dueDate);
+      formData.append("salesperson", values.salesperson);
+      formData.append("subject", values.subject);
+      formData.append("customerNotes", values.customerNotes);
+      formData.append("termsAndCondition", values.termsAndCondition);
+      formData.append("file", values.file);
       // values.txnInvoiceOrderItemsModels.forEach((item) => {
       //   formData.append("item", item.item);
       //   formData.append("qty", item.qty);
@@ -75,8 +76,8 @@ function InvoiceEdit() {
       // }
 
       try {
-        const response = await api.put(`/updateInvoices/${id}`, values);
-        if (response.status === 200) {
+        const response = await api.put(`/updateInvoice/${id}`, formData);
+        if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/invoice");
         } else {
@@ -98,8 +99,15 @@ function InvoiceEdit() {
 
         const formattedData = {
           ...rest,
-        invoiceDate: rest.invoiceDate ? new Date(rest.invoiceDate).toLocaleDateString("en-GB") : ""        }
-        formik.setValues(response.data);
+          invoiceDate: rest.invoiceDate
+            ? new Date(rest.invoiceDate).toISOString().split("T")[0]
+            : undefined,
+            dueDate: rest.dueDate
+            ? new Date(rest.dueDate).toISOString().split("T")[0]
+            : undefined,
+        };
+        formik.setValues(formattedData);
+        setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
       }
@@ -305,23 +313,29 @@ function InvoiceEdit() {
         >
           <div className="container mb-5 mt-5">
             <div className="row py-4">
-              <div className="col-md-6 col-12 mb-2">
+            <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
                   Customer Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
-                    name="customerName"
-                    className={`form-select  ${
+                    {...formik.getFieldProps("customerName")}
+                    className={`form-select    ${
                       formik.touched.customerName && formik.errors.customerName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("customerName")}
                   >
-                    <option value=""></option>
-                    <option value="Business">Business</option>
-                    {/* <option value="INDIVITUALS">Individual</option> */}
+                    <option selected></option>
+                    <option value="Sakthivel">Sakthivel</option>
+                    <option value="Suriya">Suriya</option>
+                    <option value="Chandru">Chandru</option>
+                    {/* {customerData &&
+                      customerData.map((customerName) => (
+                        <option key={customerName.id} value={customerName.id}>
+                          {customerName.contactName}
+                        </option>
+                      ))} */}
                   </select>
                   {formik.touched.customerName &&
                     formik.errors.customerName && (
@@ -460,25 +474,45 @@ function InvoiceEdit() {
               </div>
 
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">
-                  Attach File
-                </lable>
+                <lable className="form-lable">Subject</lable>
                 <div className="">
                   <input
-                    type="file"
+                    type="text"
                     className={`form-control ${
-                      formik.touched.attachFile && formik.errors.attachFile
+                      formik.touched.subject && formik.errors.subject
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("attachFile")}
+                    {...formik.getFieldProps("subject")}
                   />
-                  {formik.touched.attachFile && formik.errors.attachFile && (
+                  {formik.touched.subject && formik.errors.subject && (
                     <div className="invalid-feedback">
-                      {formik.errors.attachFile}
+                      {formik.errors.subject}
                     </div>
                   )}
                 </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Attach File</lable>
+                <div className="mb-3">
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={(event) => {
+                      formik.setFieldValue("file", event.target.files[0]);
+                    }}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.file && formik.errors.file && (
+                    <div className="invalid-feedback">{formik.errors.file}</div>
+                  )}
+                </div>
+                <img
+                src={data.attachFile}
+                className="img-fluid ms-2 w-50 rounded mt-2"
+                alt="Profile Image"
+              />
               </div>
 
               <div className="row mt-5">
@@ -878,18 +912,18 @@ function InvoiceEdit() {
                   <div className="mb-3">
                     <textarea
                       className={`form-control  ${
-                        formik.touched.termsAndconditions &&
-                        formik.errors.termsAndconditions
+                        formik.touched.termsAndCondition &&
+                        formik.errors.termsAndCondition
                           ? "is-invalid"
                           : ""
                       }`}
                       rows="4"
-                      {...formik.getFieldProps("termsAndconditions")}
+                      {...formik.getFieldProps("termsAndCondition")}
                     />
-                    {formik.touched.termsAndconditions &&
-                      formik.errors.termsAndconditions && (
+                    {formik.touched.termsAndCondition &&
+                      formik.errors.termsAndCondition && (
                         <div className="invalid-feedback">
-                          {formik.errors.termsAndconditions}
+                          {formik.errors.termsAndCondition}
                         </div>
                       )}
                   </div>

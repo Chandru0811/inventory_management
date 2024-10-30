@@ -16,7 +16,6 @@ function VendorCreditAdd() {
 
   const validationSchema = Yup.object({
     creditNoteNum: Yup.string().required("*Credit Note Number is required"),
-    orderCreditDdate: Yup.string().required("*Order Creditd Date is required"),
     // txnVendorCreditItemsModels: Yup.array().of(
     //   Yup.object({
     //     item: Yup.string().required("item is required"),
@@ -26,11 +25,12 @@ function VendorCreditAdd() {
 
   const formik = useFormik({
     initialValues: {
-      vendorId: "",
       creditNoteNum: "",
       orderNumber: "",
       orderCreditDdate: "",
-      vendorCreditsFile: "",
+      subject: "",
+      notes: "",
+      file: "",
       txnVendorCreditItemsModels: [
         {
           itemDetailsId: "",
@@ -41,81 +41,42 @@ function VendorCreditAdd() {
           amount: "",
         },
       ],
-      subject: "",
-      subTotal: "",
-      adjustments: "",
-      total: "",
-      notes: "",
-      accountDetailsId: "",
     },
     validationSchema: validationSchema,
-    // onSubmit: async (values) => {
-    //     setLoadIndicator(true);
-    //     // try {
-    //     //   const formData = new FormData();
-
-    //     //   formData.append("creditNoteNum", values.creditNoteNum);
-    //     //   formData.append("orderNumber", values.orderNumber);
-    //     //   formData.append("orderCreditDdate", values.orderCreditDdate);
-    //     //   formData.append("subject", values.subject);
-    //     //   formData.append("notes", values.notes);
-    //     //   formData.append("vendorCreditsFile", values.vendorCreditsFile);
-    //     //   formData.append("subTotal", values.subTotal);
-    //     //   formData.append("discount", values.discount);
-    //     //   formData.append("adjustment", values.adjustment);
-    //     //   formData.append("total", values.total);
-    //     //  values.txnInvoiceOrderItemsModels.forEach((item) => {
-    //     //     formData.append("item", item.item);
-    //     //     formData.append("qty", item.qty);
-    //     //     formData.append("price", item.price);
-    //     //     formData.append("taxRate", item.taxRate);
-    //     //     formData.append("disc", item.disc);
-    //     //     formData.append("amount", item.amount);
-    //     //     formData.append("mstrItemsId", item.item);
-    //     //     formData.append("description", "item.item");
-    //     //     formData.append("account", "item.item");
-    //     //     formData.append("taxAmount", "000");
-    //     //     formData.append("project", "000");
-    //     //   });
-    //     //   const response = await api.post(
-    //     //     "createVendorCredits",
-    //     //     formData,
-    //     //     {
-    //     //       headers: {
-    //     //         "Content-Type": "multipart/form-data",
-    //     //       },
-    //     //     }
-    //     //   );
-
-    //     //   if (response.status === 201) {
-    //     //     toast.success(response.data.message);
-    //     //     navigate("/vendorcredit");
-    //     //   } else {
-    //     //     toast.error(response.data.message);
-    //     //   }
-    //     // } catch (error) {
-    //     //   toast.error("Error: Unable to save sales order.");
-    //     // } finally {
-    //     //   setLoadIndicator(false);
-    //     // }
-    //   },
-
     onSubmit: async (values) => {
-      setLoadIndicator(true);
-      try {
-        const response = await api.post("/createVendorCredits", values, {});
-        if (response.status === 201) {
-          toast.success(response.data.message);
-          navigate("/vendorcredit");
-        } else {
-          toast.error(response.data.message);
+        setLoadIndicator(true);
+        try {
+          const formData = new FormData();
+          // Append each value to the FormData instance
+          for (const key in values) {
+            if (values.hasOwnProperty(key)) {
+              formData.append(key, values[key]);
+            }
+          }
+
+          const response = await api.post(
+            "createVendorCreditsProfileImage",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          if (response.status === 201) {
+            toast.success(response.data.message);
+            navigate("/vendorcredit");
+          } else {
+            toast.error(response.data.message);
+          }
+        } catch (error) {
+          toast.error("Error: Unable to save sales order.");
+        } finally {
+          setLoadIndicator(false);
         }
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
-      } finally {
-        setLoadIndicator(false);
-      }
-    },
+      },
+
   });
 
   useEffect(() => {
@@ -338,7 +299,7 @@ function VendorCreditAdd() {
               </div>
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                  Order Number<span className="text-danger">*</span>
+                  Order Number
                 </lable>
                 <div className="mb-3">
                   <input
@@ -361,7 +322,7 @@ function VendorCreditAdd() {
 
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                  Order Credit Date<span className="text-danger">*</span>
+                  Order Credit Date
                 </lable>
                 <div className="">
                   <input
@@ -381,13 +342,36 @@ function VendorCreditAdd() {
               </div>
 
               <div className="col-md-6 col-12 mb-3">
+                <lable className="form-lable">
+                  Subject
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className={`form-control  ${formik.touched.subject &&
+                      formik.errors.subject
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                    {...formik.getFieldProps("subject")}
+                  />
+                  {formik.touched.subject &&
+                    formik.errors.subject && (
+                      <div className="invalid-feedback">
+                        {formik.errors.subject}
+                      </div>
+                    )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-3">
                 <label className="form-label">Vendor Credit File</label>
                 <div className="">
                   <input
                     type="file"
                     className="form-control"
                     onChange={(event) => {
-                      formik.setFieldValue("files", event.target.files[0]);
+                      formik.setFieldValue("file", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
@@ -669,18 +653,18 @@ function VendorCreditAdd() {
                   <div className="mb-3">
                     <textarea
                       type="text"
-                      className={`form-control  ${formik.touched.customerNotes &&
-                        formik.errors.customerNotes
+                      className={`form-control  ${formik.touched.notes &&
+                        formik.errors.notes
                         ? "is-invalid"
                         : ""
                         }`}
                         rows="4"
-                      {...formik.getFieldProps("customerNotes")}
+                      {...formik.getFieldProps("notes")}
                     />
-                    {formik.touched.customerNotes &&
-                      formik.errors.customerNotes && (
+                    {formik.touched.notes &&
+                      formik.errors.notes && (
                         <div className="invalid-feedback">
-                          {formik.errors.customerNotes}
+                          {formik.errors.notes}
                         </div>
                       )}
                   </div>
@@ -772,27 +756,6 @@ function VendorCreditAdd() {
                         </div>
                       )}
                     </div>
-                  </div>
-                </div>
-
-                <div className="col-md-6 col-12 mb-3">
-                  <lable className="form-lable">Terms & Conditions</lable>
-                  <div className="mb-3">
-                    <textarea
-                      className={`form-control  ${formik.touched.termsAndconditions &&
-                        formik.errors.termsAndconditions
-                        ? "is-invalid"
-                        : ""
-                        }`}
-                        rows="4"
-                      {...formik.getFieldProps("termsAndconditions")}
-                    />
-                    {formik.touched.termsAndconditions &&
-                      formik.errors.termsAndconditions && (
-                        <div className="invalid-feedback">
-                          {formik.errors.termsAndconditions}
-                        </div>
-                      )}
                   </div>
                 </div>
               </div>
