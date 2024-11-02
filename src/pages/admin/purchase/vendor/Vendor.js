@@ -57,7 +57,7 @@ const Vendor = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllItems");
+      const response = await api.get("/getAllVendorDetails");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -98,7 +98,7 @@ const Vendor = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Vendor</h1>
+                    <h1 className="h4 ls-tight headingColor ">Vendors</h1>
                   </div>
                 </div>
                 <div className="col-auto">

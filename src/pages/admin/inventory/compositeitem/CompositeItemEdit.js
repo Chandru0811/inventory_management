@@ -254,7 +254,7 @@ const CompositeItemEdit = () => {
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
                   <h1 className="h4 ls-tight headingColor">
-                    Edit Composite Item
+                    Edit Composite Items
                   </h1>
                 </div>
               </div>

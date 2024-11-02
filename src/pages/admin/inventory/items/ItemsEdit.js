@@ -20,6 +20,31 @@ const ItemsEdit = () => {
     salesAccount: Yup.string().required("*Sales Account is required"),
     purchaseAccount: Yup.string().required("*Purchase Account is required"),
     inventoryAccount: Yup.string().required("*Inventory Account is required"),
+    weight: Yup.number().typeError("*Weight must be a number").nullable(),
+    openingStock: Yup.number()
+      .typeError("*Opening Stock must be a number")
+      .nullable(),
+    openingStockRate: Yup.number()
+      .typeError("*Opening Stock Rate must be a number")
+      .nullable(),
+    sellingPrice: Yup.number()
+      .typeError("*Selling Price must be a number")
+      .nullable(),
+    costPrice: Yup.number()
+      .typeError("*Cost Price must be a number")
+      .nullable(),
+    stockKeepingUnit: Yup.number()
+      .typeError("*Stock Keeping Unit must be a number")
+      .nullable(),
+    manufacturingPartNumber: Yup.number()
+      .typeError("*Manufacturing Part Number must be a number")
+      .nullable(),
+    internationalArticleNumber: Yup.number()
+      .typeError("*International Article Number must be a number")
+      .nullable(),
+    internationalStandardBookNumber: Yup.number()
+      .typeError("*International Standard Book Number must be a number")
+      .nullable(),
   });
 
   const formik = useFormik({
@@ -55,7 +80,6 @@ const ItemsEdit = () => {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-
 
       const formData = new FormData();
       formData.append("type", values.type);
@@ -103,7 +127,7 @@ const ItemsEdit = () => {
       try {
         const response = await api.put(`updateItem/${id}`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
 
@@ -208,7 +232,7 @@ const ItemsEdit = () => {
               <div className="col-md-6 col-12 mb-3">
                 <div>
                   <label for="exampleFormControlInput1" className="form-label">
-                  Type<span className="text-danger">*</span>
+                    Type<span className="text-danger">*</span>
                   </label>
                 </div>
                 <div className="form-check form-check-inline">
@@ -269,6 +293,7 @@ const ItemsEdit = () => {
                 <div className="mb-3">
                   <input
                     type="file"
+                    accept=".jpg, .jpeg, .png"
                     className="form-control"
                     onChange={(event) => {
                       formik.setFieldValue("file", event.target.files[0]);
@@ -276,20 +301,18 @@ const ItemsEdit = () => {
                     onBlur={formik.handleBlur}
                   />
                   {formik.touched.file && formik.errors.file && (
-                    <div className="invalid-feedback">
-                      {formik.errors.file}
-                    </div>
+                    <div className="invalid-feedback">{formik.errors.file}</div>
                   )}
                 </div>
                 <img
-                src={data.itemImage}
-                className="img-fluid ms-2 w-50 rounded mt-2"
-                alt="Profile Image"
-              />
+                  src={data.itemImage}
+                  className="img-fluid ms-2 w-50 rounded mt-2"
+                  alt="Profile Image"
+                />
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                Item Unit<span className="text-danger">*</span>
+                  Item Unit<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
@@ -309,49 +332,88 @@ const ItemsEdit = () => {
                     <option value="m">METERS</option>
                     <option value="pcs">PIECES</option>
                   </select>
-                  {formik.touched.itemUnit &&
-                    formik.errors.itemUnit && (
-                      <div className="invalid-feedback">
-                        {formik.errors.itemUnit}
-                      </div>
-                    )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Dimensions</lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="dimensions"
-                    className={`form-control  ${
-                      formik.touched.dimensions && formik.errors.dimensions
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("dimensions")}
-                  />
-                  {formik.touched.dimensions && formik.errors.dimensions && (
+                  {formik.touched.itemUnit && formik.errors.itemUnit && (
                     <div className="invalid-feedback">
-                      {formik.errors.dimensions}
+                      {formik.errors.itemUnit}
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Weight</lable>
-                <div className="mb-3">
+                <label className="form-label">Dimensions</label>
+                <div className="input-group mb-3">
+                  <input
+                    type="text"
+                    name="length"
+                    placeholder="Length"
+                    className={`form-control ${
+                      formik.touched.length && formik.errors.length
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("length")}
+                  />
+                  <span className="input-group-text">x</span>
+
+                  <input
+                    type="text"
+                    name="width"
+                    placeholder="Width"
+                    className={`form-control ${
+                      formik.touched.width && formik.errors.width
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("width")}
+                  />
+                  <span className="input-group-text">x</span>
+
+                  <input
+                    type="text"
+                    name="height"
+                    placeholder="Height"
+                    className={`form-control ${
+                      formik.touched.height && formik.errors.height
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("height")}
+                  />
+                  <span className="input-group-text">cm</span>
+
+                  {formik.touched.length && formik.errors.length && (
+                    <div className="invalid-feedback">
+                      {formik.errors.length}
+                    </div>
+                  )}
+                  {formik.touched.width && formik.errors.width && (
+                    <div className="invalid-feedback">
+                      {formik.errors.width}
+                    </div>
+                  )}
+                  {formik.touched.height && formik.errors.height && (
+                    <div className="invalid-feedback">
+                      {formik.errors.height}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <label className="form-label">Weight</label>
+                <div className="input-group mb-3">
                   <input
                     type="text"
                     name="weight"
-                    className={`form-control  ${
+                    className={`form-control ${
                       formik.touched.weight && formik.errors.weight
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("weight")}
                   />
+                  <span className="input-group-text">kg</span>{" "}
                   {formik.touched.weight && formik.errors.weight && (
                     <div className="invalid-feedback">
                       {formik.errors.weight}
@@ -361,7 +423,7 @@ const ItemsEdit = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Manaufacture Name</lable>
+                <lable className="form-lable">Manufacturer Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -404,7 +466,7 @@ const ItemsEdit = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Manaufacturing Part Number</lable>
+                <lable className="form-lable">Manufacturing Part Number</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -499,13 +561,14 @@ const ItemsEdit = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                Inventory Account<span className="text-danger">*</span>
+                  Inventory Account<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
                     name="inventoryAccount"
                     className={`form-select  ${
-                      formik.touched.inventoryAccount && formik.errors.inventoryAccount
+                      formik.touched.inventoryAccount &&
+                      formik.errors.inventoryAccount
                         ? "is-invalid"
                         : ""
                     }`}
@@ -546,7 +609,9 @@ const ItemsEdit = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Opening Stock Rate</lable>
+                <lable className="form-lable">
+                  Opening Stock Rate per Unit
+                </lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -610,6 +675,31 @@ const ItemsEdit = () => {
                     )}
                 </div>
               </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Status<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <select
+                    name="status"
+                    className={`form-select  ${
+                      formik.touched.status && formik.errors.status
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("status")}
+                  >
+                    <option value=""></option>
+                    <option value="active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                  {formik.touched.status && formik.errors.status && (
+                    <div className="invalid-feedback">
+                      {formik.errors.status}
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="col-12 mb-2 d-flex justify-content-end align-items-end">
                 {/* <div className="form-check">
                   <input
@@ -642,12 +732,14 @@ const ItemsEdit = () => {
                   </label>
                 </div> */}
               </div>
+
               <div className="col-md-6 col-12 mb-2">
                 <h3 className="my-5">Sales</h3>
                 <label className="form-label">
                   Selling Price<span className="text-danger">*</span>
                 </label>
-                <div className="mb-3">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">INR</span>{" "}
                   <input
                     type="text"
                     name="sellingPrice"
@@ -672,7 +764,8 @@ const ItemsEdit = () => {
                 <label className="form-label">
                   Cost Price<span className="text-danger">*</span>
                 </label>
-                <div className="mb-3">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">INR</span>{" "}
                   <input
                     type="text"
                     name="costPrice"
@@ -744,7 +837,7 @@ const ItemsEdit = () => {
                   </div>
 
                   <div className="col-md-6 col-12 mb-2">
-                    <label className="form-label">Sales Tax</label>
+                    <label className="form-label">Sales Tax (%)</label>
                     <div className="mb-3">
                       <input
                         type="text"
@@ -765,7 +858,7 @@ const ItemsEdit = () => {
                   </div>
 
                   <div className="col-md-6 col-12 mb-2">
-                    <label className="form-label">Purchase Tax</label>
+                    <label className="form-label">Purchase Tax (%)</label>
                     <div className="mb-3">
                       <input
                         type="text"

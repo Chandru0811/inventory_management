@@ -154,7 +154,7 @@ const ItemsView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Manaufacture Name</b>
+                        <b>Manufacturer Name</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -182,7 +182,7 @@ const ItemsView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Manaufacturing Part Number</b>
+                        <b>Manufacturing Part Number</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -309,6 +309,21 @@ const ItemsView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
+                        <b>Status</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.status || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
                         <b>Image</b>
                       </p>
                     </div>
@@ -366,7 +381,7 @@ const ItemsView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Sales Tax</b>
+                        <b>Sales Tax (%)</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -429,7 +444,7 @@ const ItemsView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Purchase Tax</b>
+                        <b>Purchase Tax (%)</b>
                       </p>
                     </div>
                     <div className="col-6">

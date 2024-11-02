@@ -99,7 +99,7 @@ const CompositeItem = () => {
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
                     <h1 className="h4 ls-tight headingColor ">
-                      Composite Item
+                      Composite Items
                     </h1>
                   </div>
                 </div>
@@ -131,7 +131,7 @@ const CompositeItem = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
                     <th scope="col" className="text-center">
@@ -151,7 +151,7 @@ const CompositeItem = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
+                      <td className="text-start">{index + 1}</td>
                       <td className="text-center">{data.name}</td>
                       <td className="text-center">{data.type}</td>
                       <td className="text-center">{data.dimensions}</td>

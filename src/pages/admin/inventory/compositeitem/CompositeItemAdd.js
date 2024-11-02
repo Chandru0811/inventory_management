@@ -247,7 +247,7 @@ const CompositeItemAdd = () => {
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
                   <h1 className="h4 ls-tight headingColor">
-                    Add Composite Item
+                    Add Composite Items
                   </h1>
                 </div>
               </div>

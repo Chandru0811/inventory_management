@@ -73,7 +73,7 @@ function AdminSidebar({ handleLogout }) {
                 }`}
                 onClick={() => toggleSubmenu("inventory")}
               >
-                <span>
+                <span style={{cursor: "pointer"}}>
                   <BiSolidCategory className="me-2" />
                   Inventory
                 </span>
@@ -121,7 +121,7 @@ function AdminSidebar({ handleLogout }) {
                 }`}
                 onClick={() => toggleSubmenu("sales")}
               >
-                <span>
+                <span style={{cursor: "pointer"}}>
                   <MdCategory className="me-2" />
                   Sales
                 </span>
@@ -183,7 +183,7 @@ function AdminSidebar({ handleLogout }) {
                 }`}
                 onClick={() => toggleSubmenu("purchases")}
               >
-                <span>
+                <span style={{cursor: "pointer"}}>
                   <AiOutlineShoppingCart className="me-2" />
                   Purchases
                 </span>
@@ -242,7 +242,7 @@ function AdminSidebar({ handleLogout }) {
                   }`}
                 onClick={() => toggleSubmenu("integrations")}
               >
-                <span>
+                <span style={{cursor: "pointer"}}>
                 <FiTool className="me-2" />
                   Integrations
                 </span>
@@ -279,7 +279,7 @@ function AdminSidebar({ handleLogout }) {
                   }`}
                 onClick={() => toggleSubmenu("settings")}
               >
-                <span>
+                <span style={{cursor: "pointer"}}>
                   <FiSettings className="me-2" />
                   Settings
                 </span>

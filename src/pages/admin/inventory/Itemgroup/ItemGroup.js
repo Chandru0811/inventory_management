@@ -129,7 +129,7 @@ const ItemGroup = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
                     <th scope="col" className="text-center">
@@ -149,7 +149,7 @@ const ItemGroup = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
+                      <td className="text-start">{index + 1}</td>
                       <td className="text-center">{data.itemGroupName}</td>
                       <td className="text-center">{data.type}</td>
                       <td className="text-center">{data.brandName}</td>

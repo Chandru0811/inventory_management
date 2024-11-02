@@ -129,7 +129,7 @@ const Items = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start">
                       S.NO
                     </th>
                     <th scope="col" className="text-center">
@@ -139,7 +139,10 @@ const Items = () => {
                       TYPE
                     </th>
                     <th scope="col" className="text-center">
-                      DIMENSION
+                      DIMENSIONS
+                    </th>
+                    <th scope="col" className="text-center">
+                      STATUS
                     </th>
                     <th scope="col" className="text-center">
                       ACTION
@@ -149,10 +152,11 @@ const Items = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
+                      <td className="text-start">{index + 1}</td>
                       <td className="text-center">{data.name}</td>
                       <td className="text-center">{data.type}</td>
                       <td className="text-center">{data.dimensions}</td>
+                      <td className="text-center">{data.status}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/item/view/${data.id}`}>
