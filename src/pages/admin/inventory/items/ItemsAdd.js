@@ -137,7 +137,10 @@ const ItemsAdd = () => {
       formData.append("openingStock", values.openingStock);
       formData.append("openingStockRate", values.openingStockRate);
       formData.append("reorderPoint", values.reorderPoint);
-      formData.append("file", values.file);
+      // formData.append("file", values.file);
+      values.file.forEach((file, index) => {
+        formData.append("file", file);  
+      });
 
       try {
         const response = await api.post("createItem", formData, {
@@ -291,22 +294,46 @@ const ItemsAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Image</lable>
+                <label className="form-label">Image</label>
                 <div className="mb-3">
                   <input
                     type="file"
                     accept=".jpg, .jpeg, .png"
+                    multiple
                     className="form-control"
                     onChange={(event) => {
-                      formik.setFieldValue("file", event.target.files[0]);
+                      const files = Array.from(event.target.files);
+                      const validFiles = files.filter(
+                        (file) => file.size <= 2 * 1024 * 1024
+                      );
+
+                      if (validFiles.length > 5) {
+                        formik.setFieldError(
+                          "file",
+                          "You can only upload up to 5 images."
+                        );
+                      } else if (
+                        files.some((file) => file.size > 2 * 1024 * 1024)
+                      ) {
+                        formik.setFieldError(
+                          "file",
+                          "Each file must be less than 2MB."
+                        );
+                      } else {
+                        formik.setFieldValue("file", validFiles);
+                      }
                     }}
                     onBlur={formik.handleBlur}
                   />
                   {formik.touched.file && formik.errors.file && (
                     <div className="invalid-feedback">{formik.errors.file}</div>
                   )}
+                  <p className="form-text">
+                    You can upload up to 5 images, each less than 2MB.
+                  </p>
                 </div>
               </div>
+
               {/* <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Item Unit<span className="text-danger">*</span>
@@ -629,7 +656,9 @@ const ItemsAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Opening Stock Rate per Unit</lable>
+                <lable className="form-lable">
+                  Opening Stock Rate per Unit
+                </lable>
                 <div className="mb-3">
                   <input
                     type="text"
