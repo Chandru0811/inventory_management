@@ -30,6 +30,13 @@ const VendorEdit = () => {
     vendorDisplayName: Yup.string().required(
       "*Vendor Display Name is required"
     ),
+    salutation: Yup.string().required("*Salutation is required"),
+    firstName: Yup.string().required("*First Name is required"),
+    lastName: Yup.string().required("*Last Name is required"),
+    vendorEmail: Yup.string()
+      .email("*Enter a valid email address")
+      .required("*Vendor Email is required"),
+    vendorMobile: Yup.string().required("*Mobile Number is required"),
   });
 
   const formik = useFormik({
@@ -159,12 +166,40 @@ const VendorEdit = () => {
           className="card shadow border-0 my-2"
           style={{ borderRadius: "0" }}
         >
-
           <div className="container mb-5">
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  First Name <span className="text-danger">*</span>
+                  Salutation<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <select
+                    type="text"
+                    name="salutation"
+                    className={`form-select  ${
+                      formik.touched.salutation && formik.errors.salutation
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("salutation")}
+                  >
+                    <option></option>
+                    <option value="Mr.">Mr.</option>
+                    <option value="Mrs.">Mrs.</option>
+                    <option value="Ms.">Ms.</option>
+                    <option value="Miss.">Miss.</option>
+                    <option value="Dr.">Dr.</option>
+                  </select>
+                  {formik.touched.salutation && formik.errors.salutation && (
+                    <div className="invalid-feedback">
+                      {formik.errors.salutation}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  First Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -208,9 +243,7 @@ const VendorEdit = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Company Name<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Company Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -301,10 +334,7 @@ const VendorEdit = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Vendor Phone
-                  <span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Vendor Phone</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -319,29 +349,6 @@ const VendorEdit = () => {
                   {formik.touched.vendorPhone && formik.errors.vendorPhone && (
                     <div className="invalid-feedback">
                       {formik.errors.vendorPhone}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Salutation
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="salutation"
-                    className={`form-control  ${
-                      formik.touched.salutation && formik.errors.salutation
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("salutation")}
-                  />
-                  {formik.touched.salutation && formik.errors.salutation && (
-                    <div className="invalid-feedback">
-                      {formik.errors.salutation}
                     </div>
                   )}
                 </div>
@@ -1118,18 +1125,18 @@ const VendorEdit = () => {
                         <tr key={row.id}>
                           <td>
                             <div className="">
-                            <input
-                              type="text"
-                              value={row.salutation}
-                              className="form-control"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "salutation",
-                                  e.target.value
-                                )
-                              }
-                            />
+                              <input
+                                type="text"
+                                value={row.salutation}
+                                className="form-control"
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    index,
+                                    "salutation",
+                                    e.target.value
+                                  )
+                                }
+                              />
                             </div>
                           </td>
                           <td>
@@ -1250,7 +1257,9 @@ const VendorEdit = () => {
                                 className="btn"
                                 onClick={() => deleteRow(index)}
                               >
-                                <TbXboxX style={{ fontSize: "25px", color: "red"}}/>
+                                <TbXboxX
+                                  style={{ fontSize: "25px", color: "red" }}
+                                />
                               </button>
                             )}
                           </td>

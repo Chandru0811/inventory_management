@@ -15,7 +15,7 @@ const Branding = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllMstrCustomers");
+        const response = await api.get("/getAllBrand");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,7 +56,7 @@ const Branding = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllItems");
+      const response = await api.get("/getAllBrand");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -72,6 +72,7 @@ const Branding = () => {
       table.destroy();
     };
   }, []);
+
   return (
     <div>
       {loading ? (
@@ -128,7 +129,7 @@ const Branding = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
                     <th scope="col" className="text-center">
@@ -148,8 +149,16 @@ const Branding = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.name}</td>
+                      <td className="text-start">{index + 1}</td>
+                      <td className="text-center"> {data.organizationLogo ? (
+                          <img
+                            src={data.organizationLogo}
+                            className="img-fluid ms-2 w-10 rounded"
+                            alt="Profile Image"
+                          />
+                        ) : (
+                          <></>
+                        )}</td>
                       {/* <td className="text-center">{data.type}</td>
                       <td className="text-center">{data.dimensions}</td> */}
                       <td className="text-center">
