@@ -110,7 +110,7 @@ function Admin({ handleLogout }) {
       <BrowserRouter basename="/wms">
         <div className="d-flex flex-column flex-lg-row bg-surface-secondary">
           <AdminSidebar handleLogout={handleLogout} />
-          <div className="flex-grow-1 h-screen overflow-y-auto">
+          <div className="flex-grow-1 h-screen overflow-y-auto ">
             <AdminHeader />
             <main className="pt-3 bg-surface-secondary">
               <div style={{ minHeight: "90vh" }}>
