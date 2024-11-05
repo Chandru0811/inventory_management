@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -9,8 +9,8 @@ const ItemsAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [showFields, setShowFields] = useState(false);
-  const [isSalesDisabled, setIsSalesDisabled] = useState(false);
-  const [isPurchaseDisabled, setIsPurchaseDisabled] = useState(false);
+  const [isSalesDisabled, setIsSalesDisabled] = useState(true);
+  const [isPurchaseDisabled, setIsPurchaseDisabled] = useState(true);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("*Name is required"),
@@ -46,6 +46,7 @@ const ItemsAdd = () => {
     internationalStandardBookNumber: Yup.number()
       .typeError("*International Standard Book Number must be a number")
       .nullable(),
+      status: Yup.string().required("*Status is required"),
   });
 
   const formik = useFormik({
@@ -152,6 +153,19 @@ const ItemsAdd = () => {
     setShowFields(!showFields);
   };
 
+  const scrollToError = (errors) => {
+    const errorField = Object.keys(errors)[0];
+    const errorElement = document.querySelector(`[name="${errorField}"]`);
+    if (errorElement) {
+      errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      errorElement.focus();
+    }
+  };
+  useEffect(() => {
+    if (formik.submitCount > 0 && Object.keys(formik.errors).length > 0) {
+      scrollToError(formik.errors);
+    }
+  }, [formik.submitCount, formik.errors]);
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -535,7 +549,7 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">MPN</label>
                   <span
-                    className="rounded-circle border pe-1 ps-1"
+                    className="rounded-circle border pe-1 ps-1 ms-1"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -571,7 +585,7 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">UPC</label>
                   <span
-                    className="rounded-circle  pe-1 ps-1 border"
+                    className="rounded-circle  pe-1 ps-1 ms-1 border"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -607,7 +621,7 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">EAN</label>
                   <span
-                    className="rounded-circle pe-1 ps-1 border"
+                    className="rounded-circle pe-1 ps-1 ms-1 border"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -643,7 +657,7 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">ISBN</label>
                   <span
-                    className="rounded-circle pe-1 ps-1 border"
+                    className="rounded-circle pe-1 ps-1 ms-1 border"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -728,9 +742,8 @@ const ItemsAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2"></div>
-              
+
               <div className="col-md-6 col-12 mb-2">
-                <h3 className="my-5">Sales</h3>
                 <div className="form-check mb-3">
                   <input
                     type="checkbox"
@@ -739,9 +752,9 @@ const ItemsAdd = () => {
                     checked={isSalesDisabled}
                     onChange={() => setIsSalesDisabled(!isSalesDisabled)}
                   />
-                  <label className="form-check-label" htmlFor="disableSales">
-                    Disable Sales Fields
-                  </label>
+                  <h2 className="form-check-label pt-1" htmlFor="disableSales">
+                    Sales Information
+                  </h2>
                 </div>
                 <label className="form-label">
                   Selling Price<span className="text-danger">*</span>
@@ -756,7 +769,7 @@ const ItemsAdd = () => {
                         ? "is-invalid"
                         : ""
                     }`}
-                    disabled={isSalesDisabled}
+                    disabled={!isSalesDisabled}
                     {...formik.getFieldProps("sellingPrice")}
                   />
                   {formik.touched.sellingPrice &&
@@ -769,7 +782,6 @@ const ItemsAdd = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <h3 className="my-5">Purchase</h3>
                 <div className="form-check mb-3">
                   <input
                     type="checkbox"
@@ -778,9 +790,12 @@ const ItemsAdd = () => {
                     checked={isPurchaseDisabled}
                     onChange={() => setIsPurchaseDisabled(!isPurchaseDisabled)}
                   />
-                  <label className="form-check-label" htmlFor="disablePurchase">
-                    Disable Purchase Fields
-                  </label>
+                  <h2
+                    className="form-check-label pt-1"
+                    htmlFor="disablePurchase"
+                  >
+                    Purchase Information
+                  </h2>
                 </div>
                 <label className="form-label">
                   Cost Price<span className="text-danger">*</span>
@@ -795,7 +810,7 @@ const ItemsAdd = () => {
                         ? "is-invalid"
                         : ""
                     }`}
-                    disabled={isPurchaseDisabled}
+                    disabled={!isPurchaseDisabled}
                     {...formik.getFieldProps("costPrice")}
                   />
                   {formik.touched.costPrice && formik.errors.costPrice && (
@@ -815,7 +830,7 @@ const ItemsAdd = () => {
                     <div className="mb-3">
                       <select
                         name="salesAccount"
-                        disabled={isSalesDisabled}
+                        disabled={!isSalesDisabled}
                         className={`form-select  ${
                           formik.touched.salesAccount &&
                           formik.errors.salesAccount
@@ -844,7 +859,7 @@ const ItemsAdd = () => {
                     </label>
                     <div className="mb-3">
                       <select
-                        disabled={isPurchaseDisabled}
+                        disabled={!isPurchaseDisabled}
                         name="purchaseAccount"
                         className={`form-select  ${
                           formik.touched.purchaseAccount &&
@@ -855,9 +870,9 @@ const ItemsAdd = () => {
                         {...formik.getFieldProps("purchaseAccount")}
                       >
                         <option value=""></option>
-                        <option value="Genral">Genral Income</option>
-                        <option value="Sales">Sales</option>
-                        <option value="Discount">Discount</option>
+                        <option value="Genral">Cose Of Goods Sold</option>
+                        <option value="Sales">Bad Debt</option>
+                        <option value="Discount">Bank Fees And Charges</option>
                       </select>
                       {formik.touched.purchaseAccount &&
                         formik.errors.purchaseAccount && (
@@ -873,7 +888,7 @@ const ItemsAdd = () => {
                     <div className="mb-3">
                       <select
                         name="salesTax"
-                        disabled={isSalesDisabled}
+                        disabled={!isSalesDisabled}
                         className={`form-select ${
                           formik.touched.salesTax && formik.errors.salesTax
                             ? "is-invalid"
@@ -907,7 +922,7 @@ const ItemsAdd = () => {
                             ? "is-invalid"
                             : ""
                         }`}
-                        disabled={isPurchaseDisabled}
+                        disabled={!isPurchaseDisabled}
                         {...formik.getFieldProps("purchaseTax")}
                       >
                         <option value="">Select Purchase Tax</option>
@@ -933,7 +948,7 @@ const ItemsAdd = () => {
                     <div className="mb-3">
                       <textarea
                         type="text"
-                        disabled={isSalesDisabled}
+                        disabled={!isSalesDisabled}
                         name="salesAccountDescription"
                         className={`form-control ${
                           formik.touched.salesAccountDescription &&
@@ -960,7 +975,7 @@ const ItemsAdd = () => {
                     <div className="mb-3">
                       <textarea
                         type="text"
-                        disabled={isPurchaseDisabled}
+                        disabled={!isPurchaseDisabled}
                         name="purchaseAccountDescription"
                         className={`form-control ${
                           formik.touched.purchaseAccountDescription &&
@@ -982,7 +997,7 @@ const ItemsAdd = () => {
                 </div>
               </div>
 
-              <div className="form-check mb-3">
+              <div className="form-check mb-3 ms-3">
                 <input
                   type="checkbox"
                   id="toggleFields"
@@ -991,7 +1006,7 @@ const ItemsAdd = () => {
                   onChange={handleCheckboxChange}
                 />
                 <label htmlFor="toggleFields" className="form-check-label">
-                  Show Additional Fields
+                  Track Inventory
                 </label>
               </div>
               {showFields && (
@@ -1002,7 +1017,7 @@ const ItemsAdd = () => {
                         Inventory Account<span className="text-danger">*</span>
                       </lable>
                       <span
-                        className="rounded-circle border pe-1 ps-1"
+                        className="rounded-circle border pe-1 ps-1 ms-1"
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
@@ -1042,7 +1057,7 @@ const ItemsAdd = () => {
                     <div className="d-flex align-items-center">
                       <lable className="form-lable">Opening Stock</lable>
                       <span
-                        className="rounded-circle border pe-1 ps-1"
+                        className="rounded-circle border pe-1 ps-1 ms-1"
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
@@ -1081,7 +1096,7 @@ const ItemsAdd = () => {
                         Opening Stock Rate per Unit
                       </lable>
                       <span
-                        className="rounded-circle border pe-1 ps-1"
+                        className="rounded-circle border pe-1 ps-1 ms-1"
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
@@ -1118,7 +1133,7 @@ const ItemsAdd = () => {
                     <div className="d-flex align-items-center">
                       <lable className="form-lable">Recorder points</lable>
                       <span
-                        className="rounded-circle border pe-1 ps-1"
+                        className="rounded-circle border pe-1 ps-1 ms-1"
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
