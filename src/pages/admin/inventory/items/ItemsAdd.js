@@ -9,6 +9,8 @@ const ItemsAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [showFields, setShowFields] = useState(false);
+  const [isSalesDisabled, setIsSalesDisabled] = useState(false);
+  const [isPurchaseDisabled, setIsPurchaseDisabled] = useState(false);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("*Name is required"),
@@ -126,7 +128,6 @@ const ItemsAdd = () => {
         formData.append("file", file);
       });
 
-
       try {
         const response = await api.post("createItem", formData, {
           headers: {
@@ -150,7 +151,7 @@ const ItemsAdd = () => {
   const handleCheckboxChange = () => {
     setShowFields(!showFields);
   };
-  
+
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -377,6 +378,9 @@ const ItemsAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <label className="form-label">Dimensions</label>
+                <span className=" ms-3 fw-lighter">
+                  (Length X Width X Height)
+                </span>
                 <div className="input-group mb-3">
                   <input
                     type="text"
@@ -408,7 +412,7 @@ const ItemsAdd = () => {
                     type="text"
                     name="height"
                     placeholder="Height"
-                    className={`form-control ${
+                    className={`form-control w-25 ${
                       formik.touched.height && formik.errors.height
                         ? "is-invalid"
                         : ""
@@ -417,7 +421,7 @@ const ItemsAdd = () => {
                   />
                   <select
                     name="unit"
-                    className="form-select"
+                    className="form-control"
                     onChange={(e) =>
                       formik.setFieldValue("unit", e.target.value)
                     }
@@ -459,7 +463,7 @@ const ItemsAdd = () => {
                   />
                   <select
                     name="weightUnit"
-                    className="form-select"
+                    className="form-control"
                     {...formik.getFieldProps("weightUnit")}
                   >
                     <option value="kg">kg</option>
@@ -531,7 +535,7 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">MPN</label>
                   <span
-                    className="rounded-circle p-2 border"
+                    className="rounded-circle border pe-1 ps-1"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -539,7 +543,8 @@ const ItemsAdd = () => {
                       fontSize: "10px",
                     }}
                     title="Manufacturing Part Number"
-                  >i
+                  >
+                    i
                   </span>
                 </div>
                 <div className="mb-3">
@@ -566,7 +571,7 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">UPC</label>
                   <span
-                    className="rounded-circle p-2 border"
+                    className="rounded-circle  pe-1 ps-1 border"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -602,7 +607,7 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">EAN</label>
                   <span
-                    className="rounded-circle p-2 border"
+                    className="rounded-circle pe-1 ps-1 border"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -638,7 +643,7 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">ISBN</label>
                   <span
-                    className="rounded-circle p-2 border"
+                    className="rounded-circle pe-1 ps-1 border"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -672,76 +677,27 @@ const ItemsAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Inventory Account<span className="text-danger">*</span>
+                  Status<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
-                    name="inventoryAccount"
+                    name="status"
                     className={`form-select  ${
-                      formik.touched.inventoryAccount &&
-                      formik.errors.inventoryAccount
+                      formik.touched.status && formik.errors.status
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("inventoryAccount")}
+                    {...formik.getFieldProps("status")}
                   >
                     <option value=""></option>
-                    <option value="FinishedGoods">Finished Goods</option>
-                    <option value="InventoryAsset">Inventory Asset</option>
-                    <option value="WorkInProgress">Work In Progress</option>
+                    <option value="active">Active</option>
+                    <option value="Inactive">Inactive</option>
                   </select>
-                  {formik.touched.inventoryAccount &&
-                    formik.errors.inventoryAccount && (
-                      <div className="invalid-feedback">
-                        {formik.errors.inventoryAccount}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Opening Stock</lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="openingStock"
-                    className={`form-control  ${
-                      formik.touched.openingStock && formik.errors.openingStock
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("openingStock")}
-                  />
-                  {formik.touched.openingStock &&
-                    formik.errors.openingStock && (
-                      <div className="invalid-feedback">
-                        {formik.errors.openingStock}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Opening Stock Rate per Unit
-                </lable>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">INR</span>{" "}
-                  <input
-                    type="text"
-                    name="openingStockRate"
-                    className={`form-control  ${
-                      formik.touched.openingStockRate &&
-                      formik.errors.openingStockRate
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("openingStockRate")}
-                  />
-                  {formik.touched.openingStockRate &&
-                    formik.errors.openingStockRate && (
-                      <div className="invalid-feedback">
-                        {formik.errors.openingStockRate}
-                      </div>
-                    )}
+                  {formik.touched.status && formik.errors.status && (
+                    <div className="invalid-feedback">
+                      {formik.errors.status}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -771,54 +727,261 @@ const ItemsAdd = () => {
                     )}
                 </div>
               </div>
-
+              <div className="col-md-6 col-12 mb-2"></div>
+              
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Recorder points</lable>
-                <div className="mb-3">
+                <h3 className="my-5">Sales</h3>
+                <div className="form-check mb-3">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="disableSales"
+                    checked={isSalesDisabled}
+                    onChange={() => setIsSalesDisabled(!isSalesDisabled)}
+                  />
+                  <label className="form-check-label" htmlFor="disableSales">
+                    Disable Sales Fields
+                  </label>
+                </div>
+                <label className="form-label">
+                  Selling Price<span className="text-danger">*</span>
+                </label>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">INR</span>{" "}
                   <input
                     type="text"
-                    name="reorderPoint"
-                    className={`form-control  ${
-                      formik.touched.reorderPoint && formik.errors.reorderPoint
+                    name="sellingPrice"
+                    className={`form-control ${
+                      formik.touched.sellingPrice && formik.errors.sellingPrice
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("reorderPoint")}
+                    disabled={isSalesDisabled}
+                    {...formik.getFieldProps("sellingPrice")}
                   />
-                  {formik.touched.reorderPoint &&
-                    formik.errors.reorderPoint && (
+                  {formik.touched.sellingPrice &&
+                    formik.errors.sellingPrice && (
                       <div className="invalid-feedback">
-                        {formik.errors.reorderPoint}
+                        {formik.errors.sellingPrice}
                       </div>
                     )}
                 </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Status<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <select
-                    name="status"
-                    className={`form-select  ${
-                      formik.touched.status && formik.errors.status
+                <h3 className="my-5">Purchase</h3>
+                <div className="form-check mb-3">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="disablePurchase"
+                    checked={isPurchaseDisabled}
+                    onChange={() => setIsPurchaseDisabled(!isPurchaseDisabled)}
+                  />
+                  <label className="form-check-label" htmlFor="disablePurchase">
+                    Disable Purchase Fields
+                  </label>
+                </div>
+                <label className="form-label">
+                  Cost Price<span className="text-danger">*</span>
+                </label>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">INR</span>{" "}
+                  <input
+                    type="text"
+                    name="costPrice"
+                    className={`form-control ${
+                      formik.touched.costPrice && formik.errors.costPrice
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("status")}
-                  >
-                    <option value=""></option>
-                    <option value="active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                  {formik.touched.status && formik.errors.status && (
+                    disabled={isPurchaseDisabled}
+                    {...formik.getFieldProps("costPrice")}
+                  />
+                  {formik.touched.costPrice && formik.errors.costPrice && (
                     <div className="invalid-feedback">
-                      {formik.errors.status}
+                      {formik.errors.costPrice}
                     </div>
                   )}
                 </div>
               </div>
+
+              <div className="container mb-5">
+                <div className="row py-4">
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">
+                      Sales Account<span className="text-danger">*</span>
+                    </label>
+                    <div className="mb-3">
+                      <select
+                        name="salesAccount"
+                        disabled={isSalesDisabled}
+                        className={`form-select  ${
+                          formik.touched.salesAccount &&
+                          formik.errors.salesAccount
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("salesAccount")}
+                      >
+                        <option value=""></option>
+                        <option value="Genral">Genral Income</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Discount">Discount</option>
+                      </select>
+                      {formik.touched.salesAccount &&
+                        formik.errors.salesAccount && (
+                          <div className="invalid-feedback">
+                            {formik.errors.salesAccount}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">
+                      Purchase Account<span className="text-danger">*</span>
+                    </label>
+                    <div className="mb-3">
+                      <select
+                        disabled={isPurchaseDisabled}
+                        name="purchaseAccount"
+                        className={`form-select  ${
+                          formik.touched.purchaseAccount &&
+                          formik.errors.purchaseAccount
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("purchaseAccount")}
+                      >
+                        <option value=""></option>
+                        <option value="Genral">Genral Income</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Discount">Discount</option>
+                      </select>
+                      {formik.touched.purchaseAccount &&
+                        formik.errors.purchaseAccount && (
+                          <div className="invalid-feedback">
+                            {formik.errors.purchaseAccount}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">Sales Tax (%)</label>
+                    <div className="mb-3">
+                      <select
+                        name="salesTax"
+                        disabled={isSalesDisabled}
+                        className={`form-select ${
+                          formik.touched.salesTax && formik.errors.salesTax
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("salesTax")}
+                      >
+                        <option value="">Select Sales Tax</option>
+                        <option value="5">5%</option>
+                        <option value="10">10%</option>
+                        <option value="15">15%</option>
+                        <option value="20">20%</option>
+                        {/* Add more options as needed */}
+                      </select>
+                      {formik.touched.salesTax && formik.errors.salesTax && (
+                        <div className="invalid-feedback">
+                          {formik.errors.salesTax}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">Purchase Tax (%)</label>
+                    <div className="mb-3">
+                      <select
+                        name="purchaseTax"
+                        className={`form-select ${
+                          formik.touched.purchaseTax &&
+                          formik.errors.purchaseTax
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        disabled={isPurchaseDisabled}
+                        {...formik.getFieldProps("purchaseTax")}
+                      >
+                        <option value="">Select Purchase Tax</option>
+                        <option value="5">5%</option>
+                        <option value="10">10%</option>
+                        <option value="15">15%</option>
+                        <option value="20">20%</option>
+                        {/* Add more options as needed */}
+                      </select>
+                      {formik.touched.purchaseTax &&
+                        formik.errors.purchaseTax && (
+                          <div className="invalid-feedback">
+                            {formik.errors.purchaseTax}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">
+                      Sales Account Description
+                    </label>
+                    <div className="mb-3">
+                      <textarea
+                        type="text"
+                        disabled={isSalesDisabled}
+                        name="salesAccountDescription"
+                        className={`form-control ${
+                          formik.touched.salesAccountDescription &&
+                          formik.errors.salesAccountDescription
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        rows="4"
+                        {...formik.getFieldProps("salesAccountDescription")}
+                      />
+                      {formik.touched.salesAccountDescription &&
+                        formik.errors.salesAccountDescription && (
+                          <div className="invalid-feedback">
+                            {formik.errors.salesAccountDescription}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">
+                      Purchase Account Description
+                    </label>
+                    <div className="mb-3">
+                      <textarea
+                        type="text"
+                        disabled={isPurchaseDisabled}
+                        name="purchaseAccountDescription"
+                        className={`form-control ${
+                          formik.touched.purchaseAccountDescription &&
+                          formik.errors.purchaseAccountDescription
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        rows="4"
+                        {...formik.getFieldProps("purchaseAccountDescription")}
+                      />
+                      {formik.touched.purchaseAccountDescription &&
+                        formik.errors.purchaseAccountDescription && (
+                          <div className="invalid-feedback">
+                            {formik.errors.purchaseAccountDescription}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="form-check mb-3">
                 <input
                   type="checkbox"
@@ -834,227 +997,157 @@ const ItemsAdd = () => {
               {showFields && (
                 <>
                   <div className="col-md-6 col-12 mb-2">
-                    <h3 className="my-5">Sales</h3>
-                    <label className="form-label">
-                      Selling Price<span className="text-danger">*</span>
-                    </label>
-                    <div className="input-group mb-3">
-                      <span className="input-group-text">INR</span>{" "}
-                      <input
-                        type="text"
-                        name="sellingPrice"
-                        className={`form-control ${
-                          formik.touched.sellingPrice &&
-                          formik.errors.sellingPrice
+                    <div className="d-flex align-items-center">
+                      <lable className="form-lable">
+                        Inventory Account<span className="text-danger">*</span>
+                      </lable>
+                      <span
+                        className="rounded-circle border pe-1 ps-1"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          fontSize: "10px",
+                        }}
+                        title="Manufacturing Part Number"
+                      >
+                        i
+                      </span>
+                    </div>
+                    <div className="mb-3">
+                      <select
+                        name="inventoryAccount"
+                        className={`form-select  ${
+                          formik.touched.inventoryAccount &&
+                          formik.errors.inventoryAccount
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("sellingPrice")}
-                      />
-                      {formik.touched.sellingPrice &&
-                        formik.errors.sellingPrice && (
+                        {...formik.getFieldProps("inventoryAccount")}
+                      >
+                        <option value=""></option>
+                        <option value="FinishedGoods">Finished Goods</option>
+                        <option value="InventoryAsset">Inventory Asset</option>
+                        <option value="WorkInProgress">Work In Progress</option>
+                      </select>
+                      {formik.touched.inventoryAccount &&
+                        formik.errors.inventoryAccount && (
                           <div className="invalid-feedback">
-                            {formik.errors.sellingPrice}
+                            {formik.errors.inventoryAccount}
                           </div>
                         )}
                     </div>
                   </div>
-
                   <div className="col-md-6 col-12 mb-2">
-                    <h3 className="my-5">Purchase</h3>
-                    <label className="form-label">
-                      Cost Price<span className="text-danger">*</span>
-                    </label>
+                    <div className="d-flex align-items-center">
+                      <lable className="form-lable">Opening Stock</lable>
+                      <span
+                        className="rounded-circle border pe-1 ps-1"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          fontSize: "10px",
+                        }}
+                        title="Manufacturing Part Number"
+                      >
+                        i
+                      </span>
+                    </div>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="openingStock"
+                        className={`form-control  ${
+                          formik.touched.openingStock &&
+                          formik.errors.openingStock
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("openingStock")}
+                      />
+                      {formik.touched.openingStock &&
+                        formik.errors.openingStock && (
+                          <div className="invalid-feedback">
+                            {formik.errors.openingStock}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 mb-2">
+                    <div className="d-flex align-items-center">
+                      {" "}
+                      <lable className="form-lable">
+                        Opening Stock Rate per Unit
+                      </lable>
+                      <span
+                        className="rounded-circle border pe-1 ps-1"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          fontSize: "10px",
+                        }}
+                        title="Manufacturing Part Number"
+                      >
+                        i
+                      </span>
+                    </div>
                     <div className="input-group mb-3">
                       <span className="input-group-text">INR</span>{" "}
                       <input
                         type="text"
-                        name="costPrice"
-                        className={`form-control ${
-                          formik.touched.costPrice && formik.errors.costPrice
+                        name="openingStockRate"
+                        className={`form-control  ${
+                          formik.touched.openingStockRate &&
+                          formik.errors.openingStockRate
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("costPrice")}
+                        {...formik.getFieldProps("openingStockRate")}
                       />
-                      {formik.touched.costPrice && formik.errors.costPrice && (
-                        <div className="invalid-feedback">
-                          {formik.errors.costPrice}
-                        </div>
-                      )}
+                      {formik.touched.openingStockRate &&
+                        formik.errors.openingStockRate && (
+                          <div className="invalid-feedback">
+                            {formik.errors.openingStockRate}
+                          </div>
+                        )}
                     </div>
                   </div>
-
-                  <div className="container mb-5">
-                    <div className="row py-4">
-                      <div className="col-md-6 col-12 mb-2">
-                        <label className="form-label">
-                          Sales Account<span className="text-danger">*</span>
-                        </label>
-                        <div className="mb-3">
-                          <select
-                            name="salesAccount"
-                            className={`form-select  ${
-                              formik.touched.salesAccount &&
-                              formik.errors.salesAccount
-                                ? "is-invalid"
-                                : ""
-                            }`}
-                            {...formik.getFieldProps("salesAccount")}
-                          >
-                            <option value=""></option>
-                            <option value="Genral">Genral Income</option>
-                            <option value="Sales">Sales</option>
-                            <option value="Discount">Discount</option>
-                          </select>
-                          {formik.touched.salesAccount &&
-                            formik.errors.salesAccount && (
-                              <div className="invalid-feedback">
-                                {formik.errors.salesAccount}
-                              </div>
-                            )}
-                        </div>
-                      </div>
-
-                      <div className="col-md-6 col-12 mb-2">
-                        <label className="form-label">
-                          Purchase Account<span className="text-danger">*</span>
-                        </label>
-                        <div className="mb-3">
-                          <select
-                            name="purchaseAccount"
-                            className={`form-select  ${
-                              formik.touched.purchaseAccount &&
-                              formik.errors.purchaseAccount
-                                ? "is-invalid"
-                                : ""
-                            }`}
-                            {...formik.getFieldProps("purchaseAccount")}
-                          >
-                            <option value=""></option>
-                            <option value="Genral">Genral Income</option>
-                            <option value="Sales">Sales</option>
-                            <option value="Discount">Discount</option>
-                          </select>
-                          {formik.touched.purchaseAccount &&
-                            formik.errors.purchaseAccount && (
-                              <div className="invalid-feedback">
-                                {formik.errors.purchaseAccount}
-                              </div>
-                            )}
-                        </div>
-                      </div>
-
-                      <div className="col-md-6 col-12 mb-2">
-                        <label className="form-label">Sales Tax (%)</label>
-                        <div className="mb-3">
-                          <select
-                            name="salesTax"
-                            className={`form-select ${
-                              formik.touched.salesTax && formik.errors.salesTax
-                                ? "is-invalid"
-                                : ""
-                            }`}
-                            {...formik.getFieldProps("salesTax")}
-                          >
-                            <option value="">Select Sales Tax</option>
-                            <option value="5">5%</option>
-                            <option value="10">10%</option>
-                            <option value="15">15%</option>
-                            <option value="20">20%</option>
-                            {/* Add more options as needed */}
-                          </select>
-                          {formik.touched.salesTax &&
-                            formik.errors.salesTax && (
-                              <div className="invalid-feedback">
-                                {formik.errors.salesTax}
-                              </div>
-                            )}
-                        </div>
-                      </div>
-
-                      <div className="col-md-6 col-12 mb-2">
-                        <label className="form-label">Purchase Tax (%)</label>
-                        <div className="mb-3">
-                          <select
-                            name="purchaseTax"
-                            className={`form-select ${
-                              formik.touched.purchaseTax &&
-                              formik.errors.purchaseTax
-                                ? "is-invalid"
-                                : ""
-                            }`}
-                            {...formik.getFieldProps("purchaseTax")}
-                          >
-                            <option value="">Select Purchase Tax</option>
-                            <option value="5">5%</option>
-                            <option value="10">10%</option>
-                            <option value="15">15%</option>
-                            <option value="20">20%</option>
-                            {/* Add more options as needed */}
-                          </select>
-                          {formik.touched.purchaseTax &&
-                            formik.errors.purchaseTax && (
-                              <div className="invalid-feedback">
-                                {formik.errors.purchaseTax}
-                              </div>
-                            )}
-                        </div>
-                      </div>
-
-                      <div className="col-md-6 col-12 mb-2">
-                        <label className="form-label">
-                          Sales Account Description
-                        </label>
-                        <div className="mb-3">
-                          <textarea
-                            type="text"
-                            name="salesAccountDescription"
-                            className={`form-control ${
-                              formik.touched.salesAccountDescription &&
-                              formik.errors.salesAccountDescription
-                                ? "is-invalid"
-                                : ""
-                            }`}
-                            rows="4"
-                            {...formik.getFieldProps("salesAccountDescription")}
-                          />
-                          {formik.touched.salesAccountDescription &&
-                            formik.errors.salesAccountDescription && (
-                              <div className="invalid-feedback">
-                                {formik.errors.salesAccountDescription}
-                              </div>
-                            )}
-                        </div>
-                      </div>
-
-                      <div className="col-md-6 col-12 mb-2">
-                        <label className="form-label">
-                          Purchase Account Description
-                        </label>
-                        <div className="mb-3">
-                          <textarea
-                            type="text"
-                            name="purchaseAccountDescription"
-                            className={`form-control ${
-                              formik.touched.purchaseAccountDescription &&
-                              formik.errors.purchaseAccountDescription
-                                ? "is-invalid"
-                                : ""
-                            }`}
-                            rows="4"
-                            {...formik.getFieldProps(
-                              "purchaseAccountDescription"
-                            )}
-                          />
-                          {formik.touched.purchaseAccountDescription &&
-                            formik.errors.purchaseAccountDescription && (
-                              <div className="invalid-feedback">
-                                {formik.errors.purchaseAccountDescription}
-                              </div>
-                            )}
-                        </div>
-                      </div>
+                  <div className="col-md-6 col-12 mb-2">
+                    <div className="d-flex align-items-center">
+                      <lable className="form-lable">Recorder points</lable>
+                      <span
+                        className="rounded-circle border pe-1 ps-1"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          fontSize: "10px",
+                        }}
+                        title="Manufacturing Part Number"
+                      >
+                        i
+                      </span>
+                    </div>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="reorderPoint"
+                        className={`form-control  ${
+                          formik.touched.reorderPoint &&
+                          formik.errors.reorderPoint
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("reorderPoint")}
+                      />
+                      {formik.touched.reorderPoint &&
+                        formik.errors.reorderPoint && (
+                          <div className="invalid-feedback">
+                            {formik.errors.reorderPoint}
+                          </div>
+                        )}
                     </div>
                   </div>
                 </>
