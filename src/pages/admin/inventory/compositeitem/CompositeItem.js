@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const CompositeItem = () => {
   const tableRef = useRef(null);
@@ -134,13 +135,13 @@ const CompositeItem = () => {
                     <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       NAME
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       TYPE
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       Brand Name
                     </th>
                     <th scope="col" className="text-center">
@@ -152,22 +153,22 @@ const CompositeItem = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
-                      <td className="text-center">{data.name}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.dimensions}</td>
+                      <td className="text-start">{data.name}</td>
+                      <td className="text-start">{data.type}</td>
+                      <td className="text-start">{data.dimensions}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/compositeitem/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
-                              View
+                            <button className="btn btn-sm">
+                            <FaEye />
                             </button>
                           </Link>
                           <Link
                             to={`/compositeitem/edit/${data.id}`}
                             className="px-2"
                           >
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
-                              Edit
+                            <button className="btn btn-sm">
+                            <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

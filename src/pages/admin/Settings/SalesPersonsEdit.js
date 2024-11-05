@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import api from "../../../config/URL";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 function SalesPersonsEdit({ onSuccess, id }) {
   const [showModal, setShowModal] = useState(false);
@@ -54,10 +55,10 @@ function SalesPersonsEdit({ onSuccess, id }) {
   return (
     <div>
       <button
-        className="btn btn-light btn-sm  shadow-none border-none"
+        className="btn btn-sm"
         onClick={handleShowModal}
       >
-        Edit
+        <FaRegEdit />
       </button>
 
       {showModal && (

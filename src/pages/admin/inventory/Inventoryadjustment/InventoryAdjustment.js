@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const InventoryAdjustment = () => {
   const tableRef = useRef(null);
@@ -131,16 +132,16 @@ const InventoryAdjustment = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       MODE OF ADJUSTMENT
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       REFERENCE NUMBER
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       DATE
                     </th>
                     <th scope="col" className="text-center">
@@ -151,23 +152,23 @@ const InventoryAdjustment = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.modeOfAdjustment}</td>
-                      <td className="text-center">{data.referenceNumber}</td>
-                      <td className="text-center">{data.date?.slice(0,10)}</td>
+                      <td className="text-start">{index + 1}</td>
+                      <td className="text-start">{data.modeOfAdjustment}</td>
+                      <td className="text-start">{data.referenceNumber}</td>
+                      <td className="text-start">{data.date?.slice(0,10)}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/inventoryadjustment/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
-                              View
+                            <button className="btn btn-sm">
+                            <FaEye />
                             </button>
                           </Link>
                           <Link
                             to={`/inventoryadjustment/edit/${data.id}`}
                             className="px-2"
                           >
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
-                              Edit
+                            <button className="btn btn-sm">
+                            <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

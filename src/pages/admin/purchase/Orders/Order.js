@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const Order = () => {
   const tableRef = useRef(null);
@@ -99,7 +100,7 @@ const Order = () => {
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
                     <h1 className="h4 ls-tight headingColor ">
-                      Purchase Order
+                      Purchase Order ({datas.length})
                     </h1>
                   </div>
                 </div>
@@ -125,19 +126,19 @@ const Order = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       VENDOR NAME
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       Purchase Order
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       DATE
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       STATUS
                     </th>
                     <th scope="col" className="text-center">
@@ -148,27 +149,27 @@ const Order = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.vendorName}</td>
-                      <td className="text-center">
+                      <td className="text-start">{index + 1}</td>
+                      <td className="text-start">{data.vendorName}</td>
+                      <td className="text-start">
                         {data.purchaseOrderNumber}
                       </td>
-                      <td className="text-center">
+                      <td className="text-start">
                         {data.date
                           ? new Date(data.date).toLocaleDateString()
                           : ""}
                       </td>
-                      <td className="text-center">{data.status}</td>
+                      <td className="text-start">{data.status}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/order/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
-                              View
+                            <button className="btn btn-sm">
+                            <FaEye />
                             </button>
                           </Link>
                           <Link to={`/order/edit/${data.id}`} className="px-2">
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
-                              Edit
+                            <button className="btn btn-sm">
+                            <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

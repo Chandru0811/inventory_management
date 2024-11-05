@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const Currency = () => {
   const tableRef = useRef(null);
@@ -97,7 +98,7 @@ const Currency = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Currencies</h1>
+                    <h1 className="h4 ls-tight headingColor ">Currencies ({datas.length})</h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -128,16 +129,16 @@ const Currency = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       CURRENCY NAME
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       CURRENCY CODE
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       CURRENCY SYMBOL
                     </th>
                     <th scope="col" className="text-center">
@@ -148,23 +149,23 @@ const Currency = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.currencyName}</td>
-                      <td className="text-center">{data.currencyCode}</td>
-                      <td className="text-center">{data.currencySymbol}</td>
+                      <td className="text-start">{index + 1}</td>
+                      <td className="text-start">{data.currencyName}</td>
+                      <td className="text-start">{data.currencyCode}</td>
+                      <td className="text-start">{data.currencySymbol}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/currency/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
-                              View
+                            <button className="btn btn-sm">
+                            <FaEye />
                             </button>
                           </Link>
                           <Link
                             to={`/currency/edit/${data.id}`}
                             className="px-2"
                           >
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
-                              Edit
+                            <button className="btn btn-sm">
+                            <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

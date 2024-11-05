@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const Vendor = () => {
   const tableRef = useRef(null);
@@ -98,7 +99,7 @@ const Vendor = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Vendors</h1>
+                    <h1 className="h4 ls-tight headingColor ">Vendors ({datas.length})</h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -129,16 +130,19 @@ const Vendor = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
+                      VENDOR NAME
+                    </th>
+                    <th scope="col" className="text-start">
                       COMPANY NAME
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       VENDOR EMAIL
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       VENDOR MOBILE
                     </th>
                     <th scope="col" className="text-center">
@@ -149,20 +153,21 @@ const Vendor = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.companyName}</td>
-                      <td className="text-center">{data.vendorEmail}</td>
-                      <td className="text-center">{data.vendorMobile}</td>
+                      <td className="text-start">{index + 1}</td>
+                      <td className="text-start">{data.vendorDisplayName}</td>
+                      <td className="text-start">{data.companyName}</td>
+                      <td className="text-start">{data.vendorEmail}</td>
+                      <td className="text-start">{data.vendorMobile}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/vendor/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
-                              View
+                            <button className="btn btn-sm">
+                            <FaEye />
                             </button>
                           </Link>
                           <Link to={`/vendor/edit/${data.id}`} className="px-2">
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
-                              Edit
+                            <button className="btn btn-sm">
+                            <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

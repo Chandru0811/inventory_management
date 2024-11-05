@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import toast from "react-hot-toast";
 import api from "../../config/URL";
+import { MdDelete } from "react-icons/md";
 
 function DeleteModel({ onSuccess, path }) {
   const [show, setShow] = useState(false);
@@ -56,10 +57,10 @@ function DeleteModel({ onSuccess, path }) {
   return (
     <>
       <button
-        className="btn btn-light  btn-sm shadow-none border-none"
+        className="btn btn-sm"
         onClick={handleShow}
       >
-        Delete
+        <MdDelete />
       </button>
 
       <Modal show={show} onHide={handleClose}>

@@ -5,6 +5,7 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../../config/URL";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const Branding = () => {
   const tableRef = useRef(null);
@@ -98,7 +99,7 @@ const Branding = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Branding</h1>
+                    <h1 className="h4 ls-tight headingColor ">Branding ({datas.length})</h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -132,7 +133,7 @@ const Branding = () => {
                     <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       ORGANIZATION LOGO
                     </th>
                     {/* <th scope="col" className="text-center">
@@ -150,7 +151,7 @@ const Branding = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
-                      <td className="text-center"> {data.organizationLogo ? (
+                      <td className="text-start"> {data.organizationLogo ? (
                           <img
                             src={data.organizationLogo}
                             className="img-fluid ms-2 w-10 rounded"
@@ -164,16 +165,16 @@ const Branding = () => {
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/customer/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
-                              View
+                            <button className="btn btn-sm">
+                            <FaEye />
                             </button>
                           </Link>
                           <Link
                             to={`/customer/edit/${data.id}`}
                             className="px-2"
                           >
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
-                              Edit
+                            <button className="btn btn-sm">
+                            <FaRegEdit />
                             </button>
                           </Link>
                           {/* <DeleteModel

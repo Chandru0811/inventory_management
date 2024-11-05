@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const PaymentReceived = () => {
     const tableRef = useRef(null);
@@ -98,7 +99,7 @@ const PaymentReceived = () => {
                             <div className="row align-items-center justify-content-between ">
                                 <div className="col">
                                     <div className="d-flex align-items-center gap-4">
-                                        <h1 className="h4 ls-tight headingColor ">Payment Received</h1>
+                                        <h1 className="h4 ls-tight headingColor ">Payment Received ({datas.length})</h1>
                                     </div>
                                 </div>
                                 <div className="col-auto">
@@ -129,16 +130,16 @@ const PaymentReceived = () => {
                             <table ref={tableRef} className="display table ">
                                 <thead className="thead-light">
                                     <tr>
-                                        <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                                        <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                                             S.NO
                                         </th>
-                                        <th scope="col" className="text-center">
+                                        <th scope="col" className="text-start">
                                             CUSTOMER NAME
                                         </th>
-                                        <th scope="col" className="text-center">
+                                        <th scope="col" className="text-start">
                                             AMOUNT RECEIVE
                                         </th>
-                                        <th scope="col" className="text-center">
+                                        <th scope="col" className="text-start">
                                             DEPOSIT TO
                                         </th>
                                         <th scope="col" className="text-center">
@@ -149,23 +150,23 @@ const PaymentReceived = () => {
                                 <tbody>
                                     {datas.map((data, index) => (
                                         <tr key={index}>
-                                            <td className="text-center">{index + 1}</td>
-                                            <td className="text-center">{data.customerName}</td>
-                                            <td className="text-center">{data.amountReceive}</td>
-                                            <td className="text-center">{data.depositTo}</td>
+                                            <td className="text-start">{index + 1}</td>
+                                            <td className="text-start">{data.customerName}</td>
+                                            <td className="text-start">{data.amountReceive}</td>
+                                            <td className="text-start">{data.depositTo}</td>
                                             <td className="text-center">
                                                 <div className="gap-2">
                                                     <Link to={`/paymentreceived/view/${data.id}`}>
-                                                        <button className="btn btn-light btn-sm  shadow-none border-none">
-                                                            View
+                                                        <button className="btn btn-sm">
+                                                        <FaEye />
                                                         </button>
                                                     </Link>
                                                     <Link
                                                         to={`/paymentreceived/edit/${data.id}`}
                                                         className="px-2"
                                                     >
-                                                        <button className="btn btn-light  btn-sm shadow-none border-none">
-                                                            Edit
+                                                        <button className="btn btn-sm">
+                                                        <FaRegEdit />
                                                         </button>
                                                     </Link>
                                                     <DeleteModel

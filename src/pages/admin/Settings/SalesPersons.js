@@ -100,7 +100,7 @@ const SalesPersons = () => {
                 <div className="row align-items-center justify-content-between ">
                   <div className="col">
                     <div className="d-flex align-items-center gap-4">
-                      <h1 className="h4 ls-tight headingColor ">Sales Persons</h1>
+                      <h1 className="h4 ls-tight headingColor ">Sales Persons ({datas.length})</h1>
                     </div>
                   </div>
                   <div className="col-auto">
@@ -122,13 +122,13 @@ const SalesPersons = () => {
                 <table ref={tableRef} className="display table ">
                   <thead className="thead-light">
                     <tr>
-                      <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                      <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                         S.NO
                       </th>
-                      <th scope="col">
+                      <th scope="col" className="text-start">
                         Name
                       </th>
-                      <th scope="col">
+                      <th scope="col" className="text-start">
                         Email
                       </th>
                       <th scope="col" className="text-center">
@@ -139,10 +139,10 @@ const SalesPersons = () => {
                   <tbody>
                     {datas.map((data, index) => (
                       <tr key={index}>
-                        <td className="text-center">{index + 1}</td>
-                        <td>{data.name}</td>
-                        <td>{data.email}</td>
-                        <td className="">
+                        <td className="text-start">{index + 1}</td>
+                        <td className="text-start">{data.name}</td>
+                        <td className="text-start">{data.email}</td>
+                        <td className="text-center">
                           <div className="d-flex justify-content-center gap-2">
                             <SalesPersonsEdit 
                               onSuccess={refreshData}

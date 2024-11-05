@@ -159,7 +159,7 @@ const CompositeItemView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Manaufacture Name</b>
+                        <b>Manufacturer Name</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -187,7 +187,7 @@ const CompositeItemView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Manaufacturing Part Number</b>
+                        <b>Manufacturing Part Number</b>
                       </p>
                     </div>
                     <div className="col-6">

@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const Customer = () => {
   const tableRef = useRef(null);
@@ -130,16 +131,16 @@ const Customer = () => {
                 <table ref={tableRef} className="display table ">
                   <thead className="thead-light">
                     <tr>
-                      <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                      <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                         S.NO
                       </th>
-                      <th scope="col" className="text-center">
+                      <th scope="col" className="text-start">
                         COMPANY NAME
                       </th>
-                      <th scope="col" className="text-center">
+                      <th scope="col" className="text-start">
                         EMAIL
                       </th>
-                      <th scope="col" className="text-center">
+                      <th scope="col" className="text-start">
                         PHONE
                       </th>
                       <th scope="col" className="text-center">
@@ -150,25 +151,25 @@ const Customer = () => {
                   <tbody>
                     {datas.map((data, index) => (
                       <tr key={index}>
-                        <td className="text-center">{index + 1}</td>
-                        <td className="text-center">{data.companyName}</td>
-                        <td className="text-center">{data.customerEmail}</td>
-                        <td className="text-center">
+                        <td className="text-start">{index + 1}</td>
+                        <td className="text-start">{data.companyName}</td>
+                        <td className="text-start">{data.customerEmail}</td>
+                        <td className="text-start">
                           {data.customerPhoneNumber}
                         </td>
                         <td className="text-center">
                           <div className="gap-2">
                             <Link to={`/customers/view/${data.id}`}>
-                              <button className="btn btn-light btn-sm  shadow-none border-none">
-                                View
+                              <button className="btn btn-sm">
+                              <FaEye />
                               </button>
                             </Link>
                             <Link
                               to={`/customers/edit/${data.id}`}
                               className="px-2"
                             >
-                              <button className="btn btn-light  btn-sm shadow-none border-none">
-                                Edit
+                              <button className="btn btn-sm">
+                              <FaRegEdit />
                               </button>
                             </Link>
                             <DeleteModel

@@ -30,13 +30,21 @@ const VendorAdd = () => {
       "*Vendor Display Name is required"
     ),
     salutation: Yup.string().required("*Salutation is required"),
-    firstName: Yup.string().required("*First Name is required"),
-    lastName: Yup.string().required("*Last Name is required"),
+    firstName: Yup.string()
+      .matches(/^[A-Za-z]+$/, "*First Name must contain only letters")
+      .required("*First Name is required"),
+    lastName: Yup.string()
+      .matches(/^[A-Za-z]+$/, "*Last Name must contain only letters")
+      .required("*Last Name is required"),
     vendorEmail: Yup.string()
       .email("*Enter a valid email address")
       .required("*Vendor Email is required"),
-    vendorMobile: Yup.string().required("*Mobile Number is required"),
+    vendorMobile: Yup.number()
+      .typeError("*Mobile Number must be a number")
+      .required("*Mobile Number is required"),
+    vendorPhone: Yup.number().typeError("*Phone Number must be a number"),
   });
+
   const formik = useFormik({
     initialValues: {
       companyName: "",
@@ -111,7 +119,7 @@ const VendorAdd = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">Add Vendor</h1>
+                  <h1 className="h4 ls-tight headingColor">Add Vendors</h1>
                 </div>
               </div>
               <div className="col-auto">
@@ -179,7 +187,7 @@ const VendorAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  First Name <span className="text-danger">*</span>
+                  First Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -435,11 +443,11 @@ const VendorAdd = () => {
                           : ""
                       }`}
                       {...formik.getFieldProps("currency")}
-                      disabled
                     >
-                      <option value="Indian Rupee" selected>
-                        Indian Rupee
-                      </option>
+                      <option></option>
+                      <option value="INR">Indian Rupee</option>
+                      <option value="SGD">Sigapore Dollor</option>
+                      <option value="USD">United States Dollor</option>
                     </select>
                     {formik.touched.currency && formik.errors.currency && (
                       <div className="invalid-feedback">

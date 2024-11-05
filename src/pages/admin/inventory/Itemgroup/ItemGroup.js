@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const ItemGroup = () => {
   const tableRef = useRef(null);
@@ -132,13 +133,13 @@ const ItemGroup = () => {
                     <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       ITEM GROUP NAME
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       TYPE
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                       BRAND NAME
                     </th>
                     <th scope="col" className="text-center">
@@ -150,22 +151,22 @@ const ItemGroup = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
-                      <td className="text-center">{data.itemGroupName}</td>
-                      <td className="text-center">{data.type}</td>
-                      <td className="text-center">{data.brandName}</td>
+                      <td className="text-start">{data.itemGroupName}</td>
+                      <td className="text-start">{data.type}</td>
+                      <td className="text-start">{data.brandName}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/itemgroup/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
-                              View
+                            <button className="btn btn-sm">
+                            <FaEye />
                             </button>
                           </Link>
                           <Link
                             to={`/itemgroup/edit/${data.id}`}
                             className="px-2"
                           >
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
-                              Edit
+                            <button className="btn btn-sm">
+                            <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

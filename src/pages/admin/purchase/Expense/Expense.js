@@ -5,7 +5,8 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
-import DeleteModel from '../../../../components/admin/DeleteModel'
+import DeleteModel from '../../../../components/admin/DeleteModel';
+import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const Expense = () => {
   const tableRef = useRef(null);
@@ -97,7 +98,7 @@ const Expense = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Expense</h1>
+                    <h1 className="h4 ls-tight headingColor ">Expense ({datas.length})</h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -128,16 +129,16 @@ const Expense = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
                       S.NO
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                     Customer Name
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                     Category Name
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
                     Tax Amount
                     </th>
                     <th scope="col" className="text-center">
@@ -148,23 +149,23 @@ const Expense = () => {
                 <tbody>
                   {datas.map((data, index) => (
                     <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{data.customerName}</td>
-                      <td className="text-center">{data.categoryName}</td>
-                      <td className="text-center">{data.taxAmount}</td>
+                      <td className="text-start">{index + 1}</td>
+                      <td className="text-start">{data.customerName}</td>
+                      <td className="text-start">{data.categoryName}</td>
+                      <td className="text-start">{data.taxAmount}</td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/expense/view/${data.id}`}>
-                            <button className="btn btn-light btn-sm  shadow-none border-none">
-                              View
+                            <button className="btn btn-sm">
+                            <FaEye />
                             </button>
                           </Link>
                           <Link
                             to={`/expense/edit/${data.id}`}
                             className="px-2"
                           >
-                            <button className="btn btn-light  btn-sm shadow-none border-none">
-                              Edit
+                            <button className="btn btn-sm">
+                            <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

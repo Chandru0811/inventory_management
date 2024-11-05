@@ -461,7 +461,7 @@ const CompositeItemEdit = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Manaufacture Name</lable>
+                <lable className="form-lable">Manufacturer Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -504,7 +504,7 @@ const CompositeItemEdit = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Manaufacturing Part Number</lable>
+                <lable className="form-lable">Manufacturing Part Number</lable>
                 <div className="mb-3">
                   <input
                     type="text"

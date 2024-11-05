@@ -31,12 +31,19 @@ const VendorEdit = () => {
       "*Vendor Display Name is required"
     ),
     salutation: Yup.string().required("*Salutation is required"),
-    firstName: Yup.string().required("*First Name is required"),
-    lastName: Yup.string().required("*Last Name is required"),
+    firstName: Yup.string()
+      .matches(/^[A-Za-z]+$/, "*First Name must contain only letters")
+      .required("*First Name is required"),
+    lastName: Yup.string()
+      .matches(/^[A-Za-z]+$/, "*Last Name must contain only letters")
+      .required("*Last Name is required"),
     vendorEmail: Yup.string()
       .email("*Enter a valid email address")
       .required("*Vendor Email is required"),
-    vendorMobile: Yup.string().required("*Mobile Number is required"),
+    vendorMobile: Yup.number()
+      .typeError("*Mobile Number must be a number")
+      .required("*Mobile Number is required"),
+    vendorPhone: Yup.number().typeError("*Phone Number must be a number"),
   });
 
   const formik = useFormik({
