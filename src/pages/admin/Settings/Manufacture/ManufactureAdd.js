@@ -57,7 +57,7 @@ function ManufactureAdd({ onSuccess }) {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Add Manufacture</h5>
+                <h5 className="modal-title">Add Manufacturer</h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -69,7 +69,7 @@ function ManufactureAdd({ onSuccess }) {
                 <form onSubmit={formik.handleSubmit}>
                   <div className="mb-3">
                     <label className="form-label">
-                      Manaufacture Name<span className="text-danger">*</span>
+                    Manufacturer Name<span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"

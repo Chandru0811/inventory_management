@@ -5,8 +5,9 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
-import DeleteModel from '../../../../components/admin/DeleteModel';
-import { FaEye, FaRegEdit } from "react-icons/fa";
+import DeleteModel from "../../../../components/admin/DeleteModel";
+import { FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const Items = () => {
   const tableRef = useRef(null);
@@ -99,7 +100,9 @@ const Items = () => {
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Items ({datas.length})</h1>
+                    <h1 className="h4 ls-tight headingColor ">
+                      Items ({datas.length})
+                    </h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -145,7 +148,11 @@ const Items = () => {
                     <th scope="col" className="text-start">
                       STATUS
                     </th>
-                    <th scope="col" className="text-center">
+                    <th
+                      scope="col"
+                      style={{ width: "100px" }}
+                      className="text-center"
+                    >
                       ACTION
                     </th>
                   </tr>
@@ -159,17 +166,19 @@ const Items = () => {
                       <td className="text-start">{data.dimensions}</td>
                       <td className="text-start">{data.status}</td>
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/item/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/item/edit/${data.id}`}
-                          >
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/item/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

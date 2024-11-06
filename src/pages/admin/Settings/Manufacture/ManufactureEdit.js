@@ -66,7 +66,7 @@ function ManufactureEdit({ onSuccess,id }) {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Edit Manufacture</h5>
+                <h5 className="modal-title">Edit Manufacturer</h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -78,7 +78,7 @@ function ManufactureEdit({ onSuccess,id }) {
                 <form onSubmit={formik.handleSubmit}>
                   <div className="mb-3">
                     <label className="form-label">
-                      Manaufacture Name<span className="text-danger">*</span>
+                    Manufacturer Name<span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"

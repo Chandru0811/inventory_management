@@ -152,7 +152,7 @@ const Unit = () => {
                               />
                             <DeleteModel
                               onSuccess={refreshData}
-                              path={`/deleteTax/${data.id}`}
+                              path={`/deleteUnit/${data.id}`}
                             />
                           </div>
                         </td>

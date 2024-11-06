@@ -403,14 +403,13 @@ const ItemsAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <label className="form-label">Dimensions</label>
-                <span className=" ms-3 fw-lighter">
+                <span className=" ms-3 fw-lighter" style={{fontSize: "13px"}}>
                   (Length X Width X Height)
                 </span>
                 <div className="input-group mb-3">
                   <input
                     type="text"
                     name="length"
-                    placeholder="Length"
                     className={`form-control ${
                       formik.touched.length && formik.errors.length
                         ? "is-invalid"
@@ -423,7 +422,6 @@ const ItemsAdd = () => {
                   <input
                     type="text"
                     name="width"
-                    placeholder="Width"
                     className={`form-control ${
                       formik.touched.width && formik.errors.width
                         ? "is-invalid"
@@ -436,8 +434,7 @@ const ItemsAdd = () => {
                   <input
                     type="text"
                     name="heightD"
-                    placeholder="Height"
-                    className={`form-control w-25 ${
+                    className={`form-control ${
                       formik.touched.heightD && formik.errors.heightD
                         ? "is-invalid"
                         : ""
@@ -517,7 +514,7 @@ const ItemsAdd = () => {
                     }`}
                     {...formik.getFieldProps("manufacturerName")}
                   >
-                    <option value="">Select Manufacturer</option>
+                    <option></option>
                     <option value="Manufacturer1">Manufacturer 1</option>
                     <option value="Manufacturer2">Manufacturer 2</option>
                     <option value="Manufacturer3">Manufacturer 3</option>
@@ -543,7 +540,7 @@ const ItemsAdd = () => {
                     }`}
                     {...formik.getFieldProps("brandName")}
                   >
-                    <option value="">Select Brand</option>
+                    <option></option>
                     <option value="Brand1">Brand 1</option>
                     <option value="Brand2">Brand 2</option>
                     <option value="Brand3">Brand 3</option>
@@ -738,11 +735,10 @@ const ItemsAdd = () => {
                     }`}
                     {...formik.getFieldProps("preferredVendor")}
                   >
-                    <option value="">Select Vendor</option>
+                    <option></option>
                     <option value="Vendor1">Vendor 1</option>
                     <option value="Vendor2">Vendor 2</option>
                     <option value="Vendor3">Vendor 3</option>
-                    {/* Add more options as needed */}
                   </select>
                   {formik.touched.preferredVendor &&
                     formik.errors.preferredVendor && (
@@ -907,7 +903,7 @@ const ItemsAdd = () => {
                         }`}
                         {...formik.getFieldProps("salesTax")}
                       >
-                        <option value="">Select Sales Tax</option>
+                        <option></option>
                         <option value="5">5%</option>
                         <option value="10">10%</option>
                         <option value="15">15%</option>
@@ -936,7 +932,7 @@ const ItemsAdd = () => {
                         disabled={!isPurchaseDisabled}
                         {...formik.getFieldProps("purchaseTax")}
                       >
-                        <option value="">Select Purchase Tax</option>
+                        <option></option>
                         <option value="5">5%</option>
                         <option value="10">10%</option>
                         <option value="15">15%</option>

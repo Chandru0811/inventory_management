@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -26,8 +25,8 @@ function UnitEdit({ onSuccess,id }) {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        const response = await api.put(`UpdateUnit/${id}`, values);
-        if (response.status === 201) {
+        const response = await api.put(`updateUnit/${id}`, values);
+        if (response.status === 200) {
           setShowModal(false);
           onSuccess();
           toast.success(response.data.message);

@@ -99,7 +99,7 @@ const Manufacture = () => {
                   <div className="col">
                     <div className="d-flex align-items-center gap-4">
                       <h1 className="h4 ls-tight headingColor ">
-                        Manufacture ({datas.length})
+                      Manufacturer ({datas.length})
                       </h1>
                     </div>
                   </div>
@@ -128,7 +128,7 @@ const Manufacture = () => {
                         S.NO
                       </th>
                       <th scope="col" className="text-start">
-                        Manufacture Name
+                      Manufacturers Name
                       </th>
                       <th scope="col" className="text-center">
                         ACTION
