@@ -46,7 +46,7 @@ const ItemsAdd = () => {
     internationalStandardBookNumber: Yup.number()
       .typeError("*International Standard Book Number must be a number")
       .nullable(),
-      status: Yup.string().required("*Status is required"),
+    status: Yup.string().required("*Status is required"),
   });
 
   const formik = useFormik({
@@ -88,8 +88,19 @@ const ItemsAdd = () => {
       formData.append("name", values.name);
       formData.append("stockKeepingUnit", values.stockKeepingUnit);
       formData.append("itemUnit", values.itemUnit);
-      formData.append("dimensions", values.dimensions);
-      formData.append("weight", values.weight);
+      // formData.append("dimensions", values.dimensions);
+      const dimensions =
+        values.length && values.width && values.heightD
+          ? `${values.length} ${values.unit} x ${values.width} ${values.unit} x ${values.heightD} ${values.unit}`
+          : "";
+      formData.append("dimensions", dimensions);
+
+      const weight =
+        values.weightValue && values.weightUnit
+          ? `${values.weightValue}${values.weightUnit}`
+          : "";
+      formData.append("weight", weight);
+
       formData.append("manufacturerName", values.manufacturerName);
       formData.append("brandName", values.brandName);
       formData.append("universalProductCode", values.universalProductCode);
@@ -424,14 +435,14 @@ const ItemsAdd = () => {
 
                   <input
                     type="text"
-                    name="height"
+                    name="heightD"
                     placeholder="Height"
                     className={`form-control w-25 ${
-                      formik.touched.height && formik.errors.height
+                      formik.touched.heightD && formik.errors.heightD
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("height")}
+                    {...formik.getFieldProps("heightD")}
                   />
                   <select
                     name="unit"
@@ -454,9 +465,9 @@ const ItemsAdd = () => {
                       {formik.errors.width}
                     </div>
                   )}
-                  {formik.touched.height && formik.errors.height && (
+                  {formik.touched.heightD && formik.errors.heightD && (
                     <div className="invalid-feedback">
-                      {formik.errors.height}
+                      {formik.errors.heightD}
                     </div>
                   )}
                 </div>
@@ -467,13 +478,13 @@ const ItemsAdd = () => {
                 <div className="input-group mb-3">
                   <input
                     type="text"
-                    name="weight"
+                    name="weightValue"
                     className={`form-control w-75 ${
-                      formik.touched.weight && formik.errors.weight
+                      formik.touched.weightValue && formik.errors.weightValue
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("weight")}
+                    {...formik.getFieldProps("weightValue")}
                   />
                   <select
                     name="weightUnit"
@@ -485,9 +496,9 @@ const ItemsAdd = () => {
                     <option value="lb">lb</option>
                     <option value="oz">oz</option>
                   </select>
-                  {formik.touched.weight && formik.errors.weight && (
+                  {formik.touched.weightValue && formik.errors.weightValue && (
                     <div className="invalid-feedback">
-                      {formik.errors.weight}
+                      {formik.errors.weightValue}
                     </div>
                   )}
                 </div>
@@ -1131,7 +1142,7 @@ const ItemsAdd = () => {
                   </div>
                   <div className="col-md-6 col-12 mb-2">
                     <div className="d-flex align-items-center">
-                      <lable className="form-lable">Recorder points</lable>
+                      <lable className="form-lable">Reorder Points</lable>
                       <span
                         className="rounded-circle border pe-1 ps-1 ms-1"
                         style={{
