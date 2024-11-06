@@ -116,7 +116,13 @@ const ItemsView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.itemUnit || ""}
+                        :{" "}
+                        {data.itemUnit === "dz" ? "DOZEN" : data.itemUnit || ""}
+                        {data.itemUnit === "box" ? "BOX" : data.itemUnit || ""}
+                        {data.itemUnit === "g" ? "GRAMS" : data.itemUnit || ""}
+                        {data.itemUnit === "kg" ? "KILOGRAMS" : data.itemUnit || ""}
+                        {data.itemUnit === "m" ? "METERS" : data.itemUnit || ""}
+                        {data.itemUnit === "pcs" ? "PIECES" : data.itemUnit || ""}
                       </p>
                     </div>
                   </div>
@@ -294,7 +300,7 @@ const ItemsView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Recorder points</b>
+                        <b>Reorder points</b>
                       </p>
                     </div>
                     <div className="col-6">

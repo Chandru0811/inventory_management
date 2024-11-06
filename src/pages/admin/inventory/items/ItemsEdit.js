@@ -91,7 +91,11 @@ const ItemsEdit = () => {
       formData.append("name", values.name);
       formData.append("stockKeepingUnit", values.stockKeepingUnit);
       formData.append("itemUnit", values.itemUnit);
-      formData.append("dimensions", values.dimensions);
+      const dimensions =
+      values.length && values.width && values.heightD
+        ? `${values.length} ${values.unit} x ${values.width} ${values.unit} x ${values.heightD} ${values.unit}`
+        : "";
+    formData.append("dimensions", dimensions);
       formData.append("weight", values.weight);
       formData.append("manufacturerName", values.manufacturerName);
       formData.append("brandName", values.brandName);
@@ -157,14 +161,37 @@ const ItemsEdit = () => {
     const getData = async () => {
       try {
         const response = await api.get(`getItemsById/${id}`);
-        formik.setValues(response.data);
-        setData(response.data);
+        const data = response.data;
+  
+        // if (data.dimensions) {
+        //   const [length, heightD, width, unit] = data.dimensions.split(/ x | /);
+        //   data.length = length || "";
+        //   data.heightD = heightD || "";
+        //   data.width = width || "";
+        //   data.unit = unit || ""; 
+        // }
+
+        if (data.dimensions) {
+          const match = data.dimensions.match(/(\d+)\s*(cm|inch)\s*x\s*(\d+)\s*\2\s*x\s*(\d+)\s*\2/);
+        
+          if (match) {
+            data.length = match[1] || "";
+            data.width = match[3] || "";
+            data.heightD = match[4] || "";
+            data.unit = match[2] || ""; 
+          }
+        }
+  
+        formik.setValues(data);
+        setData(data);
       } catch (error) {
         toast.error(error.message);
       }
     };
     getData();
   }, [id]);
+  
+
   const handleCheckboxChange = () => {
     setShowFields(!showFields);
   };
@@ -425,14 +452,14 @@ const ItemsEdit = () => {
 
                   <input
                     type="text"
-                    name="height"
+                    name="heightD"
                     placeholder="Height"
                     className={`form-control w-25 ${
-                      formik.touched.height && formik.errors.height
+                      formik.touched.heightD && formik.errors.heightD
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("height")}
+                    {...formik.getFieldProps("heightD")}
                   />
                   <select
                     name="unit"
@@ -455,9 +482,9 @@ const ItemsEdit = () => {
                       {formik.errors.width}
                     </div>
                   )}
-                  {formik.touched.height && formik.errors.height && (
+                  {formik.touched.heightD && formik.errors.heightD && (
                     <div className="invalid-feedback">
-                      {formik.errors.height}
+                      {formik.errors.heightD}
                     </div>
                   )}
                 </div>
@@ -1129,7 +1156,7 @@ const ItemsEdit = () => {
                   </div>
                   <div className="col-md-6 col-12 mb-2">
                     <div className="d-flex align-items-center">
-                      <lable className="form-lable">Recorder points</lable>
+                      <lable className="form-lable">Reorder Points</lable>
                       <span
                         className="rounded-circle border pe-1 ps-1 ms-1"
                         style={{
