@@ -2,14 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import "datatables.net-dt";
 import "datatables.net-responsive-dt";
 import $ from "jquery";
-import { Link } from "react-router-dom";
-import SalesPersonsAdd from "./SalesPersonsAdd";
-import api from "../../../config/URL";
-import DeleteModel from "../../../components/admin/DeleteModel";
-import SalesOrderEdit from "../Sales/SalesOrder/SalesOrderEdit";
-import SalesPersonsEdit from "./SalesPersonsEdit";
+import TaxAdd from "./TaxAdd";
+import TaxEdit from "./TaxEdit";
+import api from "../../../../config/URL";
+import DeleteModel from "../../../../components/admin/DeleteModel";
 
-const SalesPersons = () => {
+const Tax = () => {
   const tableRef = useRef(null);
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +15,7 @@ const SalesPersons = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getSalesPerson");
+        const response = await api.get("/getAllTax");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -58,7 +56,7 @@ const SalesPersons = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getSalesPerson");
+      const response = await api.get("/getAllTax");
       setDatas(response.data);
       initializeDataTable(); // Reinitialize DataTable after successful data update
     } catch (error) {
@@ -100,12 +98,12 @@ const SalesPersons = () => {
                 <div className="row align-items-center justify-content-between ">
                   <div className="col">
                     <div className="d-flex align-items-center gap-4">
-                      <h1 className="h4 ls-tight headingColor ">Sales Persons ({datas.length})</h1>
+                      <h1 className="h4 ls-tight headingColor ">Tax ({datas.length})</h1>
                     </div>
                   </div>
                   <div className="col-auto">
                     <div className="hstack gap-2 justify-content-end">
-                   <SalesPersonsAdd 
+                   <TaxAdd
                      onSuccess={refreshData}
                      />
                     </div>
@@ -126,10 +124,10 @@ const SalesPersons = () => {
                         S.NO
                       </th>
                       <th scope="col" className="text-start">
-                        Name
+                        Tax Name
                       </th>
                       <th scope="col" className="text-start">
-                        Email
+                        Rate
                       </th>
                       <th scope="col" className="text-center">
                         ACTION
@@ -140,17 +138,17 @@ const SalesPersons = () => {
                     {datas.map((data, index) => (
                       <tr key={index}>
                         <td className="text-start">{index + 1}</td>
-                        <td className="text-start">{data.name}</td>
-                        <td className="text-start">{data.email}</td>
+                        <td className="text-start">{data.taxName}</td>
+                        <td className="text-start">{data.rate}</td>
                         <td className="">
                           <div className="d-flex justify-content-center gap-2">
-                            <SalesPersonsEdit 
+                            <TaxEdit
                               onSuccess={refreshData}
                               id={data.id}
                               />
                             <DeleteModel
                               onSuccess={refreshData}
-                              path={`/deleteSalesPerson/${data.id}`}
+                              path={`/deleteTax/${data.id}`}
                             />
                           </div>
                         </td>
@@ -168,4 +166,4 @@ const SalesPersons = () => {
   );
 };
 
-export default SalesPersons;
+export default Tax;

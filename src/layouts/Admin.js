@@ -102,6 +102,9 @@ import Expense from "../pages/admin/purchase/Expense/Expense";
 import ExpenseAdd from "../pages/admin/purchase/Expense/ExpenseAdd";
 import ExpenseEdit from "../pages/admin/purchase/Expense/ExpenseEdit ";
 import ExpenseView from "../pages/admin/purchase/Expense/ExpenseView";
+import Tax from "../pages/admin/Settings/Tax/Tax";
+import Unit from "../pages/admin/Settings/Unit/Unit";
+import Manufacture from "../pages/admin/Settings/Manufacture/Manufacture";
 
 
 function Admin({ handleLogout }) {
@@ -278,6 +281,15 @@ function Admin({ handleLogout }) {
 
                   {/* {/ sales persons /} */}
                   <Route path="/salesPersons" element={<SalesPersons />} />
+
+                  {/* {/ Tax /} */}
+                  <Route path="/tax" element={<Tax />} />
+
+                  {/* {/ Unit /} */}
+                  <Route path="/unit" element={<Unit />} />
+
+                  {/* {/ Manufacture /} */}
+                  <Route path="/manufacture" element={<Manufacture />} />
 
                   {/* {/ Expenses /} */}
                   <Route path="/expense" element={<Expense />} />

@@ -296,6 +296,21 @@ function AdminSidebar({ handleLogout }) {
                       Sales Persons
                     </NavLink>
                   </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/tax">
+                      Tax
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/manufacture">
+                      Manufacture
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/unit">
+                      Unit
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </li>
