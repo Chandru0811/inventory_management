@@ -93,31 +93,31 @@ const ItemsEdit = () => {
       formData.append("stockKeepingUnit", values.stockKeepingUnit);
       formData.append("itemUnit", values.itemUnit);
       const dimensions =
-        values.length && values.width && values.heightD
-          ? `${values.length} ${values.unit} x ${values.width} ${values.unit} x ${values.heightD} ${values.unit}`
-          : "";
+      values.length && values.width && values.heightD
+        ? `${values.length} ${values.unit} x ${values.width} ${values.unit} x ${values.heightD} ${values.unit}`
+        : "";
       formData.append("dimensions", dimensions);
-      formData.append("weight", values.weight);
+      formData.append("weight", values.weight || "");
       formData.append("manufacturerName", values.manufacturerName);
       formData.append("brandName", values.brandName);
       formData.append("status", values.status);
-      formData.append("universalProductCode", values.universalProductCode);
+      formData.append("universalProductCode", values.universalProductCode || "");
       formData.append(
         "manufacturingPartNumber",
         values.manufacturingPartNumber
       );
       formData.append(
         "internationalArticleNumber",
-        values.internationalArticleNumber
+        values.internationalArticleNumber || ""
       );
       formData.append(
         "internationalStandardBookNumber",
-        values.internationalStandardBookNumber
+        values.internationalStandardBookNumber || ""
       );
       formData.append("sellingPrice", values.sellingPrice);
       formData.append("costPrice", values.costPrice);
       formData.append("salesAccount", values.salesAccount);
-      formData.append("purchaseAccount  ", values.purchaseAccount || " ");
+      formData.append("purchaseAccount  ", values.purchaseAccount || "");
       formData.append(
         "salesAccountDescription",
         values.salesAccountDescription
@@ -126,15 +126,15 @@ const ItemsEdit = () => {
         "purchaseAccountDescription",
         values.purchaseAccountDescription
       );
-      formData.append("salesTax", values.salesTax);
-      formData.append("purchaseTax", values.purchaseTax);
+      formData.append("salesTax", values.salesTax || "");
+      formData.append("purchaseTax", values.purchaseTax || "");
       formData.append("preferredVendor", values.preferredVendor);
       formData.append("inventoryAccount", values.inventoryAccount || "");
-      formData.append("openingStock", values.openingStock);
-      formData.append("openingStockRate", values.openingStockRate);
-      formData.append("reorderPoint", values.reorderPoint);
+      formData.append("openingStock", values.openingStock || "");
+      formData.append("openingStockRate", values.openingStockRate || "");
+      formData.append("reorderPoint", values.reorderPoint || "");
       values.file?.forEach((file, index) => {
-        formData.append("file", file);
+        formData.append("file", file);  
       });
 
       try {
@@ -213,10 +213,10 @@ const ItemsEdit = () => {
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
-          className="card shadow border-0 mb-2 top-header"
-          style={{ borderRadius: "0" }}
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
         >
-          <div className="container-fluid py-4">
+          <div className="container-fluid py-4 ">
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
@@ -226,7 +226,7 @@ const ItemsEdit = () => {
               <div className="col-auto">
                 <div className="hstack gap-2 justify-content-end">
                   <Link to="/item">
-                    <button type="button" className="btn btn-sm btn-light">
+                    <button type="submit" className="btn btn-sm btn-light">
                       <span>Back</span>
                     </button>
                   </Link>
@@ -250,6 +250,7 @@ const ItemsEdit = () => {
             </div>
           </div>
         </div>
+
         <div
           className="card shadow border-0 my-2"
           style={{ borderRadius: "0" }}
@@ -267,7 +268,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="name"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.name && formik.errors.name
                         ? "is-invalid"
                         : ""
@@ -322,7 +323,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="stockKeepingUnit"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.stockKeepingUnit &&
                       formik.errors.stockKeepingUnit
                         ? "is-invalid"
@@ -345,7 +346,7 @@ const ItemsEdit = () => {
                     type="file"
                     accept=".jpg, .jpeg, .png"
                     multiple
-                    className="form-control"
+                    className="form-control form-control-sm"
                     onChange={(event) => {
                       const files = Array.from(event.target.files);
                       const validFiles = files.filter(
@@ -377,6 +378,11 @@ const ItemsEdit = () => {
                     You can upload up to 5 images, each less than 2MB.
                   </p>
                 </div>
+                <img
+                src={data.itemImage}
+                className="img-fluid ms-2 w-50 rounded mt-2"
+                alt="Profile Image"
+              />
               </div>
 
               {/* <div className="col-md-6 col-12 mb-2">
@@ -387,7 +393,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="itemUnit"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm  ${
                       formik.touched.itemUnit && formik.errors.itemUnit
                         ? "is-invalid"
                         : ""
@@ -409,7 +415,7 @@ const ItemsEdit = () => {
                 <div className="mb-3">
                   <select
                     name="itemUnit"
-                    className={`form-select  ${
+                    className={`form-select form-select-sm  ${
                       formik.touched.itemUnit && formik.errors.itemUnit
                         ? "is-invalid"
                         : ""
@@ -434,7 +440,7 @@ const ItemsEdit = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <label className="form-label">Dimensions</label>
-                <span className=" ms-3 fw-lighter">
+                <span className=" ms-3 fw-lighter" style={{fontSize: "13px"}}>
                   (Length X Width X Height)
                 </span>
                 <div className="input-group mb-3">
@@ -442,7 +448,7 @@ const ItemsEdit = () => {
                     type="text"
                     name="length"
                     placeholder="Length"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.length && formik.errors.length
                         ? "is-invalid"
                         : ""
@@ -455,7 +461,7 @@ const ItemsEdit = () => {
                     type="text"
                     name="width"
                     placeholder="Width"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.width && formik.errors.width
                         ? "is-invalid"
                         : ""
@@ -468,7 +474,7 @@ const ItemsEdit = () => {
                     type="text"
                     name="heightD"
                     placeholder="Height"
-                    className={`form-control w-25 ${
+                    className={`form-control form-control-sm ${
                       formik.touched.heightD && formik.errors.heightD
                         ? "is-invalid"
                         : ""
@@ -477,7 +483,7 @@ const ItemsEdit = () => {
                   />
                   <select
                     name="unit"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     onChange={(e) =>
                       formik.setFieldValue("unit", e.target.value)
                     }
@@ -509,17 +515,17 @@ const ItemsEdit = () => {
                 <div className="input-group mb-3">
                   <input
                     type="text"
-                    name="weight"
-                    className={`form-control w-75 ${
-                      formik.touched.weight && formik.errors.weight
+                    name="weightValue"
+                    className={`form-control form-control-sm w-75 ${
+                      formik.touched.weightValue && formik.errors.weightValue
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("weight")}
+                    {...formik.getFieldProps("weightValue")}
                   />
                   <select
                     name="weightUnit"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     {...formik.getFieldProps("weightUnit")}
                   >
                     <option value="kg">kg</option>
@@ -527,9 +533,9 @@ const ItemsEdit = () => {
                     <option value="lb">lb</option>
                     <option value="oz">oz</option>
                   </select>
-                  {formik.touched.weight && formik.errors.weight && (
+                  {formik.touched.weightValue && formik.errors.weightValue && (
                     <div className="invalid-feedback">
-                      {formik.errors.weight}
+                      {formik.errors.weightValue}
                     </div>
                   )}
                 </div>
@@ -540,7 +546,7 @@ const ItemsEdit = () => {
                 <div className="mb-3">
                   <select
                     name="manufacturerName"
-                    className={`form-select ${
+                    className={`form-select form-select-sm ${
                       formik.touched.manufacturerName &&
                       formik.errors.manufacturerName
                         ? "is-invalid"
@@ -570,14 +576,14 @@ const ItemsEdit = () => {
                 <div className="mb-3">
                   <select
                     name="brandName"
-                    className={`form-select ${
+                    className={`form-select form-select-sm ${
                       formik.touched.brandName && formik.errors.brandName
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("brandName")}
                   >
-                    <option value="">Select Brand</option>
+                    <option selected></option>
                     <option value="Brand1">Brand 1</option>
                     <option value="Brand2">Brand 2</option>
                     <option value="Brand3">Brand 3</option>
@@ -610,7 +616,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="manufacturingPartNumber"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm  ${
                       formik.touched.manufacturingPartNumber &&
                       formik.errors.manufacturingPartNumber
                         ? "is-invalid"
@@ -646,7 +652,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="universalProductCode"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm  ${
                       formik.touched.universalProductCode &&
                       formik.errors.universalProductCode
                         ? "is-invalid"
@@ -682,7 +688,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="internationalArticleNumber"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm  ${
                       formik.touched.internationalArticleNumber &&
                       formik.errors.internationalArticleNumber
                         ? "is-invalid"
@@ -718,7 +724,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="internationalStandardBookNumber"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.internationalStandardBookNumber &&
                       formik.errors.internationalStandardBookNumber
                         ? "is-invalid"
@@ -741,7 +747,7 @@ const ItemsEdit = () => {
                 <div className="mb-3">
                   <select
                     name="status"
-                    className={`form-select  ${
+                    className={`form-select form-select-sm  ${
                       formik.touched.status && formik.errors.status
                         ? "is-invalid"
                         : ""
@@ -749,7 +755,7 @@ const ItemsEdit = () => {
                     {...formik.getFieldProps("status")}
                   >
                     <option value=""></option>
-                    <option value="Active">Active</option>
+                    <option value="active">Active</option>
                     <option value="Inactive">Inactive</option>
                   </select>
                   {formik.touched.status && formik.errors.status && (
@@ -764,7 +770,7 @@ const ItemsEdit = () => {
                 <div className="mb-3">
                   <select
                     name="preferredVendor"
-                    className={`form-select ${
+                    className={`form-select form-select-sm ${
                       formik.touched.preferredVendor &&
                       formik.errors.preferredVendor
                         ? "is-invalid"
@@ -772,7 +778,7 @@ const ItemsEdit = () => {
                     }`}
                     {...formik.getFieldProps("preferredVendor")}
                   >
-                    <option value="">Select Vendor</option>
+                    <option selected></option>
                     <option value="Vendor1">Vendor 1</option>
                     <option value="Vendor2">Vendor 2</option>
                     <option value="Vendor3">Vendor 3</option>
@@ -786,8 +792,6 @@ const ItemsEdit = () => {
                     )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2"></div>
-
               <div className="col-md-6 col-12 mb-2">
                 <div className="form-check mb-3">
                   <input
@@ -809,7 +813,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="sellingPrice"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.sellingPrice && formik.errors.sellingPrice
                         ? "is-invalid"
                         : ""
@@ -850,7 +854,7 @@ const ItemsEdit = () => {
                   <input
                     type="text"
                     name="costPrice"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.costPrice && formik.errors.costPrice
                         ? "is-invalid"
                         : ""
@@ -876,7 +880,7 @@ const ItemsEdit = () => {
                       <select
                         name="salesAccount"
                         disabled={!isSalesDisabled}
-                        className={`form-select  ${
+                        className={`form-select form-select-sm  ${
                           formik.touched.salesAccount &&
                           formik.errors.salesAccount
                             ? "is-invalid"
@@ -906,7 +910,7 @@ const ItemsEdit = () => {
                       <select
                         disabled={!isPurchaseDisabled}
                         name="purchaseAccount"
-                        className={`form-select  ${
+                        className={`form-select form-select-sm  ${
                           formik.touched.purchaseAccount &&
                           formik.errors.purchaseAccount
                             ? "is-invalid"
@@ -915,9 +919,9 @@ const ItemsEdit = () => {
                         {...formik.getFieldProps("purchaseAccount")}
                       >
                         <option value=""></option>
-                        <option value="Genral">Genral Income</option>
-                        <option value="Sales">Sales</option>
-                        <option value="Discount">Discount</option>
+                        <option value="Genral">Cose Of Goods Sold</option>
+                        <option value="Sales">Bad Debt</option>
+                        <option value="Discount">Bank Fees And Charges</option>
                       </select>
                       {formik.touched.purchaseAccount &&
                         formik.errors.purchaseAccount && (
@@ -934,14 +938,14 @@ const ItemsEdit = () => {
                       <select
                         name="salesTax"
                         disabled={!isSalesDisabled}
-                        className={`form-select ${
+                        className={`form-select form-select-sm ${
                           formik.touched.salesTax && formik.errors.salesTax
                             ? "is-invalid"
                             : ""
                         }`}
                         {...formik.getFieldProps("salesTax")}
                       >
-                        <option value="">Select Sales Tax</option>
+                        <option value=""></option>
                         <option value="5">5%</option>
                         <option value="10">10%</option>
                         <option value="15">15%</option>
@@ -961,7 +965,7 @@ const ItemsEdit = () => {
                     <div className="mb-3">
                       <select
                         name="purchaseTax"
-                        className={`form-select ${
+                        className={`form-select form-select-sm ${
                           formik.touched.purchaseTax &&
                           formik.errors.purchaseTax
                             ? "is-invalid"
@@ -970,7 +974,7 @@ const ItemsEdit = () => {
                         disabled={!isPurchaseDisabled}
                         {...formik.getFieldProps("purchaseTax")}
                       >
-                        <option value="">Select Purchase Tax</option>
+                        <option value=""></option>
                         <option value="5">5%</option>
                         <option value="10">10%</option>
                         <option value="15">15%</option>
@@ -995,7 +999,7 @@ const ItemsEdit = () => {
                         type="text"
                         disabled={!isSalesDisabled}
                         name="salesAccountDescription"
-                        className={`form-control ${
+                        className={`form-control form-control-sm ${
                           formik.touched.salesAccountDescription &&
                           formik.errors.salesAccountDescription
                             ? "is-invalid"
@@ -1022,7 +1026,7 @@ const ItemsEdit = () => {
                         type="text"
                         disabled={!isPurchaseDisabled}
                         name="purchaseAccountDescription"
-                        className={`form-control ${
+                        className={`form-control form-control-sm ${
                           formik.touched.purchaseAccountDescription &&
                           formik.errors.purchaseAccountDescription
                             ? "is-invalid"
@@ -1069,7 +1073,7 @@ const ItemsEdit = () => {
                           cursor: "pointer",
                           fontSize: "10px",
                         }}
-                        title="Manufacturing Part Number"
+                        title="The account which tracks the inventory of this item"
                       >
                         i
                       </span>
@@ -1077,7 +1081,7 @@ const ItemsEdit = () => {
                     <div className="mb-3">
                       <select
                         name="inventoryAccount"
-                        className={`form-select  ${
+                        className={`form-select form-select-sm  ${
                           formik.touched.inventoryAccount &&
                           formik.errors.inventoryAccount
                             ? "is-invalid"
@@ -1109,7 +1113,7 @@ const ItemsEdit = () => {
                           cursor: "pointer",
                           fontSize: "10px",
                         }}
-                        title="Manufacturing Part Number"
+                        title="The stock available for sale at the beggining of the accounting period"
                       >
                         i
                       </span>
@@ -1118,7 +1122,7 @@ const ItemsEdit = () => {
                       <input
                         type="text"
                         name="openingStock"
-                        className={`form-control  ${
+                        className={`form-control form-control-sm  ${
                           formik.touched.openingStock &&
                           formik.errors.openingStock
                             ? "is-invalid"
@@ -1148,7 +1152,7 @@ const ItemsEdit = () => {
                           cursor: "pointer",
                           fontSize: "10px",
                         }}
-                        title="Manufacturing Part Number"
+                        title="The rate at which you bought each unit of the opening stock"
                       >
                         i
                       </span>
@@ -1158,7 +1162,7 @@ const ItemsEdit = () => {
                       <input
                         type="text"
                         name="openingStockRate"
-                        className={`form-control  ${
+                        className={`form-control form-control-sm  ${
                           formik.touched.openingStockRate &&
                           formik.errors.openingStockRate
                             ? "is-invalid"
@@ -1185,7 +1189,7 @@ const ItemsEdit = () => {
                           cursor: "pointer",
                           fontSize: "10px",
                         }}
-                        title="Manufacturing Part Number"
+                        title="When the stock reaches the reorder point ,a notification will be send to you"
                       >
                         i
                       </span>
@@ -1194,7 +1198,7 @@ const ItemsEdit = () => {
                       <input
                         type="text"
                         name="reorderPoint"
-                        className={`form-control  ${
+                        className={`form-control form-control-sm  ${
                           formik.touched.reorderPoint &&
                           formik.errors.reorderPoint
                             ? "is-invalid"
