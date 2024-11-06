@@ -420,7 +420,6 @@ const ItemsAdd = () => {
               <div className="col-md-6 col-12 mb-2">
                 <label className="form-label">Dimensions</label>
                 <span className=" ms-3 fw-lighter" style={{fontSize: "13px"}}>
-                <span className=" ms-3 fw-lighter" style={{fontSize: "13px"}}>
                   (Length X Width X Height)
                 </span>
                 <div className="input-group mb-3">
