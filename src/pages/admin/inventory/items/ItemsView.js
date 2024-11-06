@@ -116,7 +116,13 @@ const ItemsView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.itemUnit || ""}
+                        :{" "}
+                        {data.itemUnit === "dz" ? "DOZEN" : data.itemUnit || ""}
+                        {data.itemUnit === "box" ? "BOX" : data.itemUnit || ""}
+                        {data.itemUnit === "g" ? "GRAMS" : data.itemUnit || ""}
+                        {data.itemUnit === "kg" ? "KILOGRAMS" : data.itemUnit || ""}
+                        {data.itemUnit === "m" ? "METERS" : data.itemUnit || ""}
+                        {data.itemUnit === "pcs" ? "PIECES" : data.itemUnit || ""}
                       </p>
                     </div>
                   </div>
