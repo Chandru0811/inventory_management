@@ -12,6 +12,7 @@ const ItemsEdit = () => {
   const [data, setData] = useState([]);
   const [showFields, setShowFields] = useState(false);
   const [isSalesDisabled, setIsSalesDisabled] = useState(true);
+  const [manufacture, setManufacture] = useState(null);
   const [isPurchaseDisabled, setIsPurchaseDisabled] = useState(true);
 
   const validationSchema = Yup.object({
@@ -32,10 +33,10 @@ const ItemsEdit = () => {
       .nullable(),
     sellingPrice: Yup.number()
       .typeError("*Selling Price must be a number")
-      .nullable(),
+      .required("*Selling Price is required"),
     costPrice: Yup.number()
       .typeError("*Cost Price must be a number")
-      .nullable(),
+      .required("*Cost Price is required"),
     stockKeepingUnit: Yup.number()
       .typeError("*Stock Keeping Unit must be a number")
       .nullable(),
@@ -48,7 +49,7 @@ const ItemsEdit = () => {
     internationalStandardBookNumber: Yup.number()
       .typeError("*International Standard Book Number must be a number")
       .nullable(),
-      status: Yup.string().required("*Status is required"),
+    // status: Yup.string().required("*Status is required"),
   });
 
   const formik = useFormik({
@@ -66,7 +67,7 @@ const ItemsEdit = () => {
       internationalArticleNumber: "",
       internationalStandardBookNumber: "",
       sellingPrice: "",
-      status: "",
+      // status: "",
       costPrice: "",
       salesAccount: "",
       purchaseAccount: "",
@@ -92,10 +93,10 @@ const ItemsEdit = () => {
       formData.append("stockKeepingUnit", values.stockKeepingUnit);
       formData.append("itemUnit", values.itemUnit);
       const dimensions =
-      values.length && values.width && values.heightD
-        ? `${values.length} ${values.unit} x ${values.width} ${values.unit} x ${values.heightD} ${values.unit}`
-        : "";
-    formData.append("dimensions", dimensions);
+        values.length && values.width && values.heightD
+          ? `${values.length} ${values.unit} x ${values.width} ${values.unit} x ${values.heightD} ${values.unit}`
+          : "";
+      formData.append("dimensions", dimensions);
       formData.append("weight", values.weight);
       formData.append("manufacturerName", values.manufacturerName);
       formData.append("brandName", values.brandName);
@@ -133,7 +134,7 @@ const ItemsEdit = () => {
       formData.append("openingStockRate", values.openingStockRate);
       formData.append("reorderPoint", values.reorderPoint);
       values.file?.forEach((file, index) => {
-        formData.append("file", file);  
+        formData.append("file", file);
       });
 
       try {
@@ -162,26 +163,28 @@ const ItemsEdit = () => {
       try {
         const response = await api.get(`getItemsById/${id}`);
         const data = response.data;
-  
+
         // if (data.dimensions) {
         //   const [length, heightD, width, unit] = data.dimensions.split(/ x | /);
         //   data.length = length || "";
         //   data.heightD = heightD || "";
         //   data.width = width || "";
-        //   data.unit = unit || ""; 
+        //   data.unit = unit || "";
         // }
 
         if (data.dimensions) {
-          const match = data.dimensions.match(/(\d+)\s*(cm|inch)\s*x\s*(\d+)\s*\2\s*x\s*(\d+)\s*\2/);
-        
+          const match = data.dimensions.match(
+            /(\d+)\s*(cm|inch)\s*x\s*(\d+)\s*\2\s*x\s*(\d+)\s*\2/
+          );
+
           if (match) {
             data.length = match[1] || "";
             data.width = match[3] || "";
             data.heightD = match[4] || "";
-            data.unit = match[2] || ""; 
+            data.unit = match[2] || "";
           }
         }
-  
+
         formik.setValues(data);
         setData(data);
       } catch (error) {
@@ -190,7 +193,18 @@ const ItemsEdit = () => {
     };
     getData();
   }, [id]);
-  
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllManufacturers");
+        setManufacture(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  },[]);
 
   const handleCheckboxChange = () => {
     setShowFields(!showFields);
@@ -534,10 +548,13 @@ const ItemsEdit = () => {
                     }`}
                     {...formik.getFieldProps("manufacturerName")}
                   >
-                    <option value="">Select Manufacturer</option>
-                    <option value="Manufacturer1">Manufacturer 1</option>
-                    <option value="Manufacturer2">Manufacturer 2</option>
-                    <option value="Manufacturer3">Manufacturer 3</option>
+                    <option selected></option>
+                    {manufacture &&
+                      manufacture.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.manufacturerName}
+                        </option>
+                      ))}
                   </select>
                   {formik.touched.manufacturerName &&
                     formik.errors.manufacturerName && (
@@ -717,7 +734,7 @@ const ItemsEdit = () => {
                     )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
+              {/* <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Status<span className="text-danger">*</span>
                 </lable>
@@ -741,7 +758,7 @@ const ItemsEdit = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
               <div className="col-md-6 col-12 mb-2">
                 <label className="form-label">Preferred Vendor</label>
                 <div className="mb-3">
@@ -781,7 +798,7 @@ const ItemsEdit = () => {
                     onChange={() => setIsSalesDisabled(!isSalesDisabled)}
                   />
                   <h2 className="form-check-label pt-1" htmlFor="disableSales">
-                  Sales Information
+                    Sales Information
                   </h2>
                 </div>
                 <label className="form-label">
@@ -818,8 +835,11 @@ const ItemsEdit = () => {
                     checked={isPurchaseDisabled}
                     onChange={() => setIsPurchaseDisabled(!isPurchaseDisabled)}
                   />
-                  <h2 className="form-check-label pt-1" htmlFor="disablePurchase">
-                  Purchase Information
+                  <h2
+                    className="form-check-label pt-1"
+                    htmlFor="disablePurchase"
+                  >
+                    Purchase Information
                   </h2>
                 </div>
                 <label className="form-label">
@@ -1031,7 +1051,7 @@ const ItemsEdit = () => {
                   onChange={handleCheckboxChange}
                 />
                 <label htmlFor="toggleFields" className="form-check-label">
-                Track Inventory
+                  Track Inventory
                 </label>
               </div>
               {showFields && (
