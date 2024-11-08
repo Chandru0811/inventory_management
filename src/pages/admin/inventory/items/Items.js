@@ -143,15 +143,17 @@ const Items = () => {
                       TYPE
                     </th>
                     <th scope="col" className="text-start">
-                      DIMENSIONS
+                      COST PRICE
+                    </th>
+                    <th scope="col" className="text-start">
+                      SELLING PRICE
                     </th>
                     <th scope="col" className="text-start">
                       STATUS
                     </th>
                     <th
                       scope="col"
-                      style={{ width: "100px" }}
-                      className="text-center"
+                      className="text-center ps-5"
                     >
                       ACTION
                     </th>
@@ -163,13 +165,15 @@ const Items = () => {
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.name}</td>
                       <td className="text-start">{data.type}</td>
-                      <td className="text-start">{data.dimensions}</td>
+                      <td className="text-start">{data.costPrice}</td>
+                      <td className="text-start">{data.sellingPrice}</td>
                       <td className="text-start">{data.status}</td>
                       <td className="text-center">
                         <div className="d-flex justify-content-center gap-1">
                           <Link to={`/item/view/${data.id}`}>
                             <button
                               className="btn btn-sm"
+                              style={{padding: "7px"}}
                             >
                               <GoEye />
                             </button>
@@ -177,6 +181,7 @@ const Items = () => {
                           <Link to={`/item/edit/${data.id}`}>
                             <button
                               className="btn btn-sm"
+                              style={{padding: "7px"}}
                             >
                               <FaRegEdit />
                             </button>

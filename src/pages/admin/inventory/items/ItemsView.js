@@ -52,12 +52,19 @@ const ItemsView = () => {
                   </div>
                 </div>
                 <div className="col-auto">
-                  <div className="hstack gap-2 justify-content-start">
+                  <div className="hstack justify-content-start">
                     <Link to="/item">
                       <button type="submit" className="btn btn-sm btn-light">
                         <span>Back</span>
                       </button>
                     </Link>
+                  </div>
+                </div>
+                <div className="col-auto">
+                  <div className="hstack justify-content-start">
+                      <button type="submit" className="btn btn-sm btn-success">
+                        <span>Activate</span>
+                      </button>
                   </div>
                 </div>
               </div>
@@ -296,41 +303,12 @@ const ItemsView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Preferred Vendor</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.preferredVendor || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
                         <b>Reorder points</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         : {data.reorderPoint || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Status</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.status || ""}
                       </p>
                     </div>
                   </div>
@@ -480,6 +458,20 @@ const ItemsView = () => {
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         : {data.purchaseAccountDescription || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Preferred Vendor</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.preferredVendor || ""}
                       </p>
                     </div>
                   </div>

@@ -407,13 +407,13 @@ const InventoryAdjustmentAdd = () => {
                 <table className="table table-sm table-nowrap">
                   <thead>
                     <tr>
-                      <th style={{ width: "15%" }}>
+                      <th style={{ width: "40%" }}>
                         Item Details
                         <span className="text-danger text-center">*</span>
                       </th>
-                      <th style={{ width: "10%" }}>Quantity Available</th>
-                      <th style={{ width: "15%" }}>New Quantity on hand</th>
-                      <th style={{ width: "15%" }}>Quantity Adjusted</th>
+                      <th style={{ width: "20%" }}>Quantity Available</th>
+                      <th style={{ width: "20%" }}>New Quantity on hand</th>
+                      <th style={{ width: "20%" }}>Quantity Adjusted</th>
                     </tr>
                   </thead>
                   <tbody>

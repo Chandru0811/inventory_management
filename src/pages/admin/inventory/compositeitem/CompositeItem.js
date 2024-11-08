@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const CompositeItem = () => {
   const tableRef = useRef(null);
@@ -132,17 +133,24 @@ const CompositeItem = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
                       NAME
                     </th>
                     <th scope="col" className="text-start">
-                      TYPE
+                      SKU
                     </th>
                     <th scope="col" className="text-start">
-                      Brand Name
+                      Selling Price
+                    </th>
+                    <th scope="col" className="text-start">
+                      Cost Price
                     </th>
                     <th scope="col" className="text-center">
                       ACTION
@@ -154,21 +162,28 @@ const CompositeItem = () => {
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.name}</td>
-                      <td className="text-start">{data.type}</td>
-                      <td className="text-start">{data.dimensions}</td>
+                      <td className="text-start">{data.stockKeepingUnit}</td>
+                      <td className="text-start">{data.sellingPrice}</td>
+                      <td className="text-start">{data.costPrice}</td>
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/compositeitem/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
                           <Link
                             to={`/compositeitem/edit/${data.id}`}
                             className="px-2"
                           >
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

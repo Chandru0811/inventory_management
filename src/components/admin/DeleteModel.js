@@ -60,6 +60,7 @@ function DeleteModel({ onSuccess, path }) {
     <>
       <button
         className="btn btn-sm"
+        style={{padding: "5px", paddingTop: "8px"}}
         onClick={handleShow}
       >
         <BiTrashAlt />

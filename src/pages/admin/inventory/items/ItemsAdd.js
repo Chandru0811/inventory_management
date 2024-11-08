@@ -4,7 +4,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
 import api from "../../../../config/URL";
-
+import { IoInformationCircleOutline } from "react-icons/io5";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 
 const ItemsAdd = () => {
   const navigate = useNavigate();
@@ -91,7 +92,6 @@ const ItemsAdd = () => {
       formData.append("name", values.name);
       formData.append("stockKeepingUnit", values.stockKeepingUnit);
       formData.append("itemUnit", values.itemUnit);
-      // formData.append("dimensions", values.dimensions);
       const dimensions =
         values.length && values.width && values.heightD
           ? `${values.length} ${values.unit} x ${values.width} ${values.unit} x ${values.heightD} ${values.unit}`
@@ -191,7 +191,7 @@ const ItemsAdd = () => {
       }
     };
     getData();
-  },[]);
+  }, []);
 
   return (
     <div className="container-fluid px-2 minHeight m-0">
@@ -302,7 +302,15 @@ const ItemsAdd = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Stock Keeping Unit</lable>
+                <div className="d-flex align-items-center">
+                  <label className="form-label mb-0">SKU</label>
+                  <span
+                    className="infoField"
+                    title="The Stock Keeping Unit of the item"
+                  >
+                    <IoMdInformationCircleOutline />{" "}
+                  </span>
+                </div>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -419,7 +427,7 @@ const ItemsAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <label className="form-label">Dimensions</label>
-                <span className=" ms-3 fw-lighter" style={{fontSize: "13px"}}>
+                <span className=" ms-3 fw-lighter" style={{ fontSize: "13px" }}>
                   (Length X Width X Height)
                 </span>
                 <div className="input-group mb-3">
@@ -563,9 +571,9 @@ const ItemsAdd = () => {
                     {...formik.getFieldProps("brandName")}
                   >
                     <option selected></option>
-                    <option value="Brand1">Brand 1</option>
-                    <option value="Brand2">Brand 2</option>
-                    <option value="Brand3">Brand 3</option>
+                    <option value="Hp">Hp</option>
+                    <option value="Dell">Dell</option>
+                    <option value="Lenovo">Lenovo</option>
                   </select>
                   {formik.touched.brandName && formik.errors.brandName && (
                     <div className="invalid-feedback">
@@ -579,16 +587,10 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">MPN</label>
                   <span
-                    className="rounded-circle border pe-1 ps-1 ms-1"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      fontSize: "10px",
-                    }}
-                    title="Manufacturing Part Number"
+                    className="infoField"
+                    title="Manufacturing Part Number unambiguously identifies a part design"
                   >
-                    i
+                    <IoMdInformationCircleOutline />
                   </span>
                 </div>
                 <div className="mb-3">
@@ -615,16 +617,10 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">UPC</label>
                   <span
-                    className="rounded-circle  pe-1 ps-1 ms-1 border"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      fontSize: "10px",
-                    }}
-                    title="Universal Product Code"
+                    className="infoField"
+                    title="Twelve digit unique number associated with the bar code (Universal Product Code)"
                   >
-                    i
+                    <IoMdInformationCircleOutline />{" "}
                   </span>
                 </div>
                 <div className="mb-3">
@@ -651,16 +647,10 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">EAN</label>
                   <span
-                    className="rounded-circle pe-1 ps-1 ms-1 border"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      fontSize: "10px",
-                    }}
-                    title="International Article Number"
+                    className="infoField"
+                    title="Thirteen digit unique number (International Article Number)"
                   >
-                    i
+                    <IoMdInformationCircleOutline />
                   </span>
                 </div>
                 <div className="mb-3">
@@ -687,16 +677,10 @@ const ItemsAdd = () => {
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">ISBN</label>
                   <span
-                    className="rounded-circle pe-1 ps-1 ms-1 border"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      fontSize: "10px",
-                    }}
-                    title="International Standard Book Number"
+                    className="infoField"
+                    title="Thirteen digit unique commercial book identifier (International Standard Book Number)"
                   >
-                    i
+                    <IoMdInformationCircleOutline />
                   </span>
                 </div>
                 <div className="mb-3">
@@ -744,32 +728,7 @@ const ItemsAdd = () => {
                   )}
                 </div>
               </div> */}
-              <div className="col-md-6 col-12 mb-2">
-                <label className="form-label">Preferred Vendor</label>
-                <div className="mb-3">
-                  <select
-                    name="preferredVendor"
-                    className={`form-select form-select-sm ${
-                      formik.touched.preferredVendor &&
-                      formik.errors.preferredVendor
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("preferredVendor")}
-                  >
-                    <option selected></option>
-                    <option value="Vendor1">Vendor 1</option>
-                    <option value="Vendor2">Vendor 2</option>
-                    <option value="Vendor3">Vendor 3</option>
-                  </select>
-                  {formik.touched.preferredVendor &&
-                    formik.errors.preferredVendor && (
-                      <div className="invalid-feedback">
-                        {formik.errors.preferredVendor}
-                      </div>
-                    )}
-                </div>
-              </div>
+              <div className="col-md-6 col-12"></div>
               <div className="col-md-6 col-12 mb-2">
                 <div className="form-check mb-3">
                   <input
@@ -866,8 +825,8 @@ const ItemsAdd = () => {
                         }`}
                         {...formik.getFieldProps("salesAccount")}
                       >
-                        <option value=""></option>
-                        <option value="Genral">Genral Income</option>
+                        <option></option>
+                        <option value="General Income">General Income</option>
                         <option value="Sales">Sales</option>
                         <option value="Discount">Discount</option>
                       </select>
@@ -896,10 +855,12 @@ const ItemsAdd = () => {
                         }`}
                         {...formik.getFieldProps("purchaseAccount")}
                       >
-                        <option value=""></option>
-                        <option value="Genral">Cose Of Goods Sold</option>
-                        <option value="Sales">Bad Debt</option>
-                        <option value="Discount">Bank Fees And Charges</option>
+                        <option></option>
+                        <option value="Cost of Goods Sold">
+                          Cost of Goods Sold
+                        </option>
+                        <option value="Materials">Materials</option>
+                        <option value="Labor">Labor</option>
                       </select>
                       {formik.touched.purchaseAccount &&
                         formik.errors.purchaseAccount && (
@@ -969,9 +930,7 @@ const ItemsAdd = () => {
                   </div>
 
                   <div className="col-md-6 col-12 mb-2">
-                    <label className="form-label">
-                      Sales Account Description
-                    </label>
+                    <label className="form-label">Description</label>
                     <div className="mb-3">
                       <textarea
                         type="text"
@@ -996,9 +955,7 @@ const ItemsAdd = () => {
                   </div>
 
                   <div className="col-md-6 col-12 mb-2">
-                    <label className="form-label">
-                      Purchase Account Description
-                    </label>
+                    <label className="form-label">Description</label>
                     <div className="mb-3">
                       <textarea
                         type="text"
@@ -1017,6 +974,33 @@ const ItemsAdd = () => {
                         formik.errors.purchaseAccountDescription && (
                           <div className="invalid-feedback">
                             {formik.errors.purchaseAccountDescription}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12"></div>
+                  <div className="col-md-6 col-12 mb-2">
+                    <label className="form-label">Preferred Vendor</label>
+                    <div className="mb-3">
+                      <select
+                        name="preferredVendor"
+                        className={`form-select form-select-sm ${
+                          formik.touched.preferredVendor &&
+                          formik.errors.preferredVendor
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("preferredVendor")}
+                      >
+                        <option selected></option>
+                        <option value="James">James</option>
+                        <option value="Emily">Emily</option>
+                        <option value="David">David</option>
+                      </select>
+                      {formik.touched.preferredVendor &&
+                        formik.errors.preferredVendor && (
+                          <div className="invalid-feedback">
+                            {formik.errors.preferredVendor}
                           </div>
                         )}
                     </div>
@@ -1044,16 +1028,10 @@ const ItemsAdd = () => {
                         Inventory Account<span className="text-danger">*</span>
                       </lable>
                       <span
-                        className="rounded-circle border pe-1 ps-1 ms-1"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          cursor: "pointer",
-                          fontSize: "10px",
-                        }}
+                        className="infoField"
                         title="The account which tracks the inventory of this item"
                       >
-                        i
+                        <IoMdInformationCircleOutline />
                       </span>
                     </div>
                     <div className="mb-3">
@@ -1084,16 +1062,10 @@ const ItemsAdd = () => {
                     <div className="d-flex align-items-center">
                       <lable className="form-lable">Opening Stock</lable>
                       <span
-                        className="rounded-circle border pe-1 ps-1 ms-1"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          cursor: "pointer",
-                          fontSize: "10px",
-                        }}
+                        className="infoField"
                         title="The stock available for sale at the beggining of the accounting period"
                       >
-                        i
+                        <IoMdInformationCircleOutline />
                       </span>
                     </div>
                     <div className="mb-3">
@@ -1120,19 +1092,13 @@ const ItemsAdd = () => {
                     <div className="d-flex align-items-center">
                       {" "}
                       <lable className="form-lable">
-                        Opening Stock Rate per Unit
+                        Opening Stock Rate Per Unit
                       </lable>
                       <span
-                        className="rounded-circle border pe-1 ps-1 ms-1"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          cursor: "pointer",
-                          fontSize: "10px",
-                        }}
+                        className="infoField"
                         title="The rate at which you bought each unit of the opening stock"
                       >
-                        i
+                        <IoMdInformationCircleOutline />
                       </span>
                     </div>
                     <div className="input-group mb-3">
@@ -1160,16 +1126,10 @@ const ItemsAdd = () => {
                     <div className="d-flex align-items-center">
                       <lable className="form-lable">Reorder Points</lable>
                       <span
-                        className="rounded-circle border pe-1 ps-1 ms-1"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          cursor: "pointer",
-                          fontSize: "10px",
-                        }}
-                        title="When the stock reaches the reorder point ,a notification will be send to you"
+                        className="infoField"
+                        title="When the stock reaches the reorder point, a notification will be send to you"
                       >
-                        i
+                        <IoMdInformationCircleOutline />
                       </span>
                     </div>
                     <div className="mb-3">

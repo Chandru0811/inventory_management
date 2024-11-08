@@ -368,3 +368,12 @@ svg polygon {
 .input-wide {
   width: 150px; 
 }
+
+/* Info for the field  */
+
+
+.infoField {
+  padding-left: 2px;
+  color: #afb2bd;
+  cursor: pointer;
+}
