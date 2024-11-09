@@ -18,7 +18,7 @@ const ItemsAdd = () => {
   const validationSchema = Yup.object({
     name: Yup.string().required("*Name is required"),
     type: Yup.string().required("*Type is required"),
-    itemUnit: Yup.string().required("*Item Unit is required"),
+    itemUnit: Yup.string().required("*Unit is required"),
     sellingPrice: Yup.string().required("*Selling Price is required"),
     costPrice: Yup.string().required("*Cost Price is required"),
     salesAccount: Yup.string().required("*Sales Account is required"),
@@ -80,7 +80,7 @@ const ItemsAdd = () => {
       openingStockRate: "",
       reorderPoint: "",
       file: null,
-      status: "Active",
+      status: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -210,7 +210,7 @@ const ItemsAdd = () => {
               <div className="col-auto">
                 <div className="hstack gap-2 justify-content-end">
                   <Link to="/item">
-                    <button type="submit" className="btn btn-sm btn-light">
+                    <button type="button" className="btn btn-sm btn-light">
                       <span>Back</span>
                     </button>
                   </Link>
@@ -397,7 +397,7 @@ const ItemsAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Unit<span className="text-danger">*</span>
+                  Unit<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select

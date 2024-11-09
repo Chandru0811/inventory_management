@@ -73,7 +73,7 @@ const ItemGroupView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>ItemGroup Name</b>
+                        <b>Item Group Name</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -101,12 +101,22 @@ const ItemGroupView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Item Unit</b>
+                        <b>Unit</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.itemUnit || ""}
+                    <p className="text-muted text-sm">
+                        :{" "}
+                        {{
+                          dz: "DOZEN",
+                          box: "BOX",
+                          g: "GRAMS",
+                          kg: "KILOGRAMS",
+                          m: "METERS",
+                          pcs: "PIECES",
+                        }[data.itemUnit] ||
+                          data.itemUnit ||
+                          ""}
                       </p>
                     </div>
                   </div>

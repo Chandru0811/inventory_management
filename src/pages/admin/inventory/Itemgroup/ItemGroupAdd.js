@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,30 +8,33 @@ import toast from "react-hot-toast";
 const ItemGroupAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
+  const [manufacture, setManufacture] = useState(null);
 
   const validationSchema = Yup.object({
     itemGroupName: Yup.string().required("*Item Group Name is required"),
+    type: Yup.string().required("*Type is required"),
+    itemUnit: Yup.string().required("*Item Unit is required"),
+    multipleItems: Yup.string().required("*Multiple Items is required"),
+    itemAttribute: Yup.string().required("*Item Attribute is required"),
+    itemOptions: Yup.string().required("*Item Options is required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
-      initialValues: {
-        itemGroupName: "",
-        description: "",
-        itemUnit: "",
-        tax: "",
-        manufacturerName: "",
-        brandName: "",
-        multipleItems: "",
-        itemAttribute: "",
-        itemOptions: "",
-        itemType: "",
-        salesAccount: "",
-        purchaseAccount: "",
-        inventoryAccount: "",
-        file: null,
-      },
+      itemGroupName: "",
+      description: "",
+      itemUnit: "",
+      tax: "",
+      manufacturerName: "",
+      brandName: "",
+      multipleItems: "",
+      itemAttribute: "",
+      itemOptions: "",
+      type: "",
+      salesAccount: "",
+      purchaseAccount: "",
+      inventoryAccount: "",
+      file: null,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -73,6 +76,33 @@ const ItemGroupAdd = () => {
     },
   });
 
+  const scrollToError = (errors) => {
+    const errorField = Object.keys(errors)[0];
+    const errorElement = document.querySelector(`[name="${errorField}"]`);
+    if (errorElement) {
+      errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      errorElement.focus();
+    }
+  };
+  
+  useEffect(() => {
+    if (formik.submitCount > 0 && Object.keys(formik.errors).length > 0) {
+      scrollToError(formik.errors);
+    }
+  }, [formik.submitCount]);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllManufacturers");
+        setManufacture(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
+
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -90,7 +120,7 @@ const ItemGroupAdd = () => {
               <div className="col-auto">
                 <div className="hstack gap-2 justify-content-end">
                   <Link to="/itemgroup">
-                    <button type="submit" className="btn btn-sm btn-light">
+                    <button type="button" className="btn btn-sm btn-light">
                       <span>Back</span>
                     </button>
                   </Link>
@@ -132,7 +162,7 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="itemGroupName"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.itemGroupName &&
                       formik.errors.itemGroupName
                         ? "is-invalid"
@@ -187,12 +217,12 @@ const ItemGroupAdd = () => {
 
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Unit<span className="text-danger">*</span>
+                  Unit<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
                     name="itemUnit"
-                    className={`form-select  ${
+                    className={`form-select form-select-sm ${
                       formik.touched.itemUnit && formik.errors.itemUnit
                         ? "is-invalid"
                         : ""
@@ -220,7 +250,7 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="tax"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.tax && formik.errors.tax
                         ? "is-invalid"
                         : ""
@@ -234,19 +264,26 @@ const ItemGroupAdd = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Manaufacture Name</lable>
+                <label className="form-label">Manufacturer Name</label>
                 <div className="mb-3">
-                  <input
-                    type="text"
+                  <select
                     name="manufacturerName"
-                    className={`form-control  ${
+                    className={`form-select form-select-sm ${
                       formik.touched.manufacturerName &&
                       formik.errors.manufacturerName
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("manufacturerName")}
-                  />
+                  >
+                    <option selected></option>
+                    {manufacture &&
+                      manufacture.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.manufacturerName}
+                        </option>
+                      ))}
+                  </select>
                   {formik.touched.manufacturerName &&
                     formik.errors.manufacturerName && (
                       <div className="invalid-feedback">
@@ -262,7 +299,7 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="brandName"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.brandName && formik.errors.brandName
                         ? "is-invalid"
                         : ""
@@ -285,7 +322,7 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="multipleItems"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.multipleItems &&
                       formik.errors.multipleItems
                         ? "is-invalid"
@@ -309,7 +346,7 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="itemAttribute"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.itemAttribute &&
                       formik.errors.itemAttribute
                         ? "is-invalid"
@@ -334,7 +371,7 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="itemOptions"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.itemOptions && formik.errors.itemOptions
                         ? "is-invalid"
                         : ""
@@ -354,7 +391,7 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="salesAccount"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.salesAccount && formik.errors.salesAccount
                         ? "is-invalid"
                         : ""
@@ -375,7 +412,7 @@ const ItemGroupAdd = () => {
                   <input
                     type="text"
                     name="purchaseAccount"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.purchaseAccount &&
                       formik.errors.purchaseAccount
                         ? "is-invalid"
@@ -392,13 +429,11 @@ const ItemGroupAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Inventory Account<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Inventory Account</lable>
                 <div className="mb-3">
                   <select
                     name="inventoryAccount"
-                    className={`form-select  ${
+                    className={`form-select form-select-sm ${
                       formik.touched.inventoryAccount &&
                       formik.errors.inventoryAccount
                         ? "is-invalid"
@@ -424,7 +459,7 @@ const ItemGroupAdd = () => {
                 <div className="mb-3">
                   <input
                     type="file"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     onChange={(event) => {
                       formik.setFieldValue("file", event.target.files[0]);
                     }}

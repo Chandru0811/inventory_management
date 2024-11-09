@@ -454,7 +454,7 @@ const CompositeItemAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Item Unit<span className="text-danger">*</span>
+                  Unit<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select

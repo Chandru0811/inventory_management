@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const ItemGroup = () => {
   const tableRef = useRef(null);
@@ -130,7 +131,11 @@ const ItemGroup = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
@@ -140,9 +145,12 @@ const ItemGroup = () => {
                       TYPE
                     </th>
                     <th scope="col" className="text-start">
+                      UNIT
+                    </th>
+                    <th scope="col" className="text-start">
                       BRAND NAME
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center ps-5">
                       ACTION
                     </th>
                   </tr>
@@ -153,20 +161,36 @@ const ItemGroup = () => {
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.itemGroupName}</td>
                       <td className="text-start">{data.type}</td>
+                      <td className="text-start">
+                        {" "}
+                        {{
+                          dz: "DOZEN",
+                          box: "BOX",
+                          g: "GRAMS",
+                          kg: "KILOGRAMS",
+                          m: "METERS",
+                          pcs: "PIECES",
+                        }[data.itemUnit] ||
+                          data.itemUnit ||
+                          ""}
+                      </td>
                       <td className="text-start">{data.brandName}</td>
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="gap-1">
                           <Link to={`/itemgroup/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/itemgroup/edit/${data.id}`}
-                            className="px-2"
-                          >
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/itemgroup/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

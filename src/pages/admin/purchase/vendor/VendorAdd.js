@@ -408,7 +408,7 @@ const VendorAdd = () => {
               </li>
             </ul>
           </div>
-          <div className="mt-3">
+          <div className="my-3">
             {activeTab === "otherDetails" && (
               <div className="row container-fluid">
                 <div className="col-md-6 col-12 mb-2">

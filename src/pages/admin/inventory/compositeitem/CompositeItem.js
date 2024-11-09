@@ -147,12 +147,15 @@ const CompositeItem = () => {
                       SKU
                     </th>
                     <th scope="col" className="text-start">
+                      Opening Stock
+                    </th>
+                    <th scope="col" className="text-start">
                       Selling Price
                     </th>
                     <th scope="col" className="text-start">
                       Cost Price
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center ps-5">
                       ACTION
                     </th>
                   </tr>
@@ -163,6 +166,7 @@ const CompositeItem = () => {
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.name}</td>
                       <td className="text-start">{data.stockKeepingUnit}</td>
+                      <td className="text-start">{data.openingStock}</td>
                       <td className="text-start">{data.sellingPrice}</td>
                       <td className="text-start">{data.costPrice}</td>
                       <td className="text-center">
@@ -177,7 +181,6 @@ const CompositeItem = () => {
                           </Link>
                           <Link
                             to={`/compositeitem/edit/${data.id}`}
-                            className="px-2"
                           >
                             <button
                               className="btn btn-sm"
