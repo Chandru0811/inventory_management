@@ -5,21 +5,32 @@ import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 import { TbXboxX } from "react-icons/tb";
+import { SlTrash } from "react-icons/sl";
 
 const VendorAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [activeTab, setActiveTab] = useState("otherDetails");
+  const [fields, setFields] = useState([
+    {
+      id: 1,
+      accHolderName: "",
+      bankName: "",
+      accNum: "",
+      reAccNum: "",
+      ifsc: "",
+    },
+  ]);
   const [rows, setRows] = useState([
     {
       id: 1,
       salutation: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      workPhone: "",
-      mobile: "",
-      skype: "",
+      vendorFirstName: "",
+      vendorLastName: "",
+      vendorEmail: "",
+      vendorPhone: "",
+      vendorMobile: "",
+      skypeName: "",
       designation: "",
       department: "",
     },
@@ -47,22 +58,83 @@ const VendorAdd = () => {
 
   const formik = useFormik({
     initialValues: {
-      companyName: "",
       salutation: "",
       firstName: "",
       lastName: "",
+      companyName: "",
       vendorDisplayName: "",
       vendorEmail: "",
       vendorMobile: "",
-      vendorPhone: "",
+      currency: "",
+      taxRate: "",
+      paymentTerms: "",
+      portalLanguage: "",
+      documents: "",
+      websiteUrl: "",
+      department: "",
+      designation: "",
+      twitterUrl: "",
+      skypeName: "",
+      facebookUrl: "",
+      billingAttention: "",
+      billingAddress: "",
+      billingCity: "",
+      billingState: "",
+      billingZipcode: "",
+      billingPhone: "",
+      billingFax: "",
+      shippingAttention: "",
+      shippingCountry: "",
+      shippingAddress: "",
+      shippingCity: "",
+      shippingState: "",
+      shippingZipcode: "",
+      shippingPhone: "",
+      shippingFax: "",
+      emailAddress: "",
+      workPhone: "",
+      mobile: "",
+      remark: "",
+      contacts: [
+        {
+          salutation: "Mr",
+          vendorFirstName: "",
+          vendorLastName: "",
+          vendorEmail: "",
+          vendorPhone: "",
+          vendorMobile: "",
+          skypeName: "",
+          designation: "",
+          department: "",
+          vendorId: "",
+        },
+      ],
+      bankDetails: [
+        {
+          accountHolderName: "",
+          bankName: "",
+          accountNumber: "",
+          reAccountNumber: "",
+          ifsc: "",
+          vendorId: "",
+        },
+      ],
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
+
+      // const payload = {
+      //   ...values,
+      //   contacts: values.contacts.map((contact) => ({
+      //     ...contact,
+      //     salutation: "Mr",
+      //   })),
+      // };
       try {
-        const response = await api.post("/createVendorDetails", values, {});
-        if (response.status === 201) {
+        const response = await api.post("/createVendorWithBank", values, {});
+        if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/vendor");
         } else {
@@ -78,34 +150,70 @@ const VendorAdd = () => {
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
   const addRow = () => {
     setRows([
       ...rows,
       {
         id: rows.length + 1,
-        salutation: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        workPhone: "",
-        mobile: "",
-        skype: "",
-        designation: "",
-        department: "",
+        contacts: [
+          {
+            salutation: "",
+            vendorFirstName: "",
+            vendorLastName: "",
+            vendorEmail: "",
+            vendorPhone: "",
+            vendorMobile: "",
+            skypeName: "",
+            designation: "",
+            department: "",
+          },
+        ],
       },
     ]);
   };
 
-  const handleInputChange = (index, field, value) => {
-    const updatedRows = rows.map((row, rowIndex) =>
-      rowIndex === index ? { ...row, [field]: value } : row
+  const handleInputChange = (rowIndex, field, value) => {
+    setRows((prevRows) =>
+      prevRows.map((row, idx) =>
+        idx === rowIndex
+          ? {
+              ...row,
+              contacts: row.contacts
+                ? [
+                    {
+                      ...row.contacts[0],
+                      [field]: value,
+                    },
+                  ]
+                : [{ [field]: value }],
+            }
+          : row
+      )
     );
-    setRows(updatedRows);
   };
 
   const deleteRow = (index) => {
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
+  };
+
+  const addFields = () => {
+    setFields([
+      ...fields,
+      {
+        id: fields.length + 1,
+        accountHolderName: "",
+        bankName: "",
+        accountNumber: "",
+        reAccountNumber: "",
+        ifsc: "",
+      },
+    ]);
+  };
+
+  const deleteFields = (id) => {
+    setFields(fields.filter((field) => field.id !== id));
   };
 
   return (
@@ -172,7 +280,7 @@ const VendorAdd = () => {
                     {...formik.getFieldProps("salutation")}
                   >
                     <option></option>
-                    <option value="Mr.">Mr.</option>
+                    <option value="Mr">Mr.</option>
                     <option value="Mrs.">Mrs.</option>
                     <option value="Ms.">Ms.</option>
                     <option value="Miss.">Miss.</option>
@@ -376,17 +484,17 @@ const VendorAdd = () => {
                   Contact Persons
                 </span>
               </li>
-              {/* <li className="nav-item">
+              <li className="nav-item">
                 <span
                   className={`nav-link ${
-                    activeTab === "customFields" ? "active" : ""
+                    activeTab === "bankDetails" ? "active" : ""
                   }`}
-                  onClick={() => handleTabClick("customFields")}
+                  onClick={() => handleTabClick("bankDetails")}
                 >
-                  Custom Fields
+                  Bank Details
                 </span>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <span
                   className={`nav-link ${
                     activeTab === "reportingTags" ? "active" : ""
@@ -447,7 +555,7 @@ const VendorAdd = () => {
                       <option></option>
                       <option value="INR">Indian Rupee</option>
                       <option value="SGD">Sigapore Dollor</option>
-                      <option value="USD">United States Dollor</option>
+                      <option value="AED">United Arab Emirates</option>
                     </select>
                     {formik.touched.currency && formik.errors.currency && (
                       <div className="invalid-feedback">
@@ -461,23 +569,24 @@ const VendorAdd = () => {
                   <div className="mb-3">
                     <select
                       type="text"
-                      name="dueOnReceipt"
+                      name="paymentTerms"
                       className={`form-select  ${
-                        formik.touched.dueOnReceipt &&
-                        formik.errors.dueOnReceipt
+                        formik.touched.paymentTerms &&
+                        formik.errors.paymentTerms
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("dueOnReceipt")}
+                      {...formik.getFieldProps("paymentTerms")}
                     >
-                      <option value="DueOnReceipt" selected>
+                      <option selected></option>
+                      <option value="1" selected>
                         Due on Receipt
                       </option>
                     </select>
-                    {formik.touched.dueOnReceipt &&
-                      formik.errors.dueOnReceipt && (
+                    {formik.touched.paymentTerms &&
+                      formik.errors.paymentTerms && (
                         <div className="invalid-feedback">
-                          {formik.errors.dueOnReceipt}
+                          {formik.errors.paymentTerms}
                         </div>
                       )}
                   </div>
@@ -495,7 +604,8 @@ const VendorAdd = () => {
                       }`}
                       {...formik.getFieldProps("priceList")}
                     >
-                      <option value="Indian Rupee" selected>
+                      <option selected></option>
+                      <option value="Indian Rupee">
                         Indian Rupee
                       </option>
                     </select>
@@ -511,17 +621,17 @@ const VendorAdd = () => {
                   <div className="mb-3">
                     <input
                       type="file"
-                      name="document"
+                      name="documents"
                       className={`form-control  ${
-                        formik.touched.document && formik.errors.document
+                        formik.touched.documents && formik.errors.documents
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("document")}
+                      {...formik.getFieldProps("documents")}
                     />
-                    {formik.touched.document && formik.errors.document && (
+                    {formik.touched.documents && formik.errors.documents && (
                       <div className="invalid-feedback">
-                        {formik.errors.document}
+                        {formik.errors.documents}
                       </div>
                     )}
                   </div>
@@ -598,17 +708,17 @@ const VendorAdd = () => {
                     </span>
                     <input
                       type="text"
-                      name="twitter"
+                      name="twitterUrl"
                       className={`form-control ${
-                        formik.touched.twitter && formik.errors.twitter
+                        formik.touched.twitterUrl && formik.errors.twitterUrl
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("twitter")}
+                      {...formik.getFieldProps("twitterUrl")}
                     />
-                    {formik.touched.twitter && formik.errors.twitter && (
+                    {formik.touched.twitterUrl && formik.errors.twitterUrl && (
                       <div className="invalid-feedback">
-                        {formik.errors.twitter}
+                        {formik.errors.twitterUrl}
                       </div>
                     )}
                   </div>
@@ -621,17 +731,17 @@ const VendorAdd = () => {
                     </span>
                     <input
                       type="text"
-                      name="skype"
+                      name="skypeName"
                       className={`form-control ${
-                        formik.touched.skype && formik.errors.skype
+                        formik.touched.skypeName && formik.errors.skypeName
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("skype")}
+                      {...formik.getFieldProps("skypeName")}
                     />
-                    {formik.touched.skype && formik.errors.skype && (
+                    {formik.touched.skypeName && formik.errors.skypeName && (
                       <div className="invalid-feedback">
-                        {formik.errors.skype}
+                        {formik.errors.skypeName}
                       </div>
                     )}
                   </div>
@@ -644,19 +754,20 @@ const VendorAdd = () => {
                     </span>
                     <input
                       type="text"
-                      name="facebook"
+                      name="facebookUrl"
                       className={`form-control ${
-                        formik.touched.facebook && formik.errors.facebook
+                        formik.touched.facebookUrl && formik.errors.facebookUrl
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("facebook")}
+                      {...formik.getFieldProps("facebookUrl")}
                     />
-                    {formik.touched.facebook && formik.errors.facebook && (
-                      <div className="invalid-feedback">
-                        {formik.errors.facebook}
-                      </div>
-                    )}
+                    {formik.touched.facebookUrl &&
+                      formik.errors.facebookUrl && (
+                        <div className="invalid-feedback">
+                          {formik.errors.facebookUrl}
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
@@ -694,19 +805,19 @@ const VendorAdd = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="billingCountryRegion"
+                          name="billingCountry"
                           className={`form-control  ${
-                            formik.touched.billingCountryRegion &&
-                            formik.errors.billingCountryRegion
+                            formik.touched.billingCountry &&
+                            formik.errors.billingCountry
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("billingCountryRegion")}
+                          {...formik.getFieldProps("billingCountry")}
                         />
-                        {formik.touched.billingCountryRegion &&
-                          formik.errors.billingCountryRegion && (
+                        {formik.touched.billingCountry &&
+                          formik.errors.billingCountry && (
                             <div className="invalid-feedback">
-                              {formik.errors.billingCountryRegion}
+                              {formik.errors.billingCountry}
                             </div>
                           )}
                       </div>
@@ -826,19 +937,19 @@ const VendorAdd = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="billingFaxnumber"
+                          name="billingFax"
                           className={`form-control  ${
-                            formik.touched.billingFaxnumber &&
-                            formik.errors.billingFaxnumber
+                            formik.touched.billingFax &&
+                            formik.errors.billingFax
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("billingFaxnumber")}
+                          {...formik.getFieldProps("billingFax")}
                         />
-                        {formik.touched.billingFaxnumber &&
-                          formik.errors.billingFaxnumber && (
+                        {formik.touched.billingFax &&
+                          formik.errors.billingFax && (
                             <div className="invalid-feedback">
-                              {formik.errors.billingFaxnumber}
+                              {formik.errors.billingFax}
                             </div>
                           )}
                       </div>
@@ -848,7 +959,7 @@ const VendorAdd = () => {
 
                 <div className="col-md-6 col-12">
                   <div className="d-flex justify-content-between">
-                    <h3>Shipping Address </h3>
+                    <h3>Shipping Address</h3>
                     <div className="form-check">
                       <input
                         type="checkbox"
@@ -936,19 +1047,19 @@ const VendorAdd = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="shippingCountryRegion"
+                          name="shippingCountry"
                           className={`form-control  ${
-                            formik.touched.shippingCountryRegion &&
-                            formik.errors.shippingCountryRegion
+                            formik.touched.shippingCountry &&
+                            formik.errors.shippingCountry
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("shippingCountryRegion")}
+                          {...formik.getFieldProps("shippingCountry")}
                         />
-                        {formik.touched.shippingCountryRegion &&
-                          formik.errors.shippingCountryRegion && (
+                        {formik.touched.shippingCountry &&
+                          formik.errors.shippingCountry && (
                             <div className="invalid-feedback">
-                              {formik.errors.shippingCountryRegion}
+                              {formik.errors.shippingCountry}
                             </div>
                           )}
                       </div>
@@ -1068,19 +1179,19 @@ const VendorAdd = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="shippingFaxnumber"
+                          name="shippingFax"
                           className={`form-control  ${
-                            formik.touched.shippingFaxnumber &&
-                            formik.errors.shippingFaxnumber
+                            formik.touched.shippingFax &&
+                            formik.errors.shippingFax
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("shippingFaxnumber")}
+                          {...formik.getFieldProps("shippingFax")}
                         />
-                        {formik.touched.shippingFaxnumber &&
-                          formik.errors.shippingFaxnumber && (
+                        {formik.touched.shippingFax &&
+                          formik.errors.shippingFax && (
                             <div className="invalid-feedback">
-                              {formik.errors.shippingFaxnumber}
+                              {formik.errors.shippingFax}
                             </div>
                           )}
                       </div>
@@ -1109,33 +1220,17 @@ const VendorAdd = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {rows.map((row, index) => (
+                      {rows.map((row, rowIndex) => (
                         <tr key={row.id}>
-                          <td>
-                            <div className="">
-                              <input
-                                type="text"
-                                value={row.salutation}
-                                className="form-control"
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    index,
-                                    "salutation",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                          </td>
                           <td>
                             <input
                               type="text"
-                              value={row.firstName}
-                              className="form-control input-wide"
+                              value={row.contacts?.[0]?.salutation || ""}
+                              className="form-control"
                               onChange={(e) =>
                                 handleInputChange(
-                                  index,
-                                  "firstName",
+                                  rowIndex,
+                                  "salutation",
                                   e.target.value
                                 )
                               }
@@ -1144,12 +1239,26 @@ const VendorAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.lastName}
+                              value={row.contacts?.[0]?.vendorFirstName || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
-                                  index,
-                                  "lastName",
+                                  rowIndex,
+                                  "vendorFirstName",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={row.contacts?.[0]?.vendorLastName || ""}
+                              className="form-control input-wide"
+                              onChange={(e) =>
+                                handleInputChange(
+                                  rowIndex,
+                                  "vendorLastName",
                                   e.target.value
                                 )
                               }
@@ -1158,12 +1267,12 @@ const VendorAdd = () => {
                           <td>
                             <input
                               type="email"
-                              value={row.email}
+                              value={row.contacts?.[0]?.vendorEmail || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
-                                  index,
-                                  "email",
+                                  rowIndex,
+                                  "vendorEmail",
                                   e.target.value
                                 )
                               }
@@ -1172,12 +1281,12 @@ const VendorAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.workPhone}
+                              value={row.contacts?.[0]?.vendorPhone || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
-                                  index,
-                                  "workPhone",
+                                  rowIndex,
+                                  "vendorPhone",
                                   e.target.value
                                 )
                               }
@@ -1186,12 +1295,12 @@ const VendorAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.mobile}
+                              value={row.contacts?.[0]?.vendorMobile || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
-                                  index,
-                                  "mobile",
+                                  rowIndex,
+                                  "vendorMobile",
                                   e.target.value
                                 )
                               }
@@ -1200,12 +1309,12 @@ const VendorAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.skype}
+                              value={row.contacts?.[0]?.skypeName || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
-                                  index,
-                                  "skype",
+                                  rowIndex,
+                                  "skypeName",
                                   e.target.value
                                 )
                               }
@@ -1214,11 +1323,11 @@ const VendorAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.designation}
+                              value={row.contacts?.[0]?.designation || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
-                                  index,
+                                  rowIndex,
                                   "designation",
                                   e.target.value
                                 )
@@ -1228,11 +1337,11 @@ const VendorAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.department}
+                              value={row.contacts?.[0]?.department || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
-                                  index,
+                                  rowIndex,
                                   "department",
                                   e.target.value
                                 )
@@ -1240,10 +1349,10 @@ const VendorAdd = () => {
                             />
                           </td>
                           <td>
-                            {index !== 0 && (
+                            {rowIndex !== 0 && (
                               <button
                                 className="btn"
-                                onClick={() => deleteRow(index)}
+                                onClick={() => deleteRow(rowIndex)}
                               >
                                 <TbXboxX
                                   style={{ fontSize: "25px", color: "red" }}
@@ -1266,9 +1375,190 @@ const VendorAdd = () => {
               </div>
             )}
 
-            {activeTab === "customFields" && (
-              <div className="container-fluid row"></div>
+            {activeTab === "bankDetails" && (
+              <div className="container-fluid">
+                <div className="row">
+                  {fields.map((row, index) => (
+                    <div key={row.id}>
+                      <div className="row">
+                        <div className="col-md-6 col-12 mb-2">
+                          <h4 className="mb-5">Bank {row.id}</h4>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2 text-end">
+                          {row.id > 1 && (
+                            <button
+                              type="button"
+                              className="btn btn-sm"
+                              onClick={() => deleteFields(row.id)}
+                            >
+                              <SlTrash style={{ color: "red" }} />
+                            </button>
+                          )}
+                        </div>
+                        <div className="col-md-6 col-12 my-2">
+                          <label className="form-label">
+                            Account Holder Name
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].accountHolderName`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]
+                                  ?.accountHolderName &&
+                                formik.errors.bankDetails?.[index]
+                                  ?.accountHolderName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].accountHolderName`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]
+                              ?.accountHolderName &&
+                              formik.errors.bankDetails?.[index]
+                                ?.accountHolderName && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.bankDetails[index]
+                                      .accountHolderName
+                                  }
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">Bank Name</label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].bankName`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]?.bankName &&
+                                formik.errors.bankDetails?.[index]?.bankName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].bankName`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]?.bankName &&
+                              formik.errors.bankDetails?.[index]?.bankName && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.bankDetails[index].bankName}
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">
+                            Account Number<span className="text-danger">*</span>
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].accountNumber`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]
+                                  ?.accountNumber &&
+                                formik.errors.bankDetails?.[index]
+                                  ?.accountNumber
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].accountNumber`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]
+                              ?.accountNumber &&
+                              formik.errors.bankDetails?.[index]
+                                ?.accountNumber && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.bankDetails[index]
+                                      .accountNumber
+                                  }
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">
+                            Re-enter Account Number
+                            <span className="text-danger">*</span>
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].reAccountNumber`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]
+                                  ?.reAccountNumber &&
+                                formik.errors.bankDetails?.[index]
+                                  ?.reAccountNumber
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].reAccountNumber`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]
+                              ?.reAccountNumber &&
+                              formik.errors.bankDetails?.[index]
+                                ?.reAccountNumber && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.bankDetails[index]
+                                      .reAccountNumber
+                                  }
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">
+                            IFSC<span className="text-danger">*</span>
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].ifsc`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]?.ifsc &&
+                                formik.errors.bankDetails?.[index]?.ifsc
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].ifsc`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]?.ifsc &&
+                              formik.errors.bankDetails?.[index]?.ifsc && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.bankDetails[index].ifsc}
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary me-2"
+                  onClick={addFields}
+                >
+                  Add New Bank
+                </button>
+              </div>
             )}
+
             {activeTab === "reportingTags" && (
               <div className="container-fluid row">
                 <div className="col-md-6 col-12 mb-2">
@@ -1323,17 +1613,18 @@ const VendorAdd = () => {
                   <lable className="form-lable">Remarks</lable>
                   <div className="mb-3">
                     <textarea
-                      name="remarks"
+                      name="remark"
                       className={`form-control  ${
-                        formik.touched.remarks && formik.errors.remarks
+                        formik.touched.remark && formik.errors.remark
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("remarks")}
+                      rows={`4`}
+                      {...formik.getFieldProps("remark")}
                     ></textarea>
-                    {formik.touched.remarks && formik.errors.remarks && (
+                    {formik.touched.remark && formik.errors.remark && (
                       <div className="invalid-feedback">
-                        {formik.errors.remarks}
+                        {formik.errors.remark}
                       </div>
                     )}
                   </div>

@@ -279,7 +279,7 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.twitter || ""}
+                        : {data.twitterUrl || ""}
                       </p>
                     </div>
                   </div>
@@ -292,7 +292,9 @@ const VendorView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.skype || ""}</p>
+                      <p className="text-muted text-sm">
+                        : {data.skypeName || ""}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -305,7 +307,7 @@ const VendorView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.facebook || ""}
+                        : {data.facebookUrl || ""}
                       </p>
                     </div>
                   </div>
@@ -325,7 +327,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.attention || ""}
+                          : {data.billingAttention || ""}
                         </p>
                       </div>
                     </div>
@@ -339,7 +341,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.countryRegion || ""}
+                          : {data.billingCountry || ""}
                         </p>
                       </div>
                     </div>
@@ -353,7 +355,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.address || ""}
+                          : {data.billingAddress || ""}
                         </p>
                       </div>
                     </div>
@@ -367,7 +369,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.city || ""}
+                          : {data.billingCity || ""}
                         </p>
                       </div>
                     </div>
@@ -381,7 +383,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.state || ""}
+                          : {data.billingState || ""}
                         </p>
                       </div>
                     </div>
@@ -396,7 +398,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.zipcode || ""}
+                          : {data.billingZipcode || ""}
                         </p>
                       </div>
                     </div>
@@ -410,7 +412,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.phone || ""}
+                          : {data.billingPhone || ""}
                         </p>
                       </div>
                     </div>
@@ -424,7 +426,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.faxNumber || ""}
+                          : {data.billingFax || ""}
                         </p>
                       </div>
                     </div>
@@ -441,7 +443,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.attention || ""}
+                          : {data.shippingAttention || ""}
                         </p>
                       </div>
                     </div>
@@ -455,7 +457,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.countryRegion || ""}
+                          : {data.shippingCountry || ""}
                         </p>
                       </div>
                     </div>
@@ -469,7 +471,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.address || ""}
+                          : {data.shippingAddress || ""}
                         </p>
                       </div>
                     </div>
@@ -483,7 +485,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.city || ""}
+                          : {data.shippingCity || ""}
                         </p>
                       </div>
                     </div>
@@ -497,7 +499,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.state || ""}
+                          : {data.shippingState || ""}
                         </p>
                       </div>
                     </div>
@@ -512,7 +514,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.zipcode || ""}
+                          : {data.shippingZipcode || ""}
                         </p>
                       </div>
                     </div>
@@ -526,7 +528,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.phone || ""}
+                          : {data.shippingPhone || ""}
                         </p>
                       </div>
                     </div>
@@ -540,7 +542,7 @@ const VendorView = () => {
                       </div>
                       <div className="col-6">
                         <p className="text-muted text-sm">
-                          : {data.faxNumber || ""}
+                          : {data.shippingFax || ""}
                         </p>
                       </div>
                     </div>
@@ -568,7 +570,10 @@ const VendorView = () => {
                   <tbody>
                     {rows?.map((row) => (
                       <tr key={row.id}>
-                        <td>{row.salutation}</td>
+                        <td>
+                          {row.vendorContactPersonsModels?.[0]?.salutation ||
+                            ""}
+                        </td>
                         <td>{row.firstName}</td>
                         <td>{row.lastName}</td>
                         <td>{row.email}</td>
@@ -583,6 +588,82 @@ const VendorView = () => {
                 </table>
               </div>
             </div>
+            <div className="container-fluid">
+              <div className="mb-3">
+                <h3>Bank Details</h3>
+                <div className="container">
+                  <div className="row mt-2 p-3">
+                    {data.bankDetailsModels?.map((bankDetail, index) => (
+                      <div key={index} className="col-md-6 col-12">
+                        <h5 className="text-primary my-3">Bank {index + 1}</h5>{" "}
+                        {/* Heading for each bank */}
+                        <div className="row mb-3">
+                          <div className="col-6 d-flex justify-content-start align-items-center">
+                            <p className="text-sm">
+                              <b>Account Holder Name</b>
+                            </p>
+                          </div>
+                          <div className="col-6">
+                            <p className="text-muted text-sm">
+                              : {bankDetail.accountHolderName || ""}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="row mb-3">
+                          <div className="col-6 d-flex justify-content-start align-items-center">
+                            <p className="text-sm">
+                              <b>Bank Name</b>
+                            </p>
+                          </div>
+                          <div className="col-6">
+                            <p className="text-muted text-sm">
+                              : {bankDetail.bankName || ""}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="row mb-3">
+                          <div className="col-6 d-flex justify-content-start align-items-center">
+                            <p className="text-sm">
+                              <b>Account Number</b>
+                            </p>
+                          </div>
+                          <div className="col-6">
+                            <p className="text-muted text-sm">
+                              : {bankDetail.accountNumber || ""}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="row mb-3">
+                          <div className="col-6 d-flex justify-content-start align-items-center">
+                            <p className="text-sm">
+                              <b>Re-enter Account Number</b>
+                            </p>
+                          </div>
+                          <div className="col-6">
+                            <p className="text-muted text-sm">
+                              : {bankDetail.reAccountNumber || ""}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="row mb-3">
+                          <div className="col-6 d-flex justify-content-start align-items-center">
+                            <p className="text-sm">
+                              <b>IFSC</b>
+                            </p>
+                          </div>
+                          <div className="col-6">
+                            <p className="text-muted text-sm">
+                              : {bankDetail.ifsc || ""}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="container my-5">
               <div className="row mb-3">
                 <div className="col-2 d-flex justify-content-start align-items-center">
@@ -591,7 +672,7 @@ const VendorView = () => {
                   </p>
                 </div>
                 <div className="col-10">
-                  <p className="text-muted text-sm">: {data.remarks || ""}</p>
+                  <p className="text-muted text-sm">: {data.remark || ""}</p>
                 </div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 import { TbXboxX } from "react-icons/tb";
+import { SlTrash } from "react-icons/sl";
 
 const VendorEdit = () => {
   const { id } = useParams();
@@ -23,6 +24,16 @@ const VendorEdit = () => {
       skype: "",
       designation: "",
       department: "",
+    },
+  ]);
+  const [fields, setFields] = useState([
+    {
+      id: 1,
+      accHolderName: "",
+      bankName: "",
+      accNum: "",
+      reAccNum: "",
+      ifsc: "",
     },
   ]);
 
@@ -127,6 +138,24 @@ const VendorEdit = () => {
     setRows(updatedRows);
   };
 
+  const addFields = () => {
+    setFields([
+      ...fields,
+      {
+        id: fields.length + 1,
+        accountHolderName: "",
+        bankName: "",
+        accountNumber: "",
+        reAccountNumber: "",
+        ifsc: "",
+      },
+    ]);
+  };
+
+  const deleteFields = (id) => {
+    setFields(fields.filter((field) => field.id !== id));
+  };
+
   return (
     <div className="container-fluid px-2  minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -191,7 +220,7 @@ const VendorEdit = () => {
                     {...formik.getFieldProps("salutation")}
                   >
                     <option></option>
-                    <option value="Mr.">Mr.</option>
+                    <option value="Mr">Mr.</option>
                     <option value="Mrs.">Mrs.</option>
                     <option value="Ms.">Ms.</option>
                     <option value="Miss.">Miss.</option>
@@ -395,6 +424,16 @@ const VendorEdit = () => {
                   Contact Persons
                 </span>
               </li>
+              <li className="nav-item">
+                <span
+                  className={`nav-link ${
+                    activeTab === "bankDetails" ? "active" : ""
+                  }`}
+                  onClick={() => handleTabClick("bankDetails")}
+                >
+                  Bank Details
+                </span>
+              </li>
               {/* <li className="nav-item">
                 <span
                   className={`nav-link ${
@@ -462,11 +501,11 @@ const VendorEdit = () => {
                           : ""
                       }`}
                       {...formik.getFieldProps("currency")}
-                      disabled
                     >
-                      <option value="Indian Rupee" selected>
-                        Indian Rupee
-                      </option>
+                      <option></option>
+                      <option value="INR">Indian Rupee</option>
+                      <option value="SGD">Sigapore Dollor</option>
+                      <option value="AED">United Arab Emirates</option>
                     </select>
                     {formik.touched.currency && formik.errors.currency && (
                       <div className="invalid-feedback">
@@ -489,7 +528,8 @@ const VendorEdit = () => {
                       }`}
                       {...formik.getFieldProps("dueOnReceipt")}
                     >
-                      <option value="DueOnReceipt" selected>
+                      <option selected></option>
+                      <option value="1" selected>
                         Due on Receipt
                       </option>
                     </select>
@@ -514,9 +554,8 @@ const VendorEdit = () => {
                       }`}
                       {...formik.getFieldProps("priceList")}
                     >
-                      <option value="Indian Rupee" selected>
-                        Indian Rupee
-                      </option>
+                      <option selected></option>
+                      <option value="Indian Rupee">Indian Rupee</option>
                     </select>
                     {formik.touched.priceList && formik.errors.priceList && (
                       <div className="invalid-feedback">
@@ -617,17 +656,17 @@ const VendorEdit = () => {
                     </span>
                     <input
                       type="text"
-                      name="twitter"
+                      name="twitterUrl"
                       className={`form-control ${
-                        formik.touched.twitter && formik.errors.twitter
+                        formik.touched.twitterUrl && formik.errors.twitterUrl
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("twitter")}
+                      {...formik.getFieldProps("twitterUrl")}
                     />
-                    {formik.touched.twitter && formik.errors.twitter && (
+                    {formik.touched.twitterUrl && formik.errors.twitterUrl && (
                       <div className="invalid-feedback">
-                        {formik.errors.twitter}
+                        {formik.errors.twitterUrl}
                       </div>
                     )}
                   </div>
@@ -640,17 +679,17 @@ const VendorEdit = () => {
                     </span>
                     <input
                       type="text"
-                      name="skype"
+                      name="skypeName"
                       className={`form-control ${
-                        formik.touched.skype && formik.errors.skype
+                        formik.touched.skypeName && formik.errors.skypeName
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("skype")}
+                      {...formik.getFieldProps("skypeName")}
                     />
-                    {formik.touched.skype && formik.errors.skype && (
+                    {formik.touched.skypeName && formik.errors.skypeName && (
                       <div className="invalid-feedback">
-                        {formik.errors.skype}
+                        {formik.errors.skypeName}
                       </div>
                     )}
                   </div>
@@ -713,19 +752,19 @@ const VendorEdit = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="billingCountryRegion"
+                          name="billingCountry"
                           className={`form-control  ${
-                            formik.touched.billingCountryRegion &&
-                            formik.errors.billingCountryRegion
+                            formik.touched.billingCountry &&
+                            formik.errors.billingCountry
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("billingCountryRegion")}
+                          {...formik.getFieldProps("billingCountry")}
                         />
-                        {formik.touched.billingCountryRegion &&
-                          formik.errors.billingCountryRegion && (
+                        {formik.touched.billingCountry &&
+                          formik.errors.billingCountry && (
                             <div className="invalid-feedback">
-                              {formik.errors.billingCountryRegion}
+                              {formik.errors.billingCountry}
                             </div>
                           )}
                       </div>
@@ -845,19 +884,19 @@ const VendorEdit = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="billingFaxnumber"
+                          name="billingFax"
                           className={`form-control  ${
-                            formik.touched.billingFaxnumber &&
-                            formik.errors.billingFaxnumber
+                            formik.touched.billingFax &&
+                            formik.errors.billingFax
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("billingFaxnumber")}
+                          {...formik.getFieldProps("billingFax")}
                         />
-                        {formik.touched.billingFaxnumber &&
-                          formik.errors.billingFaxnumber && (
+                        {formik.touched.billingFax &&
+                          formik.errors.billingFax && (
                             <div className="invalid-feedback">
-                              {formik.errors.billingFaxnumber}
+                              {formik.errors.billingFax}
                             </div>
                           )}
                       </div>
@@ -880,8 +919,8 @@ const VendorEdit = () => {
                               formik.values.billingAttention
                             );
                             formik.setFieldValue(
-                              "shippingCountryRegion",
-                              formik.values.billingCountryRegion
+                              "shippingCountry",
+                              formik.values.billingCountry
                             );
                             formik.setFieldValue(
                               "shippingAddress",
@@ -904,18 +943,18 @@ const VendorEdit = () => {
                               formik.values.billingPhone
                             );
                             formik.setFieldValue(
-                              "shippingFaxnumber",
-                              formik.values.billingFaxnumber
+                              "shippingFax",
+                              formik.values.billingFax
                             );
                           } else {
                             formik.setFieldValue("shippingAttention", "");
-                            formik.setFieldValue("shippingCountryRegion", "");
+                            formik.setFieldValue("shippingCountry", "");
                             formik.setFieldValue("shippingAddress", "");
                             formik.setFieldValue("shippingCity", "");
                             formik.setFieldValue("shippingState", "");
                             formik.setFieldValue("shippingZipcode", "");
                             formik.setFieldValue("shippingPhone", "");
-                            formik.setFieldValue("shippingFaxnumber", "");
+                            formik.setFieldValue("shippingFax", "");
                           }
                         }}
                       />
@@ -955,19 +994,19 @@ const VendorEdit = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="shippingCountryRegion"
+                          name="shippingCountry"
                           className={`form-control  ${
-                            formik.touched.shippingCountryRegion &&
-                            formik.errors.shippingCountryRegion
+                            formik.touched.shippingCountry &&
+                            formik.errors.shippingCountry
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("shippingCountryRegion")}
+                          {...formik.getFieldProps("shippingCountry")}
                         />
-                        {formik.touched.shippingCountryRegion &&
-                          formik.errors.shippingCountryRegion && (
+                        {formik.touched.shippingCountry &&
+                          formik.errors.shippingCountry && (
                             <div className="invalid-feedback">
-                              {formik.errors.shippingCountryRegion}
+                              {formik.errors.shippingCountry}
                             </div>
                           )}
                       </div>
@@ -1087,19 +1126,19 @@ const VendorEdit = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="shippingFaxnumber"
+                          name="shippingFax"
                           className={`form-control  ${
-                            formik.touched.shippingFaxnumber &&
-                            formik.errors.shippingFaxnumber
+                            formik.touched.shippingFax &&
+                            formik.errors.shippingFax
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("shippingFaxnumber")}
+                          {...formik.getFieldProps("shippingFax")}
                         />
-                        {formik.touched.shippingFaxnumber &&
-                          formik.errors.shippingFaxnumber && (
+                        {formik.touched.shippingFax &&
+                          formik.errors.shippingFax && (
                             <div className="invalid-feedback">
-                              {formik.errors.shippingFaxnumber}
+                              {formik.errors.shippingFax}
                             </div>
                           )}
                       </div>
@@ -1285,6 +1324,190 @@ const VendorEdit = () => {
               </div>
             )}
 
+{activeTab === "bankDetails" && (
+              <div className="container-fluid">
+                <div className="row">
+                  {fields.map((row, index) => (
+                    <div key={row.id}>
+                      <div className="row">
+                        <div className="col-md-6 col-12 mb-2">
+                          <h4 className="mb-5">Bank {row.id}</h4>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2 text-end">
+                          {row.id > 1 && (
+                            <button
+                              type="button"
+                              className="btn btn-sm"
+                              onClick={() => deleteFields(row.id)}
+                            >
+                              <SlTrash style={{ color: "red" }} />
+                            </button>
+                          )}
+                        </div>
+                        <div className="col-md-6 col-12 my-2">
+                          <label className="form-label">
+                            Account Holder Name
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].accountHolderName`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]
+                                  ?.accountHolderName &&
+                                formik.errors.bankDetails?.[index]
+                                  ?.accountHolderName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].accountHolderName`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]
+                              ?.accountHolderName &&
+                              formik.errors.bankDetails?.[index]
+                                ?.accountHolderName && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.bankDetails[index]
+                                      .accountHolderName
+                                  }
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">Bank Name</label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].bankName`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]?.bankName &&
+                                formik.errors.bankDetails?.[index]?.bankName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].bankName`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]?.bankName &&
+                              formik.errors.bankDetails?.[index]?.bankName && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.bankDetails[index].bankName}
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">
+                            Account Number<span className="text-danger">*</span>
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].accountNumber`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]
+                                  ?.accountNumber &&
+                                formik.errors.bankDetails?.[index]
+                                  ?.accountNumber
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].accountNumber`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]
+                              ?.accountNumber &&
+                              formik.errors.bankDetails?.[index]
+                                ?.accountNumber && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.bankDetails[index]
+                                      .accountNumber
+                                  }
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">
+                            Re-enter Account Number
+                            <span className="text-danger">*</span>
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].reAccountNumber`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]
+                                  ?.reAccountNumber &&
+                                formik.errors.bankDetails?.[index]
+                                  ?.reAccountNumber
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].reAccountNumber`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]
+                              ?.reAccountNumber &&
+                              formik.errors.bankDetails?.[index]
+                                ?.reAccountNumber && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.bankDetails[index]
+                                      .reAccountNumber
+                                  }
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">
+                            IFSC<span className="text-danger">*</span>
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].ifsc`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]?.ifsc &&
+                                formik.errors.bankDetails?.[index]?.ifsc
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].ifsc`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]?.ifsc &&
+                              formik.errors.bankDetails?.[index]?.ifsc && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.bankDetails[index].ifsc}
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary me-2"
+                  onClick={addFields}
+                >
+                  Add New Bank
+                </button>
+              </div>
+            )}
+
             {activeTab === "customFields" && (
               <div className="container-fluid row"></div>
             )}
@@ -1342,17 +1565,18 @@ const VendorEdit = () => {
                   <lable className="form-lable">Remarks</lable>
                   <div className="mb-3">
                     <textarea
-                      name="remarks"
+                      name="remark"
                       className={`form-control  ${
-                        formik.touched.remarks && formik.errors.remarks
+                        formik.touched.remark && formik.errors.remark
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("remarks")}
+                      rows={4}
+                      {...formik.getFieldProps("remark")}
                     ></textarea>
-                    {formik.touched.remarks && formik.errors.remarks && (
+                    {formik.touched.remark && formik.errors.remark && (
                       <div className="invalid-feedback">
-                        {formik.errors.remarks}
+                        {formik.errors.remark}
                       </div>
                     )}
                   </div>
