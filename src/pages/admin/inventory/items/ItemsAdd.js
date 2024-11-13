@@ -4,7 +4,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
 import api from "../../../../config/URL";
-import { IoInformationCircleOutline } from "react-icons/io5";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
 const ItemsAdd = () => {

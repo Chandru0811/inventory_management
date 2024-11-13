@@ -432,10 +432,10 @@ function BillsAdd() {
                         <th style={{ width: "25%" }}>
                           Item
                         </th>
-                        <th style={{ width: "10%" }}>Quantity</th>
+                        <th style={{ width: "15%" }}>Account</th>
+                        <th style={{ width: "15%" }}>Quantity</th>
                         <th style={{ width: "15%" }}>Rate</th>
-                        <th style={{ width: "15%" }}>Discount(%)</th>
-                        <th style={{ width: "15%" }}>Tax (%)</th>
+                        <th style={{ width: "15%" }}>Customer Details</th>
                         <th style={{ width: "15%" }}>Amount</th>
                       </tr>
                     </thead>
@@ -485,45 +485,47 @@ function BillsAdd() {
                                 )}
                             </td>
                             <td>
-                              <input
-                                onInput={(event) => {
-                                  event.target.value =
-                                    event.target.value.replace(/[^0-9]/g, "");
-                                }}
-                                type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].qty`}
-                                className={`form-control ${
+                              <select
+                                name={`txnInvoiceOrderItemsModels[${index}].item`}
+                                {...formik.getFieldProps(
+                                  `txnInvoiceOrderItemsModels[${index}].item`
+                                )}
+                                className={`form-select ${
                                   formik.touched.txnInvoiceOrderItemsModels?.[
                                     index
-                                  ]?.qty &&
+                                  ]?.item &&
                                   formik.errors.txnInvoiceOrderItemsModels?.[
                                     index
-                                  ]?.qty
+                                  ]?.item
                                     ? "is-invalid"
                                     : ""
                                 }`}
-                                {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].qty`
-                                )}
-                              />
+                              >
+                                <option selected> </option>
+                                {itemData &&
+                                  itemData.map((itemId) => (
+                                    <option key={itemId.id} value={itemId.id}>
+                                      {itemId.itemName}
+                                    </option>
+                                  ))}
+                              </select>
                               {formik.touched.txnInvoiceOrderItemsModels?.[
                                 index
-                              ]?.qty &&
+                              ]?.item &&
                                 formik.errors.txnInvoiceOrderItemsModels?.[
                                   index
-                                ]?.qty && (
+                                ]?.item && (
                                   <div className="invalid-feedback">
                                     {
                                       formik.errors.txnInvoiceOrderItemsModels[
                                         index
-                                      ].qty
+                                      ].item
                                     }
                                   </div>
                                 )}
                             </td>
                             <td>
                               <input
-                                readOnly
                                 type="text"
                                 name={`txnInvoiceOrderItemsModels[${index}].price`}
                                 className={`form-control ${
@@ -594,46 +596,47 @@ function BillsAdd() {
                                 )}
                             </td>
                             <td>
-                              <input
-                                onInput={(event) => {
-                                  event.target.value = event.target.value
-                                    .replace(/[^0-9]/g, "")
-                                    .slice(0, 2);
-                                }}
-                                type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].taxRate`}
-                                className={`form-control ${
+                              <select
+                                name={`txnInvoiceOrderItemsModels[${index}].item`}
+                                {...formik.getFieldProps(
+                                  `txnInvoiceOrderItemsModels[${index}].item`
+                                )}
+                                className={`form-select ${
                                   formik.touched.txnInvoiceOrderItemsModels?.[
                                     index
-                                  ]?.taxRate &&
+                                  ]?.item &&
                                   formik.errors.txnInvoiceOrderItemsModels?.[
                                     index
-                                  ]?.taxRate
+                                  ]?.item
                                     ? "is-invalid"
                                     : ""
                                 }`}
-                                {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].taxRate`
-                                )}
-                              />
+                              >
+                                <option selected> </option>
+                                {itemData &&
+                                  itemData.map((itemId) => (
+                                    <option key={itemId.id} value={itemId.id}>
+                                      {itemId.itemName}
+                                    </option>
+                                  ))}
+                              </select>
                               {formik.touched.txnInvoiceOrderItemsModels?.[
                                 index
-                              ]?.taxRate &&
+                              ]?.item &&
                                 formik.errors.txnInvoiceOrderItemsModels?.[
                                   index
-                                ]?.taxRate && (
+                                ]?.item && (
                                   <div className="invalid-feedback">
                                     {
                                       formik.errors.txnInvoiceOrderItemsModels[
                                         index
-                                      ].taxRate
+                                      ].item
                                     }
                                   </div>
                                 )}
                             </td>
                             <td>
                               <input
-                                readOnly
                                 type="text"
                                 name={`txnInvoiceOrderItemsModels[${index}].amount`}
                                 className={`form-control ${

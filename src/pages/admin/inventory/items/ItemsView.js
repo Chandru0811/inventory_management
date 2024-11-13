@@ -7,21 +7,49 @@ const ItemsView = () => {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadIndicator, setLoadIndicator] = useState(false);
+
+  const getData = async () => {
+    setLoading(false);
+    try {
+      const response = await api.get(`/getItemsById/${id}`);
+      setData(response.data);
+    } catch (e) {
+      toast.error("Error fetching data: ", e?.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const getData = async () => {
-      setLoading(false);
-      try {
-        const response = await api.get(`/getItemsById/${id}`);
-        setData(response.data);
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     getData();
   }, [id]);
+
+  const handleActivate = async (status) => {
+    setLoadIndicator(true);
+    try {
+      const response = await api.post(
+        `updateStatus/${id}`,
+        JSON.stringify(status),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        getData();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred while activating the product.");
+      console.error("Activation Error:", error);
+    } finally {
+      setLoadIndicator(false);
+    }
+  };
 
   return (
     <div>
@@ -62,9 +90,32 @@ const ItemsView = () => {
                 </div>
                 <div className="col-auto">
                   <div className="hstack justify-content-start">
-                      <button type="submit" className="btn btn-sm btn-success">
+                    {/* <button type="submit" className="btn btn-sm btn-success">
                         <span>Activate</span>
+                      </button> */}
+                    {data.status == "Inactive" ? (
+                      <button
+                        type="button"
+                        onClick={() => handleActivate("Active")}
+                        className="btn btn-success btn-sm me-2"
+                        disabled={loadIndicator}
+                      >
+                        {loadIndicator && (
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            aria-hidden="true"
+                          ></span>
+                        )}
+                        Activate
                       </button>
+                    ) : (
+                      <button
+                        onClick={() => handleActivate("Inactive")}
+                        className="btn btn-danger btn-sm me-2"
+                      >
+                        Deactivate
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

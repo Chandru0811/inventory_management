@@ -568,26 +568,24 @@ const VendorView = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {rows?.map((row) => (
-                      <tr key={row.id}>
-                        <td>
-                          {row.vendorContactPersonsModels?.[0]?.salutation ||
-                            ""}
-                        </td>
-                        <td>{row.firstName}</td>
-                        <td>{row.lastName}</td>
-                        <td>{row.email}</td>
-                        <td>{row.workPhone}</td>
-                        <td>{row.mobile}</td>
-                        <td>{row.skype}</td>
-                        <td>{row.designation}</td>
-                        <td>{row.department}</td>
+                    {data?.vendorContactPersonsModels?.map((person) => (
+                      <tr key={person.id}>
+                        <td>{person.salutation || ""}</td>
+                        <td>{person.vendorFirstName || ""}</td>
+                        <td>{person.vendorLastName || ""}</td>
+                        <td>{person.vendorEmail || ""}</td>
+                        <td>{person.vendorPhone || ""}</td>
+                        <td>{person.vendorMobile || ""}</td>
+                        <td>{person.skypeName || ""}</td>
+                        <td>{person.designation || ""}</td>
+                        <td>{person.department || ""}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
+
             <div className="container-fluid">
               <div className="mb-3">
                 <h3>Bank Details</h3>
@@ -595,7 +593,7 @@ const VendorView = () => {
                   <div className="row mt-2 p-3">
                     {data.bankDetailsModels?.map((bankDetail, index) => (
                       <div key={index} className="col-md-6 col-12">
-                        <h5 className="text-primary my-3">Bank {index + 1}</h5>{" "}
+                        <h5 className="text-primary my-3">Bank {index + 1}</h5>
                         {/* Heading for each bank */}
                         <div className="row mb-3">
                           <div className="col-6 d-flex justify-content-start align-items-center">

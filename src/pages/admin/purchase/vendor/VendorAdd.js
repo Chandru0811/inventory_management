@@ -125,15 +125,23 @@ const VendorAdd = () => {
       setLoadIndicator(true);
       console.log(values);
 
-      // const payload = {
-      //   ...values,
-      //   contacts: values.contacts.map((contact) => ({
-      //     ...contact,
-      //     salutation: "Mr",
-      //   })),
-      // };
+      const payload = {
+        ...values,
+        contacts: rows.map((row) => ({
+          salutation: row.contacts?.[0]?.salutation || "",
+          vendorFirstName: row.contacts?.[0]?.vendorFirstName || "",
+          vendorLastName: row.contacts?.[0]?.vendorLastName || "",
+          vendorEmail: row.contacts?.[0]?.vendorEmail || "",
+          vendorPhone: row.contacts?.[0]?.vendorPhone || "",
+          vendorMobile: row.contacts?.[0]?.vendorMobile || "",
+          skypeName: row.contacts?.[0]?.skypeName || "",
+          designation: row.contacts?.[0]?.designation || "",
+          department: row.contacts?.[0]?.department || "",
+        })),
+      };
+
       try {
-        const response = await api.post("/createVendorWithBank", values, {});
+        const response = await api.post("/createVendorWithBank", payload, {});
         if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/vendor");
@@ -175,23 +183,20 @@ const VendorAdd = () => {
 
   const handleInputChange = (rowIndex, field, value) => {
     setRows((prevRows) =>
-      prevRows.map((row, idx) =>
-        idx === rowIndex
-          ? {
-              ...row,
-              contacts: row.contacts
-                ? [
-                    {
-                      ...row.contacts[0],
-                      [field]: value,
-                    },
-                  ]
-                : [{ [field]: value }],
-            }
-          : row
-      )
+      prevRows.map((row, idx) => {
+        if (idx !== rowIndex) return row; // Return unchanged rows
+        
+        const updatedContacts = row.contacts ? [...row.contacts] : [{}];
+        updatedContacts[0] = { ...updatedContacts[0], [field]: value };
+  
+        return {
+          ...row,
+          contacts: updatedContacts,
+        };
+      })
     );
   };
+  
 
   const deleteRow = (index) => {
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
