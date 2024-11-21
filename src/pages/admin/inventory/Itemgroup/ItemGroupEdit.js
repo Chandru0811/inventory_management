@@ -4,12 +4,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
+import { SlTrash } from "react-icons/sl";
 
 const ItemGroupEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [data, setData] = useState([]);
+  const [multipleItemsJson, setMultipleItemsJson] = useState([{ itemAttribute: "", itemOptions: "" }]);
 
   const validationSchema = Yup.object({
     itemGroupName: Yup.string().required("*Item Group Name is required"),
@@ -28,9 +30,6 @@ const ItemGroupEdit = () => {
       tax: "",
       manufacturerName: "",
       brandName: "",       
-      multipleItems: "",
-      itemAttribute: "",
-      itemOptions: "", 
       itemType: "",     
       salesAccount: "",
       purchaseAccount: "",
@@ -38,19 +37,14 @@ const ItemGroupEdit = () => {
       itemImage: "",     
       salesId: "",
       purchaseId: "",
+      multipleItemsJson,
       itemId: "",
+      file: null,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       console.log(values);
-         // const formData = new FormData();
-      // // Append each value to the FormData instance
-      // for (const key in values) {
-      //   if (values.hasOwnProperty(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // }
 
       const formData = new FormData();
       formData.append("type", values.type);
@@ -128,6 +122,20 @@ const ItemGroupEdit = () => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleAddItem = () => {
+    setMultipleItemsJson([...multipleItemsJson, { itemAttribute: "", itemOptions: "" }]);
+    formik.setFieldValue("multipleItemsJson", [
+      ...multipleItemsJson,
+      { itemAttribute: "", itemOptions: "" },
+    ]);
+  };
+
+  const handleRemoveItem = (index) => {
+    const updatedItems = multipleItemsJson.filter((_, i) => i !== index);
+    setMultipleItemsJson(updatedItems);
+    formik.setFieldValue("multipleItemsJson", updatedItems);
+  };
 
   return (
     <div className="container-fluid px-2 minHeight m-0">
@@ -496,6 +504,80 @@ const ItemGroupEdit = () => {
                   alt="Profile Image"
                 />
               </div>
+            </div>
+          </div>
+          <div className="container">
+            <h4 className="mb-3">Multiple Items</h4>
+            {multipleItemsJson.map((item, index) => (
+              <div className="row" key={index}>
+                <div className="col-md-4 col-12 mb-2">
+                  <label className="form-label">
+                    Item Attribute<span className="text-danger">*</span>
+                  </label>
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      name={`multipleItemsJson[${index}].itemAttribute`}
+                      className={`form-control form-control-sm ${
+                        formik.touched.multipleItemsJson?.[index]?.itemAttribute &&
+                        formik.errors.multipleItemsJson?.[index]?.itemAttribute
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      value={formik.values.multipleItemsJson[index].itemAttribute}
+                      onChange={formik.handleChange}
+                    />
+                    {formik.touched.multipleItemsJson?.[index]?.itemAttribute &&
+                      formik.errors.multipleItemsJson?.[index]?.itemAttribute && (
+                        <div className="invalid-feedback">
+                          {formik.errors.multipleItemsJson[index].itemAttribute}
+                        </div>
+                      )}
+                  </div>
+                </div>
+                <div className="col-md-4 col-12 mb-2">
+                  <label className="form-label">
+                    Item Options<span className="text-danger">*</span>
+                  </label>
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      name={`multipleItemsJson[${index}].itemOptions`}
+                      className={`form-control form-control-sm ${
+                        formik.touched.multipleItemsJson?.[index]?.itemOptions &&
+                        formik.errors.multipleItemsJson?.[index]?.itemOptions
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      value={formik.values.multipleItemsJson[index].itemOptions}
+                      onChange={formik.handleChange}
+                    />
+                    {formik.touched.multipleItemsJson?.[index]?.itemOptions &&
+                      formik.errors.multipleItemsJson?.[index]?.itemOptions && (
+                        <div className="invalid-feedback">
+                          {formik.errors.multipleItemsJson[index].itemOptions}
+                        </div>
+                      )}
+                  </div>
+                </div>
+                <div className="col-md-4 col-12 mt-5 pt-4">
+                  <span
+                    onClick={() => handleRemoveItem(index)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <SlTrash style={{ color: "red" }} />
+                  </span>
+                </div>
+              </div>
+            ))}
+            <div>
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={handleAddItem}
+              >
+                Add More
+              </button>
             </div>
           </div>
         </div>

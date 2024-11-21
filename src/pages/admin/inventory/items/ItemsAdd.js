@@ -19,8 +19,6 @@ const ItemsAdd = () => {
     name: Yup.string().required("*Name is required"),
     type: Yup.string().required("*Type is required"),
     itemUnit: Yup.string().required("*Unit is required"),
-    sellingPrice: Yup.string().required("*Selling Price is required"),
-    costPrice: Yup.string().required("*Cost Price is required"),
     salesAccount: Yup.string().required("*Sales Account is required"),
     purchaseAccount: Yup.string().required("*Purchase Account is required"),
     inventoryAccount: Yup.string().required("*Inventory Account is required"),
@@ -49,7 +47,6 @@ const ItemsAdd = () => {
     internationalStandardBookNumber: Yup.number()
       .typeError("*International Standard Book Number must be a number")
       .nullable(),
-    // status: Yup.string().required("*Status is required"),
   });
 
   const formik = useFormik({
@@ -79,13 +76,15 @@ const ItemsAdd = () => {
       openingStock: "",
       openingStockRate: "",
       reorderPoint: "",
-      file: null,
+      returnableItem: "true",
+      warehouseId: "1",
+      profileImage: null,
       status: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
-      console.log(values);
+      console.log("Weight", values.weight);
 
       const formData = new FormData();
       formData.append("type", values.type);
@@ -100,12 +99,12 @@ const ItemsAdd = () => {
 
       const weight =
         values.weightValue && values.weightUnit
-          ? `${values.weightValue}${values.weightUnit}`
+          ? `${values.weightValue} ${values.weightUnit}`
           : "";
       formData.append("weight", weight);
-
       formData.append("manufacturerName", values.manufacturerName);
       formData.append("brandName", values.brandName);
+      formData.append("returnableItem", values.returnableItem);
       formData.append("universalProductCode", values.universalProductCode);
       formData.append(
         "manufacturingPartNumber",
@@ -122,7 +121,7 @@ const ItemsAdd = () => {
       formData.append("sellingPrice", values.sellingPrice);
       formData.append("costPrice", values.costPrice);
       formData.append("salesAccount", values.salesAccount);
-      formData.append("purchaseAccount  ", values.purchaseAccount || " ");
+      formData.append("purchaseAccount  ", values.purchaseAccount || "");
       formData.append(
         "salesAccountDescription",
         values.salesAccountDescription
@@ -138,9 +137,11 @@ const ItemsAdd = () => {
       formData.append("openingStock", values.openingStock);
       formData.append("openingStockRate", values.openingStockRate);
       formData.append("reorderPoint", values.reorderPoint);
+      formData.append("status", values.status || "Inactive");
+      formData.append("warehouseId", values.warehouseId);
       // formData.append("file", values.file);
-      values.file?.forEach((file, index) => {
-        formData.append("file", file);
+      values.profileImage?.forEach((profileImage, index) => {
+        formData.append("profileImage", profileImage);
       });
 
       try {
@@ -157,7 +158,7 @@ const ItemsAdd = () => {
           toast.error(response.data.message);
         }
       } catch (e) {
-        toast.error("Error fetching data: " + e?.response?.data?.message);
+        toast.error(e?.response?.data?.message);
       } finally {
         setLoadIndicator(false);
       }
@@ -175,6 +176,7 @@ const ItemsAdd = () => {
       errorElement.focus();
     }
   };
+  
   useEffect(() => {
     if (formik.submitCount > 0 && Object.keys(formik.errors).length > 0) {
       scrollToError(formik.errors);
@@ -343,6 +345,7 @@ const ItemsAdd = () => {
                     )}
                 </div>
               </div>
+              
               <div className="col-md-6 col-12 mb-2">
                 <label className="form-label">Image</label>
                 <div className="mb-3">
@@ -354,59 +357,40 @@ const ItemsAdd = () => {
                     onChange={(event) => {
                       const files = Array.from(event.target.files);
                       const validFiles = files.filter(
-                        (file) => file.size <= 2 * 1024 * 1024
+                        (profileImage) => profileImage.size <= 2 * 1024 * 1024
                       );
 
                       if (validFiles.length > 5) {
                         formik.setFieldError(
-                          "file",
+                          "profileImage",
                           "You can only upload up to 5 images."
                         );
                       } else if (
-                        files.some((file) => file.size > 2 * 1024 * 1024)
+                        files.some(
+                          (profileImage) => profileImage.size > 2 * 1024 * 1024
+                        )
                       ) {
                         formik.setFieldError(
-                          "file",
+                          "profileImage",
                           "Each file must be less than 2MB."
                         );
                       } else {
-                        formik.setFieldValue("file", validFiles);
+                        formik.setFieldValue("profileImage", validFiles);
                       }
                     }}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.touched.file && formik.errors.file && (
-                    <div className="invalid-feedback">{formik.errors.file}</div>
-                  )}
+                  {formik.touched.profileImage &&
+                    formik.errors.profileImage && (
+                      <div className="invalid-feedback">
+                        {formik.errors.profileImage}
+                      </div>
+                    )}
                   <p className="form-text">
                     You can upload up to 5 images, each less than 2MB.
                   </p>
                 </div>
               </div>
-
-              {/* <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Item Unit<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="itemUnit"
-                    className={`form-control form-control-sm  ${
-                      formik.touched.itemUnit && formik.errors.itemUnit
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("itemUnit")}
-                  />
-                  {formik.touched.itemUnit && formik.errors.itemUnit && (
-                    <div className="invalid-feedback">
-                      {formik.errors.itemUnit}
-                    </div>
-                  )}
-                </div>
-              </div> */}
-
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Unit<span className="text-danger">*</span>
@@ -436,7 +420,6 @@ const ItemsAdd = () => {
                   )}
                 </div>
               </div>
-
               <div className="col-md-6 col-12 mb-2">
                 <label className="form-label">Dimensions</label>
                 <span className=" ms-3 fw-lighter" style={{ fontSize: "13px" }}>
@@ -595,6 +578,42 @@ const ItemsAdd = () => {
                 </div>
               </div>
 
+              <div className="col-md-6 col-12 mb-3">
+                <div className="d-flex align-items-center">
+                  <label className="form-label mb-0">Returnable Item </label>
+                  <span
+                    className="infoField"
+                    title="Enable this option if the item is eligible for sales return"
+                  >
+                    <IoMdInformationCircleOutline />
+                  </span>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="returnableItem"
+                    id="true"
+                    value="true"
+                    onChange={formik.handleChange}
+                    checked={formik.values.returnableItem === "true"}
+                  />
+                  <label className="form-check-label">Yes</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="returnableItem"
+                    id="false"
+                    value="false"
+                    onChange={formik.handleChange}
+                    checked={formik.values.returnableItem === "false"}
+                  />
+                  <label className="form-check-label">No</label>
+                </div>
+              </div>
+
               <div className="col-md-6 col-12 mb-2">
                 <div className="d-flex align-items-center">
                   <label className="form-label mb-0">MPN</label>
@@ -715,32 +734,6 @@ const ItemsAdd = () => {
                     )}
                 </div>
               </div>
-              {/* <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Status<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <select
-                    name="status"
-                    className={`form-select form-select-sm  ${
-                      formik.touched.status && formik.errors.status
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("status")}
-                  >
-                    <option value=""></option>
-                    <option value="active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                  {formik.touched.status && formik.errors.status && (
-                    <div className="invalid-feedback">
-                      {formik.errors.status}
-                    </div>
-                  )}
-                </div>
-              </div> */}
-              <div className="col-md-6 col-12"></div>
               <div className="col-md-6 col-12 mb-2">
                 <div className="form-check mb-3">
                   <input
@@ -1073,6 +1066,27 @@ const ItemsAdd = () => {
                         )}
                     </div>
                   </div>
+
+                  <div className="col-md-6 col-12 mb-2">
+                    <lable className="form-lable">Warehouse Name</lable>
+                    <div className="mb-3">
+                      <select
+                        name="warehouseId"
+                        className={`form-select form-select-sm  ${
+                          formik.touched.warehouseId &&
+                          formik.errors.warehouseId
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("warehouseId")}
+                      >
+                        <option value="1" selected>
+                          ECS Warehouse
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div className="col-md-6 col-12 mb-2">
                     <div className="d-flex align-items-center">
                       <lable className="form-lable">Opening Stock</lable>

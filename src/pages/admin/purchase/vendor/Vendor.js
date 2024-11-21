@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const Vendor = () => {
   const tableRef = useRef(null);
@@ -92,8 +93,8 @@ const Vendor = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
@@ -104,7 +105,6 @@ const Vendor = () => {
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/vendor/add">
                       <button
                         type="submit"
@@ -115,13 +115,11 @@ const Vendor = () => {
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -158,16 +156,22 @@ const Vendor = () => {
                       <td className="text-start">{data.companyName}</td>
                       <td className="text-start">{data.vendorEmail}</td>
                       <td className="text-start">{data.vendorMobile}</td>
-                      <td className="text-center">
-                        <div className="gap-2">
+                        <td className="text-center">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/vendor/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{padding: "7px"}}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link to={`/vendor/edit/${data.id}`} className="px-2">
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/vendor/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{padding: "7px"}}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

@@ -7,10 +7,10 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const InventoryAdjustment = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -60,7 +60,7 @@ const InventoryAdjustment = () => {
     try {
       const response = await api.get("/getAllInventoryAdjustments");
       setDatas(response.data);
-      initializeDataTable(); // Reinitialize DataTable after successful data update
+      initializeDataTable(); 
     } catch (error) {
       console.error("Error refreshing data:", error);
     }
@@ -92,8 +92,8 @@ const InventoryAdjustment = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
@@ -106,7 +106,6 @@ const InventoryAdjustment = () => {
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/inventoryadjustment/add">
                       <button
                         type="submit"
@@ -117,13 +116,11 @@ const InventoryAdjustment = () => {
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -144,7 +141,10 @@ const InventoryAdjustment = () => {
                     <th scope="col" className="text-start">
                       DATE
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-start">
+                      Reason
+                    </th>
+                    <th scope="col" className="text-center ps-5">
                       ACTION
                     </th>
                   </tr>
@@ -156,19 +156,23 @@ const InventoryAdjustment = () => {
                       <td className="text-start">{data.modeOfAdjustment}</td>
                       <td className="text-start">{data.referenceNumber}</td>
                       <td className="text-start">{data.date?.slice(0,10)}</td>
-                      <td className="text-center">
-                        <div className="gap-2">
+                      <td className="text-start">{data.referenceNumber}</td>
+                       <td className="text-center">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/inventoryadjustment/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{padding: "7px"}}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/inventoryadjustment/edit/${data.id}`}
-                            className="px-2"
-                          >
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/inventoryadjustment/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{padding: "7px"}}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

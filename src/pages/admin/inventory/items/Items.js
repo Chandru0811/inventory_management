@@ -11,7 +11,6 @@ import { GoEye } from "react-icons/go";
 
 const Items = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -93,8 +92,8 @@ const Items = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
@@ -107,7 +106,6 @@ const Items = () => {
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/item/add">
                       <button
                         type="submit"
@@ -118,13 +116,11 @@ const Items = () => {
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -146,7 +142,7 @@ const Items = () => {
                       COST PRICE
                     </th>
                     <th scope="col" className="text-start">
-                      SELLING PRICE
+                      Stock on Hand
                     </th>
                     <th scope="col" className="text-start">
                       STATUS
@@ -166,7 +162,7 @@ const Items = () => {
                       <td className="text-start">{data.name}</td>
                       <td className="text-start">{data.type}</td>
                       <td className="text-start">{data.costPrice}</td>
-                      <td className="text-start">{data.sellingPrice}</td>
+                      <td className="text-start">{data.openingStock}</td>
                       <td className="text-start">{data.status}</td>
                       <td className="text-center">
                         <div className="d-flex justify-content-center gap-1">

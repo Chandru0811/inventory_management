@@ -71,7 +71,10 @@ const ItemsView = () => {
           className="container-fluid px-2 minHeight"
           style={{ borderRadius: "0" }}
         >
-          <div className="card shadow border-0 mb-2 top-header">
+          <div
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
+          >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="col">
@@ -317,7 +320,14 @@ const ItemsView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.inventoryAccount || ""}
+                        :{" "}
+                        {{
+                          FinishedGoods: "Finished Goods",
+                          InventoryAsset: "Inventory Asset",
+                          WorkInProgress: "Work In Progress",
+                        }[data.inventoryAccount] ||
+                          data.inventoryAccount ||
+                          ""}
                       </p>
                     </div>
                   </div>
@@ -375,14 +385,19 @@ const ItemsView = () => {
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         :{" "}
-                        {data.itemImage ? (
-                          <img
-                            src={data.itemImage}
-                            className="img-fluid ms-2 w-100 rounded"
-                            alt="Profile Image"
-                          />
+                        {data.itemImage && data.itemImage.length > 0 ? (
+                          <div className="d-flex flex-wrap gap-4 mt-2">
+                            {data.itemImage.map((image, index) => (
+                              <img
+                                key={index}
+                                src={image}
+                                className="img-fluid w-25 rounded"
+                                alt={`Item ${index + 1}`}
+                              />
+                            ))}
+                          </div>
                         ) : (
-                          <></>
+                          <span></span>
                         )}
                       </p>
                     </div>
