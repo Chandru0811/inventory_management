@@ -11,6 +11,7 @@ const ItemsAdd = () => {
   const [loading, setLoadIndicator] = useState(false);
   const [showFields, setShowFields] = useState(true);
   const [manufacture, setManufacture] = useState(null);
+  const [vendor, setVendor] = useState(null);
   const [isSalesDisabled, setIsSalesDisabled] = useState(true);
   const [isPurchaseDisabled, setIsPurchaseDisabled] = useState(true);
 
@@ -185,6 +186,18 @@ const ItemsAdd = () => {
       try {
         const response = await api.get("getAllManufacturers");
         setManufacture(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("vendorIdsWithDisplayNames");
+        setVendor(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -992,9 +1005,12 @@ const ItemsAdd = () => {
                         {...formik.getFieldProps("preferredVendor")}
                       >
                         <option selected></option>
-                        <option value="James">James</option>
-                        <option value="Emily">Emily</option>
-                        <option value="David">David</option>
+                        {vendor &&
+                          vendor.map((data) => (
+                            <option key={data.id} value={data.id}>
+                              {data.vendorDisplayName}
+                            </option>
+                          ))}
                       </select>
                       {formik.touched.preferredVendor &&
                         formik.errors.preferredVendor && (

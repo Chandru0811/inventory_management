@@ -6,11 +6,13 @@ import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 import { TbXboxX } from "react-icons/tb";
 import { SlTrash } from "react-icons/sl";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 
 const VendorAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [activeTab, setActiveTab] = useState("otherDetails");
+  const [enablePortal, setEnablePortal] = useState(false);
   const [fields, setFields] = useState([
     {
       id: 1,
@@ -68,8 +70,9 @@ const VendorAdd = () => {
       currency: "",
       taxRate: "",
       paymentTerms: "",
+      enablePortal: "",
       portalLanguage: "",
-      documents: "",
+      fileAttachment: "",
       websiteUrl: "",
       department: "",
       designation: "",
@@ -78,6 +81,7 @@ const VendorAdd = () => {
       facebookUrl: "",
       billingAttention: "",
       billingAddress: "",
+      billingCountry: "",
       billingCity: "",
       billingState: "",
       billingZipcode: "",
@@ -97,7 +101,7 @@ const VendorAdd = () => {
       remark: "",
       contacts: [
         {
-          salutation: "Mr",
+          salutation: "",
           vendorFirstName: "",
           vendorLastName: "",
           vendorEmail: "",
@@ -106,7 +110,6 @@ const VendorAdd = () => {
           skypeName: "",
           designation: "",
           department: "",
-          vendorId: "",
         },
       ],
       bankDetails: [
@@ -122,36 +125,114 @@ const VendorAdd = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      setLoadIndicator(true);
+      setLoadIndicator(true); // Show loading indicator
       console.log(values);
 
-      const payload = {
-        ...values,
-        contacts: rows.map((row) => ({
-          salutation: row.contacts?.[0]?.salutation || "",
-          vendorFirstName: row.contacts?.[0]?.vendorFirstName || "",
-          vendorLastName: row.contacts?.[0]?.vendorLastName || "",
-          vendorEmail: row.contacts?.[0]?.vendorEmail || "",
-          vendorPhone: row.contacts?.[0]?.vendorPhone || "",
-          vendorMobile: row.contacts?.[0]?.vendorMobile || "",
-          skypeName: row.contacts?.[0]?.skypeName || "",
-          designation: row.contacts?.[0]?.designation || "",
-          department: row.contacts?.[0]?.department || "",
-        })),
-      };
+      // FormData initialization
+      const formData = new FormData();
+
+      // Append basic fields
+      formData.append("salutation", values.salutation || "");
+      formData.append("firstName", values.firstName || "");
+      formData.append("lastName", values.lastName || "");
+      formData.append("companyName", values.companyName || "");
+      formData.append("vendorDisplayName", values.vendorDisplayName || "");
+      formData.append("vendorEmail", values.vendorEmail || "");
+      formData.append("vendorPhone", values.vendorPhone || "");
+      formData.append("vendorMobile", values.vendorMobile || "");
+      formData.append("currency", values.currency || "");
+      formData.append("taxRate", values.taxRate || "");
+      formData.append("paymentTerms", values.paymentTerms || "");
+      formData.append("enablePortal", enablePortal); // Checkbox value from state
+      formData.append("portalLanguage", values.portalLanguage || "");
+      formData.append("websiteUrl", values.websiteUrl || "");
+      formData.append("department", values.department || "");
+      formData.append("designation", values.designation || ""); // Removed extra spaces
+      formData.append("twitterUrl", values.twitterUrl || "");
+      formData.append("skypeName", values.skypeName || "");
+      formData.append("facebookUrl", values.facebookUrl || "");
+      formData.append("billingAttention", values.billingAttention || "");
+      formData.append("billingCountry", values.billingCountry || "");
+      formData.append("billingAddress", values.billingAddress || "");
+      formData.append("billingCity", values.billingCity || "");
+      formData.append("billingState", values.billingState || "");
+      formData.append("billingZipcode", values.billingZipcode || "");
+      formData.append("billingPhone", values.billingPhone || "");
+      formData.append("billingFax", values.billingFax || "");
+      formData.append("shippingAttention", values.shippingAttention || "");
+      formData.append("shippingCountry", values.shippingCountry || "");
+      formData.append("shippingAddress", values.shippingAddress || "");
+      formData.append("shippingCity", values.shippingCity || "");
+      formData.append("shippingState", values.shippingState || "");
+      formData.append("shippingZipcode", values.shippingZipcode || "");
+      formData.append("shippingPhone", values.shippingPhone || "");
+      formData.append("shippingFax", values.shippingFax || "");
+      formData.append("remark", values.remark || "");
+      formData.append("pan", values.pan || "");
+      formData.append("fileAttachment", values.fileAttachment || null);
+
+      // Append contacts
+      formData.append(
+        "contacts",
+        JSON.stringify(
+          rows
+            .map((row) => row.contacts?.[0])
+            .filter(
+              (item) =>
+                item?.salutation &&
+                item?.vendorFirstName &&
+                item?.vendorLastName &&
+                item?.vendorEmail &&
+                item?.vendorPhone &&
+                item?.vendorMobile &&
+                item?.skypeName &&
+                item?.designation &&
+                item?.department
+            )
+        )
+      );
+
+      console.log("Contacts Data:", rows);
+
+      // Append bank details
+      formData.append(
+        "bankDetails",
+        JSON.stringify(
+          values.bankDetails
+            .filter(
+              (item) =>
+                item.accountHolderName &&
+                item.bankName &&
+                item.accountNumber &&
+                item.reAccountNumber &&
+                item.ifsc
+            )
+            .map((item) => ({
+              accountHolderName: item.accountHolderName,
+              bankName: item.bankName,
+              accountNumber: item.accountNumber, // No need to parse account numbers
+              reAccountNumber: item.reAccountNumber,
+              ifsc: item.ifsc, // IFSC is alphanumeric
+            }))
+        )
+      );
 
       try {
-        const response = await api.post("/createVendorWithBank", payload, {});
+        // API request
+        const response = await api.post("/createVendorWithBank", formData);
         if (response.status === 200) {
-          toast.success(response.data.message);
-          navigate("/vendor");
+          toast.success(response.data.message); // Success notification
+          navigate("/vendor"); // Navigate to the vendor page
         } else {
-          toast.error(response.data.message);
+          toast.error(response.data.message); // Error notification
         }
       } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
+        // Handle errors
+        toast.error(
+          `Error fetching data: ${e?.response?.data?.message || e.message}`
+        );
       } finally {
-        setLoadIndicator(false);
+        setLoadIndicator(false); // Hide loading indicator
       }
     },
   });
@@ -185,10 +266,10 @@ const VendorAdd = () => {
     setRows((prevRows) =>
       prevRows.map((row, idx) => {
         if (idx !== rowIndex) return row; // Return unchanged rows
-        
+
         const updatedContacts = row.contacts ? [...row.contacts] : [{}];
         updatedContacts[0] = { ...updatedContacts[0], [field]: value };
-  
+
         return {
           ...row,
           contacts: updatedContacts,
@@ -196,7 +277,6 @@ const VendorAdd = () => {
       })
     );
   };
-  
 
   const deleteRow = (index) => {
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
@@ -219,6 +299,10 @@ const VendorAdd = () => {
 
   const deleteFields = (id) => {
     setFields(fields.filter((field) => field.id !== id));
+  };
+
+  const handleCheckboxChange = (event) => {
+    setEnablePortal(event.target.checked);
   };
 
   return (
@@ -597,28 +681,86 @@ const VendorAdd = () => {
                   </div>
                 </div>
                 <div className="col-md-6 col-12 mb-2">
-                  <lable className="form-lable">Price List</lable>
+                  <label className="form-label mb-0">TDS</label>
                   <div className="mb-3">
                     <select
                       type="text"
-                      name="priceList"
+                      name="taxRate"
                       className={`form-select  ${
-                        formik.touched.priceList && formik.errors.priceList
+                        formik.touched.taxRate && formik.errors.taxRate
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("priceList")}
+                      {...formik.getFieldProps("taxRate")}
                     >
                       <option selected></option>
-                      <option value="Indian Rupee">
-                        Indian Rupee
-                      </option>
+                      <option value="1">Dividend</option>
+                      <option value="2">Commission or Brokerage</option>
+                      <option value="3">Professional Fees</option>
                     </select>
-                    {formik.touched.priceList && formik.errors.priceList && (
+                    {formik.touched.taxRate && formik.errors.taxRate && (
                       <div className="invalid-feedback">
-                        {formik.errors.priceList}
+                        {formik.errors.taxRate}
                       </div>
                     )}
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 mb-2">
+                  <div className="d-flex align-items-center">
+                    <label className="form-label mb-0">Enable Portal</label>
+                    <span
+                      className="infoField"
+                      title="Give your vendors access to portal to view transactions and payments"
+                    >
+                      <IoMdInformationCircleOutline />
+                    </span>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      checked={enablePortal}
+                      onChange={handleCheckboxChange} // Handle checkbox state changes dynamically
+                    />
+                    <label className="form-check-label">
+                      Allow portal access for this vendor
+                    </label>
+                  </div>
+                </div>
+
+                <div className="col-md-6 col-12 mb-2">
+                  <div className="d-flex align-items-center">
+                    <label className="form-label mb-0">Portal Language</label>
+                    <span
+                      className="infoField"
+                      title="This will change the contact's portal in corresponding languages"
+                    >
+                      <IoMdInformationCircleOutline />
+                    </span>
+                  </div>
+                  <div className="mb-3">
+                    <select
+                      type="text"
+                      name="portalLanguage"
+                      className={`form-select  ${
+                        formik.touched.portalLanguage &&
+                        formik.errors.portalLanguage
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      {...formik.getFieldProps("portalLanguage")}
+                    >
+                      <option selected></option>
+                      <option value="English">English</option>
+                      <option value="Tamil">Tamil</option>
+                      <option value="Hindi">Hindi</option>
+                    </select>
+                    {formik.touched.portalLanguage &&
+                      formik.errors.portalLanguage && (
+                        <div className="invalid-feedback">
+                          {formik.errors.portalLanguage}
+                        </div>
+                      )}
                   </div>
                 </div>
                 <div className="col-md-6 col-12 mb-2">
@@ -626,19 +768,21 @@ const VendorAdd = () => {
                   <div className="mb-3">
                     <input
                       type="file"
-                      name="documents"
-                      className={`form-control  ${
-                        formik.touched.documents && formik.errors.documents
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      {...formik.getFieldProps("documents")}
+                      className="form-control form-control-sm"
+                      onChange={(event) => {
+                        formik.setFieldValue(
+                          "fileAttachment",
+                          event.target.files[0]
+                        );
+                      }}
+                      onBlur={formik.handleBlur}
                     />
-                    {formik.touched.documents && formik.errors.documents && (
-                      <div className="invalid-feedback">
-                        {formik.errors.documents}
-                      </div>
-                    )}
+                    {formik.touched.fileAttachment &&
+                      formik.errors.fileAttachment && (
+                        <div className="invalid-feedback">
+                          {formik.errors.fileAttachment}
+                        </div>
+                      )}
                   </div>
                 </div>
                 <div className="col-md-6 col-12 mb-2">
@@ -782,7 +926,7 @@ const VendorAdd = () => {
               <div className="container-fluid row">
                 <div className="col-md-6 col-12">
                   <h3 className="">Billing Address</h3>
-                  <div className="row">
+                  <div className="row mt-3">
                     <div className="col-12 mb-2">
                       <lable className="form-lable">Attention</lable>
                       <div className="mb-3">
@@ -977,8 +1121,8 @@ const VendorAdd = () => {
                               formik.values.billingAttention
                             );
                             formik.setFieldValue(
-                              "shippingCountryRegion",
-                              formik.values.billingCountryRegion
+                              "shippingCountry",
+                              formik.values.billingCountry
                             );
                             formik.setFieldValue(
                               "shippingAddress",
@@ -1001,12 +1145,12 @@ const VendorAdd = () => {
                               formik.values.billingPhone
                             );
                             formik.setFieldValue(
-                              "shippingFaxnumber",
-                              formik.values.billingFaxnumber
+                              "shippingFax",
+                              formik.values.billingFax
                             );
                           } else {
                             formik.setFieldValue("shippingAttention", "");
-                            formik.setFieldValue("shippingCountryRegion", "");
+                            formik.setFieldValue("shippingCountry", "");
                             formik.setFieldValue("shippingAddress", "");
                             formik.setFieldValue("shippingCity", "");
                             formik.setFieldValue("shippingState", "");
@@ -1024,7 +1168,7 @@ const VendorAdd = () => {
                       </label>
                     </div>
                   </div>
-                  <div className="row">
+                  <div className="row mt-3">
                     <div className="col-12 mb-2">
                       <lable className="form-lable">Attention</lable>
                       <div className="mb-3">
@@ -1400,7 +1544,7 @@ const VendorAdd = () => {
                             </button>
                           )}
                         </div>
-                        <div className="col-md-6 col-12 my-2">
+                        {/* <div className="col-md-6 col-12 my-2">
                           <label className="form-label">
                             Account Holder Name
                           </label>
@@ -1432,9 +1576,69 @@ const VendorAdd = () => {
                                 </div>
                               )}
                           </div>
-                        </div>
+                        </div> */}
                         <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">
+                            Account Holder Name
+                            <span className="text-danger">*</span>
+                          </label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].accountHolderName`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]
+                                  ?.accountHolderName &&
+                                formik.errors.bankDetails?.[index]
+                                  ?.accountHolderName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].accountHolderName`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]
+                              ?.accountHolderName &&
+                              formik.errors.bankDetails?.[index]
+                                ?.accountHolderName && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.bankDetails[index]
+                                      .accountHolderName
+                                  }
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        {/* <div className="col-md-6 col-12 mb-2">
                           <label className="form-label">Bank Name</label>
+                          <div className="mb-3">
+                            <input
+                              type="text"
+                              name={`bankDetails[${index}].bankName`}
+                              className={`form-control ${
+                                formik.touched.bankDetails?.[index]?.bankName &&
+                                formik.errors.bankDetails?.[index]?.bankName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `bankDetails[${index}].bankName`
+                              )}
+                            />
+                            {formik.touched.bankDetails?.[index]?.bankName &&
+                              formik.errors.bankDetails?.[index]?.bankName && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.bankDetails[index].bankName}
+                                </div>
+                              )}
+                          </div>
+                        </div> */}
+                        <div className="col-md-6 col-12 mb-2">
+                          <label className="form-label">
+                            Bank Name<span className="text-danger">*</span>
+                          </label>
                           <div className="mb-3">
                             <input
                               type="text"

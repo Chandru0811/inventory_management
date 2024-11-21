@@ -13,7 +13,7 @@ const VendorView = () => {
     const getData = async () => {
       setLoading(false);
       try {
-        const response = await api.get(`/getAllVendorDetailsById/${id}`);
+        const response = await api.get(`/vendorRetrievalWithBank/${id}`);
         setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
@@ -231,12 +231,21 @@ const VendorView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Price List</b>
+                        <b>Document</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.priceList || ""}
+                        :{" "}
+                        {data.files ? (
+                          <img
+                            src={data.files}
+                            className="img-fluid ms-2 w-100 rounded"
+                            alt="Profile Image"
+                          />
+                        ) : (
+                          <></>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -245,17 +254,16 @@ const VendorView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Document</b>
+                        <b>Department</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.document || ""}
+                        : {data.department || ""}
                       </p>
                     </div>
                   </div>
                 </div>
-
                 <div className="col-md-6 col-12">
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
@@ -568,7 +576,7 @@ const VendorView = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {data?.vendorContactPersonsModels?.map((person) => (
+                    {data?.contacts?.map((person) => (
                       <tr key={person.id}>
                         <td>{person.salutation || ""}</td>
                         <td>{person.vendorFirstName || ""}</td>
@@ -591,7 +599,7 @@ const VendorView = () => {
                 <h3>Bank Details</h3>
                 <div className="container">
                   <div className="row mt-2 p-3">
-                    {data.bankDetailsModels?.map((bankDetail, index) => (
+                    {data.bankDetails?.map((bankDetail, index) => (
                       <div key={index} className="col-md-6 col-12">
                         <h5 className="text-primary my-3">Bank {index + 1}</h5>
                         {/* Heading for each bank */}

@@ -11,16 +11,17 @@ const CompositeItemEdit = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [itemData, setItemData] = useState(null);
-  const [data, setData] = useState([]);
   const [manufacture, setManufacture] = useState(null);
+  const [data, setData] = useState([]);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("*Name is required"),
-    itemUnit: Yup.string().required("*Item Unit is required"),
+    unit: Yup.string().required("*Item Unit is required"),
     sellingPrice: Yup.string().required("*Selling Price is required"),
     costPrice: Yup.string().required("*Cost Price is required"),
-    salesAccount: Yup.string().required("*Sales Account is required"),
-    purchaseAccount: Yup.string().required("*Purchase Account is required"),
+    accountSalesId: Yup.string().required("*Sales Account is required"),
+    accountPurchaseId: Yup.string().required("*Purchase Account is required"),
+    inventoryAccount: Yup.string().required("*Inventory Account is required"),
   });
 
   const formik = useFormik({
@@ -30,20 +31,20 @@ const CompositeItemEdit = () => {
       itemId: "",
       name: "",
       type: "",
-      stockKeepingUnit: "",
-      itemUnit: "",
+      sku: "",
+      unit: "",
       dimensions: "",
       weight: "",
-      manufacturerName: "",
-      brandName: "",
-      universalProductCode: "",
-      manufacturingPartNumber: "",
-      internationalArticleNumber: "",
-      internationalStandardBookNumber: "",
+      manufactureId: "",
+      brandId: "",
+      upc: "",
+      mpn: "",
+      ean: "",
+      isbn: "",
       sellingPrice: "",
       costPrice: "",
-      salesAccount: "",
-      purchaseAccount: "",
+      accountSalesId: "",
+      accountPurchaseId: "",
       salesAccountDescription: "",
       purchaseAccountDescription: "",
       salesTax: "",
@@ -51,17 +52,25 @@ const CompositeItemEdit = () => {
       preferredVendor: "",
       inventoryAccount: "",
       openingStock: "",
-      openingStockRate: "",
-      reorderPoint: "",
-      compositeItemImage: null,
-      txnInvoiceOrderItemsModels: [
+      openingStockValue: "",
+      reorderPoint: "",  
+      imageFile: null,
+      compositeAssociateItemsJson: [
         {
-          item: "",
-          qty: "",
-          price: "",
-          disc: "",
-          taxRate: "",
-          amount: "",
+          id: "",
+          itemId: "",
+          quantity: "",
+          sellingPrice: "",
+          costPrice: "",
+        },
+      ],
+      compositeAssociateServiceJson: [
+        {
+          id: "",
+          itemId: "",
+          quantity: "",
+          sellingPrice: "",
+          costPrice: "",
         },
       ],
     },
@@ -72,26 +81,25 @@ const CompositeItemEdit = () => {
 
       // const payload = {
       //   ...values,
-      //   universalProductCode: Number(values.universalProductCode) || 0,
-      //   internationalArticleNumber:
-      //     Number(values.internationalArticleNumber) || 0,
-      //   internationalStandardBookNumber:
-      //     Number(values.internationalStandardBookNumber) || 0,
+      //   upc: Number(values.upc) || 0,
+      //   ean:
+      //     Number(values.ean) || 0,
+      //   isbn:
+      //     Number(values.isbn) || 0,
       //   salesTax: Number(values.salesTax) || 0,
       //   purchaseTax: Number(values.purchaseTax) || 0,
       //   weight: Number(values.weight) || 0,
       //   sellingPrice: Number(values.sellingPrice) || 0,
       //   costPrice: Number(values.costPrice) || 0,
       //   openingStock: Number(values.openingStock) || 0,
-      //   openingStockRate: Number(values.openingStockRate) || 0,
+      //   openingStockValue: Number(values.openingStockValue) || 0,
       //   reorderPoint: Number(values.reorderPoint) || 0,
       // };
 
       const formData = new FormData();
-      formData.append("type", values.type);
       formData.append("name", values.name);
-      formData.append("stockKeepingUnit", values.stockKeepingUnit);
-      formData.append("itemUnit", values.itemUnit);
+      formData.append("sku", values.sku);
+      formData.append("unit", values.unit);
       const dimensions =
         values.length && values.width && values.heightD
           ? `${values.length} ${values.unit} x ${values.width} ${values.unit} x ${values.heightD} ${values.unit}`
@@ -101,25 +109,17 @@ const CompositeItemEdit = () => {
         values.weightValue && values.weightUnit
           ? `${values.weightValue}${values.weightUnit}`
           : "";
-      formData.append("manufacturerName", values.manufacturerName);
-      formData.append("brandName", values.brandName);
-      formData.append("universalProductCode", values.universalProductCode);
-      formData.append(
-        "manufacturingPartNumber",
-        values.manufacturingPartNumber
-      );
-      formData.append(
-        "internationalArticleNumber",
-        values.internationalArticleNumber
-      );
-      formData.append(
-        "internationalStandardBookNumber",
-        values.internationalStandardBookNumber
-      );
+      formData.append("weight", weight);
+      formData.append("manufactureId", values.manufactureId || "");
+      formData.append("brandId", values.brandId);
+      formData.append("upc", values.upc);
+      formData.append("mpn", values.mpn);
+      formData.append("ean", values.ean);
+      formData.append("isbn", values.isbn);
       formData.append("sellingPrice", values.sellingPrice);
       formData.append("costPrice", values.costPrice);
-      formData.append("salesAccount", values.salesAccount);
-      formData.append("purchaseAccount  ", values.purchaseAccount || " ");
+      formData.append("accountSalesId", values.accountSalesId);
+      formData.append("accountPurchaseId  ", values.accountPurchaseId || " ");
       formData.append(
         "salesAccountDescription",
         values.salesAccountDescription
@@ -128,18 +128,65 @@ const CompositeItemEdit = () => {
         "purchaseAccountDescription",
         values.purchaseAccountDescription
       );
-      formData.append("salesTax", values.salesTax);
-      formData.append("purchaseTax", values.purchaseTax);
+      // formData.append("salesTax", values.salesTax);
+      // formData.append("purchaseTax", values.purchaseTax);
       formData.append("preferredVendor", values.preferredVendor);
       // formData.append("inventoryAccount", values.inventoryAccount);
       formData.append("openingStock", values.openingStock);
-      formData.append("openingStockRate", values.openingStockRate);
+      formData.append("openingStockValue", values.openingStockValue);
       formData.append("reorderPoint", values.reorderPoint);
-      formData.append("images", values.images);
+      formData.append(
+        "compositeAssociateItemsJson",
+        JSON.stringify(
+          values.compositeAssociateItemsJson
+            .filter(
+              (item) =>
+                item.itemId &&
+                item.quantity &&
+                item.sellingPrice &&
+                item.costPrice
+            ) // Filter out incomplete items
+            .map((item) => ({
+              id: item.id,
+              itemId: item.itemId?.id || item.itemId, // Ensure itemId is the correct ID value
+              quantity: parseInt(item.quantity, 10),
+              sellingPrice: parseFloat(item.sellingPrice),
+              costPrice: parseFloat(item.costPrice),
+            }))
+        )
+      );
+      formData.append("aiTotalSellingPrice", values.aiTotalSellingPrice || "");
+      formData.append("aiTotalCostPrice", values.aiTotalCostPrice || "");
+      formData.append(
+        "compositeAssociateServiceJson",
+        JSON.stringify(
+          values.compositeAssociateServiceJson
+            .filter(
+              (item) =>
+                item.itemId &&
+                item.quantity &&
+                item.sellingPrice &&
+                item.costPrice
+            ) // Filter out incomplete items
+            .map((item) => ({
+              id: item.id,
+              itemId: item.itemId?.id || item.itemId, // Ensure itemId is the correct ID value
+              quantity: parseInt(item.quantity, 10),
+              sellingPrice: parseFloat(item.sellingPrice),
+              costPrice: parseFloat(item.costPrice),
+            }))
+        )
+      );
+      formData.append("asTotalSellingPrice", values.asTotalSellingPrice || "");
+      formData.append("asTotalCostPrice", values.asTotalCostPrice || "");
+      formData.append("inventoryAccount", values.inventoryAccount || "");
+      formData.append("categoryId", "1");
+      formData.append("wareHouseId", "1");
+      formData.append("imageFile", values.imageFile);
 
       try {
         const response = await api.put(
-          `update-composite-attach/${id}`,
+          `compositeUpdationWithItems/${id}`,
           formData,
           {
             headers: {
@@ -161,6 +208,7 @@ const CompositeItemEdit = () => {
       }
     },
   });
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -169,7 +217,7 @@ const CompositeItemEdit = () => {
 
         if (data.dimensions) {
           const match = data.dimensions.match(
-            /(\d+)\s*(cm|inch)\s*x\s*(\d+)\s*\2\s*x\s*(\d+)\s*\2/
+            /(\d+)\s*(\w+)\s*x\s*(\d+)\s*\2\s*x\s*(\d+)\s*\2/
           );
 
           if (match) {
@@ -178,6 +226,38 @@ const CompositeItemEdit = () => {
             data.heightD = match[4] || "";
             data.unit = match[2] || "";
           }
+        }
+
+        if (data.weight) {
+          const weightMatch = data.weight.match(/(\d+)(\w+)/);
+          if (weightMatch) {
+            data.weightValue = weightMatch[1];
+            data.weightUnit = weightMatch[2];
+          }
+        }
+
+        if (data.compositeAssociateItems) {
+          data.compositeAssociateItemsJson = data.compositeAssociateItems.map(
+            (item) => ({
+              id: item.id,
+              itemId: item.itemId,
+              quantity: item.quantity,
+              sellingPrice: item.sellingPrice,
+              costPrice: item.costPrice,
+            })
+          );
+        }
+
+        if (data.compositeAssociateServicesModels) {
+          data.compositeAssociateServiceJson = data.compositeAssociateServicesModels.map(
+            (item) => ({
+              id: item.id,
+              itemId: item.itemId,
+              quantity: item.quantity,
+              sellingPrice: item.sellingPrice,
+              costPrice: item.costPrice,
+            })
+          );
         }
 
         formik.setValues(data);
@@ -197,7 +277,7 @@ const CompositeItemEdit = () => {
   //       let totalTax = 0;
   //       let discAmount = 0;
   //       const updatedItems = await Promise.all(
-  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
+  //         formik.values.compositeAssociateItemsJson.map(async (item, index) => {
   //           if (
   //             item.qty &&
   //             item.price &&
@@ -224,7 +304,7 @@ const CompositeItemEdit = () => {
   //       );
   //       formik.setValues({
   //         ...formik.values,
-  //         txnInvoiceOrderItemsModels: updatedItems,
+  //         compositeAssociateItemsJson: updatedItems,
   //       });
   //       formik.setFieldValue("subTotal", totalRate);
   //       formik.setFieldValue("total", totalAmount);
@@ -237,12 +317,12 @@ const CompositeItemEdit = () => {
 
   //   updateAndCalculate();
   // }, [
-  //   formik.values.txnInvoiceOrderItemsModels?.map((item) => item.qty).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels
+  //   formik.values.compositeAssociateItemsJson?.map((item) => item.qty).join(""),
+  //   formik.values.compositeAssociateItemsJson
   //     ?.map((item) => item.price)
   //     .join(""),
-  //   formik.values.txnInvoiceOrderItemsModels?.map((item) => item.disc).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels
+  //   formik.values.compositeAssociateItemsJson?.map((item) => item.disc).join(""),
+  //   formik.values.compositeAssociateItemsJson
   //     ?.map((item) => item.taxRate)
   //     .join(""),
   // ]);
@@ -256,31 +336,60 @@ const CompositeItemEdit = () => {
   };
 
   const AddRowContent = () => {
-    console.log(
-      "Current txnInvoiceOrderItemsModels:",
-      formik.values.txnInvoiceOrderItemsModels
-    );
-    formik.setFieldValue("txnInvoiceOrderItemsModels", [
-      ...(formik.values.txnInvoiceOrderItemsModels || []),
+    formik.setFieldValue("compositeAssociateItemsJson", [
+      ...formik.values.compositeAssociateItemsJson,
       {
-        item: "",
-        qty: "",
-        price: "",
-        disc: "",
-        taxRate: "",
-        amount: "",
+        itemId: "",
+        quantity: "",
+        sellingPrice: "",
+        costPrice: "",
       },
     ]);
   };
 
   const deleteRow = (index) => {
-    if (formik.values.txnInvoiceOrderItemsModels.length === 1) {
+    if (formik.values.compositeAssociateItemsJson.length === 1) {
       return;
     }
-    const updatedRows = [...formik.values.txnInvoiceOrderItemsModels];
+    const updatedRows = [...formik.values.compositeAssociateItemsJson];
     updatedRows.pop();
-    formik.setFieldValue("txnInvoiceOrderItemsModels", updatedRows);
+    formik.setFieldValue("compositeAssociateItemsJson", updatedRows);
   };
+
+  const AddRowService = () => {
+    formik.setFieldValue("compositeAssociateServiceJson", [
+      ...formik.values.compositeAssociateServiceJson,
+      {
+        itemId: "",
+        quantity: "",
+        sellingPrice: "",
+        costPrice: "",
+      },
+    ]);
+  };
+
+  const deleteRowService = (index) => {
+    if (formik.values.compositeAssociateServiceJson.length === 1) {
+      return;
+    }
+    const updatedRows = [...formik.values.compositeAssociateServiceJson];
+    updatedRows.pop();
+    formik.setFieldValue("compositeAssociateServiceJson", updatedRows);
+  };
+
+  const scrollToError = (errors) => {
+    const errorField = Object.keys(errors)[0];
+    const errorElement = document.querySelector(`[name="${errorField}"]`);
+    if (errorElement) {
+      errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      errorElement.focus();
+    }
+  };
+  useEffect(() => {
+    if (formik.submitCount > 0 && Object.keys(formik.errors).length > 0) {
+      scrollToError(formik.errors);
+    }
+  }, [formik.submitCount]);
 
   useEffect(() => {
     const getData = async () => {
@@ -292,6 +401,18 @@ const CompositeItemEdit = () => {
       }
     };
     getData();
+  }, []);
+
+  useEffect(() => {
+    const getItemData = async () => {
+      try {
+        const response = await api.get("itemId-name");
+        setItemData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getItemData();
   }, []);
 
   return (
@@ -367,42 +488,6 @@ const CompositeItemEdit = () => {
                   )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-3">
-                <div>
-                  <label for="exampleFormControlInput1" className="form-label">
-                    Type
-                  </label>
-                </div>
-                <div className="form-check form-check-inline">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="type"
-                    id="Goods"
-                    value="Goods"
-                    onChange={formik.handleChange}
-                    checked={formik.values.type === "Goods"}
-                  />
-                  <label className="form-check-label">Goods</label>
-                </div>
-                <div className="form-check form-check-inline">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="type"
-                    id="Service"
-                    value="Service"
-                    onChange={formik.handleChange}
-                    checked={formik.values.type === "Service"}
-                  />
-                  <label className="form-check-label">Service</label>
-                </div>
-                {formik.errors.type && formik.touched.type && (
-                  <div className="text-danger" style={{ fontSize: ".875em" }}>
-                    {formik.errors.type}
-                  </div>
-                )}
-              </div>
 
               <div className="col-md-6 col-12 mb-2">
                 <div className="d-flex align-items-center">
@@ -417,21 +502,17 @@ const CompositeItemEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="stockKeepingUnit"
+                    name="sku"
                     className={`form-control form-control-sm ${
-                      formik.touched.stockKeepingUnit &&
-                      formik.errors.stockKeepingUnit
+                      formik.touched.sku && formik.errors.sku
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("stockKeepingUnit")}
+                    {...formik.getFieldProps("sku")}
                   />
-                  {formik.touched.stockKeepingUnit &&
-                    formik.errors.stockKeepingUnit && (
-                      <div className="invalid-feedback">
-                        {formik.errors.stockKeepingUnit}
-                      </div>
-                    )}
+                  {formik.touched.sku && formik.errors.sku && (
+                    <div className="invalid-feedback">{formik.errors.sku}</div>
+                  )}
                 </div>
               </div>
               {/* <div className="col-md-6 col-12 mb-2">
@@ -442,16 +523,16 @@ const CompositeItemEdit = () => {
                     className="form-control"
                     onChange={(event) => {
                       formik.setFieldValue(
-                        "compositeItemImage",
+                        "imageFile",
                         event.target.files[0]
                       );
                     }}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.touched.compositeItemImage &&
-                    formik.errors.compositeItemImage && (
+                  {formik.touched.imageFile &&
+                    formik.errors.imageFile && (
                       <div className="invalid-feedback">
-                        {formik.errors.compositeItemImage}
+                        {formik.errors.imageFile}
                       </div>
                     )}
                 </div>
@@ -463,13 +544,13 @@ const CompositeItemEdit = () => {
                     type="file"
                     className="form-control form-control-sm"
                     onChange={(event) => {
-                      formik.setFieldValue("images", event.target.files[0]);
+                      formik.setFieldValue("imageFile", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.touched.images && formik.errors.images && (
+                  {formik.touched.imageFile && formik.errors.imageFile && (
                     <div className="invalid-feedback">
-                      {formik.errors.images}
+                      {formik.errors.imageFile}
                     </div>
                   )}
                 </div>
@@ -485,13 +566,13 @@ const CompositeItemEdit = () => {
                 </lable>
                 <div className="mb-3">
                   <select
-                    name="itemUnit"
+                    name="unit"
                     className={`form-select form-select-sm  ${
-                      formik.touched.itemUnit && formik.errors.itemUnit
+                      formik.touched.unit && formik.errors.unit
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("itemUnit")}
+                    {...formik.getFieldProps("unit")}
                   >
                     <option value=""></option>
                     <option value="dz">DOZEN</option>
@@ -501,10 +582,8 @@ const CompositeItemEdit = () => {
                     <option value="m">METERS</option>
                     <option value="pcs">PIECES</option>
                   </select>
-                  {formik.touched.itemUnit && formik.errors.itemUnit && (
-                    <div className="invalid-feedback">
-                      {formik.errors.itemUnit}
-                    </div>
+                  {formik.touched.unit && formik.errors.unit && (
+                    <div className="invalid-feedback">{formik.errors.unit}</div>
                   )}
                 </div>
               </div>
@@ -616,14 +695,14 @@ const CompositeItemEdit = () => {
                 <label className="form-label">Manufacturer Name</label>
                 <div className="mb-3">
                   <select
-                    name="manufacturerName"
+                    name="manufactureId"
                     className={`form-select form-select-sm ${
-                      formik.touched.manufacturerName &&
-                      formik.errors.manufacturerName
+                      formik.touched.manufactureId &&
+                      formik.errors.manufactureId
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("manufacturerName")}
+                    {...formik.getFieldProps("manufactureId")}
                   >
                     <option selected></option>
                     {manufacture &&
@@ -633,10 +712,10 @@ const CompositeItemEdit = () => {
                         </option>
                       ))}
                   </select>
-                  {formik.touched.manufacturerName &&
-                    formik.errors.manufacturerName && (
+                  {formik.touched.manufactureId &&
+                    formik.errors.manufactureId && (
                       <div className="invalid-feedback">
-                        {formik.errors.manufacturerName}
+                        {formik.errors.manufactureId}
                       </div>
                     )}
                 </div>
@@ -647,17 +726,17 @@ const CompositeItemEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="brandName"
+                    name="brandId"
                     className={`form-control form-control-sm  ${
-                      formik.touched.brandName && formik.errors.brandName
+                      formik.touched.brandId && formik.errors.brandId
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("brandName")}
+                    {...formik.getFieldProps("brandId")}
                   />
-                  {formik.touched.brandName && formik.errors.brandName && (
+                  {formik.touched.brandId && formik.errors.brandId && (
                     <div className="invalid-feedback">
-                      {formik.errors.brandName}
+                      {formik.errors.brandId}
                     </div>
                   )}
                 </div>
@@ -675,21 +754,17 @@ const CompositeItemEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="manufacturingPartNumber"
+                    name="mpn"
                     className={`form-control form-control-sm ${
-                      formik.touched.manufacturingPartNumber &&
-                      formik.errors.manufacturingPartNumber
+                      formik.touched.mpn && formik.errors.mpn
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("manufacturingPartNumber")}
+                    {...formik.getFieldProps("mpn")}
                   />
-                  {formik.touched.manufacturingPartNumber &&
-                    formik.errors.manufacturingPartNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.manufacturingPartNumber}
-                      </div>
-                    )}
+                  {formik.touched.mpn && formik.errors.mpn && (
+                    <div className="invalid-feedback">{formik.errors.mpn}</div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -705,21 +780,17 @@ const CompositeItemEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="universalProductCode"
+                    name="upc"
                     className={`form-control form-control-sm  ${
-                      formik.touched.universalProductCode &&
-                      formik.errors.universalProductCode
+                      formik.touched.upc && formik.errors.upc
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("universalProductCode")}
+                    {...formik.getFieldProps("upc")}
                   />
-                  {formik.touched.universalProductCode &&
-                    formik.errors.universalProductCode && (
-                      <div className="invalid-feedback">
-                        {formik.errors.universalProductCode}
-                      </div>
-                    )}
+                  {formik.touched.upc && formik.errors.upc && (
+                    <div className="invalid-feedback">{formik.errors.upc}</div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -735,21 +806,17 @@ const CompositeItemEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="internationalArticleNumber"
+                    name="ean"
                     className={`form-control form-control-sm  ${
-                      formik.touched.internationalArticleNumber &&
-                      formik.errors.internationalArticleNumber
+                      formik.touched.ean && formik.errors.ean
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("internationalArticleNumber")}
+                    {...formik.getFieldProps("ean")}
                   />
-                  {formik.touched.internationalArticleNumber &&
-                    formik.errors.internationalArticleNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.internationalArticleNumber}
-                      </div>
-                    )}
+                  {formik.touched.ean && formik.errors.ean && (
+                    <div className="invalid-feedback">{formik.errors.ean}</div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -765,21 +832,17 @@ const CompositeItemEdit = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="internationalStandardBookNumber"
+                    name="isbn"
                     className={`form-control form-control-sm  ${
-                      formik.touched.internationalStandardBookNumber &&
-                      formik.errors.internationalStandardBookNumber
+                      formik.touched.isbn && formik.errors.isbn
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("internationalStandardBookNumber")}
+                    {...formik.getFieldProps("isbn")}
                   />
-                  {formik.touched.internationalStandardBookNumber &&
-                    formik.errors.internationalStandardBookNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.internationalStandardBookNumber}
-                      </div>
-                    )}
+                  {formik.touched.isbn && formik.errors.isbn && (
+                    <div className="invalid-feedback">{formik.errors.isbn}</div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
@@ -860,22 +923,23 @@ const CompositeItemEdit = () => {
                     <IoMdInformationCircleOutline />
                   </span>
                 </div>
-                <div className="mb-3">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">INR</span>{" "}
                   <input
                     type="text"
-                    name="openingStockRate"
+                    name="openingStockValue"
                     className={`form-control form-control-sm  ${
-                      formik.touched.openingStockRate &&
-                      formik.errors.openingStockRate
+                      formik.touched.openingStockValue &&
+                      formik.errors.openingStockValue
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("openingStockRate")}
+                    {...formik.getFieldProps("openingStockValue")}
                   />
-                  {formik.touched.openingStockRate &&
-                    formik.errors.openingStockRate && (
+                  {formik.touched.openingStockValue &&
+                    formik.errors.openingStockValue && (
                       <div className="invalid-feedback">
-                        {formik.errors.openingStockRate}
+                        {formik.errors.openingStockValue}
                       </div>
                     )}
                 </div>
@@ -909,8 +973,9 @@ const CompositeItemEdit = () => {
                     )}
                 </div>
               </div>
-              <div className="row mt-5">
-                <div className="">
+              <div className="row my-5">
+                <h3>Associate Item</h3>
+                <div className="mt-3">
                   <h3
                     style={{ background: "#4066D5" }}
                     className="text-light p-2"
@@ -923,7 +988,7 @@ const CompositeItemEdit = () => {
                     <thead>
                       <tr>
                         <th style={{ width: "40%" }}>
-                          Item<span className="text-danger">*</span>
+                          Item Details<span className="text-danger">*</span>
                         </th>
                         <th style={{ width: "20%" }}>Quantity</th>
                         <th style={{ width: "20%" }}>Selling Price</th>
@@ -931,45 +996,46 @@ const CompositeItemEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.txnInvoiceOrderItemsModels?.map(
+                      {formik.values.compositeAssociateItemsJson?.map(
                         (item, index) => (
                           <tr key={index}>
                             <td>
                               <select
-                                name={`txnInvoiceOrderItemsModels[${index}].item`}
+                                name={`compositeAssociateItemsJson[${index}].itemId`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].item`
+                                  `compositeAssociateItemsJson[${index}].itemId`
                                 )}
                                 className={`form-select ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.compositeAssociateItemsJson?.[
                                     index
-                                  ]?.item &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.itemId &&
+                                  formik.errors.compositeAssociateItemsJson?.[
                                     index
-                                  ]?.item
+                                  ]?.itemId
                                     ? "is-invalid"
                                     : ""
                                 }`}
                               >
                                 <option selected> </option>
+                                {/* <option value="110">Items</option> */}
                                 {itemData &&
-                                  itemData.map((itemId) => (
-                                    <option key={itemId.id} value={itemId.id}>
-                                      {itemId.itemName}
+                                  itemData.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                      {item.name}
                                     </option>
                                   ))}
                               </select>
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
+                              {formik.touched.compositeAssociateItemsJson?.[
                                 index
-                              ]?.item &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
+                              ]?.itemId &&
+                                formik.errors.compositeAssociateItemsJson?.[
                                   index
-                                ]?.item && (
+                                ]?.itemId && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.compositeAssociateItemsJson[
                                         index
-                                      ].item
+                                      ].itemId
                                     }
                                   </div>
                                 )}
@@ -981,32 +1047,32 @@ const CompositeItemEdit = () => {
                                     event.target.value.replace(/[^0-9]/g, "");
                                 }}
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].qty`}
+                                name={`compositeAssociateItemsJson[${index}].quantity`}
                                 className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.compositeAssociateItemsJson?.[
                                     index
-                                  ]?.qty &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.quantity &&
+                                  formik.errors.compositeAssociateItemsJson?.[
                                     index
-                                  ]?.qty
+                                  ]?.quantity
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].qty`
+                                  `compositeAssociateItemsJson[${index}].quantity`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
+                              {formik.touched.compositeAssociateItemsJson?.[
                                 index
-                              ]?.qty &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
+                              ]?.quantity &&
+                                formik.errors.compositeAssociateItemsJson?.[
                                   index
-                                ]?.qty && (
+                                ]?.quantity && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.compositeAssociateItemsJson[
                                         index
-                                      ].qty
+                                      ].quantity
                                     }
                                   </div>
                                 )}
@@ -1018,32 +1084,32 @@ const CompositeItemEdit = () => {
                                     event.target.value.replace(/[^0-9]/g, "");
                                 }}
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].price`}
+                                name={`compositeAssociateItemsJson[${index}].sellingPrice`}
                                 className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.compositeAssociateItemsJson?.[
                                     index
-                                  ]?.price &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.sellingPrice &&
+                                  formik.errors.compositeAssociateItemsJson?.[
                                     index
-                                  ]?.price
+                                  ]?.sellingPrice
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].price`
+                                  `compositeAssociateItemsJson[${index}].sellingPrice`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
+                              {formik.touched.compositeAssociateItemsJson?.[
                                 index
-                              ]?.price &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
+                              ]?.sellingPrice &&
+                                formik.errors.compositeAssociateItemsJson?.[
                                   index
-                                ]?.price && (
+                                ]?.sellingPrice && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.compositeAssociateItemsJson[
                                         index
-                                      ].price
+                                      ].sellingPrice
                                     }
                                   </div>
                                 )}
@@ -1055,32 +1121,32 @@ const CompositeItemEdit = () => {
                                     event.target.value.replace(/[^0-9]/g, "");
                                 }}
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].disc`}
+                                name={`compositeAssociateItemsJson[${index}].costPrice`}
                                 className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.compositeAssociateItemsJson?.[
                                     index
-                                  ]?.disc &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.costPrice &&
+                                  formik.errors.compositeAssociateItemsJson?.[
                                     index
-                                  ]?.disc
+                                  ]?.costPrice
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].disc`
+                                  `compositeAssociateItemsJson[${index}].costPrice`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
+                              {formik.touched.compositeAssociateItemsJson?.[
                                 index
-                              ]?.disc &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
+                              ]?.costPrice &&
+                                formik.errors.compositeAssociateItemsJson?.[
                                   index
-                                ]?.disc && (
+                                ]?.costPrice && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.compositeAssociateItemsJson[
                                         index
-                                      ].disc
+                                      ].costPrice
                                     }
                                   </div>
                                 )}
@@ -1100,17 +1166,53 @@ const CompositeItemEdit = () => {
                         </td>
                         <td>
                           <input
+                            onInput={(event) => {
+                              event.target.value = event.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              );
+                            }}
                             type="text"
-                            class="form-control"
-                            id="exampleFormControlInput1"
+                            name={`aiTotalSellingPrice`}
+                            className={`form-control ${
+                              formik.touched.aiTotalSellingPrice &&
+                              formik.errors.aiTotalSellingPrice
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            {...formik.getFieldProps(`aiTotalSellingPrice`)}
                           />
+                          {formik.touched.aiTotalSellingPrice &&
+                            formik.errors.aiTotalSellingPrice && (
+                              <div className="invalid-feedback">
+                                {formik.errors.aiTotalSellingPrice}
+                              </div>
+                            )}
                         </td>
                         <td>
                           <input
+                            onInput={(event) => {
+                              event.target.value = event.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              );
+                            }}
                             type="text"
-                            class="form-control"
-                            id="exampleFormControlInput1"
+                            name={`aiTotalCostPrice`}
+                            className={`form-control ${
+                              formik.touched.aiTotalCostPrice &&
+                              formik.errors.aiTotalCostPrice
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            {...formik.getFieldProps(`aiTotalCostPrice`)}
                           />
+                          {formik.touched.aiTotalCostPrice &&
+                            formik.errors.aiTotalCostPrice && (
+                              <div className="invalid-feedback">
+                                {formik.errors.aiTotalCostPrice}
+                              </div>
+                            )}
                         </td>
                       </tr>
                     </tbody>
@@ -1126,7 +1228,7 @@ const CompositeItemEdit = () => {
                 >
                   Add row
                 </button>
-                {formik.values.txnInvoiceOrderItemsModels?.length > 1 && (
+                {formik.values.compositeAssociateItemsJson?.length > 1 && (
                   <button
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
                     onClick={deleteRow}
@@ -1135,12 +1237,277 @@ const CompositeItemEdit = () => {
                   </button>
                 )}
               </div>
-              <div className="col-md-6 col-12 mb-2">
+              <div className="row my-5">
+                <h3>Associate Service</h3>
+                <div className="mt-3">
+                  <h3
+                    style={{ background: "#4066D5" }}
+                    className="text-light p-2"
+                  >
+                    Item Table
+                  </h3>
+                </div>
+                <div className="table-responsive">
+                  <table className="table table-sm table-nowrap">
+                    <thead>
+                      <tr>
+                        <th style={{ width: "40%" }}>
+                          Service Details<span className="text-danger">*</span>
+                        </th>
+                        <th style={{ width: "20%" }}>Quantity</th>
+                        <th style={{ width: "20%" }}>Selling Price</th>
+                        <th style={{ width: "20%" }}>Cost Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formik.values.compositeAssociateServiceJson?.map(
+                        (item, index) => (
+                          <tr key={index}>
+                            <td>
+                              <select
+                                name={`compositeAssociateServiceJson[${index}].itemId`}
+                                {...formik.getFieldProps(
+                                  `compositeAssociateServiceJson[${index}].itemId`
+                                )}
+                                className={`form-select ${
+                                  formik.touched
+                                    .compositeAssociateServiceJson?.[index]
+                                    ?.itemId &&
+                                  formik.errors.compositeAssociateServiceJson?.[
+                                    index
+                                  ]?.itemId
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                              >
+                                <option selected> </option>
+                                {/* <option value="110">Items</option> */}
+                                {itemData &&
+                                  itemData.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                      {item.name}
+                                    </option>
+                                  ))}
+                              </select>
+                              {formik.touched.compositeAssociateServiceJson?.[
+                                index
+                              ]?.itemId &&
+                                formik.errors.compositeAssociateServiceJson?.[
+                                  index
+                                ]?.itemId && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors
+                                        .compositeAssociateServiceJson[index]
+                                        .itemId
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                            <td>
+                              <input
+                                onInput={(event) => {
+                                  event.target.value =
+                                    event.target.value.replace(/[^0-9]/g, "");
+                                }}
+                                type="text"
+                                name={`compositeAssociateServiceJson[${index}].quantity`}
+                                className={`form-control ${
+                                  formik.touched
+                                    .compositeAssociateServiceJson?.[index]
+                                    ?.quantity &&
+                                  formik.errors.compositeAssociateServiceJson?.[
+                                    index
+                                  ]?.quantity
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                                {...formik.getFieldProps(
+                                  `compositeAssociateServiceJson[${index}].quantity`
+                                )}
+                              />
+                              {formik.touched.compositeAssociateServiceJson?.[
+                                index
+                              ]?.quantity &&
+                                formik.errors.compositeAssociateServiceJson?.[
+                                  index
+                                ]?.quantity && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors
+                                        .compositeAssociateServiceJson[index]
+                                        .quantity
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                            <td>
+                              <input
+                                onInput={(event) => {
+                                  event.target.value =
+                                    event.target.value.replace(/[^0-9]/g, "");
+                                }}
+                                type="text"
+                                name={`compositeAssociateServiceJson[${index}].sellingPrice`}
+                                className={`form-control ${
+                                  formik.touched
+                                    .compositeAssociateServiceJson?.[index]
+                                    ?.sellingPrice &&
+                                  formik.errors.compositeAssociateServiceJson?.[
+                                    index
+                                  ]?.sellingPrice
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                                {...formik.getFieldProps(
+                                  `compositeAssociateServiceJson[${index}].sellingPrice`
+                                )}
+                              />
+                              {formik.touched.compositeAssociateServiceJson?.[
+                                index
+                              ]?.sellingPrice &&
+                                formik.errors.compositeAssociateServiceJson?.[
+                                  index
+                                ]?.sellingPrice && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors
+                                        .compositeAssociateServiceJson[index]
+                                        .sellingPrice
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                            <td>
+                              <input
+                                onInput={(event) => {
+                                  event.target.value =
+                                    event.target.value.replace(/[^0-9]/g, "");
+                                }}
+                                type="text"
+                                name={`compositeAssociateServiceJson[${index}].costPrice`}
+                                className={`form-control ${
+                                  formik.touched
+                                    .compositeAssociateServiceJson?.[index]
+                                    ?.costPrice &&
+                                  formik.errors.compositeAssociateServiceJson?.[
+                                    index
+                                  ]?.costPrice
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                                {...formik.getFieldProps(
+                                  `compositeAssociateServiceJson[${index}].costPrice`
+                                )}
+                              />
+                              {formik.touched.compositeAssociateServiceJson?.[
+                                index
+                              ]?.costPrice &&
+                                formik.errors.compositeAssociateServiceJson?.[
+                                  index
+                                ]?.costPrice && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors
+                                        .compositeAssociateServiceJson[index]
+                                        .costPrice
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                    <tbody>
+                      <tr>
+                        <th></th>
+                        <td
+                          className="text-center"
+                          style={{ color: "#9c93a5" }}
+                        >
+                          Total (Rs.) :
+                        </td>
+                        <td>
+                          <input
+                            onInput={(event) => {
+                              event.target.value = event.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              );
+                            }}
+                            type="text"
+                            name={`asTotalSellingPrice`}
+                            className={`form-control ${
+                              formik.touched.asTotalSellingPrice &&
+                              formik.errors.asTotalSellingPrice
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            {...formik.getFieldProps(`asTotalSellingPrice`)}
+                          />
+                          {formik.touched.asTotalSellingPrice &&
+                            formik.errors.asTotalSellingPrice && (
+                              <div className="invalid-feedback">
+                                {formik.errors.asTotalSellingPrice}
+                              </div>
+                            )}
+                        </td>
+                        <td>
+                          <input
+                            onInput={(event) => {
+                              event.target.value = event.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              );
+                            }}
+                            type="text"
+                            name={`asTotalCostPrice`}
+                            className={`form-control ${
+                              formik.touched.asTotalCostPrice &&
+                              formik.errors.asTotalCostPrice
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            {...formik.getFieldProps(`asTotalCostPrice`)}
+                          />
+                          {formik.touched.asTotalCostPrice &&
+                            formik.errors.asTotalCostPrice && (
+                              <div className="invalid-feedback">
+                                {formik.errors.asTotalCostPrice}
+                              </div>
+                            )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  className="btn btn-button btn-primary btn-sm my-4 mx-1"
+                  type="button"
+                  onClick={AddRowService}
+                >
+                  Add row
+                </button>
+                {formik.values.compositeAssociateServiceJson?.length > 1 && (
+                  <button
+                    className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
+                    onClick={deleteRowService}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+              <div className="col-md-6 col-12 my-2">
                 <h3 className="my-5">Sales</h3>
                 <label className="form-label">
                   Selling Price<span className="text-danger">*</span>
                 </label>
-                <div className="mb-3">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">INR</span>{" "}
                   <input
                     type="text"
                     name="sellingPrice"
@@ -1165,7 +1532,8 @@ const CompositeItemEdit = () => {
                 <label className="form-label">
                   Cost Price<span className="text-danger">*</span>
                 </label>
-                <div className="mb-3">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">INR</span>{" "}
                   <input
                     type="text"
                     name="costPrice"
@@ -1192,24 +1560,24 @@ const CompositeItemEdit = () => {
                     </label>
                     <div className="mb-3">
                       <select
-                        name="salesAccount"
+                        name="accountSalesId"
                         className={`form-select form-select-sm  ${
-                          formik.touched.salesAccount &&
-                          formik.errors.salesAccount
+                          formik.touched.accountSalesId &&
+                          formik.errors.accountSalesId
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("salesAccount")}
+                        {...formik.getFieldProps("accountSalesId")}
                       >
                         <option></option>
-                        <option value="General Income">General Income</option>
-                        <option value="Sales">Sales</option>
-                        <option value="Discount">Discount</option>
+                        <option value="1">General Income</option>
+                        <option value="2">Sales</option>
+                        <option value="3">Discount</option>
                       </select>
-                      {formik.touched.salesAccount &&
-                        formik.errors.salesAccount && (
+                      {formik.touched.accountSalesId &&
+                        formik.errors.accountSalesId && (
                           <div className="invalid-feedback">
-                            {formik.errors.salesAccount}
+                            {formik.errors.accountSalesId}
                           </div>
                         )}
                     </div>
@@ -1221,26 +1589,24 @@ const CompositeItemEdit = () => {
                     </label>
                     <div className="mb-3">
                       <select
-                        name="purchaseAccount"
+                        name="accountPurchaseId"
                         className={`form-select form-select-sm  ${
-                          formik.touched.purchaseAccount &&
-                          formik.errors.purchaseAccount
+                          formik.touched.accountPurchaseId &&
+                          formik.errors.accountPurchaseId
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("purchaseAccount")}
+                        {...formik.getFieldProps("accountPurchaseId")}
                       >
                         <option></option>
-                        <option value="Cost of Goods Sold">
-                          Cost of Goods Sold
-                        </option>
-                        <option value="Materials">Materials</option>
-                        <option value="Labor">Labor</option>
+                        <option value="1">Cost of Goods Sold</option>
+                        <option value="2">Materials</option>
+                        <option value="3">Labor</option>
                       </select>
-                      {formik.touched.purchaseAccount &&
-                        formik.errors.purchaseAccount && (
+                      {formik.touched.accountPurchaseId &&
+                        formik.errors.accountPurchaseId && (
                           <div className="invalid-feedback">
-                            {formik.errors.purchaseAccount}
+                            {formik.errors.accountPurchaseId}
                           </div>
                         )}
                     </div>

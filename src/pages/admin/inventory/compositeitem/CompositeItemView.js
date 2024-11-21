@@ -92,25 +92,11 @@ const CompositeItemView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Type </b>
+                        <b>SKU</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.type || ""}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Stock Keeping Unit</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.stockKeepingUnit || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.sku || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -131,8 +117,8 @@ const CompositeItemView = () => {
                           kg: "KILOGRAMS",
                           m: "METERS",
                           pcs: "PIECES",
-                        }[data.itemUnit] ||
-                          data.itemUnit ||
+                        }[data.unit] ||
+                          data.unit ||
                           ""}
                       </p>
                     </div>
@@ -199,13 +185,11 @@ const CompositeItemView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Manufacturing Part Number</b>
+                        <b>MPN</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.manufacturingPartNumber || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.mpn || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -213,13 +197,11 @@ const CompositeItemView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Universal Product Code</b>
+                        <b>UPC</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.universalProductCode || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.upc || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -227,13 +209,11 @@ const CompositeItemView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>International Article Number</b>
+                        <b>EAN</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.internationalArticleNumber || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.ean || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -241,13 +221,11 @@ const CompositeItemView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>International Standard BookNumber</b>
+                        <b>ISBN</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.internationalStandardBookNumber || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.isbn || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -288,7 +266,7 @@ const CompositeItemView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.openingStockRate || ""}
+                        : {data.openingStockValue || ""}
                       </p>
                     </div>
                   </div>
@@ -335,6 +313,7 @@ const CompositeItemView = () => {
             <div className="row mt-5 flex-nowrap">
               <div className="col-12">
                 <div className="table-responsive ">
+                  <h3 className="mb-3">Associate Item</h3>
                   <div className="">
                     <h3
                       style={{ background: "#4066D5" }}
@@ -354,14 +333,59 @@ const CompositeItemView = () => {
                     </thead>
                     <tbody className="table-group">
                       {data &&
-                      data.invoiceItemsModels &&
-                      data.invoiceItemsModels.length > 0 ? (
-                        data.invoiceItemsModels.map((item, index) => (
+                      data.compositeAssociateItems &&
+                      data.compositeAssociateItems.length > 0 ? (
+                        data.compositeAssociateItems.map((item, index) => (
                           <tr key={index}>
-                            <td>{itemName(item.item)}</td>
-                            <td>{item.qty}</td>
-                            <td>{item.price}</td>
-                            <td>{item.disc}</td>
+                            <td>{item.itemName}</td>
+                            <td>{item.quantity}</td>
+                            <td>{item.sellingPrice}</td>
+                            <td>{item.costPrice}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="7" className="text-center">
+                            No data available
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div className="row mt-5 flex-nowrap">
+              <div className="col-12">
+                <div className="table-responsive">
+                  <h3 className="mb-3">Associate Service</h3>
+                  <div className="">
+                    <h3
+                      style={{ background: "#4066D5" }}
+                      className="text-light p-2"
+                    >
+                      Item Table
+                    </h3>
+                  </div>
+                  <table class="table">
+                    <thead className="thead-light">
+                      <tr>
+                        <th style={{ width: "40%" }}>ITEM DETAILS</th>
+                        <th style={{ width: "20%" }}>Quantity</th>
+                        <th style={{ width: "20%" }}>Selling Price</th>
+                        <th style={{ width: "20%" }}>Cost Price</th>
+                      </tr>
+                    </thead>
+                    <tbody className="table-group">
+                      {data &&
+                      data.compositeAssociateServicesModels &&
+                      data.compositeAssociateServicesModels.length > 0 ? (
+                        data.compositeAssociateServicesModels.map((item, index) => (
+                          <tr key={index}>
+                            <td>{item.itemName}</td>
+                            <td>{item.quantity}</td>
+                            <td>{item.sellingPrice}</td>
+                            <td>{item.costPrice}</td>
                           </tr>
                         ))
                       ) : (
