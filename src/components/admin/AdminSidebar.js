@@ -4,7 +4,7 @@ import deals from "../../assets/CRMLogo.png";
 import { BsBarChartFill } from "react-icons/bs";
 import { BiLogOut, BiSolidCategory } from "react-icons/bi";
 import { MdCategory } from "react-icons/md";
-import { FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { AiOutlineBarChart, AiOutlineShoppingCart } from "react-icons/ai";
 import { FiSettings, FiTool } from "react-icons/fi";
 import { RiFileList3Line } from "react-icons/ri";
@@ -73,7 +73,7 @@ function AdminSidebar({ handleLogout }) {
                 }`}
                 onClick={() => toggleSubmenu("inventory")}
               >
-                <span style={{cursor: "pointer"}}>
+                <span style={{ cursor: "pointer" }}>
                   <BiSolidCategory className="me-2" />
                   Inventory
                 </span>
@@ -121,12 +121,12 @@ function AdminSidebar({ handleLogout }) {
                 }`}
                 onClick={() => toggleSubmenu("sales")}
               >
-                <span style={{cursor: "pointer"}}>
+                <span style={{ cursor: "pointer" }}>
                   <MdCategory className="me-2" />
                   Sales
                 </span>
                 {activeSubmenu === "sales" ? (
-                 <FaChevronDown className="chevron-icon" />
+                  <FaChevronDown className="chevron-icon" />
                 ) : (
                   <FaChevronRight className="chevron-icon" />
                 )}
@@ -183,12 +183,12 @@ function AdminSidebar({ handleLogout }) {
                 }`}
                 onClick={() => toggleSubmenu("purchases")}
               >
-                <span style={{cursor: "pointer"}}>
+                <span style={{ cursor: "pointer" }}>
                   <AiOutlineShoppingCart className="me-2" />
                   Purchases
                 </span>
                 {activeSubmenu === "purchases" ? (
-                 <FaChevronDown className="chevron-icon" />
+                  <FaChevronDown className="chevron-icon" />
                 ) : (
                   <FaChevronRight className="chevron-icon" />
                 )}
@@ -237,17 +237,17 @@ function AdminSidebar({ handleLogout }) {
 
             <li className="nav-item">
               <div
-                   className={`nav-link submenu d-flex justify-content-between align-items-center ${
-                    activeSubmenu === "integrations" ? "active" : ""
-                  }`}
+                className={`nav-link submenu d-flex justify-content-between align-items-center ${
+                  activeSubmenu === "integrations" ? "active" : ""
+                }`}
                 onClick={() => toggleSubmenu("integrations")}
               >
-                <span style={{cursor: "pointer"}}>
-                <FiTool className="me-2" />
+                <span style={{ cursor: "pointer" }}>
+                  <FiTool className="me-2" />
                   Integrations
                 </span>
                 {activeSubmenu === "integrations" ? (
-                 <FaChevronDown className="chevron-icon" />
+                  <FaChevronDown className="chevron-icon" />
                 ) : (
                   <FaChevronRight className="chevron-icon" />
                 )}
@@ -274,17 +274,17 @@ function AdminSidebar({ handleLogout }) {
             </li>
             <li className="nav-item">
               <div
-                   className={`nav-link submenu d-flex justify-content-between align-items-center ${
-                    activeSubmenu === "settings" ? "active" : ""
-                  }`}
+                className={`nav-link submenu d-flex justify-content-between align-items-center ${
+                  activeSubmenu === "settings" ? "active" : ""
+                }`}
                 onClick={() => toggleSubmenu("settings")}
               >
-                <span style={{cursor: "pointer"}}>
+                <span style={{ cursor: "pointer" }}>
                   <FiSettings className="me-2" />
                   Settings
                 </span>
                 {activeSubmenu === "settings" ? (
-                 <FaChevronDown className="chevron-icon" />
+                  <FaChevronDown className="chevron-icon" />
                 ) : (
                   <FaChevronRight className="chevron-icon" />
                 )}
@@ -309,6 +309,21 @@ function AdminSidebar({ handleLogout }) {
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/unit">
                       Unit
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/terms">
+                      Payment Terms
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/reason">
+                      Reason
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/account">
+                      Account
                     </NavLink>
                   </li>
                 </ul>

@@ -51,7 +51,7 @@ const CurrencyAdd = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">Add Currencies</h1>
+                  <h1 className="h4 ls-tight headingColor">Add Currency</h1>
                 </div>
               </div>
               <div className="col-auto">

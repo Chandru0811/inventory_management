@@ -52,7 +52,7 @@ const CurrencyView = () => {
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
                     <h1 className="h4 ls-tight headingColor">
-                      View Currencies
+                      View Currency
                     </h1>
                   </div>
                 </div>

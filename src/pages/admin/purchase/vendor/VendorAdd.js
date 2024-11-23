@@ -125,7 +125,7 @@ const VendorAdd = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      setLoadIndicator(true); // Show loading indicator
+      setLoadIndicator(true); 
       console.log(values);
 
       // FormData initialization
@@ -143,11 +143,11 @@ const VendorAdd = () => {
       formData.append("currency", values.currency || "");
       formData.append("taxRate", values.taxRate || "");
       formData.append("paymentTerms", values.paymentTerms || "");
-      formData.append("enablePortal", enablePortal); // Checkbox value from state
+      formData.append("enablePortal", enablePortal); 
       formData.append("portalLanguage", values.portalLanguage || "");
       formData.append("websiteUrl", values.websiteUrl || "");
       formData.append("department", values.department || "");
-      formData.append("designation", values.designation || ""); // Removed extra spaces
+      formData.append("designation", values.designation || ""); 
       formData.append("twitterUrl", values.twitterUrl || "");
       formData.append("skypeName", values.skypeName || "");
       formData.append("facebookUrl", values.facebookUrl || "");
@@ -210,9 +210,9 @@ const VendorAdd = () => {
             .map((item) => ({
               accountHolderName: item.accountHolderName,
               bankName: item.bankName,
-              accountNumber: item.accountNumber, // No need to parse account numbers
+              accountNumber: item.accountNumber,
               reAccountNumber: item.reAccountNumber,
-              ifsc: item.ifsc, // IFSC is alphanumeric
+              ifsc: item.ifsc, 
             }))
         )
       );
@@ -263,7 +263,7 @@ const VendorAdd = () => {
   const handleInputChange = (rowIndex, field, value) => {
     setRows((prevRows) =>
       prevRows.map((row, idx) => {
-        if (idx !== rowIndex) return row; // Return unchanged rows
+        if (idx !== rowIndex) return row;
 
         const updatedContacts = row.contacts ? [...row.contacts] : [{}];
         updatedContacts[0] = { ...updatedContacts[0], [field]: value };
@@ -424,7 +424,6 @@ const VendorAdd = () => {
                   )}
                 </div>
               </div>
-
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">Company Name</lable>
                 <div className="mb-3">
@@ -708,14 +707,13 @@ const VendorAdd = () => {
                       type="checkbox"
                       className="form-check-input"
                       checked={enablePortal}
-                      onChange={handleCheckboxChange} // Handle checkbox state changes dynamically
+                      onChange={handleCheckboxChange}
                     />
                     <label className="form-check-label">
                       Allow portal access for this vendor
                     </label>
                   </div>
                 </div>
-
                 <div className="col-md-6 col-12 mb-2">
                   <div className="d-flex align-items-center">
                     <label className="form-label mb-0">Portal Language</label>

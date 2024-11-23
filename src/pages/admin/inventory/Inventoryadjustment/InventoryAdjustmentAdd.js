@@ -33,7 +33,7 @@ const InventoryAdjustmentAdd = () => {
       accountId: "",
       quantityAdjustmentItems: [
         {
-          item: "",
+          itemId: "",
           qty: "",
           price: "",
           disc: "",
@@ -61,9 +61,21 @@ const InventoryAdjustmentAdd = () => {
       formData.append("referenceNumber", values.referenceNumber);
       formData.append("date", values.date);
       formData.append("accountId", values.accountId);
-      formData.append("reason", values.reason);
+      formData.append("reasonId", values.reasonId);
+      formData.append("wareHouseId", values.wareHouseId);
       formData.append("descOfAdjustment", values.descOfAdjustment);
       formData.append("file", values.file);
+      formData.append(
+        "quantityAdjustmentItems",
+        JSON.stringify(
+          values.quantityAdjustmentItems.map((item) => ({
+            itemId: item.itemId,
+            quantityAvailable: item.quantityAvailable,
+            quantityOnHand: item.quantityOnHand,
+            quantityAdjusted: item.quantityAdjusted,
+          }))
+        )
+      );
       try {
         const response = await api.post("createInventoryAdjustment", formData, {
           headers: {

@@ -1051,7 +1051,7 @@ const CompositeItemAdd = () => {
                                   const quantity =
                                     parseInt(e.target.value, 10) || 0;
                                   handleQuantityChange(index, quantity);
-                                  formik.handleChange(e); // Ensure Formik handles the input value
+                                  formik.handleChange(e);
                                 }}
                               />
                               {formik.touched.compositeAssociateItemsJson?.[
@@ -1069,7 +1069,6 @@ const CompositeItemAdd = () => {
                                   </div>
                                 )}
                             </td>
-
                             <td>
                               <input
                                 onInput={(event) => {

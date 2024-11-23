@@ -28,19 +28,26 @@ const CustomerEdit = () => {
 
   const validationSchema = Yup.object({
     customerType: Yup.string().required("*Customer Type is required"),
-    companyName: Yup.string().required("*Company Name is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    customerEmail: Yup.string().required("*Email is required"),
-    customerPhoneNumber: Yup.string().required("*Phone is required"),
-    customerDisplayName: Yup.string().required("*Display Name is required"),
+    // salutation: Yup.string().required("*Salutation is required"),
+    // firstName: Yup.string()
+    //   .matches(/^[A-Za-z]+$/, "*First Name must contain only letters")
+    //   .required("*First Name is required"),
+    // lastName: Yup.string()
+    //   .matches(/^[A-Za-z]+$/, "*Last Name must contain only letters")
+    //   .required("*Last Name is required"),
+    customerEmail: Yup.string().required("*Customer Email is required"),
+    customerDisplayName: Yup.string().required(
+      "*Customer Display Name is required"
+    ),
   });
 
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
       customerType: "",
       companyName: "",
-      primaryContact: "",
+      salutation: "",
+      firstName: "",
+      lastName: "",
       customerEmail: "",
       customerPhoneNumber: "",
       customerDisplayName: "",
@@ -165,34 +172,115 @@ const CustomerEdit = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Customer Type<span className="text-danger">*</span>
+                  Salutation<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
-                    name="customerType"
-                    className={`form-select  ${
-                      formik.touched.customerType && formik.errors.customerType
+                    type="text"
+                    name="salutation"
+                    className={`form-select form-select-sm  ${
+                      formik.touched.salutation && formik.errors.salutation
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("customerType")}
+                    {...formik.getFieldProps("salutation")}
                   >
-                    <option value=""></option>
-                    <option value="Business">Business</option>
-                    {/* <option value="INDIVITUALS">Individual</option> */}
+                    <option></option>
+                    <option value="Mr">Mr.</option>
+                    <option value="Mrs.">Mrs.</option>
+                    <option value="Ms.">Ms.</option>
+                    <option value="Miss.">Miss.</option>
+                    <option value="Dr.">Dr.</option>
                   </select>
-                  {formik.touched.customerType &&
-                    formik.errors.customerType && (
-                      <div className="invalid-feedback">
-                        {formik.errors.customerType}
-                      </div>
-                    )}
+                  {formik.touched.salutation && formik.errors.salutation && (
+                    <div className="invalid-feedback">
+                      {formik.errors.salutation}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Company Name<span className="text-danger">*</span>
+                  First Name<span className="text-danger">*</span>
                 </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="firstName"
+                    className={`form-control form-control-sm ${
+                      formik.touched.firstName && formik.errors.firstName
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("firstName")}
+                  />
+                  {formik.touched.firstName && formik.errors.firstName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.firstName}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Last Name<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="lastName"
+                    className={`form-control form-control-sm  ${
+                      formik.touched.lastName && formik.errors.lastName
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("lastName")}
+                  />
+                  {formik.touched.lastName && formik.errors.lastName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.lastName}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                    Customer Type<span className="text-danger">*</span>
+                  </label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="customerType"
+                    id="Business"
+                    value="Business"
+                    onChange={formik.handleChange}
+                    checked={formik.values.customerType === "Business"}
+                  />
+                  <label className="form-check-label">Business</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="customerType"
+                    id="Individual"
+                    value="Individual"
+                    onChange={formik.handleChange}
+                    checked={formik.values.customerType === "Individual"}
+                  />
+                  <label className="form-check-label">Individual</label>
+                </div>
+                {formik.errors.customerType && formik.touched.customerType && (
+                  <div className="text-danger" style={{ fontSize: ".875em" }}>
+                    {formik.errors.customerType}
+                  </div>
+                )}
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Company Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -211,82 +299,6 @@ const CustomerEdit = () => {
                   )}
                 </div>
               </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Primary Contact<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="primaryContact"
-                    className={`form-control  ${
-                      formik.touched.primaryContact &&
-                      formik.errors.primaryContact
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("primaryContact")}
-                  />
-                  {formik.touched.primaryContact &&
-                    formik.errors.primaryContact && (
-                      <div className="invalid-feedback">
-                        {formik.errors.primaryContact}
-                      </div>
-                    )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Customer Email<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="customerEmail"
-                    className={`form-control  ${
-                      formik.touched.customerEmail &&
-                      formik.errors.customerEmail
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("customerEmail")}
-                  />
-                  {formik.touched.customerEmail &&
-                    formik.errors.customerEmail && (
-                      <div className="invalid-feedback">
-                        {formik.errors.customerEmail}
-                      </div>
-                    )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Customer Phone<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="customerPhoneNumber"
-                    className={`form-control  ${
-                      formik.touched.customerPhoneNumber &&
-                      formik.errors.customerPhoneNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("customerPhoneNumber")}
-                  />
-                  {formik.touched.customerPhoneNumber &&
-                    formik.errors.customerPhoneNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.customerPhoneNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Customer Display Name<span className="text-danger">*</span>
@@ -311,71 +323,97 @@ const CustomerEdit = () => {
                     )}
                 </div>
               </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Customer Email<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="customerEmail"
+                    className={`form-control  ${
+                      formik.touched.customerEmail &&
+                      formik.errors.customerEmail
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("customerEmail")}
+                  />
+                  {formik.touched.customerEmail &&
+                    formik.errors.customerEmail && (
+                      <div className="invalid-feedback">
+                        {formik.errors.customerEmail}
+                      </div>
+                    )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Customer Phone</lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="customerPhoneNumber"
+                    className={`form-control  ${
+                      formik.touched.customerPhoneNumber &&
+                      formik.errors.customerPhoneNumber
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("customerPhoneNumber")}
+                  />
+                  {formik.touched.customerPhoneNumber &&
+                    formik.errors.customerPhoneNumber && (
+                      <div className="invalid-feedback">
+                        {formik.errors.customerPhoneNumber}
+                      </div>
+                    )}
+                </div>
+              </div>
               <ul
-              className="nav nav-underline border-bottom"
-              style={{ cursor: "pointer" }}
-            >
-              <li className="nav-item">
-                <span
-                  className={`nav-link ${
-                    activeTab === "otherDetails" ? "active" : ""
-                  }`}
-                  onClick={() => handleTabClick("otherDetails")}
-                >
-                  Other Details
-                </span>
-              </li>
-              <li className="nav-item">
-                <span
-                  className={`nav-link ${
-                    activeTab === "address" ? "active" : ""
-                  }`}
-                  onClick={() => handleTabClick("address")}
-                >
-                  Address
-                </span>
-              </li>
-              <li className="nav-item">
-                <span
-                  className={`nav-link ${
-                    activeTab === "contactPersons" ? "active" : ""
-                  }`}
-                  onClick={() => handleTabClick("contactPersons")}
-                >
-                  Contact Persons
-                </span>
-              </li>
-              {/* <li className="nav-item">
-                <span
-                  className={`nav-link ${
-                    activeTab === "customFields" ? "active" : ""
-                  }`}
-                  onClick={() => handleTabClick("customFields")}
-                >
-                  Custom Fields
-                </span>
-              </li>
-              <li className="nav-item">
-                <span
-                  className={`nav-link ${
-                    activeTab === "reportingTags" ? "active" : ""
-                  }`}
-                  onClick={() => handleTabClick("reportingTags")}
-                >
-                  Reporting Tags
-                </span>
-              </li> */}
-              <li className="nav-item">
-                <span
-                  className={`nav-link ${
-                    activeTab === "remarks" ? "active" : ""
-                  }`}
-                  onClick={() => handleTabClick("remarks")}
-                >
-                  Remarks
-                </span>
-              </li>
-            </ul>
+                className="nav nav-underline border-bottom"
+                style={{ cursor: "pointer" }}
+              >
+                <li className="nav-item">
+                  <span
+                    className={`nav-link ${
+                      activeTab === "otherDetails" ? "active" : ""
+                    }`}
+                    onClick={() => handleTabClick("otherDetails")}
+                  >
+                    Other Details
+                  </span>
+                </li>
+                <li className="nav-item">
+                  <span
+                    className={`nav-link ${
+                      activeTab === "address" ? "active" : ""
+                    }`}
+                    onClick={() => handleTabClick("address")}
+                  >
+                    Address
+                  </span>
+                </li>
+                <li className="nav-item">
+                  <span
+                    className={`nav-link ${
+                      activeTab === "contactPersons" ? "active" : ""
+                    }`}
+                    onClick={() => handleTabClick("contactPersons")}
+                  >
+                    Contact Persons
+                  </span>
+                </li>
+                <li className="nav-item">
+                  <span
+                    className={`nav-link ${
+                      activeTab === "remarks" ? "active" : ""
+                    }`}
+                    onClick={() => handleTabClick("remarks")}
+                  >
+                    Remarks
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
           <div className="mt-3">
@@ -1213,7 +1251,9 @@ const CustomerEdit = () => {
                                 className="btn"
                                 onClick={() => deleteRow(index)}
                               >
-                                <TbXboxX style={{ fontSize: "25px", color: "red"}}/>
+                                <TbXboxX
+                                  style={{ fontSize: "25px", color: "red" }}
+                                />
                               </button>
                             )}
                           </td>

@@ -5,11 +5,13 @@ import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 import { TbXboxX } from "react-icons/tb";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 
 const CustomerAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [activeTab, setActiveTab] = useState("otherDetails");
+  const [enablePortal, setEnablePortal] = useState(false);
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -26,33 +28,134 @@ const CustomerAdd = () => {
   ]);
 
   const validationSchema = Yup.object({
-    customerType: Yup.string().required("*Contact Name is required"),
-    companyName: Yup.string().required("*Company Name is required"),
-    primaryContact: Yup.string().required("*Primary Contact is required"),
-    customerEmail: Yup.string().required("*Email is required"),
-    customerPhoneNumber: Yup.string().required("*Phone is required"),
-    customerDisplayName: Yup.string().required("*Display Name is required"),
+    customerType: Yup.string().required("*Customer Type is required"),
+    // salutation: Yup.string().required("*Salutation is required"),
+    // firstName: Yup.string()
+    //   .matches(/^[A-Za-z]+$/, "*First Name must contain only letters")
+    //   .required("*First Name is required"),
+    // lastName: Yup.string()
+    //   .matches(/^[A-Za-z]+$/, "*Last Name must contain only letters")
+    //   .required("*Last Name is required"),
+    customerEmail: Yup.string().required("*Customer Email is required"),
+    customerDisplayName: Yup.string().required(
+      "*Customer Display Name is required"
+    ),
   });
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
       customerType: "",
-      companyName: "",
       primaryContact: "",
+      companyName: "",
+      customerDisplayName: "",
+      customerEmail: "",
       customerEmail: "",
       customerPhoneNumber: "",
-      customerDisplayName: "",
+      currency: "",
+      taxRate: "",
+      paymentTerms: "",
+      enablePortal: "",
+      websiteUrl: "",
+      department: "",
+      designation: "",
+      twitterUrl: "",
+      skypeName: "",
+      facebookUrl: "",
+      billingAttention: "",
+      billingCountry: "",
+      billingAddress: "",
+      billingCity: "",
+      billingState: "",
+      billingZipcode: "",
+      billingPhone: "",
+      billingFax: "",
+      shippingAttention: "",
+      shippingCountry: "",
+      shippingAddress: "",
+      shippingCity: "",
+      shippingState: "",
+      shippingZipcode: "",
+      shippingPhone: "",
+      shippingFax: "",
+      remark: "",
+      fileAttachment: null,
+      contactsJson: [
+        {
+          salutation: "",
+          customerFirstName: "",
+          customerLastName: "",
+          customerEmail: "",
+          customerPhone: "",
+          customerMobile: "",
+          skypeName: "",
+          designation: "",
+          department: "",
+        },
+      ],
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
-      console.log(values);
-      const payload = {
-        ...values,
-        customerPhoneNumber: Number(values.customerPhoneNumber) || 0,
-      };
+      console.log("Items :", values.contactsJson);
+
+      const formData = new FormData();
+      formData.append("customerType", values.customerType);
+      formData.append("primaryContact", values.primaryContact || "Suriya");
+      formData.append("companyName", values.companyName);
+      formData.append("customerDisplayName", values.customerDisplayName);
+      formData.append("customerEmail", values.customerEmail);
+      formData.append("customerPhoneNumber", values.customerPhoneNumber);
+      formData.append("descOfAdjustment", values.descOfAdjustment);
+      formData.append("currency", values.currency);
+      formData.append("taxRate", values.taxRate);
+      formData.append("paymentTerms", values.paymentTerms);
+      formData.append("enablePortal", enablePortal);
+      formData.append("portalLanguage", values.portalLanguage);
+      formData.append("websiteUrl", values.websiteUrl);
+      formData.append("department", values.department);
+      formData.append("designation", values.designation);
+      formData.append("twitterUrl", values.twitterUrl);
+      formData.append("skypeName", values.skypeName);
+      formData.append("facebookUrl", values.facebookUrl);
+      formData.append("billingAttention", values.billingAttention);
+      formData.append("billingCountry", values.billingCountry);
+      formData.append("billingAddress", values.billingAddress);
+      formData.append("billingCity", values.billingCity);
+      formData.append("billingState", values.billingState);
+      formData.append("billingZipcode", values.billingZipcode);
+      formData.append("billingPhone", values.billingPhone);
+      formData.append("billingFax", values.billingFax);
+      formData.append("shippingAttention", values.shippingAttention);
+      formData.append("shippingCountry", values.shippingCountry);
+      formData.append("shippingAddress", values.shippingAddress);
+      formData.append("shippingCity", values.shippingCity);
+      formData.append("shippingState", values.shippingState);
+      formData.append("shippingZipcode", values.shippingZipcode);
+      formData.append("shippingPhone", values.shippingPhone);
+      formData.append("shippingFax", values.shippingFax);
+      formData.append("remark", values.remark);
+      formData.append("fileAttachment", values.fileAttachment);
+      formData.append(
+        "contactsJson",
+        JSON.stringify(
+          values.contactsJson.map((item) => ({
+            salutation: item.salutation,
+            customerFirstName: item.customerFirstName,
+            customerLastName: item.customerLastName,
+            customerEmail: item.customerEmail,
+            customerPhone: item.customerPhone,
+            customerMobile: item.customerMobile,
+            skypeName: item.skypeName,
+            designation: item.designation,
+            department: item.department,
+          }))
+        )
+      );
       try {
-        const response = await api.post("/createCustomers", payload, {});
+        const response = await api.post("/createCustomerWithContacts", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/customers");
@@ -66,37 +169,56 @@ const CustomerAdd = () => {
       }
     },
   });
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
   const addRow = () => {
     setRows([
       ...rows,
       {
         id: rows.length + 1,
-        salutation: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        workPhone: "",
-        mobile: "",
-        skype: "",
-        designation: "",
-        department: "",
+        contacts: [
+          {
+            salutation: "",
+            customerFirstName: "",
+            customerLastName: "",
+            customerEmail: "",
+            customerPhone: "",
+            customerMobile: "",
+            skypeName: "",
+            designation: "",
+            department: "",
+          },
+        ],
       },
     ]);
   };
 
-  const handleInputChange = (index, field, value) => {
-    const updatedRows = rows.map((row, rowIndex) =>
-      rowIndex === index ? { ...row, [field]: value } : row
+  const handleInputChange = (rowIndex, field, value) => {
+    setRows((prevRows) =>
+      prevRows.map((row, idx) => {
+        if (idx !== rowIndex) return row;
+
+        const updatedContacts = row.contacts ? [...row.contacts] : [{}];
+        updatedContacts[0] = { ...updatedContacts[0], [field]: value };
+
+        return {
+          ...row,
+          contacts: updatedContacts,
+        };
+      })
     );
-    setRows(updatedRows);
   };
 
   const deleteRow = (index) => {
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
+  };
+
+  const handleCheckboxChange = (event) => {
+    setEnablePortal(event.target.checked);
   };
 
   return (
@@ -149,34 +271,115 @@ const CustomerAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Customer Type<span className="text-danger">*</span>
+                  Salutation<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
-                    name="customerType"
-                    className={`form-select  ${
-                      formik.touched.customerType && formik.errors.customerType
+                    type="text"
+                    name="salutation"
+                    className={`form-select form-select-sm  ${
+                      formik.touched.salutation && formik.errors.salutation
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("customerType")}
+                    {...formik.getFieldProps("salutation")}
                   >
-                    <option value=""></option>
-                    <option value="Business">Business</option>
-                    {/* <option value="INDIVITUALS">Individual</option> */}
+                    <option></option>
+                    <option value="Mr">Mr.</option>
+                    <option value="Mrs.">Mrs.</option>
+                    <option value="Ms.">Ms.</option>
+                    <option value="Miss.">Miss.</option>
+                    <option value="Dr.">Dr.</option>
                   </select>
-                  {formik.touched.customerType &&
-                    formik.errors.customerType && (
-                      <div className="invalid-feedback">
-                        {formik.errors.customerType}
-                      </div>
-                    )}
+                  {formik.touched.salutation && formik.errors.salutation && (
+                    <div className="invalid-feedback">
+                      {formik.errors.salutation}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Company Name<span className="text-danger">*</span>
+                  First Name<span className="text-danger">*</span>
                 </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="firstName"
+                    className={`form-control form-control-sm ${
+                      formik.touched.firstName && formik.errors.firstName
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("firstName")}
+                  />
+                  {formik.touched.firstName && formik.errors.firstName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.firstName}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Last Name<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="lastName"
+                    className={`form-control form-control-sm  ${
+                      formik.touched.lastName && formik.errors.lastName
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("lastName")}
+                  />
+                  {formik.touched.lastName && formik.errors.lastName && (
+                    <div className="invalid-feedback">
+                      {formik.errors.lastName}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                    Customer Type<span className="text-danger">*</span>
+                  </label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="customerType"
+                    id="Business"
+                    value="Business"
+                    onChange={formik.handleChange}
+                    checked={formik.values.customerType === "Business"}
+                  />
+                  <label className="form-check-label">Business</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="customerType"
+                    id="Individual"
+                    value="Individual"
+                    onChange={formik.handleChange}
+                    checked={formik.values.customerType === "Individual"}
+                  />
+                  <label className="form-check-label">Individual</label>
+                </div>
+                {formik.errors.customerType && formik.touched.customerType && (
+                  <div className="text-danger" style={{ fontSize: ".875em" }}>
+                    {formik.errors.customerType}
+                  </div>
+                )}
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Company Name</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -195,32 +398,30 @@ const CustomerAdd = () => {
                   )}
                 </div>
               </div>
-
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Primary Contact<span className="text-danger">*</span>
+                  Customer Display Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="primaryContact"
+                    name="customerDisplayName"
                     className={`form-control  ${
-                      formik.touched.primaryContact &&
-                      formik.errors.primaryContact
+                      formik.touched.customerDisplayName &&
+                      formik.errors.customerDisplayName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("primaryContact")}
+                    {...formik.getFieldProps("customerDisplayName")}
                   />
-                  {formik.touched.primaryContact &&
-                    formik.errors.primaryContact && (
+                  {formik.touched.customerDisplayName &&
+                    formik.errors.customerDisplayName && (
                       <div className="invalid-feedback">
-                        {formik.errors.primaryContact}
+                        {formik.errors.customerDisplayName}
                       </div>
                     )}
                 </div>
               </div>
-
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Customer Email<span className="text-danger">*</span>
@@ -245,11 +446,8 @@ const CustomerAdd = () => {
                     )}
                 </div>
               </div>
-
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Customer Phone<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Customer Phone</lable>
                 <div className="mb-3">
                   <input
                     type="text"
@@ -266,31 +464,6 @@ const CustomerAdd = () => {
                     formik.errors.customerPhoneNumber && (
                       <div className="invalid-feedback">
                         {formik.errors.customerPhoneNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Customer Display Name<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="customerDisplayName"
-                    className={`form-control  ${
-                      formik.touched.customerDisplayName &&
-                      formik.errors.customerDisplayName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("customerDisplayName")}
-                  />
-                  {formik.touched.customerDisplayName &&
-                    formik.errors.customerDisplayName && (
-                      <div className="invalid-feedback">
-                        {formik.errors.customerDisplayName}
                       </div>
                     )}
                 </div>
@@ -330,26 +503,6 @@ const CustomerAdd = () => {
                   Contact Persons
                 </span>
               </li>
-              {/* <li className="nav-item">
-                <span
-                  className={`nav-link ${
-                    activeTab === "customFields" ? "active" : ""
-                  }`}
-                  onClick={() => handleTabClick("customFields")}
-                >
-                  Custom Fields
-                </span>
-              </li>
-              <li className="nav-item">
-                <span
-                  className={`nav-link ${
-                    activeTab === "reportingTags" ? "active" : ""
-                  }`}
-                  onClick={() => handleTabClick("reportingTags")}
-                >
-                  Reporting Tags
-                </span>
-              </li> */}
               <li className="nav-item">
                 <span
                   className={`nav-link ${
@@ -398,11 +551,15 @@ const CustomerAdd = () => {
                           : ""
                       }`}
                       {...formik.getFieldProps("currency")}
-                      disabled
                     >
-                      <option value="Indian Rupee" selected>
-                        Indian Rupee
+                      <option selected></option>
+                      <option value="INR - Indian Rupee">
+                        INR - Indian Rupee
                       </option>
+                      <option value="USD - United States Dollar">
+                        USD - United States Dollar
+                      </option>
+                      <option value="EUR - Euro">EUR - Euro</option>
                     </select>
                     {formik.touched.currency && formik.errors.currency && (
                       <div className="invalid-feedback">
@@ -425,9 +582,9 @@ const CustomerAdd = () => {
                       }`}
                       {...formik.getFieldProps("dueOnReceipt")}
                     >
-                      <option value="DueOnReceipt" selected>
-                        Due on Receipt
-                      </option>
+                      <option selected></option>
+                      <option value="1">Due on Receipt</option>
+                      <option value="2">Due end of the month</option>
                     </select>
                     {formik.touched.dueOnReceipt &&
                       formik.errors.dueOnReceipt && (
@@ -450,8 +607,9 @@ const CustomerAdd = () => {
                       }`}
                       {...formik.getFieldProps("priceList")}
                     >
-                      <option value="Indian Rupee" selected>
-                        Indian Rupee
+                      <option selected></option>
+                      <option value="Pen [ 10% Markup]">
+                        Pen [ 10% Markup]
                       </option>
                     </select>
                     {formik.touched.priceList && formik.errors.priceList && (
@@ -459,6 +617,63 @@ const CustomerAdd = () => {
                         {formik.errors.priceList}
                       </div>
                     )}
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 mb-2">
+                  <div className="d-flex align-items-center">
+                    <label className="form-label mb-0">Enable Portal</label>
+                    <span
+                      className="infoField"
+                      title="Give your customers access to portal to view transactions and make online payments"
+                    >
+                      <IoMdInformationCircleOutline />
+                    </span>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      checked={enablePortal}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label className="form-check-label">
+                      Allow portal access for this vendor
+                    </label>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 mb-2">
+                  <div className="d-flex align-items-center">
+                    <label className="form-label mb-0">Portal Language</label>
+                    <span
+                      className="infoField"
+                      title="This will change the contact's portal in corresponding languages"
+                    >
+                      <IoMdInformationCircleOutline />
+                    </span>
+                  </div>
+                  <div className="mb-3">
+                    <select
+                      type="text"
+                      name="portalLanguage"
+                      className={`form-select form-select-sm  ${
+                        formik.touched.portalLanguage &&
+                        formik.errors.portalLanguage
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      {...formik.getFieldProps("portalLanguage")}
+                    >
+                      <option selected></option>
+                      <option value="English">English</option>
+                      <option value="Tamil">Tamil</option>
+                      <option value="Hindi">Hindi</option>
+                    </select>
+                    {formik.touched.portalLanguage &&
+                      formik.errors.portalLanguage && (
+                        <div className="invalid-feedback">
+                          {formik.errors.portalLanguage}
+                        </div>
+                      )}
                   </div>
                 </div>
                 <div className="col-md-6 col-12 mb-2">
@@ -1068,29 +1283,29 @@ const CustomerAdd = () => {
                         <tr key={row.id}>
                           <td>
                             <div className="">
-                            <input
-                              type="text"
-                              value={row.salutation}
-                              className="form-control"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "salutation",
-                                  e.target.value
-                                )
-                              }
-                            />
+                              <input
+                                type="text"
+                                value={row.contacts?.[0]?.salutation || ""}
+                                className="form-control"
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    index,
+                                    "salutation",
+                                    e.target.value
+                                  )
+                                }
+                              />
                             </div>
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.firstName}
+                              value={row.contacts?.[0]?.customerFirstName || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
-                                  "firstName",
+                                  "customerFirstName",
                                   e.target.value
                                 )
                               }
@@ -1099,12 +1314,12 @@ const CustomerAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.lastName}
+                              value={row.contacts?.[0]?.customerLastName || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
-                                  "lastName",
+                                  "customerLastName",
                                   e.target.value
                                 )
                               }
@@ -1113,12 +1328,12 @@ const CustomerAdd = () => {
                           <td>
                             <input
                               type="email"
-                              value={row.email}
+                              value={row.contacts?.[0]?.customerEmail || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
-                                  "email",
+                                  "customerEmail",
                                   e.target.value
                                 )
                               }
@@ -1127,12 +1342,12 @@ const CustomerAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.workPhone}
+                              value={row.contacts?.[0]?.customerPhone || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
-                                  "workPhone",
+                                  "customerPhone",
                                   e.target.value
                                 )
                               }
@@ -1141,12 +1356,12 @@ const CustomerAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.mobile}
+                              value={row.contacts?.[0]?.customerMobile || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
-                                  "mobile",
+                                  "customerMobile",
                                   e.target.value
                                 )
                               }
@@ -1155,12 +1370,12 @@ const CustomerAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.skype}
+                              value={row.contacts?.[0]?.skypeName || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
                                   index,
-                                  "skype",
+                                  "skypeName",
                                   e.target.value
                                 )
                               }
@@ -1169,7 +1384,7 @@ const CustomerAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.designation}
+                              value={row.contacts?.[0]?.designation || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
@@ -1183,7 +1398,7 @@ const CustomerAdd = () => {
                           <td>
                             <input
                               type="text"
-                              value={row.department}
+                              value={row.contacts?.[0]?.department || ""}
                               className="form-control input-wide"
                               onChange={(e) =>
                                 handleInputChange(
@@ -1200,7 +1415,9 @@ const CustomerAdd = () => {
                                 className="btn"
                                 onClick={() => deleteRow(index)}
                               >
-                                <TbXboxX style={{ fontSize: "25px", color: "red"}}/>
+                                <TbXboxX
+                                  style={{ fontSize: "25px", color: "red" }}
+                                />
                               </button>
                             )}
                           </td>

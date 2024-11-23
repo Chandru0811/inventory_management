@@ -9,31 +9,39 @@ const PriceListAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
 
-  const validationSchema = Yup.object({
+  const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
-    roundOffTo: Yup.string().required("*Round Off To is required"),
-    percentage: Yup.string().required("*Percentage is required"),
-  });
+    transactionType: Yup.string().required("*Transaction Type is required"),
+    // roundOffTo: Yup.string()
+    //   .nullable()
+    //   .when("priceListType", {
+    //     is: "AllItems",
+    //     then: Yup.string().required("*Round off To is required"),
+    //     otherwise: Yup.string().nullable(),
+    //   }),
+    // percentage: Yup.string()
+    //   .nullable()
+    //   .when("priceListType", {
+    //     is: "AllItems",
+    //     then: Yup.string().required("*Percentage is required"),
+    //     otherwise: Yup.string().nullable(),
+    //   }),
+  });  
+
   const formik = useFormik({
     initialValues: {
-      // companyName: "",
-      itemId: "",
-      salesId: "",
-      purchaseId: "",
       name: "",
       transactionType: "",
-      priceListType: "",
+      priceListType: "AllItems",
       description: "",
       percentage: "",
       roundOffTo: "",
       pricingScheme: "",
       currency: "",
-      // discount: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
-      console.log(values);
       try {
         const response = await api.post("/createPriceList", values, {});
         if (response.status === 201) {
@@ -103,195 +111,111 @@ const PriceListAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Name <span className="text-danger">*</span>
+                  Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="name"
-                    className={`form-control ${formik.touched.name && formik.errors.name
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control ${
+                      formik.touched.name && formik.errors.name
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("name")}
                   />
                   {formik.touched.name && formik.errors.name && (
-                    <div className="invalid-feedback">
-                      {formik.errors.name}
-                    </div>
+                    <div className="invalid-feedback">{formik.errors.name}</div>
                   )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Transaction Type<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                    Transaction Type<span className="text-danger">*</span>
+                  </label>
+                </div>
+                <div className="form-check form-check-inline">
                   <input
-                    type="text"
+                    className="form-check-input"
+                    type="radio"
                     name="transactionType"
-                    className={`form-control  ${formik.touched.transactionType && formik.errors.transactionType
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("transactionType")}
+                    id="Sales"
+                    value="Sales"
+                    onChange={formik.handleChange}
+                    checked={formik.values.transactionType === "Sales"}
                   />
-                  {formik.touched.transactionType && formik.errors.transactionType && (
-                    <div className="invalid-feedback">
+                  <label className="form-check-label">Sales</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="transactionType"
+                    id="Purchase"
+                    value="Purchase"
+                    onChange={formik.handleChange}
+                    checked={formik.values.transactionType === "Purchase"}
+                  />
+                  <label className="form-check-label">Purchase</label>
+                </div>
+                {formik.errors.transactionType &&
+                  formik.touched.transactionType && (
+                    <div className="text-danger" style={{ fontSize: ".875em" }}>
                       {formik.errors.transactionType}
                     </div>
                   )}
-                </div>
               </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Price List Type<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
+              <div className="col-md-6 col-12 mb-3">
+                <div>
+                  <label for="exampleFormControlInput1" className="form-label">
+                    Price List Type
+                  </label>
+                </div>
+                <div className="form-check form-check-inline">
                   <input
-                    type="text"
+                    className="form-check-input"
+                    type="radio"
                     name="priceListType"
-                    className={`form-control ${formik.touched.priceListType &&
-                      formik.errors.priceListType
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("priceListType")}
+                    id="AllItems"
+                    value="AllItems"
+                    onChange={formik.handleChange}
+                    checked={formik.values.priceListType === "AllItems"}
                   />
-                  {formik.touched.priceListType &&
-                    formik.errors.priceListType && (
-                      <div className="invalid-feedback">
-                        {formik.errors.priceListType}
-                      </div>
-                    )}
+                  <label className="form-check-label">All Items</label>
                 </div>
-              </div>
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Percentage<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
+                <div className="form-check form-check-inline">
                   <input
-                    type="text"
-                    name="percentage"
-                    className={`form-control  ${formik.touched.percentage && formik.errors.percentage
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("percentage")}
+                    className="form-check-input"
+                    type="radio"
+                    name="priceListType"
+                    id="IndividualItems"
+                    value="IndividualItems"
+                    onChange={formik.handleChange}
+                    checked={formik.values.priceListType === "IndividualItems"}
                   />
-                  {formik.touched.percentage && formik.errors.percentage && (
-                    <div className="invalid-feedback">
-                      {formik.errors.percentage}
+                  <label className="form-check-label">Individual Items</label>
+                </div>
+                {formik.errors.priceListType &&
+                  formik.touched.priceListType && (
+                    <div className="text-danger" style={{ fontSize: ".875em" }}>
+                      {formik.errors.priceListType}
                     </div>
                   )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Round Off To<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="roundOffTo"
-                    className={`form-control  ${formik.touched.roundOffTo && formik.errors.roundOffTo
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("roundOffTo")}
-                  />
-                  {formik.touched.roundOffTo && formik.errors.roundOffTo && (
-                    <div className="invalid-feedback">
-                      {formik.errors.roundOffTo}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Pricing Scheme<span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="pricingScheme"
-                    className={`form-control  ${formik.touched.pricingScheme &&
-                      formik.errors.pricingScheme
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("pricingScheme")}
-                  />
-                  {formik.touched.pricingScheme &&
-                    formik.errors.pricingScheme && (
-                      <div className="invalid-feedback">
-                        {formik.errors.pricingScheme}
-                      </div>
-                    )}
-                </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Currency
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="currency"
-                    className={`form-control  ${formik.touched.currency && formik.errors.currency
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("currency")}
-                  />
-                  {formik.touched.currency && formik.errors.currency && (
-                    <div className="invalid-feedback">
-                      {formik.errors.currency}
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Discount
-                  <span className="text-danger">*</span>
-                </lable>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="discount"
-                    className={`form-control  ${formik.touched.discount && formik.errors.discount
-                      ? "is-invalid"
-                      : ""
-                      }`}
-                    {...formik.getFieldProps("discount")}
-                  />
-                  {formik.touched.discount && formik.errors.discount && (
-                    <div className="invalid-feedback">
-                      {formik.errors.discount}
-                    </div>
-                  )}
-                </div>
-              </div> */}
-              <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Description
-                  <span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Description</lable>
                 <div className="mb-3">
                   <textarea
                     type="text"
                     name="description"
-                    className={`form-control  ${formik.touched.description && formik.errors.description
-                      ? "is-invalid"
-                      : ""
-                      }`}
+                    className={`form-control  ${
+                      formik.touched.description && formik.errors.description
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     {...formik.getFieldProps("description")}
+                    rows={4}
                   />
                   {formik.touched.description && formik.errors.description && (
                     <div className="invalid-feedback">
@@ -300,6 +224,149 @@ const PriceListAdd = () => {
                   )}
                 </div>
               </div>
+              {formik.values.priceListType === "AllItems" && (
+                <>
+                  <div className="col-md-6 col-12 mb-2">
+                    <lable className="form-lable">
+                      Percentage<span className="text-danger">*</span>
+                    </lable>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="percentage"
+                        className={`form-control  ${
+                          formik.touched.percentage && formik.errors.percentage
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("percentage")}
+                      />
+                      {formik.touched.percentage &&
+                        formik.errors.percentage && (
+                          <div className="invalid-feedback">
+                            {formik.errors.percentage}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 mb-2">
+                    <lable className="form-lable">
+                      Round off To<span className="text-danger">*</span>
+                    </lable>
+                    <div className="mb-3">
+                      <select
+                        type="text"
+                        name="roundOffTo"
+                        className={`form-select  ${
+                          formik.touched.roundOffTo && formik.errors.roundOffTo
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("roundOffTo")}
+                      >
+                        <option selected></option>
+                        <option value="NeverMind">Never Mind</option>
+                        <option value="NearestWholeNumber">
+                          Nearest whole number
+                        </option>
+                        <option value="0.99">0.99</option>
+                        <option value="0.50">0.50</option>
+                        <option value="0.49">0.49</option>
+                        <option value="DecimalPlaces">Decimal Places</option>
+                      </select>
+                      {formik.touched.roundOffTo &&
+                        formik.errors.roundOffTo && (
+                          <div className="invalid-feedback">
+                            {formik.errors.roundOffTo}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                </>
+              )}
+              {formik.values.priceListType === "IndividualItems" && (
+                <>
+                  <div className="col-md-6 col-12 mb-3">
+                    <div>
+                      <label
+                        for="exampleFormControlInput1"
+                        className="form-label"
+                      >
+                        Pricing Scheme
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="pricingScheme"
+                        id="UnitPricing"
+                        value="UnitPricing"
+                        onChange={formik.handleChange}
+                        checked={formik.values.pricingScheme === "UnitPricing"}
+                      />
+                      <label className="form-check-label">Unit Pricing</label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="pricingScheme"
+                        id="VolumePrice"
+                        value="VolumePrice"
+                        onChange={formik.handleChange}
+                        checked={formik.values.pricingScheme === "VolumePrice"}
+                      />
+                      <label className="form-check-label">Volume Price</label>
+                    </div>
+                    {formik.errors.pricingScheme &&
+                      formik.touched.pricingScheme && (
+                        <div
+                          className="text-danger"
+                          style={{ fontSize: ".875em" }}
+                        >
+                          {formik.errors.pricingScheme}
+                        </div>
+                      )}
+                  </div>
+                  <div className="col-md-6 col-12 mb-2">
+                    <lable className="form-lable">Currency</lable>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        name="currency"
+                        className={`form-control  ${
+                          formik.touched.currency && formik.errors.currency
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        {...formik.getFieldProps("currency")}
+                      />
+                      {formik.touched.currency && formik.errors.currency && (
+                        <div className="invalid-feedback">
+                          {formik.errors.currency}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12 mb-2">
+                    <lable>Discount</lable>
+                    <div className="form-check mb-3">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="disableSales"
+                      />
+                      <h2
+                        className="form-check-label pt-1"
+                        htmlFor="disableSales"
+                      >
+                        I want to include discount percentage for the items
+                      </h2>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

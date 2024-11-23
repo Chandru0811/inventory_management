@@ -105,7 +105,9 @@ import ExpenseView from "../pages/admin/purchase/Expense/ExpenseView";
 import Tax from "../pages/admin/Settings/Tax/Tax";
 import Unit from "../pages/admin/Settings/Unit/Unit";
 import Manufacture from "../pages/admin/Settings/Manufacture/Manufacture";
-
+import PaymentTerms from "../pages/admin/Settings/PaymentTerms/PaymentTerms";
+import Reason from "../pages/admin/Settings/Reason/Reason";
+import Account from "../pages/admin/Settings/Account/Account";
 
 function Admin({ handleLogout }) {
   return (
@@ -126,14 +128,25 @@ function Admin({ handleLogout }) {
 
                   <Route path="/itemgroup" element={<ItemGroup />} />
                   <Route path="/itemgroup/add" element={<ItemGroupAdd />} />
-                  <Route path="/itemgroup/edit/:id" element={<ItemGroupEdit />} />
-                  <Route path="/itemgroup/view/:id" element={<ItemGroupView />} />
-
+                  <Route
+                    path="/itemgroup/edit/:id"
+                    element={<ItemGroupEdit />}
+                  />
+                  <Route
+                    path="/itemgroup/view/:id"
+                    element={<ItemGroupView />}
+                  />
 
                   <Route path="/warehouse" element={<WareHouse />} />
                   <Route path="/warehouse/add" element={<WareHouseAdd />} />
-                  <Route path="/warehouse/edit/:id" element={<WareHouseEdit />} />
-                  <Route path="/warehouse/view/:id" element={<WareHouseView />} />
+                  <Route
+                    path="/warehouse/edit/:id"
+                    element={<WareHouseEdit />}
+                  />
+                  <Route
+                    path="/warehouse/view/:id"
+                    element={<WareHouseView />}
+                  />
 
                   <Route path="/brand" element={<Branding />} />
                   <Route path="/brand/add" element={<BrandingAdd />} />
@@ -175,13 +188,25 @@ function Admin({ handleLogout }) {
                   {/* Sales */}
                   <Route path="/customers" element={<Customer />} />
                   <Route path="/customers/add" element={<CustomerAdd />} />
-                  <Route path="/customers/edit/:id" element={<CustomerEdit />} />
-                  <Route path="/customers/view/:id" element={<CustomerView />} />
+                  <Route
+                    path="/customers/edit/:id"
+                    element={<CustomerEdit />}
+                  />
+                  <Route
+                    path="/customers/view/:id"
+                    element={<CustomerView />}
+                  />
 
                   <Route path="/salesorder" element={<SalesOrder />} />
                   <Route path="/salesorder/add" element={<SalesOrderAdd />} />
-                  <Route path="/salesorder/edit/:id" element={<SalesOrderEdit />} />
-                  <Route path="/salesorder/view/:id" element={<SalesOrderView />} />
+                  <Route
+                    path="/salesorder/edit/:id"
+                    element={<SalesOrderEdit />}
+                  />
+                  <Route
+                    path="/salesorder/view/:id"
+                    element={<SalesOrderView />}
+                  />
 
                   <Route path="/packages" element={<Packages />} />
                   <Route path="/packages/add" element={<PackagesAdd />} />
@@ -193,20 +218,44 @@ function Admin({ handleLogout }) {
                   <Route path="/shipment/edit/:id" element={<ShipmentEdit />} />
                   <Route path="/shipment/view/:id" element={<ShipmentView />} />
 
-                  <Route path="/paymentreceived" element={<PaymentReceived />} />
-                  <Route path="/paymentreceived/add" element={<PaymentReceivedAdd />} />
-                  <Route path="/paymentreceived/edit/:id" element={<PaymentReceivedEdit />} />
-                  <Route path="/paymentreceived/view/:id" element={<PaymentReceivedView />} />
+                  <Route
+                    path="/paymentreceived"
+                    element={<PaymentReceived />}
+                  />
+                  <Route
+                    path="/paymentreceived/add"
+                    element={<PaymentReceivedAdd />}
+                  />
+                  <Route
+                    path="/paymentreceived/edit/:id"
+                    element={<PaymentReceivedEdit />}
+                  />
+                  <Route
+                    path="/paymentreceived/view/:id"
+                    element={<PaymentReceivedView />}
+                  />
 
                   <Route path="/creditnotes" element={<CreditNotes />} />
                   <Route path="/creditnotes/add" element={<CreditNotesAdd />} />
-                  <Route path="/creditnotes/edit/:id" element={<CreditNotesEdit />} />
-                  <Route path="/creditnotes/view/:id" element={<CreditNotesView />} />
+                  <Route
+                    path="/creditnotes/edit/:id"
+                    element={<CreditNotesEdit />}
+                  />
+                  <Route
+                    path="/creditnotes/view/:id"
+                    element={<CreditNotesView />}
+                  />
 
                   <Route path="/pricelist" element={<PriceList />} />
                   <Route path="/pricelist/add" element={<PriceListAdd />} />
-                  <Route path="/pricelist/edit/:id" element={<PriceListEdit />} />
-                  <Route path="/pricelist/view/:id" element={<PriceListView />} />
+                  <Route
+                    path="/pricelist/edit/:id"
+                    element={<PriceListEdit />}
+                  />
+                  <Route
+                    path="/pricelist/view/:id"
+                    element={<PriceListView />}
+                  />
 
                   <Route path="/compositeitem" element={<CompositeItem />} />
                   <Route
@@ -291,7 +340,16 @@ function Admin({ handleLogout }) {
                   {/* {/ Manufacture /} */}
                   <Route path="/manufacture" element={<Manufacture />} />
 
-                  {/* {/ Expenses /} */}
+                  {/* Payment Terms */}
+                  <Route path="/terms" element={<PaymentTerms />} />
+
+                  {/* Reaons */}
+                  <Route path="/reason" element={<Reason />} />
+
+                  {/* Account */}
+                  <Route path="/account" element={<Account />} />
+
+                  {/* Expenses */}
                   <Route path="/expense" element={<Expense />} />
                   <Route path="/expense/add" element={<ExpenseAdd />} />
                   <Route path="/expense/edit/:id" element={<ExpenseEdit />} />

@@ -2,23 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import "datatables.net-dt";
 import "datatables.net-responsive-dt";
 import $ from "jquery";
-import { Link } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
-import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
-import { FaEye, FaRegEdit } from "react-icons/fa";
-import { GoEye } from "react-icons/go";
+import api from "../../../../config/URL";
+import ReasonAdd from "./ReasonAdd";
+import ReasonEdit from "./ReasonEdit";
 
-const Customer = () => {
+const Reason = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get("/getAllCustomers");
+        const response = await api.get("/getAllAdjustmentReasons");
         setDatas(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -59,9 +56,9 @@ const Customer = () => {
     destroyDataTable();
     setLoading(true);
     try {
-      const response = await api.get("/getAllCustomers");
+      const response = await api.get("/getAllAdjustmentReasons");
       setDatas(response.data);
-      initializeDataTable(); // Reinitialize DataTable after successful data update
+      initializeDataTable();
     } catch (error) {
       console.error("Error refreshing data:", error);
     }
@@ -75,6 +72,7 @@ const Customer = () => {
       table.destroy();
     };
   }, []);
+
   return (
     <div>
       {loading ? (
@@ -94,30 +92,21 @@ const Customer = () => {
         <>
           <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header sticky-top"
-            style={{ borderRadius: "0", top: "66px" }}
-          >
+              className="card shadow border-0 mb-2 top-header sticky-top"
+              style={{ borderRadius: "0", top: "66px" }}
+            >
               <div className="container-fluid py-4">
                 <div className="row align-items-center justify-content-between ">
                   <div className="col">
                     <div className="d-flex align-items-center gap-4">
-                      <h1 className="h4 ls-tight headingColor ">Customer</h1>
+                      <h1 className="h4 ls-tight headingColor ">
+                        Reasons ({datas.length})
+                      </h1>
                     </div>
                   </div>
                   <div className="col-auto">
                     <div className="hstack gap-2 justify-content-end">
-                      {/* {storedScreens?.levelCreate && ( */}
-                      <Link to="/customers/add">
-                        <button
-                          type="submit"
-                          className="btn btn-sm btn-button btn-primary"
-                        >
-                          <span cla>
-                            Add <FaPlus className="pb-1" />
-                          </span>
-                        </button>
-                      </Link>
-                      {/* )} */}
+                      <ReasonAdd onSuccess={refreshData} />
                     </div>
                   </div>
                 </div>
@@ -140,16 +129,7 @@ const Customer = () => {
                         S.NO
                       </th>
                       <th scope="col" className="text-start">
-                        Customer NAME
-                      </th>
-                      <th scope="col" className="text-start">
-                        COMPANY NAME
-                      </th>
-                      <th scope="col" className="text-start">
-                        EMAIL
-                      </th>
-                      <th scope="col" className="text-start">
-                        PHONE
+                        Reason
                       </th>
                       <th scope="col" className="text-center ps-5">
                         ACTION
@@ -160,33 +140,16 @@ const Customer = () => {
                     {datas.map((data, index) => (
                       <tr key={index}>
                         <td className="text-start">{index + 1}</td>
-                        <td className="text-start">{data.customerName}</td>
-                        <td className="text-start">{data.companyName}</td>
-                        <td className="text-start">{data.customerEmail}</td>
-                        <td className="text-start">
-                          {data.customerPhoneNumber}
-                        </td>
-                        <td className="text-center">
+                        <td className="text-start">{data.reason}</td>
+                        <td className="">
                           <div className="d-flex justify-content-center gap-1">
-                            <Link to={`/customers/view/${data.id}`}>
-                              <button
-                                className="btn btn-sm"
-                                style={{ padding: "7px" }}
-                              >
-                                <GoEye />
-                              </button>
-                            </Link>
-                            <Link to={`/customers/edit/${data.id}`}>
-                              <button
-                                className="btn btn-sm"
-                                style={{ padding: "7px" }}
-                              >
-                                <FaRegEdit />
-                              </button>
-                            </Link>
+                            <ReasonEdit
+                              onSuccess={refreshData}
+                              id={data.id}
+                            />
                             <DeleteModel
                               onSuccess={refreshData}
-                              path={`/deleteCustomers/${data.id}`}
+                              path={`/deleteAdjustmentReason/${data.id}`}
                             />
                           </div>
                         </td>
@@ -204,4 +167,4 @@ const Customer = () => {
   );
 };
 
-export default Customer;
+export default Reason;
