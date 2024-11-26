@@ -10,15 +10,22 @@ const ItemGroupAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [manufacture, setManufacture] = useState(null);
-  const [multipleItemsJson, setMultipleItemsJson] = useState([{ itemAttribute: "", itemOptions: "" }]);
+  const [brandId, setBrandId] = useState(null);
 
   const validationSchema = Yup.object({
     itemGroupName: Yup.string().required("*Item Group Name is required"),
     type: Yup.string().required("*Type is required"),
     itemUnit: Yup.string().required("*Item Unit is required"),
-    multipleItems: Yup.string().required("*Multiple Items is required"),
-    itemAttribute: Yup.string().required("*Item Attribute is required"),
-    itemOptions: Yup.string().required("*Item Options is required"),
+    multipleItemsJson: Yup.array()
+      .of(
+        Yup.object({
+          attribute: Yup.string().required("Item Attribute is required"),
+          options: Yup.array()
+            .of(Yup.string().required("Item option is required"))
+            .min(1, "At least one item option is required"),
+        })
+      )
+      .min(1, "At least one item is required"),
   });
 
   const formik = useFormik({
@@ -33,7 +40,7 @@ const ItemGroupAdd = () => {
       salesAccount: "",
       purchaseAccount: "",
       inventoryAccount: "",
-      multipleItemsJson,
+      multipleItemsJson: [{ attribute: "", options: [] }],
       file: null,
     },
     validationSchema: validationSchema,
@@ -46,9 +53,12 @@ const ItemGroupAdd = () => {
       formData.append("description", values.description);
       formData.append("itemUnit", values.itemUnit);
       formData.append("tax", values.tax);
-      formData.append("manufacturerName", values.manufacturerName);
+      // formData.append("manufacturerName", values.manufacturerName);
       formData.append("brandName", values.brandName);
-      formData.append("multipleItemsJson", values.multipleItemsJson);
+      formData.append(
+        "multipleItemsJson",
+        JSON.stringify(values.multipleItemsJson)
+      );
       formData.append("salesAccount", values.salesAccount);
       formData.append("purchaseAccount", values.purchaseAccount);
       formData.append("inventoryAccount", values.inventoryAccount);
@@ -63,16 +73,16 @@ const ItemGroupAdd = () => {
           toast.success(response.data.message);
           navigate("/itemgroup");
         } else {
-          toast.error(response.data.message);
+          toast.error(response.data.message || "Something went wrong");
         }
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } catch (error) {
+        toast.error("Error fetching data: ", error?.response?.data?.message);
       } finally {
         setLoadIndicator(false);
       }
     },
   });
-
+  // console.log("formkmultipleItemsJson", formik.values.multipleItemsJson);
   const scrollToError = (errors) => {
     const errorField = Object.keys(errors)[0];
     const errorElement = document.querySelector(`[name="${errorField}"]`);
@@ -88,37 +98,71 @@ const ItemGroupAdd = () => {
     }
   }, [formik.submitCount]);
 
+  useEffect(() => {
+    const fetchItemGroupData = async () => {
+      try {
+        const response = await api.get("getItemGroup");
+        const itemGroupData = response.data;
+
+        const updatedmultipleItemsJson = itemGroupData.multipleItemsJson.map(
+          (item) => ({
+            attribute: item.attribute,
+            options: item.options,
+          })
+        );
+
+        formik.setFieldValue("multipleItemsJson", updatedmultipleItemsJson);
+      } catch (error) {
+        console.error("Error fetching item group data:", error);
+      }
+    };
+
+    fetchItemGroupData();
+  }, []);
+
   const handleAddItem = () => {
-    setMultipleItemsJson([...multipleItemsJson, { itemAttribute: "", itemOptions: "" }]);
     formik.setFieldValue("multipleItemsJson", [
-      ...multipleItemsJson,
-      { itemAttribute: "", itemOptions: "" },
+      ...formik.values.multipleItemsJson,
+      { attribute: "", options: [] },
     ]);
   };
 
   const handleRemoveItem = (index) => {
-    const updatedItems = multipleItemsJson.filter((_, i) => i !== index);
-    setMultipleItemsJson(updatedItems);
+    const updatedItems = formik.values.multipleItemsJson.filter(
+      (_, i) => i !== index
+    );
     formik.setFieldValue("multipleItemsJson", updatedItems);
   };
 
   useEffect(() => {
-    const getData = async () => {
+    const fetchManufacturers = async () => {
       try {
         const response = await api.get("getAllManufacturers");
         setManufacture(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching manufacturers:", error);
       }
     };
-    getData();
+    fetchManufacturers();
+  }, []);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const response = await api.get("getAllBrands");
+        setBrandId(response.data);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
+    fetchBrands();
   }, []);
 
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
-          className="card shadow border-0 mb-2 top-header"
+          className="card shadow border-0 mb-2 top-header sticky-top"
           style={{ borderRadius: "0" }}
         >
           <div className="container-fluid py-4">
@@ -305,18 +349,25 @@ const ItemGroupAdd = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">Brand Name</lable>
+                <label className="form-label">Brand Name</label>
                 <div className="mb-3">
-                  <input
-                    type="text"
+                  <select
                     name="brandName"
-                    className={`form-control form-control-sm ${
+                    className={`form-select form-select-sm ${
                       formik.touched.brandName && formik.errors.brandName
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("brandName")}
-                  />
+                  >
+                    <option selected></option>
+                    {brandId &&
+                      brandId.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.brandName}
+                        </option>
+                      ))}
+                  </select>
                   {formik.touched.brandName && formik.errors.brandName && (
                     <div className="invalid-feedback">
                       {formik.errors.brandName}
@@ -413,64 +464,119 @@ const ItemGroupAdd = () => {
           </div>
           <div className="container">
             <h4 className="mb-3">Multiple Items</h4>
-            {multipleItemsJson.map((item, index) => (
-              <div className="row" key={index}>
-                <div className="col-md-4 col-12 mb-2">
+            {formik.values.multipleItemsJson.map((item, index) => (
+              <div className="row text-center" key={index}>
+                <div className="col-md-5 col-12 mb-2">
                   <label className="form-label">
                     Item Attribute<span className="text-danger">*</span>
                   </label>
                   <div className="mb-3">
                     <input
                       type="text"
-                      name={`multipleItemsJson[${index}].itemAttribute`}
+                      name={`multipleItemsJson[${index}].attribute`}
                       className={`form-control form-control-sm ${
-                        formik.touched.multipleItemsJson?.[index]?.itemAttribute &&
-                        formik.errors.multipleItemsJson?.[index]?.itemAttribute
+                        formik.touched.multipleItemsJson?.[index]?.attribute &&
+                        formik.errors.multipleItemsJson?.[index]?.attribute
                           ? "is-invalid"
                           : ""
                       }`}
-                      value={formik.values.multipleItemsJson[index].itemAttribute}
+                      value={formik.values.multipleItemsJson[index].attribute}
                       onChange={formik.handleChange}
                     />
-                    {formik.touched.multipleItemsJson?.[index]?.itemAttribute &&
-                      formik.errors.multipleItemsJson?.[index]?.itemAttribute && (
+                    {formik.touched.multipleItemsJson?.[index]?.attribute &&
+                      formik.errors.multipleItemsJson?.[index]?.attribute && (
                         <div className="invalid-feedback">
-                          {formik.errors.multipleItemsJson[index].itemAttribute}
+                          {formik.errors.multipleItemsJson[index].attribute}
                         </div>
                       )}
                   </div>
                 </div>
-                <div className="col-md-4 col-12 mb-2">
+                <div className="col-md-5 col-5 mb-3">
                   <label className="form-label">
                     Item Options<span className="text-danger">*</span>
                   </label>
-                  <div className="mb-3">
+                  <div
+                    className={`form-control form-control-sm ${
+                      formik.touched.options && formik.errors.options
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "5px",
+                      alignItems: "center",
+                      minHeight: "38px",
+                    }}
+                  >
+                    {formik.values.multipleItemsJson[index].options.map(
+                      (tag, optionIndex) => (
+                        <span
+                          key={optionIndex}
+                          className="badge bg-primary text-white d-flex align-items-center"
+                          style={{ padding: "5px 10px", borderRadius: "10px" }}
+                        >
+                          {tag}
+                          <button
+                            type="button"
+                            className="btn-close btn-close-white ms-2"
+                            style={{ fontSize: "10px", lineHeight: 1 }}
+                            onClick={() => {
+                              const updatedTags = [
+                                ...formik.values.multipleItemsJson[index]
+                                  .options,
+                              ];
+                              updatedTags.splice(optionIndex, 1);
+                              formik.setFieldValue(
+                                `multipleItemsJson[${index}].options`,
+                                updatedTags
+                              );
+                            }}
+                          />
+                        </span>
+                      )
+                    )}
                     <input
                       type="text"
-                      name={`multipleItemsJson[${index}].itemOptions`}
-                      className={`form-control form-control-sm ${
-                        formik.touched.multipleItemsJson?.[index]?.itemOptions &&
-                        formik.errors.multipleItemsJson?.[index]?.itemOptions
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      value={formik.values.multipleItemsJson[index].itemOptions}
-                      onChange={formik.handleChange}
+                      className="border-0"
+                      style={{ flex: 1, outline: "none", minWidth: "150px" }}
+                      value={formik.values.newTag?.[index] || ""}
+                      onChange={(e) =>
+                        formik.setFieldValue(`newTag[${index}]`, e.target.value)
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          if (formik.values.newTag) {
+                            const updatedTags = [
+                              ...formik.values.multipleItemsJson[index].options,
+                              formik.values.newTag[index].trim(),
+                            ];
+                            formik.setFieldValue(
+                              `multipleItemsJson[${index}].options`,
+                              updatedTags
+                            );
+                            formik.setFieldValue(`newTag[${index}]`, "");
+                          }
+                        }
+                      }}
                     />
-                    {formik.touched.multipleItemsJson?.[index]?.itemOptions &&
-                      formik.errors.multipleItemsJson?.[index]?.itemOptions && (
-                        <div className="invalid-feedback">
-                          {formik.errors.multipleItemsJson[index].itemOptions}
-                        </div>
-                      )}
                   </div>
+                  {formik.touched.multipleItemsJson?.[index]?.options &&
+                    formik.errors.multipleItemsJson?.[index]?.options && (
+                      <div className="invalid-feedback">
+                        {formik.errors.multipleItemsJson[index].options}
+                      </div>
+                    )}
                 </div>
-                <div className="col-md-4 col-12 mt-5 pt-4">
+                <div className="col-md-2 col-12 mt-5 pt-4">
                   <span
+                    type="button"
                     onClick={() => handleRemoveItem(index)}
-                    style={{ cursor: "pointer" }}
+                    className="text-danger"
+                    title="Remove Item"
                   >
-                    <SlTrash style={{ color: "red" }} />
+                    <SlTrash />
                   </span>
                 </div>
               </div>

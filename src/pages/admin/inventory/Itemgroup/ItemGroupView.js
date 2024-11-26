@@ -48,7 +48,9 @@ const ItemGroupView = () => {
               <div className="row align-items-center">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor">View Item Group</h1>
+                    <h1 className="h4 ls-tight headingColor">
+                      View Item Group
+                    </h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -105,7 +107,7 @@ const ItemGroupView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                    <p className="text-muted text-sm">
+                      <p className="text-muted text-sm">
                         :{" "}
                         {{
                           dz: "DOZEN",
@@ -162,48 +164,7 @@ const ItemGroupView = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Multiple Items</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.multipleItems || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Item Attribute</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.itemAttribute || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Item Options</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.itemOptions || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+
                 <div className="col-md-6 col-12">
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
@@ -282,6 +243,24 @@ const ItemGroupView = () => {
                       </p>
                     </div>
                   </div>
+                </div>
+                <div className="col-12">
+                  {data.multipleItemsModels?.length ? (
+                    data.multipleItemsModels.map((model) => (
+                      <div className="col-12 mb-3" key={model.id}>
+                        <div className="card p-3 shadow-sm">
+                          <p>
+                            <b>Attribute:</b> {model.attribute}
+                          </p>
+                          <p>
+                            <b>Options:</b> {model.options.join(", ")}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted">No item attributes available.</p>
+                  )}
                 </div>
               </div>
             </div>
