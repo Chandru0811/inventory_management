@@ -11,13 +11,13 @@ function PaymentTermsEdit({ onSuccess, id }) {
 
   const validationSchema = Yup.object({
     termName: Yup.string().required("*Term Name is required"),
-    numberOfDays: Yup.string().required("*Number of days is required"),
+    noOfDays: Yup.string().required("*Number of days is required"),
   });
 
   const formik = useFormik({
     initialValues: {
       termName: "",
-      numberOfDays: "",
+      noOfDays: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -103,19 +103,19 @@ function PaymentTermsEdit({ onSuccess, id }) {
                       </label>
                       <input
                         type="text"
-                        name="numberOfDays"
+                        name="noOfDays"
                         className={`form-control form-control-sm ${
-                          formik.touched.numberOfDays &&
-                          formik.errors.numberOfDays
+                          formik.touched.noOfDays &&
+                          formik.errors.noOfDays
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("numberOfDays")}
+                        {...formik.getFieldProps("noOfDays")}
                       />
-                      {formik.touched.numberOfDays &&
-                        formik.errors.numberOfDays && (
+                      {formik.touched.noOfDays &&
+                        formik.errors.noOfDays && (
                           <div className="invalid-feedback">
-                            {formik.errors.numberOfDays}
+                            {formik.errors.noOfDays}
                           </div>
                         )}
                     </div>

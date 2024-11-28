@@ -153,7 +153,8 @@ const Challan = () => {
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.customerName}</td>
-                      <td className="text-start">{data.deliveryChallanDate.slice(0,10)}</td>
+                      {/* <td className="text-start">{data.deliveryChallanDate.slice(0,10)}</td> */}
+                      <td className="text-start">{data.deliveryChallanDate}</td>
                       <td className="text-start">{data.deliveryChallan}</td>
                       <td className="text-center">
                         <div className="gap-2">

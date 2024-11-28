@@ -10,7 +10,6 @@ import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const PriceList = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -74,6 +73,7 @@ const PriceList = () => {
       table.destroy();
     };
   }, []);
+
   return (
     <div>
       {loading ? (
@@ -92,8 +92,8 @@ const PriceList = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
@@ -104,7 +104,6 @@ const PriceList = () => {
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/pricelist/add">
                       <button
                         type="submit"
@@ -115,13 +114,11 @@ const PriceList = () => {
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -130,7 +127,11 @@ const PriceList = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
@@ -153,12 +154,20 @@ const PriceList = () => {
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.name}</td>
                       <td className="text-start">{data.transactionType}</td>
-                      <td className="text-start">{data.priceListType}</td>
+                      {/* <td className="text-start">{data.priceListType}</td> */}
+                      <td className="text-start">
+                        {{
+                          AllItems: "All Items",
+                          IndividualItems: "Individual Items",
+                        }[data.priceListType] ||
+                          data.priceListType ||
+                          ""}
+                      </td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/pricelist/view/${data.id}`}>
                             <button className="btn btn-sm">
-                            <FaEye />
+                              <FaEye />
                             </button>
                           </Link>
                           <Link
@@ -166,7 +175,7 @@ const PriceList = () => {
                             className="px-2"
                           >
                             <button className="btn btn-sm">
-                            <FaRegEdit />
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

@@ -37,7 +37,7 @@ function OrderView() {
     const getData = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`getAllPurchaseOrderById/${id}`);
+        const response = await api.get(`purchaseOrderRetrievalWithItems/${id}`);
         setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
@@ -65,14 +65,19 @@ function OrderView() {
     doc.text(`Package Slip: ${customerData.packageSlip || ""}`, 14, 50);
     doc.text(
       `Package Date: ${
-        customerData.packageDate ? new Date(customerData.packageDate).toLocaleDateString() : ""
+        customerData.packageDate
+          ? new Date(customerData.packageDate).toLocaleDateString()
+          : ""
       }`,
       14,
       60
     );
     doc.text(`Internal Notes: ${customerData.internalNotes || ""}`, 14, 70);
 
-    if (customerData.invoiceItemsModels && customerData.invoiceItemsModels.length > 0) {
+    if (
+      customerData.invoiceItemsModels &&
+      customerData.invoiceItemsModels.length > 0
+    ) {
       const tableColumn = [
         "S.No",
         "Item Details",
@@ -152,13 +157,18 @@ function OrderView() {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div className="card shadow border-0 mb-2 top-header">
+          <div
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
+          >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="row align-items-center">
                   <div className="col">
                     <div className="d-flex align-items-center gap-4">
-                      <h1 className="h4 ls-tight headingColor">View Purchase Order</h1>
+                      <h1 className="h4 ls-tight headingColor">
+                        View Purchase Order
+                      </h1>
                     </div>
                   </div>
                   <div className="col-auto d-flex gap-4">
@@ -180,7 +190,10 @@ function OrderView() {
                         >
                           <BsThreeDotsVertical />
                         </button>
-                        <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
+                        <ul
+                          className="dropdown-menu"
+                          aria-labelledby="pdfDropdown"
+                        >
                           <li>
                             <button
                               className="dropdown-item"
@@ -390,24 +403,22 @@ function OrderView() {
                         <tr>
                           <th>S.NO</th>
                           <th>ITEM DETAILS</th>
+                          <th>Account</th>
                           <th>QUANTITY</th>
                           <th>RATE</th>
-                          <th>DISCOUNT</th>
-                          <th>TAX</th>
                           <th>AMOUNT</th>
                         </tr>
                       </thead>
                       <tbody className="table-group">
                         {data &&
-                          data.invoiceItemsModels &&
-                          data.invoiceItemsModels.map((item, index) => (
+                          data.items &&
+                          data.items.map((item, index) => (
                             <tr key={index}>
                               <th scope="row">{index + 1}</th>
-                              <td>{itemName(item.item)}</td>
-                              <td>{item.qty}</td>
-                              <td>{item.price}</td>
-                              <td>{item.disc}</td>
-                              <td>{item.taxRate}</td>
+                              <td>{item.itemName}</td>
+                              <td>{item.accountId}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.rate}</td>
                               <td>{item.amount}</td>
                             </tr>
                           ))}
@@ -433,9 +444,15 @@ function OrderView() {
                     <div class="col-sm-4 ">: {data.subTotal || ""}</div>
                   </div>
                   <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label">Total Tax</label>
+                    <label class="col-sm-4 col-form-label">Discount</label>
                     <div class="col-sm-4"></div>
-                    <div class="col-sm-4">: {data.totalTax || ""}</div>
+                    <div class="col-sm-4">: {data.discount || ""}</div>
+                    <div class="col-sm-4 "></div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Adjustment</label>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">: {data.adjustment || ""}</div>
                     <div class="col-sm-4 "></div>
                   </div>
                   <hr></hr>

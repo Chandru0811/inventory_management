@@ -15,14 +15,14 @@ function InvoicesAdd() {
   const [itemData, setItemData] = useState(null);
 
   const validationSchema = Yup.object({
-    customerName: Yup.string().required("*Customer name is required"),
-    invoiceNumber: Yup.string().required("*Invoice Number is required"),
+    customerName: Yup.string().required("*Customer Name is required"),
+    invoiceNumber: Yup.string().required("*Invoice is required"),
     invoiceDate: Yup.string().required("*Invoice Date is required"),
-    // txnInvoiceOrderItemsModels: Yup.array().of(
-    //   Yup.object({
-    //     item: Yup.string().required("*Item is required"),
-    //   })
-    // ),
+    txnInvoiceOrderItemsModels: Yup.array().of(
+      Yup.object({
+        item: Yup.string().required("*Item Detail is required"),
+      })
+    ),
   });
 
   const formik = useFormik({
@@ -497,13 +497,12 @@ function InvoicesAdd() {
                     <thead>
                       <tr>
                         <th>S.NO</th>
-                        <th style={{ width: "25%" }}>
-                          Item<span className="text-danger">*</span>
+                        <th style={{ width: "40%" }}>
+                          Item Details<span className="text-danger">*</span>
                         </th>
-                        <th style={{ width: "10%" }}>Quantity</th>
+                        <th style={{ width: "15%" }}>Quantity</th>
                         <th style={{ width: "15%" }}>Rate</th>
                         <th style={{ width: "15%" }}>Discount(%)</th>
-                        <th style={{ width: "15%" }}>Tax (%)</th>
                         <th style={{ width: "15%" }}>Amount</th>
                       </tr>
                     </thead>
@@ -591,7 +590,6 @@ function InvoicesAdd() {
                             </td>
                             <td>
                               <input
-                                readOnly
                                 type="text"
                                 name={`txnInvoiceOrderItemsModels[${index}].price`}
                                 className={`form-control ${
@@ -663,45 +661,6 @@ function InvoicesAdd() {
                             </td>
                             <td>
                               <input
-                                onInput={(event) => {
-                                  event.target.value = event.target.value
-                                    .replace(/[^0-9]/g, "")
-                                    .slice(0, 2);
-                                }}
-                                type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].taxRate`}
-                                className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.taxRate &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.taxRate
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].taxRate`
-                                )}
-                              />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.taxRate &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.taxRate && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.txnInvoiceOrderItemsModels[
-                                        index
-                                      ].taxRate
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                            <td>
-                              <input
-                                readOnly
                                 type="text"
                                 name={`txnInvoiceOrderItemsModels[${index}].amount`}
                                 className={`form-control ${
@@ -787,7 +746,7 @@ function InvoicesAdd() {
                 >
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">
-                      Sub Total<span className="text-danger">*</span>
+                      Sub Total
                     </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
@@ -809,7 +768,7 @@ function InvoicesAdd() {
                   </div>
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">
-                      Total Discount<span className="text-danger">*</span>
+                      Adjustment
                     </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
@@ -831,27 +790,6 @@ function InvoicesAdd() {
                         )}
                     </div>
                   </div>
-                  <div className="row mb-3">
-                    <label className="col-sm-4 col-form-label">Total Tax</label>
-                    <div className="col-sm-4"></div>
-                    <div className="col-sm-4">
-                      <input
-                        type="text"
-                        className={`form-control ${
-                          formik.touched.totalTax && formik.errors.totalTax
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                        {...formik.getFieldProps("totalTax")}
-                      />
-                      {formik.touched.totalTax && formik.errors.totalTax && (
-                        <div className="invalid-feedback">
-                          {formik.errors.totalTax}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
                   <hr />
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">Total</label>

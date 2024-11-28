@@ -140,7 +140,7 @@ const Account = () => {
                     {datas.map((data, index) => (
                       <tr key={index}>
                         <td className="text-start">{index + 1}</td>
-                        <td className="text-start">{data.account}</td>
+                        <td className="text-start">{data.accountName}</td>
                         <td className="">
                           <div className="d-flex justify-content-center gap-2">
                             <AccountEdit

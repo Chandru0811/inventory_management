@@ -11,6 +11,8 @@ const InventoryAdjustmentEdit = () => {
   const [data, setData] = useState([]);
   const [loading, setLoadIndicator] = useState(false);
   const [itemData, setItemData] = useState(null);
+  const [reason, setReason] = useState(null);
+  const [account, setAccount] = useState(null);
 
   const validationSchema = Yup.object({
     modeOfAdjustment: Yup.string().required("*Mode of Adjustment is required"),
@@ -19,56 +21,66 @@ const InventoryAdjustmentEdit = () => {
     reasonId: Yup.string().required("*Reason is required"),
     quantityAdjustmentItems: Yup.array().of(
       Yup.object().shape({
-        item: Yup.string().required("*Item is required"),
+        itemId: Yup.string().required("*Item is required"),
       })
     ),
   });
 
   const formik = useFormik({
     initialValues: {
-      modeOfAdjustment: "",
+      modeOfAdjustment: "Quantity Adjustment",
       referenceNumber: "",
       date: "",
       reasonId: "",
       descOfAdjustment: "",
-      inventoryAdjustmentsFile: null,
+      attachFile: null,
       accountId: "",
+      wareHouseId: "",
       quantityAdjustmentItems: [
         {
-          item: "",
-          qty: "",
-          price: "",
-          disc: "",
-          taxRate: "",
-          amount: "",
+          itemId: "",
+          quantityAvailable: "",
+          quantityOnHand: "",
+          quantityAdjusted: "",
         },
       ],
       valueAdjustmentItems: [
         {
-          item: "",
-          qty: "",
-          price: "",
-          disc: "",
-          taxRate: "",
-          amount: "",
+          itemId: "",
+          quantityAvailable: "",
+          quantityOnHand: "",
+          quantityAdjusted: "",
         },
       ],
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
+      console.log(values);
 
       const formData = new FormData();
       formData.append("modeOfAdjustment", values.modeOfAdjustment);
       formData.append("referenceNumber", values.referenceNumber);
       formData.append("date", values.date);
       formData.append("accountId", values.accountId);
-      formData.append("reason", values.reason);
+      formData.append("reasonId", values.reasonId);
+      formData.append("wareHouseId", values.wareHouseId);
       formData.append("descOfAdjustment", values.descOfAdjustment);
-      formData.append("file", values.file);
+      formData.append("attachFile", values.attachFile || "");
+      formData.append(
+        "quantityAdjustmentItems",
+        JSON.stringify(
+          values.quantityAdjustmentItems.map((item) => ({
+            itemId: item.itemId?.id || item.itemId,
+            quantityAvailable: item.quantityAvailable,
+            quantityOnHand: item.quantityOnHand,
+            quantityAdjusted: item.quantityAdjusted,
+          }))
+        )
+      );
       try {
         const response = await api.put(
-          `updateInventoryAdjustment/${id}`,
+          `inventoryAdjustmentUpdationWithItems/${id}`,
           formData,
           {
             headers: {
@@ -94,12 +106,10 @@ const InventoryAdjustmentEdit = () => {
     formik.setFieldValue("quantityAdjustmentItems", [
       ...formik.values.quantityAdjustmentItems,
       {
-        item: "",
-        qty: "",
-        price: "",
-        disc: "",
-        taxRate: "",
-        amount: "",
+        itemId: "",
+        quantityAvailable: "",
+        quantityOnHand: "",
+        quantityAdjusted: "",
       },
     ]);
   };
@@ -117,12 +127,10 @@ const InventoryAdjustmentEdit = () => {
     formik.setFieldValue("valueAdjustmentItems", [
       ...formik.values.valueAdjustmentItems,
       {
-        item: "",
-        qty: "",
-        price: "",
-        disc: "",
-        taxRate: "",
-        amount: "",
+        itemId: "",
+        quantityAvailable: "",
+        quantityOnHand: "",
+        quantityAdjusted: "",
       },
     ]);
   };
@@ -135,6 +143,42 @@ const InventoryAdjustmentEdit = () => {
     updatedRows.pop();
     formik.setFieldValue("valueAdjustmentItems", updatedRows);
   };
+
+  useEffect(() => {
+    const getItemData = async () => {
+      try {
+        const response = await api.get("itemId-name");
+        setItemData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getItemData();
+  }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllAdjustmentReasons");
+        setReason(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllAccounts");
+        setAccount(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
 
   useEffect(() => {
     const getData = async () => {
@@ -158,17 +202,39 @@ const InventoryAdjustmentEdit = () => {
     getData();
   }, [id]);
 
-  useEffect(() => {
-    const getItemData = async () => {
-      try {
-        const response = await api.get("itemId-name");
-        setItemData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`quantityAdjustmentItems[${index}]`, {
+          itemId: selectedItemId,
+          quantityAvailable: itemDetails.openingStock,
+        });
       }
-    };
-    getItemData();
-  }, []);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleAdjustment = async (index, event) => {
+    const item = formik.values.quantityAdjustmentItems[index] || {};
+    const quantityAdjusted = parseInt(event.target.value || 0, 10);
+
+    // Calculate the new quantity on hand
+    const newAdjustment = (item.quantityAvailable || 0) + quantityAdjusted;
+
+    await formik.setFieldValue(
+      `quantityAdjustmentItems[${index}].quantityOnHand`,
+      newAdjustment
+    );
+    await formik.setFieldValue(
+      `quantityAdjustmentItems[${index}].quantityAdjusted`,
+      quantityAdjusted
+    );
+  };
 
   return (
     <div className="container-fluid px-2 minHeight m-0">
@@ -321,9 +387,12 @@ const InventoryAdjustmentEdit = () => {
                     {...formik.getFieldProps("accountId")}
                   >
                     <option selected></option>
-                    <option value="1">Cost of Goods Sold</option>
-                    <option value="2">Materials</option>
-                    <option value="3">Petty Cash</option>
+                    {account &&
+                      account.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.accountName}
+                        </option>
+                      ))}
                   </select>
                   {formik.touched.accountId && formik.errors.accountId && (
                     <div className="invalid-feedback">
@@ -347,9 +416,12 @@ const InventoryAdjustmentEdit = () => {
                     {...formik.getFieldProps("reasonId")}
                   >
                     <option selected></option>
-                    <option value="1">Invaild proof</option>
-                    <option value="2">Stock on fire</option>
-                    <option value="3">Stolen goods</option>
+                    {reason &&
+                      reason.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.reason}
+                        </option>
+                      ))}
                   </select>
                   {formik.touched.reasonId && formik.errors.reasonId && (
                     <div className="invalid-feedback">
@@ -372,11 +444,10 @@ const InventoryAdjustmentEdit = () => {
                     }`}
                     {...formik.getFieldProps("wareHouseId")}
                   >
-                    <option value="ECS Cloud Infotech" selected>
-                      ECS Cloud Infotech
-                    </option>
-                    <option value="Cloud ECS">Cloud ECS</option>
-                    <option value="ECS Cloud">ECS Cloud</option>
+                    <option selected></option>
+                    <option value="1">ECS Cloud Infotech</option>
+                    <option value="2">Cloud ECS</option>
+                    <option value="3">ECS Cloud</option>
                   </select>
                   {formik.touched.wareHouseId && formik.errors.wareHouseId && (
                     <div className="invalid-feedback">
@@ -414,12 +485,14 @@ const InventoryAdjustmentEdit = () => {
                     type="file"
                     className="form-control"
                     onChange={(event) => {
-                      formik.setFieldValue("file", event.target.files[0]);
+                      formik.setFieldValue("attachFile", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.touched.file && formik.errors.file && (
-                    <div className="invalid-feedback">{formik.errors.file}</div>
+                  {formik.touched.attachFile && formik.errors.attachFile && (
+                    <div className="invalid-feedback">
+                      {formik.errors.attachFile}
+                    </div>
                   )}
                 </div>
                 <img
@@ -459,38 +532,41 @@ const InventoryAdjustmentEdit = () => {
                             <tr key={index}>
                               <td>
                                 <select
-                                  name={`quantityAdjustmentItems[${index}].item`}
+                                  name={`quantityAdjustmentItems[${index}].itemId`}
                                   {...formik.getFieldProps(
-                                    `quantityAdjustmentItems[${index}].item`
+                                    `quantityAdjustmentItems[${index}].itemId`
                                   )}
                                   className={`form-select ${
                                     formik.touched.quantityAdjustmentItems?.[
                                       index
-                                    ]?.item &&
+                                    ]?.itemId &&
                                     formik.errors.quantityAdjustmentItems?.[
                                       index
-                                    ]?.item
+                                    ]?.itemId
                                       ? "is-invalid"
                                       : ""
                                   }`}
+                                  onChange={(event) =>
+                                    handleItemSelection(index, event)
+                                  }
                                 >
                                   <option selected> </option>
                                   {itemData &&
-                                    itemData.map((itemId) => (
-                                      <option key={itemId.id} value={itemId.id}>
-                                        {itemId.name}
+                                    itemData.map((item) => (
+                                      <option key={item.id} value={item.id}>
+                                        {item.name}
                                       </option>
                                     ))}
                                 </select>
                                 {formik.touched.quantityAdjustmentItems?.[index]
-                                  ?.item &&
+                                  ?.itemId &&
                                   formik.errors.quantityAdjustmentItems?.[index]
-                                    ?.item && (
+                                    ?.itemId && (
                                     <div className="invalid-feedback">
                                       {
                                         formik.errors.quantityAdjustmentItems[
                                           index
-                                        ].item
+                                        ].itemId
                                       }
                                     </div>
                                   )}
@@ -502,30 +578,30 @@ const InventoryAdjustmentEdit = () => {
                                       event.target.value.replace(/[^0-9]/g, "");
                                   }}
                                   type="text"
-                                  name={`quantityAdjustmentItems[${index}].qty`}
+                                  name={`quantityAdjustmentItems[${index}].quantityAvailable`}
                                   className={`form-control ${
                                     formik.touched.quantityAdjustmentItems?.[
                                       index
-                                    ]?.qty &&
+                                    ]?.quantityAvailable &&
                                     formik.errors.quantityAdjustmentItems?.[
                                       index
-                                    ]?.qty
+                                    ]?.quantityAvailable
                                       ? "is-invalid"
                                       : ""
                                   }`}
                                   {...formik.getFieldProps(
-                                    `quantityAdjustmentItems[${index}].qty`
+                                    `quantityAdjustmentItems[${index}].quantityAvailable`
                                   )}
                                 />
                                 {formik.touched.quantityAdjustmentItems?.[index]
-                                  ?.qty &&
+                                  ?.quantityAvailable &&
                                   formik.errors.quantityAdjustmentItems?.[index]
-                                    ?.qty && (
+                                    ?.quantityAvailable && (
                                     <div className="invalid-feedback">
                                       {
                                         formik.errors.quantityAdjustmentItems[
                                           index
-                                        ].qty
+                                        ].quantityAvailable
                                       }
                                     </div>
                                   )}
@@ -533,30 +609,30 @@ const InventoryAdjustmentEdit = () => {
                               <td>
                                 <input
                                   type="text"
-                                  name={`quantityAdjustmentItems[${index}].price`}
+                                  name={`quantityAdjustmentItems[${index}].quantityOnHand`}
                                   className={`form-control ${
                                     formik.touched.quantityAdjustmentItems?.[
                                       index
-                                    ]?.price &&
+                                    ]?.quantityOnHand &&
                                     formik.errors.quantityAdjustmentItems?.[
                                       index
-                                    ]?.price
+                                    ]?.quantityOnHand
                                       ? "is-invalid"
                                       : ""
                                   }`}
                                   {...formik.getFieldProps(
-                                    `quantityAdjustmentItems[${index}].price`
+                                    `quantityAdjustmentItems[${index}].quantityOnHand`
                                   )}
                                 />
                                 {formik.touched.quantityAdjustmentItems?.[index]
-                                  ?.price &&
+                                  ?.quantityOnHand &&
                                   formik.errors.quantityAdjustmentItems?.[index]
-                                    ?.price && (
+                                    ?.quantityOnHand && (
                                     <div className="invalid-feedback">
                                       {
                                         formik.errors.quantityAdjustmentItems[
                                           index
-                                        ].price
+                                        ].quantityOnHand
                                       }
                                     </div>
                                   )}
@@ -565,34 +641,37 @@ const InventoryAdjustmentEdit = () => {
                                 <input
                                   onInput={(event) => {
                                     event.target.value = event.target.value
-                                      .replace(/[^0-9]/g, "")
+                                      .replace(/[^-0-9]/g, "")
                                       .slice(0, 2);
                                   }}
                                   type="text"
-                                  name={`quantityAdjustmentItems[${index}].disc`}
+                                  name={`quantityAdjustmentItems[${index}].quantityAdjusted`}
                                   className={`form-control ${
                                     formik.touched.quantityAdjustmentItems?.[
                                       index
-                                    ]?.disc &&
+                                    ]?.quantityAdjusted &&
                                     formik.errors.quantityAdjustmentItems?.[
                                       index
-                                    ]?.disc
+                                    ]?.quantityAdjusted
                                       ? "is-invalid"
                                       : ""
                                   }`}
                                   {...formik.getFieldProps(
-                                    `quantityAdjustmentItems[${index}].disc`
+                                    `quantityAdjustmentItems[${index}].quantityAdjusted`
                                   )}
+                                  onChange={(event) =>
+                                    handleAdjustment(index, event)
+                                  }
                                 />
                                 {formik.touched.quantityAdjustmentItems?.[index]
-                                  ?.disc &&
+                                  ?.quantityAdjusted &&
                                   formik.errors.quantityAdjustmentItems?.[index]
-                                    ?.disc && (
+                                    ?.quantityAdjusted && (
                                     <div className="invalid-feedback">
                                       {
                                         formik.errors.quantityAdjustmentItems[
                                           index
-                                        ].disc
+                                        ].quantityAdjusted
                                       }
                                     </div>
                                   )}

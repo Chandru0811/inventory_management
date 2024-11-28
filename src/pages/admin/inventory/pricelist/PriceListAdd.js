@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 const PriceListAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
+  const [currency, setCurrency] = useState(null);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
@@ -26,7 +27,7 @@ const PriceListAdd = () => {
     //     then: Yup.string().required("*Percentage is required"),
     //     otherwise: Yup.string().nullable(),
     //   }),
-  });  
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -36,14 +37,31 @@ const PriceListAdd = () => {
       description: "",
       percentage: "",
       roundOffTo: "",
-      pricingScheme: "",
+      pricingScheme: "UnitPricing",
       currency: "",
+      discount: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
+      const payload = {
+        name: values.name,
+        transactionType: values.transactionType,
+        priceListType: values.priceListType,
+        description: values.description,
+      };
+
+      if (values.priceListType === "AllItems") {
+        payload.percentage = values.percentage;
+        payload.roundOffTo = values.roundOffTo;
+      } else if (values.priceListType === "IndividualItems") {
+        payload.pricingScheme = values.pricingScheme;
+        payload.currency = values.currency;
+        payload.discount = values.discount;
+      }
+
       try {
-        const response = await api.post("/createPriceList", values, {});
+        const response = await api.post("/createPriceList", payload);
         if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/pricelist");
@@ -57,6 +75,18 @@ const PriceListAdd = () => {
       }
     },
   });
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllCurrencyNameWithId");
+        setCurrency(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
 
   return (
     <div className="container-fluid px-2  minHeight m-0">
@@ -312,10 +342,10 @@ const PriceListAdd = () => {
                         className="form-check-input"
                         type="radio"
                         name="pricingScheme"
-                        id="VolumePrice"
-                        value="VolumePrice"
+                        id="VolumePricing"
+                        value="VolumePricing"
                         onChange={formik.handleChange}
-                        checked={formik.values.pricingScheme === "VolumePrice"}
+                        checked={formik.values.pricingScheme === "VolumePricing"}
                       />
                       <label className="form-check-label">Volume Price</label>
                     </div>
@@ -332,16 +362,24 @@ const PriceListAdd = () => {
                   <div className="col-md-6 col-12 mb-2">
                     <lable className="form-lable">Currency</lable>
                     <div className="mb-3">
-                      <input
+                      <select
                         type="text"
                         name="currency"
-                        className={`form-control  ${
+                        className={`form-select form-select-sm ${
                           formik.touched.currency && formik.errors.currency
                             ? "is-invalid"
                             : ""
                         }`}
                         {...formik.getFieldProps("currency")}
-                      />
+                      >
+                        <option selected></option>
+                        {currency &&
+                          currency.map((data) => (
+                            <option value={data.id} key={data.id}>
+                              {data.currencyName}
+                            </option>
+                          ))}
+                      </select>
                       {formik.touched.currency && formik.errors.currency && (
                         <div className="invalid-feedback">
                           {formik.errors.currency}
@@ -350,19 +388,22 @@ const PriceListAdd = () => {
                     </div>
                   </div>
                   <div className="col-md-6 col-12 mb-2">
-                    <lable>Discount</lable>
+                    <label className="form-label">Discount</label>
                     <div className="form-check mb-3">
                       <input
                         type="checkbox"
                         className="form-check-input"
-                        id="disableSales"
+                        id="discount"
+                        name="discount"
+                        {...formik.getFieldProps("discount")}
+                        checked={formik.values.discount}
                       />
-                      <h2
+                      <label
                         className="form-check-label pt-1"
-                        htmlFor="disableSales"
+                        htmlFor="discount"
                       >
                         I want to include discount percentage for the items
-                      </h2>
+                      </label>
                     </div>
                   </div>
                 </>

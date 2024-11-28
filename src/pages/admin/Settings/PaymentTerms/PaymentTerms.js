@@ -144,7 +144,7 @@ const PaymentTerms = () => {
                       <tr key={index}>
                         <td className="text-start">{index + 1}</td>
                         <td className="text-start">{data.termName}</td>
-                        <td className="text-start">{data.numberOfDays}</td>
+                        <td className="text-start">{data.noOfDays}</td>
                         <td className="">
                           <div className="d-flex justify-content-center gap-1">
                             <PaymentTermsEdit

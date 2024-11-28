@@ -82,9 +82,7 @@ const PriceListView = () => {
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.name || ""}
-                      </p>
+                      <p className="text-muted text-sm">: {data.name || ""}</p>
                     </div>
                   </div>
                 </div>
@@ -92,7 +90,7 @@ const PriceListView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Transaction Type </b>
+                        <b>Transaction Type</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -111,7 +109,13 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.priceListType || ""}
+                        :{" "}
+                        {{
+                          AllItems: "All Items",
+                          IndividualItems: "Individual Items",
+                        }[data.priceListType] ||
+                          data.priceListType ||
+                          ""}
                       </p>
                     </div>
                   </div>
@@ -120,11 +124,13 @@ const PriceListView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Percentage </b>
+                        <b>Percentage</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.percentage || ""}</p>
+                      <p className="text-muted text-sm">
+                        : {data.percentage || ""}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -133,12 +139,19 @@ const PriceListView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Round Off To</b>
+                        <b>Round off To</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.roundOffTo || ""}
+                        :{" "}
+                        {{
+                          NeverMind: "Never Mind",
+                          NearestWholeNumber: "Nearest Whole Number",
+                          DecimalPlaces: "Decimal Places",
+                        }[data.roundOffTo] ||
+                          data.roundOffTo ||
+                          ""}
                       </p>
                     </div>
                   </div>
@@ -152,7 +165,13 @@ const PriceListView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.pricingScheme || ""}
+                        :{" "}
+                        {{
+                          UnitPricing: "Unit Pricing",
+                          VolumePricing: "Volume Pricing",
+                        }[data.pricingScheme] ||
+                          data.pricingScheme ||
+                          ""}
                       </p>
                     </div>
                   </div>
@@ -167,20 +186,6 @@ const PriceListView = () => {
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         : {data.currency || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Discount</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.discount || ""}
                       </p>
                     </div>
                   </div>

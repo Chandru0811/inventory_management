@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const Order = () => {
   const tableRef = useRef(null);
@@ -92,8 +93,8 @@ const Order = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
@@ -126,7 +127,11 @@ const Order = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
@@ -141,7 +146,7 @@ const Order = () => {
                     <th scope="col" className="text-start">
                       STATUS
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center ps-5">
                       ACTION
                     </th>
                   </tr>
@@ -151,9 +156,7 @@ const Order = () => {
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.vendorName}</td>
-                      <td className="text-start">
-                        {data.purchaseOrderNumber}
-                      </td>
+                      <td className="text-start">{data.purchaseOrderNumber}</td>
                       <td className="text-start">
                         {data.date
                           ? new Date(data.date).toLocaleDateString()
@@ -161,15 +164,21 @@ const Order = () => {
                       </td>
                       <td className="text-start">{data.status}</td>
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/order/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link to={`/order/edit/${data.id}`} className="px-2">
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/order/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

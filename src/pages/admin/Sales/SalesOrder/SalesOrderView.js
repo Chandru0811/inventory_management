@@ -24,7 +24,7 @@ const SalesOrderView = () => {
     const getData = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`getAllSalesOrdersById/${id}`);
+        const response = await api.get(`salesOrderRetrievalWithItems/${id}`);
         setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
@@ -129,10 +129,10 @@ const SalesOrderView = () => {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
-          >
+        <div
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
+        >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="col">
@@ -355,7 +355,7 @@ const SalesOrderView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.paymentTermsId || ""}
+                        : {data.paymentTerms || ""}
                       </p>
                     </div>
                   </div>
@@ -409,21 +409,19 @@ const SalesOrderView = () => {
                         <th>QUANTITY</th>
                         <th>RATE</th>
                         <th>DISCOUNT</th>
-                        <th>TAX</th>
                         <th>AMOUNT</th>
                       </tr>
                     </thead>
                     <tbody className="table-group">
                       {data &&
-                        data.invoiceItemsModels &&
-                        data.invoiceItemsModels.map((item, index) => (
+                        data.itemDetails &&
+                        data.itemDetails.map((item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
-                            <td>(item.item)</td>
-                            <td>{item.qty}</td>
-                            <td>{item.price}</td>
+                            <td>{item.itemDetails}</td>
+                            <td>{item.quantity}</td>
+                            <td>{item.rate}</td>
                             <td>{item.disc}</td>
-                            <td>{item.taxRate}</td>
                             <td>{item.amount}</td>
                           </tr>
                         ))}
@@ -435,7 +433,9 @@ const SalesOrderView = () => {
             <div class="row mt-5 container-fluid">
               <div className="col-md-6 col-12 mb-3 mt-5">
                 <lable className="form-lable">Customer Notes :</lable>
-                <div className="mb-3">{data.notes || ""}</div>
+                <div className="mb-3">{data.customerNotes || ""}</div>
+                <lable className="form-lable">Terms Condition :</lable>
+                <div className="mb-3">{data.termsAndConditions || ""}</div>
               </div>
               <div
                 className="col-md-6 col-12 mt-5 mb-3 rounded"
@@ -447,7 +447,7 @@ const SalesOrderView = () => {
                   <div class="col-sm-4 ">: {data.subTotal || ""}</div>
                 </div>
                 <div class="row mb-3">
-                  <label class="col-sm-4 col-form-label">Total Tax</label>
+                  <label class="col-sm-4 col-form-label">Adjustment</label>
                   <div class="col-sm-4"></div>
                   <div class="col-sm-4">: {data.totalTax || ""}</div>
                   <div class="col-sm-4 "></div>

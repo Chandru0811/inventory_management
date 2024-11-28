@@ -8,6 +8,7 @@ import api from "../../../../config/URL";
 import axios from "axios";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const SalesOrder = () => {
   const tableRef = useRef(null);
@@ -60,7 +61,7 @@ const SalesOrder = () => {
     try {
       const response = await api.get("getAllSalesOrders");
       setDatas(response.data);
-      initializeDataTable(); 
+      initializeDataTable();
     } catch (error) {
       console.error("Error refreshing data:", error);
     }
@@ -92,14 +93,16 @@ const SalesOrder = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 my-2"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Sales Orders ({datas.length})</h1>
+                    <h1 className="h4 ls-tight headingColor ">
+                      Sales Orders ({datas.length})
+                    </h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -127,19 +130,26 @@ const SalesOrder = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
                       CUSTOMER NAME
                     </th>
                     <th scope="col" className="text-start">
-                      SALESORDER
+                      DATE
+                    </th>
+                    <th scope="col" className="text-start">
+                      SALES ORDER
                     </th>
                     <th scope="col" className="text-start">
                       DELIVERY METHOD
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center ps-5">
                       ACTION
                     </th>
                   </tr>
@@ -149,26 +159,36 @@ const SalesOrder = () => {
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.customerName}</td>
+                      <td className="text-start">
+                        {data.salesOrderDate
+                          ? new Date(data.salesOrderDate).toLocaleDateString(
+                              "en-GB"
+                            )
+                          : ""}
+                      </td>
                       <td className="text-start">{data.salesOrder}</td>
                       <td className="text-start">{data.deliveryMethod}</td>
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/salesorder/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/salesorder/edit/${data.id}`}
-                            className="px-2"
-                          >
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/salesorder/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel
                             onSuccess={refreshData}
-                            path={`deleteSalesOrders/${data.id}`}
+                            path={`/deleteSalesOrders/${data.id}`}
                           />
                         </div>
                       </td>
