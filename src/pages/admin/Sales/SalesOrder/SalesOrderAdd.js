@@ -43,7 +43,7 @@ const SalesOrderAdd = () => {
           itemId: "",
           quantity: "",
           rate: "",
-          disc: "",
+          discount: "",
           amount: "",
         },
       ],
@@ -55,7 +55,7 @@ const SalesOrderAdd = () => {
         const formData = new FormData();
 
         formData.append("customerId", values.customerId);
-        formData.append("customerName", values.customerName | "");
+        // formData.append("customerName", values.customerName | "");
         formData.append("salesOrder", values.salesOrder);
         formData.append("referenceNumber", values.referenceNumber);
         formData.append("salesOrderDate", values.salesOrderDate);
@@ -71,10 +71,11 @@ const SalesOrderAdd = () => {
         formData.append(
           "salesOrderItemsJson",
           JSON.stringify(
-            values.salesOrderItemsJson.map((item) => ({
+            values.salesOrderItemsJson?.map((item) => ({
               itemId: item.itemId?.id || item.itemId,
               quantity: item.quantity,
               rate: item.rate,
+              discount: item.discount,
               amount: item.amount,
             }))
           )
@@ -635,23 +636,23 @@ const SalesOrderAdd = () => {
                                 .slice(0, 2);
                             }}
                             type="text"
-                            name={`salesOrderItemsJson[${index}].disc`}
+                            name={`salesOrderItemsJson[${index}].discount`}
                             className={`form-control ${
                               formik.touched.salesOrderItemsJson?.[index]
-                                ?.disc &&
-                              formik.errors.salesOrderItemsJson?.[index]?.disc
+                                ?.discount &&
+                              formik.errors.salesOrderItemsJson?.[index]?.discount
                                 ? "is-invalid"
                                 : ""
                             }`}
                             {...formik.getFieldProps(
-                              `salesOrderItemsJson[${index}].disc`
+                              `salesOrderItemsJson[${index}].discount`
                             )}
                           />
-                          {formik.touched.salesOrderItemsJson?.[index]?.disc &&
+                          {formik.touched.salesOrderItemsJson?.[index]?.discount &&
                             formik.errors.salesOrderItemsJson?.[index]
-                              ?.disc && (
+                              ?.discount && (
                               <div className="invalid-feedback">
-                                {formik.errors.salesOrderItemsJson[index].disc}
+                                {formik.errors.salesOrderItemsJson[index].discount}
                               </div>
                             )}
                         </td>

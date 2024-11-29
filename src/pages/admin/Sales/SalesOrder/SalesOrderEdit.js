@@ -57,7 +57,6 @@ const SalesOrderEdit = () => {
       const formData = new FormData();
 
       formData.append("customerId", values.customerId);
-      formData.append("customerName", values.customerName | "");
       formData.append("salesOrder", values.salesOrder);
       formData.append("referenceNumber", values.referenceNumber);
       formData.append("salesOrderDate", values.salesOrderDate);
@@ -71,9 +70,9 @@ const SalesOrderEdit = () => {
       formData.append("total", values.total);
       formData.append("attachFile", values.attachFile);
       formData.append(
-        "itemDetails",
+        "salesOrderItemsJson",
         JSON.stringify(
-          values.salesOrderItemsJson.map((item) => ({
+          values.itemDetails?.map((item) => ({
             itemId: item.itemId?.id || item.itemId,
             quantity: item.quantity,
             rate: item.rate,
@@ -652,21 +651,21 @@ const SalesOrderEdit = () => {
                                 .slice(0, 2);
                             }}
                             type="text"
-                            name={`itemDetails[${index}].disc`}
+                            name={`itemDetails[${index}].discount`}
                             className={`form-control ${
-                              formik.touched.itemDetails?.[index]?.disc &&
-                              formik.errors.itemDetails?.[index]?.disc
+                              formik.touched.itemDetails?.[index]?.discount &&
+                              formik.errors.itemDetails?.[index]?.discount
                                 ? "is-invalid"
                                 : ""
                             }`}
                             {...formik.getFieldProps(
-                              `itemDetails[${index}].disc`
+                              `itemDetails[${index}].discount`
                             )}
                           />
-                          {formik.touched.itemDetails?.[index]?.disc &&
-                            formik.errors.itemDetails?.[index]?.disc && (
+                          {formik.touched.itemDetails?.[index]?.discount &&
+                            formik.errors.itemDetails?.[index]?.discount && (
                               <div className="invalid-feedback">
-                                {formik.errors.itemDetails[index].disc}
+                                {formik.errors.itemDetails[index].discount}
                               </div>
                             )}
                         </td>

@@ -421,7 +421,7 @@ const SalesOrderView = () => {
                             <td>{item.itemDetails}</td>
                             <td>{item.quantity}</td>
                             <td>{item.rate}</td>
-                            <td>{item.disc}</td>
+                            <td>{item.discount}</td>
                             <td>{item.amount}</td>
                           </tr>
                         ))}
