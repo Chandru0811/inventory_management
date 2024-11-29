@@ -31,6 +31,7 @@ function BillsAdd() {
       discount: "",
       total: "",
       notes: "",
+      adjustments: "",
       itemDetails: [
         {
           itemId: "",
@@ -59,6 +60,7 @@ function BillsAdd() {
         formData.append("discount", values.discount);
         formData.append("total", values.total);
         formData.append("notes", values.notes);
+        formData.append("adjustments", values.adjustments);
         formData.append("companyId ", 1);
         formData.append(
           "itemDetails",
@@ -556,9 +558,7 @@ function BillsAdd() {
                   style={{ border: "1px solid lightgrey" }}
                 >
                   <div className="row mb-3 mt-2">
-                    <label className="col-sm-4 col-form-label">
-                      Sub Total<span className="text-danger">*</span>
-                    </label>
+                    <label className="col-sm-4 col-form-label">Sub Total</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
@@ -578,9 +578,7 @@ function BillsAdd() {
                     </div>
                   </div>
                   <div className="row mb-3 mt-2">
-                    <label className="col-sm-4 col-form-label">
-                      Total Discount<span className="text-danger">*</span>
-                    </label>
+                    <label className="col-sm-4 col-form-label">Discount</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
@@ -600,29 +598,35 @@ function BillsAdd() {
                     </div>
                   </div>
                   <div className="row mb-3">
-                    <label className="col-sm-4 col-form-label">Total Tax</label>
+                    <label className="col-sm-4 col-form-label">
+                      Adjustment
+                    </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
                         className={`form-control ${
-                          formik.touched.totalTax && formik.errors.totalTax
+                          formik.touched.adjustments &&
+                          formik.errors.adjustments
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("totalTax")}
+                        {...formik.getFieldProps("adjustments")}
                       />
-                      {formik.touched.totalTax && formik.errors.totalTax && (
-                        <div className="invalid-feedback">
-                          {formik.errors.totalTax}
-                        </div>
-                      )}
+                      {formik.touched.adjustments &&
+                        formik.errors.adjustments && (
+                          <div className="invalid-feedback">
+                            {formik.errors.adjustments}
+                          </div>
+                        )}
                     </div>
                   </div>
 
                   <hr />
                   <div className="row mb-3 mt-2">
-                    <label className="col-sm-4 col-form-label">Total</label>
+                    <label className="col-sm-4 col-form-label">
+                      Total ( ₹ )
+                    </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input

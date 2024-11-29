@@ -8,29 +8,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 function BillsView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
-  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [customerData, setCustomerData] = useState({
-    customerName: "John Doe",
-    salesOrder: "SO12345",
-    packageSlip: "PS98765",
-    packageDate: new Date(),
-    internalNotes: "Please deliver on time.",
-    billsItemDetailsModels: [
-      { item: "Item 1", qty: 2, price: 100, disc: 10, taxRate: 5, amount: 190 },
-      {
-        item: "Item 2",
-        qty: 1,
-        price: 200,
-        disc: 20,
-        taxRate: 10,
-        amount: 180,
-      },
-    ],
-    subTotal: 370,
-    totalTax: 15,
-    total: 385,
-  });
 
   useEffect(() => {
     const getData = async () => {
@@ -47,10 +25,6 @@ function BillsView() {
     getData();
   }, [id]);
 
-  const itemName = (id) => {
-    const name = items.find((item) => item.id == id);
-    return name?.itemName;
-  };
   const generatePDF = () => {
     const doc = new jsPDF();
 
@@ -59,60 +33,61 @@ function BillsView() {
 
     // Add customer details
     doc.setFontSize(12);
-    doc.text(`Customer Name: ${customerData.customerName || ""}`, 14, 30);
-    doc.text(`Sales Order: ${customerData.salesOrder || ""}`, 14, 40);
-    doc.text(`Package Slip: ${customerData.packageSlip || ""}`, 14, 50);
+    doc.text(`Vendor Name: ${data.vendorName || ""}`, 14, 30);
+    doc.text(`Bill Number: ${data.billNumber || ""}`, 14, 40);
+    doc.text(`Order Number: ${data.orderNumber || ""}`, 14, 50);
+    doc.text(`Subject: ${data.subject || ""}`, 14, 60);
     doc.text(
-      `Package Date: ${
-        customerData.packageDate
-          ? new Date(customerData.packageDate).toLocaleDateString()
-          : ""
+      `Bill Date: ${
+        data.billDate ? new Date(data.billDate).toLocaleDateString() : ""
       }`,
       14,
-      60
+      70
     );
-    doc.text(`Internal Notes: ${customerData.internalNotes || ""}`, 14, 70);
+    doc.text(
+      `Due Date: ${
+        data.dueDate ? new Date(data.dueDate).toLocaleDateString() : ""
+      }`,
+      14,
+      80
+    );
+    doc.text(`Notes: ${data.notes || ""}`, 14, 90);
 
-    if (
-      customerData.billsItemDetailsModels &&
-      customerData.billsItemDetailsModels.length > 0
-    ) {
+    // Table
+    if (data.billsItemDetailsModels && data.billsItemDetailsModels.length > 0) {
       const tableColumn = [
         "S.No",
-        "Item Details",
-        "Quantity",
-        "Rate",
-        "Discount",
-        "Tax",
-        "Amount",
+        "ITEM",
+        "ACCOUNT",
+        "QUANTITY",
+        "RATE",
+        "CUSTOMER DETAILS",
+        "AMOUNT",
       ];
-      const tableRows = [];
-
-      customerData.billsItemDetailsModels.forEach((item, index) => {
-        const rowData = [
-          index + 1,
-          item.item || "",
-          item.qty || "",
-          item.price || "",
-          item.discount || "",
-          item.taxRate || "",
-          item.amount || "",
-        ];
-        tableRows.push(rowData);
-      });
+      const tableRows = data.billsItemDetailsModels.map((item, index) => [
+        String(index + 1),
+        String(item.itemId || ""),
+        String(item.accountName || ""),
+        String(item.quantity || ""),
+        String(item.rate || ""),
+        String(item.customerDetail || ""),
+        String(item.amount || ""),
+      ]);
 
       doc.autoTable({
-        startY: 80,
+        startY: 100,
         head: [tableColumn],
         body: tableRows,
         theme: "grid",
       });
     }
 
-    const finalY = doc.lastAutoTable?.finalY || 80;
-    doc.text(`Sub Total: ${customerData.subTotal || ""}`, 14, finalY + 10);
-    doc.text(`Total Tax: ${customerData.totalTax || ""}`, 14, finalY + 20);
-    doc.text(`Total:  ${customerData.total || ""}`, 14, finalY + 30);
+    // Totals
+    const lastTableY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 100;
+    doc.text(`Sub Total: ${data.subTotal || "N/A"}`, 14, lastTableY);
+    doc.text(`Discount: ${data.discount || "N/A"}`, 14, lastTableY + 10);
+    doc.text(`Adjustments: ${data.adjustments || "N/A"}`, 14, lastTableY + 20);
+    doc.text(`Total: ${data.total || "N/A"}`, 14, lastTableY + 30);
 
     return doc;
   };
@@ -157,7 +132,10 @@ function BillsView() {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div className="card shadow border-0 mb-2 top-header">
+          <div
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ top: "66px" }}
+          >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="row align-items-center">
@@ -347,7 +325,7 @@ function BillsView() {
                             <tr key={index}>
                               <th scope="row">{index + 1}</th>
                               <td>{item.itemId}</td>
-                              <td>{item.quantity}</td>
+                              <td>{item.accountName}</td>
                               <td>{item.quantity}</td>
                               <td>{item.rate}</td>
                               <td>{item.customerDetail}</td>
@@ -375,16 +353,14 @@ function BillsView() {
                     <div class="col-sm-4 ">: {data.subTotal || ""}</div>
                   </div>
                   <div class="row mb-3 mt-2">
-                    <label class="col-sm-4 col-form-label">
-                      Total Discount
-                    </label>
+                    <label class="col-sm-4 col-form-label">Discount</label>
                     <div class="col-sm-4"></div>
                     <div class="col-sm-4 ">: {data.discount || ""}</div>
                   </div>
                   <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label">Total Tax</label>
+                    <label class="col-sm-4 col-form-label">Adjustments</label>
                     <div class="col-sm-4"></div>
-                    <div class="col-sm-4">: {data.totalTax || ""}</div>
+                    <div class="col-sm-4">: {data.adjustments || ""}</div>
                     <div class="col-sm-4 "></div>
                   </div>
                   <hr></hr>
