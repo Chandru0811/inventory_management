@@ -16,7 +16,7 @@ function BillsView() {
     packageSlip: "PS98765",
     packageDate: new Date(),
     internalNotes: "Please deliver on time.",
-    invoiceItemsModels: [
+    billsItemDetailsModels: [
       { item: "Item 1", qty: 2, price: 100, disc: 10, taxRate: 5, amount: 190 },
       {
         item: "Item 2",
@@ -64,14 +64,19 @@ function BillsView() {
     doc.text(`Package Slip: ${customerData.packageSlip || ""}`, 14, 50);
     doc.text(
       `Package Date: ${
-        customerData.packageDate ? new Date(customerData.packageDate).toLocaleDateString() : ""
+        customerData.packageDate
+          ? new Date(customerData.packageDate).toLocaleDateString()
+          : ""
       }`,
       14,
       60
     );
     doc.text(`Internal Notes: ${customerData.internalNotes || ""}`, 14, 70);
 
-    if (customerData.invoiceItemsModels && customerData.invoiceItemsModels.length > 0) {
+    if (
+      customerData.billsItemDetailsModels &&
+      customerData.billsItemDetailsModels.length > 0
+    ) {
       const tableColumn = [
         "S.No",
         "Item Details",
@@ -83,7 +88,7 @@ function BillsView() {
       ];
       const tableRows = [];
 
-      customerData.invoiceItemsModels.forEach((item, index) => {
+      customerData.billsItemDetailsModels.forEach((item, index) => {
         const rowData = [
           index + 1,
           item.item || "",
@@ -180,7 +185,10 @@ function BillsView() {
                         >
                           <BsThreeDotsVertical />
                         </button>
-                        <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
+                        <ul
+                          className="dropdown-menu"
+                          aria-labelledby="pdfDropdown"
+                        >
                           <li>
                             <button
                               className="dropdown-item"
@@ -281,7 +289,7 @@ function BillsView() {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                      :{" "}
+                        :{" "}
                         {data.billDate
                           ? new Date(data.billDate).toLocaleDateString()
                           : ""}
@@ -324,25 +332,25 @@ function BillsView() {
                       <thead className="thead-light">
                         <tr>
                           <th>S.NO</th>
-                          <th>ITEM DETAILS</th>
+                          <th>ITEM</th>
+                          <th>ACCOUNT</th>
                           <th>QUANTITY</th>
                           <th>RATE</th>
-                          <th>DISCOUNT</th>
-                          <th>TAX</th>
+                          <th>CUSTOMER DETAILS</th>
                           <th>AMOUNT</th>
                         </tr>
                       </thead>
                       <tbody className="table-group">
                         {data &&
-                          data.invoiceItemsModels &&
-                          data.invoiceItemsModels.map((item, index) => (
+                          data.billsItemDetailsModels &&
+                          data.billsItemDetailsModels.map((item, index) => (
                             <tr key={index}>
                               <th scope="row">{index + 1}</th>
-                              <td>{itemName(item.item)}</td>
-                              <td>{item.qty}</td>
-                              <td>{item.price}</td>
-                              <td>{item.disc}</td>
-                              <td>{item.taxRate}</td>
+                              <td>{item.itemId}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.rate}</td>
+                              <td>{item.customerDetail}</td>
                               <td>{item.amount}</td>
                             </tr>
                           ))}
@@ -353,8 +361,9 @@ function BillsView() {
               </div>
               <div class="row mt-5">
                 <div className="col-md-6 col-12 mb-3 mt-5">
-                  <lable className="form-lable">Customer Notes :</lable>
-                  <div className="mb-3">{data.notes || ""}</div>
+                  <div className="mb-3">
+                    Customer Notes : {data.notes || ""}
+                  </div>
                 </div>
                 <div
                   className="col-md-6 col-12 mt-5 mb-3 rounded"
@@ -364,6 +373,13 @@ function BillsView() {
                     <label class="col-sm-4 col-form-label">Sub Total</label>
                     <div class="col-sm-4"></div>
                     <div class="col-sm-4 ">: {data.subTotal || ""}</div>
+                  </div>
+                  <div class="row mb-3 mt-2">
+                    <label class="col-sm-4 col-form-label">
+                      Total Discount
+                    </label>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4 ">: {data.discount || ""}</div>
                   </div>
                   <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Total Tax</label>
