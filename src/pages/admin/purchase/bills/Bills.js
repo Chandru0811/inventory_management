@@ -92,14 +92,16 @@ const Bills = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Bills ({datas.length})</h1>
+                    <h1 className="h4 ls-tight headingColor ">
+                      Bills ({datas.length})
+                    </h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -127,7 +129,11 @@ const Bills = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
@@ -163,15 +169,12 @@ const Bills = () => {
                         <div className="gap-2">
                           <Link to={`/bills/view/${data.id}`}>
                             <button className="btn btn-sm">
-                            <FaEye />
+                              <FaEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/bills/edit/${data.id}`}
-                            className="px-2"
-                          >
+                          <Link to={`/bills/edit/${data.id}`} className="px-2">
                             <button className="btn btn-sm">
-                            <FaRegEdit />
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel
