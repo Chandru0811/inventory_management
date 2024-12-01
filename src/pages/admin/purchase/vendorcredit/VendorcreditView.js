@@ -35,7 +35,7 @@ function VendorCreditView() {
     const getData = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`getAllVendorCreditsById/${id}`);
+        const response = await api.get(`vendorCreditRetrivalWithItems/${id}`);
         setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
@@ -312,11 +312,25 @@ function VendorCreditView() {
                 </div>
               </div>
               <div className="row mt-2 p-3">
+              <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Vendor Name</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.vendorId || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
                 <div className="col-md-6 col-12">
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Credit Note Number </b>
+                        <b>Credit Note</b>
                       </p>
                     </div>
                     <div className="col-6">
@@ -336,6 +350,25 @@ function VendorCreditView() {
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         : {data.creditNoteNum || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Vendor Credit Date</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                    <p className="text-muted text-sm">
+                        :{" "}
+                        {data.orderCreditDdate
+                          ? new Date(
+                              data.orderCreditDdate
+                            ).toLocaleDateString("en-GB")
+                          : ""}
                       </p>
                     </div>
                   </div>
@@ -380,24 +413,24 @@ function VendorCreditView() {
                         <tr>
                           <th>S.NO</th>
                           <th>ITEM DETAILS</th>
+                          <th>ACCOUNT</th>
                           <th>QUANTITY</th>
                           <th>RATE</th>
                           <th>DISCOUNT</th>
-                          <th>TAX</th>
                           <th>AMOUNT</th>
                         </tr>
                       </thead>
                       <tbody className="table-group">
                         {data &&
-                          data.invoiceItemsModels &&
-                          data.invoiceItemsModels.map((item, index) => (
+                          data.creditsItems &&
+                          data.creditsItems.map((item, index) => (
                             <tr key={index}>
                               <th scope="row">{index + 1}</th>
-                              <td>{itemName(item.item)}</td>
-                              <td>{item.qty}</td>
-                              <td>{item.price}</td>
-                              <td>{item.disc}</td>
-                              <td>{item.taxRate}</td>
+                              <td>{item.itemName}</td>
+                              <td>{item.accountName}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.rate}</td>
+                              <td>{item.discount}</td>
                               <td>{item.amount}</td>
                             </tr>
                           ))}
@@ -408,12 +441,8 @@ function VendorCreditView() {
               </div>
               <div class="row mt-5">
                 <div className="col-md-6 col-12 mb-3 mt-5">
-                  <lable className="form-lable">
-                    Customer Notes : {data.notes}
-                  </lable>
-                  <div className="mb-3">Thanks For Your Bussiness</div>
-                  <lable className="form-lable mt-2">Terms & Conditions</lable>
-                  <div className="mb-3">{/* <p>{data.}</p> */}</div>
+                <lable className="form-lable">Customer Notes :</lable>
+                  <div className="mb-3">{data.notes || ""}</div>
                 </div>
                 <div
                   className="col-md-6 col-12 mt-5 mb-3 rounded"
@@ -425,7 +454,13 @@ function VendorCreditView() {
                     <div class="col-sm-4 ">: {data.subTotal || ""}</div>
                   </div>
                   <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label">Total Tax</label>
+                    <label class="col-sm-4 col-form-label">Discount</label>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">: {data.discount || ""}</div>
+                    <div class="col-sm-4 "></div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Adjustment</label>
                     <div class="col-sm-4"></div>
                     <div class="col-sm-4">: {data.totalTax || ""}</div>
                     <div class="col-sm-4 "></div>
@@ -457,9 +492,6 @@ function VendorCreditView() {
                 </div>
               </div>
             </div> */}
-              </div>
-              <div className="col-md-6 col-12 mb-5">
-                Authorized Signature _____________________________
               </div>
             </div>
           </div>

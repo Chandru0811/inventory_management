@@ -134,6 +134,9 @@ const VendorCredit = () => {
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
+                      Vendor Name
+                    </th>
+                    <th scope="col" className="text-start">
                       CREDIT NOTE NUMBER
                     </th>
                     <th scope="col" className="text-start">
@@ -151,12 +154,13 @@ const VendorCredit = () => {
                   {datas.map((data, index) => (
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
+                      <td className="text-start">{data.vendorName}</td>
                       <td className="text-start">{data.creditNoteNum}</td>
                       <td className="text-start">
-                        {data.orderCreditDdate
-                          ? data.orderCreditDdate.substring(8, 10) + "-" +
-                          data.orderCreditDdate.substring(5, 7) + "-" +
-                          data.orderCreditDdate.substring(2, 4)
+                        {data.orderCreditDate
+                          ? data.orderCreditDate.substring(8, 10) + "-" +
+                          data.orderCreditDate.substring(5, 7) + "-" +
+                          data.orderCreditDate.substring(2, 4)
                           : ""}
                       </td>
                       <td className="text-start">{data.orderNumber}</td>

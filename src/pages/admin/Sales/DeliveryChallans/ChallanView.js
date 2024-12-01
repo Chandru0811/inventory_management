@@ -32,7 +32,7 @@ function ChallanView() {
     const getData = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`getDeliveryChallansById/${id}`);
+        const response = await api.get(`deliveryChallansRetrivalWithItems/${id}`);
         setData(response.data);
       } catch (e) {
         toast.error("Error fetching data");
@@ -154,8 +154,8 @@ function ChallanView() {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
@@ -350,21 +350,19 @@ function ChallanView() {
                           <th>QUANTITY</th>
                           <th>RATE</th>
                           <th>DISCOUNT</th>
-                          <th>TAX</th>
                           <th>AMOUNT</th>
                         </tr>
                       </thead>
                       <tbody className="table-group">
                         {data &&
-                          data.invoiceItemsModels &&
-                          data.invoiceItemsModels.map((item, index) => (
+                          data.challanitems &&
+                          data.challanitems.map((item, index) => (
                             <tr key={index}>
                               <th scope="row">{index + 1}</th>
-                              <td>{itemName(item.item)}</td>
-                              <td>{item.qty}</td>
-                              <td>{item.price}</td>
+                              <td>{item.itemName}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.rate}</td>
                               <td>{item.discount}</td>
-                              <td>{item.taxRate}</td>
                               <td>{item.amount}</td>
                             </tr>
                           ))}
@@ -378,7 +376,7 @@ function ChallanView() {
                   <lable className="form-lable">Customer Notes :</lable>
                   <div className="mb-3">{data.customerNotes || ""}</div>
                   <lable className="form-lable">Terms Condition :</lable>
-                  <div className="mb-3">{data.customerNotes || ""}</div>
+                  <div className="mb-3">{data.termsAndCondition || ""}</div>
                 </div>
                 <div
                   className="col-md-6 col-12 mt-5 mb-3 rounded"
@@ -390,9 +388,9 @@ function ChallanView() {
                     <div class="col-sm-4 ">: {data.subTotal || ""}</div>
                   </div>
                   <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label">Total Tax</label>
+                    <label class="col-sm-4 col-form-label">Adjustment</label>
                     <div class="col-sm-4"></div>
-                    <div class="col-sm-4">: {data.totalTax || ""}</div>
+                    <div class="col-sm-4">: {data.adjustment || ""}</div>
                     <div class="col-sm-4 "></div>
                   </div>
                   <hr></hr>

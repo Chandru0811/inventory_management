@@ -12,7 +12,7 @@ function ChellanAdd() {
   const [itemData, setItemData] = useState(null);
 
   const validationSchema = Yup.object({
-    customerName: Yup.string().required("*Customer Name is required"),
+    customerId: Yup.string().required("*Customer Name is required"),
     deliveryChallan: Yup.string().required("*Delivery Challan is required"),
     deliveryChallanDate: Yup.string().required(
       "*Delivery Challan Date is required"
@@ -20,21 +20,21 @@ function ChellanAdd() {
     challanType: Yup.string().required("*Challan Type is required"),
     deliveryChallanItemsJson: Yup.array().of(
       Yup.object({
-        item: Yup.string().required("*Item is required"),
+        itemId: Yup.string().required("*Item is required"),
       })
     ),
   });
 
   const formik = useFormik({
     initialValues: {
-      customerName: "",
+      customerId: "",
       deliveryChallan: "",
       deliveryChallanDate: "",
       challanType: "",
       attachFile: null,
       deliveryChallanItemsJson: [
         {
-          item: "",
+          itemId: "",
           qty: "",
           price: "",
           amount: "",
@@ -44,43 +44,39 @@ function ChellanAdd() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
+      console.log(values);
       try {
         const formData = new FormData();
 
-        formData.append("customerName", values.customerName);
+        formData.append("customerId", values.customerId);
         formData.append("deliveryChallan", values.deliveryChallan);
         formData.append("reference", values.reference);
         formData.append("deliveryChallanDate", values.deliveryChallanDate);
         formData.append("subTotal", values.subTotal);
-        formData.append("discount", values.discount);
         formData.append("adjustment", values.adjustment);
         formData.append("total", values.total);
         formData.append("customerNotes", values.customerNotes);
-        formData.append("termsAndCondition", values.termsAndCondition);
+        formData.append("termsConditions", values.termsConditions);
         formData.append("attachFile", values.attachFile);
-        // values.deliveryChallanItemsJson.forEach((item) => {
-        //   formData.append("item", item.item);
-        //   formData.append("qty", item.qty);
-        //   formData.append("price", item.price);
-        //   formData.append("taxRate", item.taxRate);
-        //   formData.append("disc", item.disc);
-        //   formData.append("amount", item.amount);
-        //   formData.append("mstrItemsId", item.item);
-        //   formData.append("description", "item.item");
-        //   formData.append("account", "item.item");
-        //   formData.append("taxAmount", "000");
-        //   formData.append("project", "000");
-        // });
-        if (values.files) {
-          formData.append("files", values.files);
-        }
-        const response = await api.post("chellan-attach", formData, {
+        formData.append(
+          "deliveryChallanItemsJson",
+          JSON.stringify(
+            values.deliveryChallanItemsJson?.map((item) => ({
+              itemId: item.itemId?.id || item.itemId,
+              quantity: item.quantity,
+              rate: item.rate,
+              // discount: item.discount,
+              amount: item.amount,
+            }))
+          )
+        );
+        const response = await api.post("createDeliveryChallansWithItems", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
 
-        if (response.status === 200) {
+        if (response.status === 201) {
           toast.success(response.data.message);
           navigate("/challan");
         } else {
@@ -94,139 +90,138 @@ function ChellanAdd() {
     },
   });
 
-  useEffect(() => {
-    const updateAndCalculate = async () => {
-      try {
-        let totalRate = 0;
-        let totalAmount = 0;
-        let totalTax = 0;
-        let discAmount = 0;
-        const updatedItems = await Promise.all(
-          formik.values.deliveryChallanItemsJson.map(async (item, index) => {
-            if (item.item) {
-              try {
-                const response = await api.get(`itemsById/${item.item}`);
-                const updatedItem = {
-                  ...item,
-                  price: response.data.salesPrice,
-                  qty: 1,
-                };
-                const amount = calculateAmount(
-                  updatedItem.qty,
-                  updatedItem.price,
-                  updatedItem.disc,
-                  updatedItem.taxRate
-                );
-                const itemTotalRate = updatedItem.qty * updatedItem.price;
-                const itemTotalTax =
-                  itemTotalRate * (updatedItem.taxRate / 100);
-                const itemTotalDisc = itemTotalRate * (updatedItem.disc / 100);
-                discAmount += itemTotalDisc;
-                totalRate += updatedItem.price;
-                totalAmount += amount;
-                totalTax += itemTotalTax;
-                return { ...updatedItem, amount };
-              } catch (error) {
-                toast.error(
-                  "Error fetching data: ",
-                  error?.response?.data?.message
-                );
-              }
-            }
-            return item;
-          })
-        );
-        formik.setValues({
-          ...formik.values,
-          deliveryChallanItemsJson: updatedItems,
-        });
-        formik.setFieldValue("subTotal", totalRate);
-        formik.setFieldValue("total", totalAmount);
-        formik.setFieldValue("totalTax", totalTax);
-        formik.setFieldValue("discountAmount", discAmount);
-      } catch (error) {
-        toast.error("Error updating items: ", error.message);
-      }
-    };
+  // useEffect(() => {
+  //   const updateAndCalculate = async () => {
+  //     try {
+  //       let totalRate = 0;
+  //       let totalAmount = 0;
+  //       let totalTax = 0;
+  //       let discAmount = 0;
+  //       const updatedItems = await Promise.all(
+  //         formik.values.deliveryChallanItemsJson.map(async (item, index) => {
+  //           if (item.item) {
+  //             try {
+  //               const response = await api.get(`itemsById/${item.item}`);
+  //               const updatedItem = {
+  //                 ...item,
+  //                 price: response.data.salesPrice,
+  //                 qty: 1,
+  //               };
+  //               const amount = calculateAmount(
+  //                 updatedItem.qty,
+  //                 updatedItem.price,
+  //                 updatedItem.disc,
+  //                 updatedItem.taxRate
+  //               );
+  //               const itemTotalRate = updatedItem.qty * updatedItem.price;
+  //               const itemTotalTax =
+  //                 itemTotalRate * (updatedItem.taxRate / 100);
+  //               const itemTotalDisc = itemTotalRate * (updatedItem.disc / 100);
+  //               discAmount += itemTotalDisc;
+  //               totalRate += updatedItem.price;
+  //               totalAmount += amount;
+  //               totalTax += itemTotalTax;
+  //               return { ...updatedItem, amount };
+  //             } catch (error) {
+  //               toast.error(
+  //                 "Error fetching data: ",
+  //                 error?.response?.data?.message
+  //               );
+  //             }
+  //           }
+  //           return item;
+  //         })
+  //       );
+  //       formik.setValues({
+  //         ...formik.values,
+  //         deliveryChallanItemsJson: updatedItems,
+  //       });
+  //       formik.setFieldValue("subTotal", totalRate);
+  //       formik.setFieldValue("total", totalAmount);
+  //       formik.setFieldValue("totalTax", totalTax);
+  //       formik.setFieldValue("discountAmount", discAmount);
+  //     } catch (error) {
+  //       toast.error("Error updating items: ", error.message);
+  //     }
+  //   };
 
-    updateAndCalculate();
-  }, [
-    formik.values.deliveryChallanItemsJson.map((item) => item.item).join(""),
-  ]);
+  //   updateAndCalculate();
+  // }, [
+  //   formik.values.deliveryChallanItemsJson.map((item) => item.item).join(""),
+  // ]);
 
-  useEffect(() => {
-    const updateAndCalculate = async () => {
-      try {
-        let totalRate = 0;
-        let totalAmount = 0;
-        let totalTax = 0;
-        let discAmount = 0;
-        const updatedItems = await Promise.all(
-          formik.values.deliveryChallanItemsJson.map(async (item, index) => {
-            if (
-              item.qty &&
-              item.price &&
-              item.disc !== undefined &&
-              item.taxRate !== undefined
-            ) {
-              const amount = calculateAmount(
-                item.qty,
-                item.price,
-                item.disc,
-                item.taxRate
-              );
-              const itemTotalRate = item.qty * item.price;
-              const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-              const itemTotalDisc = itemTotalRate * (item.disc / 100);
-              discAmount += itemTotalDisc;
-              totalRate += item.price;
-              totalAmount += amount;
-              totalTax += itemTotalTax;
-              return { ...item, amount };
-            }
-            return item;
-          })
-        );
-        formik.setValues({
-          ...formik.values,
-          deliveryChallanItemsJson: updatedItems,
-        });
-        formik.setFieldValue("subTotal", totalRate);
-        formik.setFieldValue("total", totalAmount);
-        formik.setFieldValue("totalTax", totalTax);
-        formik.setFieldValue("discountAmount", discAmount);
-      } catch (error) {
-        toast.error("Error updating items: ", error.message);
-      }
-    };
+  // useEffect(() => {
+  //   const updateAndCalculate = async () => {
+  //     try {
+  //       let totalRate = 0;
+  //       let totalAmount = 0;
+  //       let totalTax = 0;
+  //       let discAmount = 0;
+  //       const updatedItems = await Promise.all(
+  //         formik.values.deliveryChallanItemsJson.map(async (item, index) => {
+  //           if (
+  //             item.qty &&
+  //             item.price &&
+  //             item.disc !== undefined &&
+  //             item.taxRate !== undefined
+  //           ) {
+  //             const amount = calculateAmount(
+  //               item.qty,
+  //               item.price,
+  //               item.disc,
+  //               item.taxRate
+  //             );
+  //             const itemTotalRate = item.qty * item.price;
+  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
+  //             const itemTotalDisc = itemTotalRate * (item.disc / 100);
+  //             discAmount += itemTotalDisc;
+  //             totalRate += item.price;
+  //             totalAmount += amount;
+  //             totalTax += itemTotalTax;
+  //             return { ...item, amount };
+  //           }
+  //           return item;
+  //         })
+  //       );
+  //       formik.setValues({
+  //         ...formik.values,
+  //         deliveryChallanItemsJson: updatedItems,
+  //       });
+  //       formik.setFieldValue("subTotal", totalRate);
+  //       formik.setFieldValue("total", totalAmount);
+  //       formik.setFieldValue("totalTax", totalTax);
+  //       formik.setFieldValue("discountAmount", discAmount);
+  //     } catch (error) {
+  //       toast.error("Error updating items: ", error.message);
+  //     }
+  //   };
 
-    updateAndCalculate();
-  }, [
-    formik.values.deliveryChallanItemsJson.map((item) => item.qty).join(""),
-    formik.values.deliveryChallanItemsJson.map((item) => item.price).join(""),
-    formik.values.deliveryChallanItemsJson.map((item) => item.disc).join(""),
-    formik.values.deliveryChallanItemsJson
-      .map((item) => item.taxRate)
-      .join(""),
-  ]);
+  //   updateAndCalculate();
+  // }, [
+  //   formik.values.deliveryChallanItemsJson.map((item) => item.qty).join(""),
+  //   formik.values.deliveryChallanItemsJson.map((item) => item.price).join(""),
+  //   formik.values.deliveryChallanItemsJson.map((item) => item.disc).join(""),
+  //   formik.values.deliveryChallanItemsJson
+  //     .map((item) => item.taxRate)
+  //     .join(""),
+  // ]);
 
-  const calculateAmount = (qty, price, disc, taxRate) => {
-    const totalRate = qty * price;
-    const discountAmount = totalRate * (disc / 100);
-    const taxableAmount = totalRate * (taxRate / 100);
-    const totalAmount = totalRate + taxableAmount - discountAmount;
-    return totalAmount;
-  };
+  // const calculateAmount = (qty, price, disc, taxRate) => {
+  //   const totalRate = qty * price;
+  //   const discountAmount = totalRate * (disc / 100);
+  //   const taxableAmount = totalRate * (taxRate / 100);
+  //   const totalAmount = totalRate + taxableAmount - discountAmount;
+  //   return totalAmount;
+  // };
 
   const AddRowContent = () => {
     formik.setFieldValue("deliveryChallanItemsJson", [
       ...formik.values.deliveryChallanItemsJson,
       {
-        item: "",
-        qty: "",
-        price: "",
-        disc: "",
-        taxRate: "",
+        itemId: "",
+        quantity: "",
+        rate: "",
+        discount: "",
         amount: "",
       },
     ]);
@@ -268,10 +263,10 @@ function ChellanAdd() {
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
-        <div
-          className="card shadow border-0 mb-2 top-header"
-          style={{ borderRadius: "0" }}
-        >
+      <div
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
+          >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
               <div className="col">
@@ -320,9 +315,9 @@ function ChellanAdd() {
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("customerName")}
-                    className={`form-select    ${
-                      formik.touched.customerName && formik.errors.customerName
+                    {...formik.getFieldProps("customerId")}
+                    className={`form-select form-select-sm   ${
+                      formik.touched.customerId && formik.errors.customerId
                         ? "is-invalid"
                         : ""
                     }`}
@@ -335,10 +330,10 @@ function ChellanAdd() {
                         </option>
                       ))}
                   </select>
-                  {formik.touched.customerName &&
-                    formik.errors.customerName && (
+                  {formik.touched.customerId &&
+                    formik.errors.customerId && (
                       <div className="invalid-feedback">
-                        {formik.errors.customerName}
+                        {formik.errors.customerId}
                       </div>
                     )}
                 </div>
@@ -373,7 +368,7 @@ function ChellanAdd() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm  ${
                       formik.touched.deliveryChallan &&
                       formik.errors.deliveryChallan
                         ? "is-invalid"
@@ -395,7 +390,7 @@ function ChellanAdd() {
                 <div className="">
                   <input
                     type="text"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.reference && formik.errors.reference
                         ? "is-invalid"
                         : ""
@@ -417,7 +412,7 @@ function ChellanAdd() {
                 <div className="">
                   <input
                     type="date"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.deliveryChallanDate &&
                       formik.errors.deliveryChallanDate
                         ? "is-invalid"
@@ -440,7 +435,7 @@ function ChellanAdd() {
                 <div className="">
                   <select
                     type="text"
-                    className={`form-select ${
+                    className={`form-select form-select-sm ${
                       formik.touched.challanType && formik.errors.challanType
                         ? "is-invalid"
                         : ""
@@ -470,11 +465,10 @@ function ChellanAdd() {
                 <div className="mb-3">
                   <input
                     type="file"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     onChange={(event) => {
                       formik.setFieldValue("attachFile", event.target.files[0]);
                     }}
-                    onBlur={formik.handleBlur}
                   />
                   {formik.touched.attachFile && formik.errors.attachFile && (
                     <div className="invalid-feedback">
@@ -514,17 +508,17 @@ function ChellanAdd() {
                             <th scope="row">{index + 1}</th>
                             <td>
                               <select
-                                name={`deliveryChallanItemsJson[${index}].item`}
+                                name={`deliveryChallanItemsJson[${index}].itemId`}
                                 {...formik.getFieldProps(
-                                  `deliveryChallanItemsJson[${index}].item`
+                                  `deliveryChallanItemsJson[${index}].itemId`
                                 )}
                                 className={`form-select ${
                                   formik.touched.deliveryChallanItemsJson?.[
                                     index
-                                  ]?.item &&
+                                  ]?.itemId &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
-                                  ]?.item
+                                  ]?.itemId
                                     ? "is-invalid"
                                     : ""
                                 }`}
@@ -539,15 +533,15 @@ function ChellanAdd() {
                               </select>
                               {formik.touched.deliveryChallanItemsJson?.[
                                 index
-                              ]?.item &&
+                              ]?.itemId &&
                                 formik.errors.deliveryChallanItemsJson?.[
                                   index
-                                ]?.item && (
+                                ]?.itemId && (
                                   <div className="invalid-feedback">
                                     {
                                       formik.errors.deliveryChallanItemsJson[
                                         index
-                                      ].item
+                                      ].itemId
                                     }
                                   </div>
                                 )}
@@ -559,32 +553,32 @@ function ChellanAdd() {
                                     event.target.value.replace(/[^0-9]/g, "");
                                 }}
                                 type="text"
-                                name={`deliveryChallanItemsJson[${index}].qty`}
+                                name={`deliveryChallanItemsJson[${index}].quantity`}
                                 className={`form-control ${
                                   formik.touched.deliveryChallanItemsJson?.[
                                     index
-                                  ]?.qty &&
+                                  ]?.quantity &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
-                                  ]?.qty
+                                  ]?.quantity
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `deliveryChallanItemsJson[${index}].qty`
+                                  `deliveryChallanItemsJson[${index}].quantity`
                                 )}
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
                                 index
-                              ]?.qty &&
+                              ]?.quantity &&
                                 formik.errors.deliveryChallanItemsJson?.[
                                   index
-                                ]?.qty && (
+                                ]?.quantity && (
                                   <div className="invalid-feedback">
                                     {
                                       formik.errors.deliveryChallanItemsJson[
                                         index
-                                      ].qty
+                                      ].quantity
                                     }
                                   </div>
                                 )}
@@ -592,32 +586,32 @@ function ChellanAdd() {
                             <td>
                               <input
                                 type="text"
-                                name={`deliveryChallanItemsJson[${index}].price`}
+                                name={`deliveryChallanItemsJson[${index}].rate`}
                                 className={`form-control ${
                                   formik.touched.deliveryChallanItemsJson?.[
                                     index
-                                  ]?.price &&
+                                  ]?.rate &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
-                                  ]?.price
+                                  ]?.rate
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `deliveryChallanItemsJson[${index}].price`
+                                  `deliveryChallanItemsJson[${index}].rate`
                                 )}
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
                                 index
-                              ]?.price &&
+                              ]?.rate &&
                                 formik.errors.deliveryChallanItemsJson?.[
                                   index
-                                ]?.price && (
+                                ]?.rate && (
                                   <div className="invalid-feedback">
                                     {
                                       formik.errors.deliveryChallanItemsJson[
                                         index
-                                      ].price
+                                      ].rate
                                     }
                                   </div>
                                 )}
@@ -630,39 +624,38 @@ function ChellanAdd() {
                                     .slice(0, 2);
                                 }}
                                 type="text"
-                                name={`deliveryChallanItemsJson[${index}].disc`}
+                                name={`deliveryChallanItemsJson[${index}].discount`}
                                 className={`form-control ${
                                   formik.touched.deliveryChallanItemsJson?.[
                                     index
-                                  ]?.disc &&
+                                  ]?.discount &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
-                                  ]?.disc
+                                  ]?.discount
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `deliveryChallanItemsJson[${index}].disc`
+                                  `deliveryChallanItemsJson[${index}].discount`
                                 )}
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
                                 index
-                              ]?.disc &&
+                              ]?.discount &&
                                 formik.errors.deliveryChallanItemsJson?.[
                                   index
-                                ]?.disc && (
+                                ]?.discount && (
                                   <div className="invalid-feedback">
                                     {
                                       formik.errors.deliveryChallanItemsJson[
                                         index
-                                      ].disc
+                                      ].discount
                                     }
                                   </div>
                                 )}
                             </td>
                             <td>
                               <input
-                                readOnly
                                 type="text"
                                 name={`deliveryChallanItemsJson[${index}].amount`}
                                 className={`form-control ${
@@ -758,7 +751,6 @@ function ChellanAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("subTotal")}
-                        disabled
                       />
                       {formik.touched.subTotal && formik.errors.subTotal && (
                         <div className="invalid-feedback">
@@ -804,7 +796,6 @@ function ChellanAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("total")}
-                        disabled
                       />
                       {formik.touched.total && formik.errors.total && (
                         <div className="invalid-feedback">
@@ -820,18 +811,18 @@ function ChellanAdd() {
                   <div className="mb-3">
                     <textarea
                       className={`form-control  ${
-                        formik.touched.termsAndCondition &&
-                        formik.errors.termsAndCondition
+                        formik.touched.termsConditions &&
+                        formik.errors.termsConditions
                           ? "is-invalid"
                           : ""
                       }`}
                       rows="4"
-                      {...formik.getFieldProps("termsAndCondition")}
+                      {...formik.getFieldProps("termsConditions")}
                     />
-                    {formik.touched.termsAndCondition &&
-                      formik.errors.termsAndCondition && (
+                    {formik.touched.termsConditions &&
+                      formik.errors.termsConditions && (
                         <div className="invalid-feedback">
-                          {formik.errors.termsAndCondition}
+                          {formik.errors.termsConditions}
                         </div>
                       )}
                   </div>

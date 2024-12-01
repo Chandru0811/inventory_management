@@ -2,64 +2,68 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-// import api from "../../config/URL";
-import toast from "react-hot-toast";
 import api from "../../../../config/URL";
+import toast from "react-hot-toast";
+// import VendorCredit from "./VendorCredit";
 
-function OrderAdd() {
+function VendorCreditEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoadIndicator] = useState(false);
-  const [customerData, setCustomerData] = useState(null);
+  const [wareHouseData, setWareHouseData] = useState(null);
+  const [vendor, setVendor] = useState(null);
   const [itemData, setItemData] = useState(null);
-  const [data, setData] = useState([]);
 
   const validationSchema = Yup.object({
-    vendorName: Yup.string().required("*Vendor name is required"),
-    deliveryAddressCategory: Yup.string().required(
-      "*Delivery address category is required"
+    vendorName: Yup.string().required("*Vendor Name is required"),
+    creditNote: Yup.string().required("*Credit Note is required"),
+    txnVendorCreditItemsModels: Yup.array().of(
+      Yup.object().shape({
+        itemId: Yup.string().required("*Item Details is required"),
+      })
     ),
-    deliveryAddress: Yup.string().required("*Delivery address is required"),
-    purchaseOrderNumber: Yup.string().required("*Purchase order is required"),
   });
 
   const formik = useFormik({
     initialValues: {
+      wareHouseData: "",
       vendorName: "",
-      deliveryAddressCategory: "",
-      deliveryAddress: "",
-      purchaseOrderNumber: "",
-      purchaseOrderRef: "",
-      date: "",
-      deliveryDate: "",
-      paymentTerm: "",
-      shipmentPreference: "",
+      creditNote: "",
+      orderNumber: "",
+      vendorCreditDdate: "",
+      subject: "",
       notes: "",
-      termsCondition: "",
-      file: null,
+      file: "",
+      txnVendorCreditItemsModels: [
+        {
+          itemId: "",
+          account: "",
+          qty: "",
+          rate: "",
+          amount: "",
+        },
+      ],
     },
-    validationSchema: validationSchema,
+    validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
         const formData = new FormData();
-        formData.append("vendorName", values.vendorName);
-        formData.append(
-          "deliveryAddressCategory",
-          values.deliveryAddressCategory
-        );
-        formData.append("deliveryAddress", values.deliveryAddress);
-        formData.append("purchaseOrderNumber", values.purchaseOrderNumber);
-        formData.append("purchaseOrderRef", values.purchaseOrderRef);
-        formData.append("date", values.date);
-        formData.append("deliveryDate", values.deliveryDate);
-        formData.append("paymentTerm", values.paymentTerm);
-        formData.append("shipmentPreference", values.shipmentPreference);
+        formData.append("wareHouseId", values.wareHouseData);
+        formData.append("vendorId", values.vendorName);
+        formData.append("creditNote", values.creditNote);
+        formData.append("orderNumber", values.orderNumber);
+        formData.append("vendorCreditDdate", values.vendorCreditDdate);
+        formData.append("subject", values.subject);
         formData.append("notes", values.notes);
-        formData.append("termsCondition", values.termsCondition);
         formData.append("file", values.file);
+        formData.append(
+          "txnVendorCreditItemsModels",
+          JSON.stringify(values.txnVendorCreditItemsModels)
+        );
+
         const response = await api.put(
-          `/updatePurchaseOrderProfileImage/${id}`,
+          `vendorCreditUpdationWithItems/${id}`,
           formData,
           {
             headers: {
@@ -68,14 +72,14 @@ function OrderAdd() {
           }
         );
 
-        if (response.status === 201) {
+        if (response.status === 200 || response.status === 201) {
           toast.success(response.data.message);
-          navigate("/order");
+          navigate("/vendorcredit");
         } else {
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error("Error: Unable to save sales order.");
+        toast.error("Error: Unable to save vendor credit.");
       } finally {
         setLoadIndicator(false);
       }
@@ -83,200 +87,105 @@ function OrderAdd() {
   });
 
   useEffect(() => {
-    const getData = async () => {
+    const fetchVendorCreditData = async () => {
       try {
-        const response = await api.get(`/getAllPurchaseOrderById/${id}`);
-        const rest = response.data;
+        const response = await api.get(`vendorCreditRetrivalWithItems/${id}`);
+        const vendorCreditDAta = response.data;
 
-        const formattedData = {
-          ...rest,
-          date: rest.date
-            ? new Date(rest.date).toISOString().split("T")[0]
-            : undefined,
-          deliveryDate: rest.deliveryDate
-            ? new Date(rest.deliveryDate).toISOString().split("T")[0]
-            : undefined,
-        };
-        formik.setValues(formattedData);
-        setData(response.data);
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
+        formik.setValues({
+          wareHouseData: vendorCreditDAta.wareHouseData,
+          vendorName: vendorCreditDAta.vendorName,
+          creditNote: vendorCreditDAta.creditNote,
+          orderNumber: vendorCreditDAta.orderNumber,
+          vendorCreditDdate: vendorCreditDAta.vendorCreditDdate,
+          subject: vendorCreditDAta.subject,
+          notes: vendorCreditDAta.notes,
+          file: vendorCreditDAta.file,
+          txnVendorCreditItemsModels:
+            vendorCreditDAta.txnVendorCreditItemsModels,
+        });
+      } catch (error) {
+        console.error("Error fetching item group data:", error);
+        toast.error("Error fetching item group data");
       }
     };
 
-    getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (id) {
+      fetchVendorCreditData();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const fetchWarehouses = async () => {
+      try {
+        const response = await api.get("getAllWarehouses");
+        setWareHouseData(response.data);
+      } catch (error) {
+        console.error("Error fetching Warehouses:", error);
+      }
+    };
+
+    const fetchVendors = async () => {
+      try {
+        const response = await api.get("vendorIdsWithDisplayNames");
+        setVendor(response.data);
+      } catch (error) {
+        console.error("Error fetching Vendors:", error);
+      }
+    };
+
+    fetchWarehouses();
+    fetchVendors();
   }, []);
 
-  //   const fetchData = async () => {
-  //     try {
-  //       const customerData = await fetchAllCustomerWithIds();
-  //       const itemData = await fetchAllItemWithIds();
-  //       setCustomerData(customerData);
-  //       setItemData(itemData);
-  //     } catch (error) {
-  //       toast.error(error.message);
-  //     }
-  //   };
-  //   useEffect(() => {
-  //     fetchData();
-  //   }, []);
+  const AddRowContent = () => {
+    formik.setFieldValue("txnVendorCreditItemsModels", [
+      ...formik.values.txnVendorCreditItemsModels,
+      {
+        itemId: "",
+        qty: "",
+        rate: "",
+        discount: "",
+        taxRate: "",
+        amount: "",
+      },
+    ]);
+  };
 
-  //   useEffect(() => {
-  //     const updateAndCalculate = async () => {
-  //       try {
-  //         let totalRate = 0;
-  //         let totalAmount = 0;
-  //         let totalTax = 0;
-  //         let discAmount=0;
-  //         const updatedItems = await Promise.all(
-  //           formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-  //             if (item.item) {
-  //               try {
-  //                 const response = await api.get(`itemsById/${item.item}`);
-  //                 const updatedItem = { ...item, price: response.data.salesPrice, qty:1 };
-  //                 const amount = calculateAmount(updatedItem.qty, updatedItem.price, updatedItem.disc, updatedItem.taxRate);
-  //                 const itemTotalRate = updatedItem.qty * updatedItem.price;
-  //                 const itemTotalTax = itemTotalRate * (updatedItem.taxRate / 100);
-  //                 const itemTotalDisc =
-  //                   itemTotalRate * (updatedItem.disc / 100);
-  //                   discAmount +=itemTotalDisc
-  //                 totalRate += updatedItem.price;
-  //                 totalAmount += amount;
-  //                 totalTax += itemTotalTax;
-  //                 return { ...updatedItem, amount };
-  //               } catch (error) {
-  //                 toast.error("Error fetching data: ", error?.response?.data?.message);
-  //               }
-  //             }
-  //             return item;
-  //           })
-  //         );
-  //         formik.setValues({ ...formik.values, txnInvoiceOrderItemsModels: updatedItems });
-  //         formik.setFieldValue("subTotal", totalRate);
-  //         formik.setFieldValue("total", totalAmount);
-  //         formik.setFieldValue("totalTax", totalTax);
-  //         formik.setFieldValue("discountAmount", discAmount);
-  //       } catch (error) {
-  //         toast.error("Error updating items: ", error.message);
-  //       }
-  //     };
-
-  //     updateAndCalculate();
-  //   }, [
-  //     formik.values.txnInvoiceOrderItemsModels.map((item) => item.item).join(""),
-  //   ]);
-
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-  //           if (
-  //             item.qty &&
-  //             item.price &&
-  //             item.disc !== undefined &&
-  //             item.taxRate !== undefined
-  //           ) {
-  //             const amount = calculateAmount(
-  //               item.qty,
-  //               item.price,
-  //               item.disc,
-  //               item.taxRate
-  //             );
-  //             const itemTotalRate = item.qty * item.price;
-  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //             const itemTotalDisc = itemTotalRate * (item.disc / 100);
-  //             discAmount += itemTotalDisc;
-  //             totalRate += item.price;
-  //             totalAmount += amount;
-  //             totalTax += itemTotalTax;
-  //             return { ...item, amount };
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         txnInvoiceOrderItemsModels: updatedItems,
-  //       });
-  //       formik.setFieldValue("subTotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("discountAmount", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.qty).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.price).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.disc).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels
-  //     .map((item) => item.taxRate)
-  //     .join(""),
-  // ]);
-
-  // const calculateAmount = (qty, price, disc, taxRate) => {
-  //   const totalRate = qty * price;
-  //   const discountAmount = totalRate * (disc / 100);
-  //   const taxableAmount = totalRate * (taxRate / 100);
-  //   const totalAmount = totalRate + taxableAmount - discountAmount;
-  //   return totalAmount;
-  // };
-
-  // const AddRowContent = () => {
-  //   formik.setFieldValue("txnInvoiceOrderItemsModels", [
-  //     ...formik.values.txnInvoiceOrderItemsModels,
-  //     {
-  //       item: "",
-  //       qty: "",
-  //       price: "",
-  //       disc: "",
-  //       taxRate: "",
-  //       amount: "",
-  //     },
-  //   ]);
-  // };
-
-  // const deleteRow = (index) => {
-  //   if (formik.values.txnInvoiceOrderItemsModels.length === 1) {
-  //     return;
-  //   }
-  //   const updatedRows = [...formik.values.txnInvoiceOrderItemsModels];
-  //   updatedRows.pop();
-  //   formik.setFieldValue("txnInvoiceOrderItemsModels", updatedRows);
-  // };
-
+  const deleteRow = (index) => {
+    if (formik.values.txnVendorCreditItemsModels.length === 1) {
+      return;
+    }
+    const updatedRows = [...formik.values.txnVendorCreditItemsModels];
+    updatedRows.splice(index, 1);
+    formik.setFieldValue("txnVendorCreditItemsModels", updatedRows);
+  };
   return (
-    <div className="container-fluid p-2 minHeight m-0">
+    <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
-        <div className="card shadow border-0 mb-2 top-header">
+        <div
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
+        >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
                   <h1 className="h4 ls-tight headingColor">
-                    Edit Purchase Order
+                    Edit Vendor Credit
                   </h1>
                 </div>
               </div>
               <div className="col-auto">
                 <div className="hstack gap-2 justify-content-end">
-                  <Link to="/order">
+                  <Link to="/vendorcredit">
                     <button type="submit" className="btn btn-sm btn-light">
                       <span>Back</span>
                     </button>
                   </Link>
                   <button
                     type="submit"
-                    className="btn btn-sm btn-primary"
+                    className="btn btn-sm btn-button btn-primary"
                     disabled={loading}
                   >
                     {loading ? (
@@ -287,14 +196,17 @@ function OrderAdd() {
                     ) : (
                       <span></span>
                     )}
-                    &nbsp;<span>Update</span>
+                    &nbsp;<span>Save</span>
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="card shadow border-0 my-2">
+        <div
+          className="card shadow border-0 my-2"
+          style={{ borderRadius: "0" }}
+        >
           <div className="container mb-5 mt-5">
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-3">
@@ -303,17 +215,21 @@ function OrderAdd() {
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("vendorName")}
-                    className={`form-select    ${
+                    name="vendorName"
+                    className={`form-select form-select-sm ${
                       formik.touched.vendorName && formik.errors.vendorName
                         ? "is-invalid"
                         : ""
                     }`}
+                    {...formik.getFieldProps("vendorName")}
                   >
                     <option selected></option>
-                    <option value="John Smith">John Smith</option>
-                    <option value="Emily Johnson">Emily Johnson</option>
-                    <option value="David Williams">David Williams</option>
+                    {vendor &&
+                      vendor.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.vendorDisplayName}
+                        </option>
+                      ))}
                   </select>
                   {formik.touched.vendorName && formik.errors.vendorName && (
                     <div className="invalid-feedback">
@@ -322,215 +238,129 @@ function OrderAdd() {
                   )}
                 </div>
               </div>
-
-              <div className="col-md-6 col-12 mb-3">
-                <div>
-                  <label for="exampleFormControlInput1" className="form-label">
-                    Delivery Address Category{" "}
-                    <span className="text-danger">*</span>
-                  </label>
-                </div>
-                <div className="form-check form-check-inline">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="deliveryAddressCategory"
-                    id="ORGANIZATION"
-                    value="ORGANIZATION"
-                    onChange={formik.handleChange}
-                    checked={
-                      formik.values.deliveryAddressCategory === "ORGANIZATION"
-                    }
-                  />
-                  <label className="form-check-label">Organization</label>
-                </div>
-                <div className="form-check form-check-inline">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="deliveryAddressCategory"
-                    id="CUSTOMER"
-                    value="CUSTOMER"
-                    onChange={formik.handleChange}
-                    checked={
-                      formik.values.deliveryAddressCategory === "CUSTOMER"
-                    }
-                  />
-                  <label className="form-check-label">Customer</label>
-                </div>
-                {formik.errors.deliveryAddressCategory &&
-                  formik.touched.deliveryAddressCategory && (
-                    <div
-                      className="text-danger  "
-                      style={{ fontSize: ".875em" }}
-                    >
-                      {formik.errors.deliveryAddressCategory}
-                    </div>
-                  )}
-              </div>
-
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
-                  Delivery Address<span className="text-danger">*</span>
+                  Credit Note<span className="text-danger">*</span>
                 </lable>
-                <div className="">
-                  <textarea
-                    type="text"
-                    className={`form-control ${
-                      formik.touched.deliveryAddress &&
-                      formik.errors.deliveryAddress
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    rows="4"
-                    {...formik.getFieldProps("deliveryAddress")}
-                  />
-                  {formik.touched.deliveryAddress &&
-                    formik.errors.deliveryAddress && (
-                      <div className="invalid-feedback">
-                        {formik.errors.deliveryAddress}
-                      </div>
-                    )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">
-                  Purchase Order<span className="text-danger">*</span>
-                </lable>
-                <div className="">
-                  <input
-                    type="text"
-                    className={`form-control ${
-                      formik.touched.purchaseOrderNumber &&
-                      formik.errors.purchaseOrderNumber
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("purchaseOrderNumber")}
-                  />
-                  {formik.touched.purchaseOrderNumber &&
-                    formik.errors.purchaseOrderNumber && (
-                      <div className="invalid-feedback">
-                        {formik.errors.purchaseOrderNumber}
-                      </div>
-                    )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">Reference</label>
-                <div className="">
-                  <input
-                    type="text"
-                    className={`form-control  ${
-                      formik.touched.purchaseOrderRef &&
-                      formik.errors.purchaseOrderRef
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("purchaseOrderRef")}
-                  />
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">Date</lable>
-                <div className="mb-3">
-                  <input
-                    type="date"
-                    className={`form-control  ${
-                      formik.touched.date && formik.errors.date
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("date")}
-                  />
-                  {formik.touched.date && formik.errors.date && (
-                    <div className="invalid-feedback">{formik.errors.date}</div>
-                  )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">Delivery Date</lable>
-                <div className="mb-3">
-                  <input
-                    type="date"
-                    className={`form-control  ${
-                      formik.touched.deliveryDate && formik.errors.deliveryDate
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("deliveryDate")}
-                  />
-                  {formik.touched.deliveryDate &&
-                    formik.errors.deliveryDate && (
-                      <div className="invalid-feedback">
-                        {formik.errors.deliveryDate}
-                      </div>
-                    )}
-                </div>
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">Payment Term</lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control  ${
-                      formik.touched.paymentTerm && formik.errors.paymentTerm
+                    className={`form-control  form-select-sm ${
+                      formik.touched.creditNote && formik.errors.creditNote
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("paymentTerm")}
+                    {...formik.getFieldProps("creditNote")}
                   />
-                  {formik.touched.paymentTerm && formik.errors.paymentTerm && (
+                  {formik.touched.creditNote && formik.errors.creditNote && (
                     <div className="invalid-feedback">
-                      {formik.errors.paymentTerm}
+                      {formik.errors.creditNote}
                     </div>
                   )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">Shipment Preference</lable>
+                <lable className="form-lable">Order Number</lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control  ${
-                      formik.touched.shipmentPreference &&
-                      formik.errors.shipmentPreference
+                    className={`form-control  form-select-sm  ${
+                      formik.touched.orderNumber && formik.errors.orderNumber
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("shipmentPreference")}
+                    {...formik.getFieldProps("orderNumber")}
                   />
-                  {formik.touched.shipmentPreference &&
-                    formik.errors.shipmentPreference && (
+                  {formik.touched.orderNumber && formik.errors.orderNumber && (
+                    <div className="invalid-feedback">
+                      {formik.errors.orderNumber}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-3">
+                <lable className="form-lable">Vendor Credit Date</lable>
+                <div className="">
+                  <input
+                    type="date"
+                    className={`form-control  form-select-sm ${
+                      formik.touched.vendorCreditDdate &&
+                      formik.errors.vendorCreditDdate
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("vendorCreditDdate")}
+                  />
+                  {formik.touched.vendorCreditDdate &&
+                    formik.errors.vendorCreditDdate && (
                       <div className="invalid-feedback">
-                        {formik.errors.shipmentPreference}
+                        {formik.errors.vendorCreditDdate}
                       </div>
                     )}
                 </div>
               </div>
+
               <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">Attach File</lable>
+                <lable className="form-lable">Subject</lable>
                 <div className="mb-3">
+                  <input
+                    type="text"
+                    className={`form-control  form-select-sm  ${
+                      formik.touched.subject && formik.errors.subject
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("subject")}
+                  />
+                  {formik.touched.subject && formik.errors.subject && (
+                    <div className="invalid-feedback">
+                      {formik.errors.subject}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-3">
+                <label className="form-label">Attach File</label>
+                <div className="">
                   <input
                     type="file"
-                    className="form-control"
+                    className="form-control  form-select-sm"
                     onChange={(event) => {
                       formik.setFieldValue("file", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
                 </div>
-                <img
-                  src={data.purchaseOrderFile}
-                  className="img-fluid ms-2 w-50 rounded mt-2"
-                  alt="Profile Image"
-                />
               </div>
 
-              {/* <div className="row">
+              <div className="col-md-6 col-12 mb-3">
+                <lable className="form-lable">Warehouse</lable>
+                <div className="mb-3">
+                  <select
+                    name="wareHouseData"
+                    className={`form-select form-select-sm ${
+                      formik.touched.wareHouseData &&
+                      formik.errors.wareHouseData
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("wareHouseData")}
+                  >
+                    <option selected></option>
+                    <option value="1">Ecs Cloud</option>
+                  </select>
+                  {formik.touched.wareHouseData &&
+                    formik.errors.wareHouseData && (
+                      <div className="invalid-feedback">
+                        {formik.errors.wareHouseData}
+                      </div>
+                    )}
+                </div>
+              </div>
+
+              <div className="row mt-5">
                 <div className="">
                   <h3
                     style={{ background: "#4066D5" }}
@@ -544,32 +374,33 @@ function OrderAdd() {
                     <thead>
                       <tr>
                         <th>S.NO</th>
-                        <th style={{ width: "25%" }}>Item</th>
+                        <th style={{ width: "40%" }}>
+                          Item Details<span className="text-danger">*</span>
+                        </th>
+                        <th style={{ width: "20%" }}>Account</th>
                         <th style={{ width: "10%" }}>Quantity</th>
-                        <th style={{ width: "15%" }}>Rate</th>
-                        <th style={{ width: "15%" }}>Discount(%)</th>
-                        <th style={{ width: "15%" }}>Tax (%)</th>
+                        <th style={{ width: "10%" }}>Rate</th>
                         <th style={{ width: "15%" }}>Amount</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.txnInvoiceOrderItemsModels.map(
+                      {formik.values.txnVendorCreditItemsModels?.map(
                         (item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>
                               <select
-                                name={`txnInvoiceOrderItemsModels[${index}].item`}
+                                name={`txnVendorCreditItemsModels[${index}].itemId`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].item`
+                                  `txnVendorCreditItemsModels[${index}].itemId`
                                 )}
-                                className={`form-select ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                className={`form-control  form-select-sm ${
+                                  formik.touched.txnVendorCreditItemsModels?.[
                                     index
-                                  ]?.item &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.itemId &&
+                                  formik.errors.txnVendorCreditItemsModels?.[
                                     index
-                                  ]?.item
+                                  ]?.itemId
                                     ? "is-invalid"
                                     : ""
                                 }`}
@@ -582,17 +413,17 @@ function OrderAdd() {
                                     </option>
                                   ))}
                               </select>
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
+                              {formik.touched.txnVendorCreditItemsModels?.[
                                 index
-                              ]?.item &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
+                              ]?.itemId &&
+                                formik.errors.txnVendorCreditItemsModels?.[
                                   index
-                                ]?.item && (
+                                ]?.itemId && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.txnVendorCreditItemsModels[
                                         index
-                                      ].item
+                                      ].itemId
                                     }
                                   </div>
                                 )}
@@ -604,30 +435,67 @@ function OrderAdd() {
                                     event.target.value.replace(/[^0-9]/g, "");
                                 }}
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].qty`}
-                                className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                name={`txnVendorCreditItemsModels[${index}].account`}
+                                className={`form-control  form-select-sm ${
+                                  formik.touched.txnVendorCreditItemsModels?.[
+                                    index
+                                  ]?.account &&
+                                  formik.errors.txnVendorCreditItemsModels?.[
+                                    index
+                                  ]?.account
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                                {...formik.getFieldProps(
+                                  `txnVendorCreditItemsModels[${index}].account`
+                                )}
+                              />
+                              {formik.touched.txnVendorCreditItemsModels?.[
+                                index
+                              ]?.account &&
+                                formik.errors.txnVendorCreditItemsModels?.[
+                                  index
+                                ]?.account && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors.txnVendorCreditItemsModels[
+                                        index
+                                      ].account
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                            <td>
+                              <input
+                                onInput={(event) => {
+                                  event.target.value =
+                                    event.target.value.replace(/[^0-9]/g, "");
+                                }}
+                                type="text"
+                                name={`txnVendorCreditItemsModels[${index}].qty`}
+                                className={`form-control  form-select-sm ${
+                                  formik.touched.txnVendorCreditItemsModels?.[
                                     index
                                   ]?.qty &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  formik.errors.txnVendorCreditItemsModels?.[
                                     index
                                   ]?.qty
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].qty`
+                                  `txnVendorCreditItemsModels[${index}].qty`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
+                              {formik.touched.txnVendorCreditItemsModels?.[
                                 index
                               ]?.qty &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
+                                formik.errors.txnVendorCreditItemsModels?.[
                                   index
                                 ]?.qty && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.txnVendorCreditItemsModels[
                                         index
                                       ].qty
                                     }
@@ -636,110 +504,33 @@ function OrderAdd() {
                             </td>
                             <td>
                               <input
-                                readOnly
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].price`}
-                                className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                name={`txnVendorCreditItemsModels[${index}].rate`}
+                                className={`form-control  form-select-sm ${
+                                  formik.touched.txnVendorCreditItemsModels?.[
                                     index
-                                  ]?.price &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.rate &&
+                                  formik.errors.txnVendorCreditItemsModels?.[
                                     index
-                                  ]?.price
+                                  ]?.rate
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].price`
+                                  `txnVendorCreditItemsModels[${index}].rate`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
+                              {formik.touched.txnVendorCreditItemsModels?.[
                                 index
-                              ]?.price &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
+                              ]?.rate &&
+                                formik.errors.txnVendorCreditItemsModels?.[
                                   index
-                                ]?.price && (
+                                ]?.rate && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.txnVendorCreditItemsModels[
                                         index
-                                      ].price
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                            <td>
-                              <input
-                                onInput={(event) => {
-                                  event.target.value = event.target.value
-                                    .replace(/[^0-9]/g, "")
-                                    .slice(0, 2);
-                                }}
-                                type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].disc`}
-                                className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.disc &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.disc
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].disc`
-                                )}
-                              />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.disc &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.disc && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.txnInvoiceOrderItemsModels[
-                                        index
-                                      ].disc
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                            <td>
-                              <input
-                                onInput={(event) => {
-                                  event.target.value = event.target.value
-                                    .replace(/[^0-9]/g, "")
-                                    .slice(0, 2);
-                                }}
-                                type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].taxRate`}
-                                className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.taxRate &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.taxRate
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].taxRate`
-                                )}
-                              />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.taxRate &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.taxRate && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.txnInvoiceOrderItemsModels[
-                                        index
-                                      ].taxRate
+                                      ].rate
                                     }
                                   </div>
                                 )}
@@ -748,30 +539,30 @@ function OrderAdd() {
                               <input
                                 readOnly
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].amount`}
-                                className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                name={`txnVendorCreditItemsModels[${index}].amount`}
+                                className={`form-control  form-select-sm ${
+                                  formik.touched.txnVendorCreditItemsModels?.[
                                     index
                                   ]?.amount &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  formik.errors.txnVendorCreditItemsModels?.[
                                     index
                                   ]?.amount
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].amount`
+                                  `txnVendorCreditItemsModels[${index}].amount`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
+                              {formik.touched.txnVendorCreditItemsModels?.[
                                 index
                               ]?.amount &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
+                                formik.errors.txnVendorCreditItemsModels?.[
                                   index
                                 ]?.amount && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.txnVendorCreditItemsModels[
                                         index
                                       ].amount
                                     }
@@ -794,7 +585,7 @@ function OrderAdd() {
                 >
                   Add row
                 </button>
-                {formik.values.txnInvoiceOrderItemsModels.length > 1 && (
+                {formik.values.txnVendorCreditItemsModels?.length > 1 && (
                   <button
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
                     onClick={deleteRow}
@@ -802,14 +593,14 @@ function OrderAdd() {
                     Delete
                   </button>
                 )}
-              </div> */}
+              </div>
               <div className="row mt-5 pt-0">
                 <div className="col-md-6 col-12 mb-3 pt-0">
                   <lable className="form-lable">Customer Notes</lable>
                   <div className="mb-3">
                     <textarea
                       type="text"
-                      className={`form-control  ${
+                      className={`form-control  form-select-sm  ${
                         formik.touched.notes && formik.errors.notes
                           ? "is-invalid"
                           : ""
@@ -824,19 +615,17 @@ function OrderAdd() {
                     )}
                   </div>
                 </div>
-                {/* <div
+                <div
                   className="col-md-6 col-12 mt-5 rounded"
                   style={{ border: "1px solid lightgrey" }}
                 >
                   <div className="row mb-3 mt-2">
-                    <label className="col-sm-4 col-form-label">
-                      Sub Total<span className="text-danger">*</span>
-                    </label>
+                    <label className="col-sm-4 col-form-label">Sub Total</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
+                        className={`form-control  form-select-sm ${
                           formik.touched.subTotal && formik.errors.subTotal
                             ? "is-invalid"
                             : ""
@@ -851,14 +640,12 @@ function OrderAdd() {
                     </div>
                   </div>
                   <div className="row mb-3 mt-2">
-                    <label className="col-sm-4 col-form-label">
-                      Total Discount<span className="text-danger">*</span>
-                    </label>
+                    <label className="col-sm-4 col-form-label">Discount</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
+                        className={`form-control  form-select-sm ${
                           formik.touched.discountAmount &&
                           formik.errors.discountAmount
                             ? "is-invalid"
@@ -875,12 +662,14 @@ function OrderAdd() {
                     </div>
                   </div>
                   <div className="row mb-3">
-                    <label className="col-sm-4 col-form-label">Total Tax</label>
+                    <label className="col-sm-4 col-form-label">
+                      Adjustment
+                    </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
+                        className={`form-control  form-select-sm ${
                           formik.touched.totalTax && formik.errors.totalTax
                             ? "is-invalid"
                             : ""
@@ -897,12 +686,14 @@ function OrderAdd() {
 
                   <hr />
                   <div className="row mb-3 mt-2">
-                    <label className="col-sm-4 col-form-label">Total</label>
+                    <label className="col-sm-4 col-form-label">
+                      Total ( Rs. )
+                    </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
+                        className={`form-control  form-select-sm ${
                           formik.touched.total && formik.errors.total
                             ? "is-invalid"
                             : ""
@@ -916,28 +707,6 @@ function OrderAdd() {
                       )}
                     </div>
                   </div>
-                </div> */}
-
-                <div className="col-md-6 col-12 mb-3">
-                  <lable className="form-lable">Terms & Conditions</lable>
-                  <div className="mb-3">
-                    <textarea
-                      className={`form-control  ${
-                        formik.touched.termsCondition &&
-                        formik.errors.termsCondition
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      rows="4"
-                      {...formik.getFieldProps("termsCondition")}
-                    />
-                    {formik.touched.termsCondition &&
-                      formik.errors.termsCondition && (
-                        <div className="invalid-feedback">
-                          {formik.errors.termsCondition}
-                        </div>
-                      )}
-                  </div>
                 </div>
               </div>
             </div>
@@ -948,4 +717,4 @@ function OrderAdd() {
   );
 }
 
-export default OrderAdd;
+export default VendorCreditEdit;

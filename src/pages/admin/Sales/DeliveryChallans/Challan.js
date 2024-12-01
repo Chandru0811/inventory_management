@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const Challan = () => {
   const tableRef = useRef(null);
@@ -87,20 +88,22 @@ const Challan = () => {
                 stroke-width="1.3"
                 points="16,0 32,32 0,32"
               ></polygon>
-            </svg>  
+            </svg>
           </div>
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Delivery Challans ({datas.length})</h1>
+                    <h1 className="h4 ls-tight headingColor ">
+                      Delivery Challans ({datas.length})
+                    </h1>
                   </div>
                 </div>
                 <div className="col-auto">
@@ -131,7 +134,11 @@ const Challan = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
@@ -154,21 +161,31 @@ const Challan = () => {
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.customerName}</td>
                       {/* <td className="text-start">{data.deliveryChallanDate.slice(0,10)}</td> */}
-                      <td className="text-start">{data.deliveryChallanDate}</td>
+                      <td className="text-start">
+                        {" "}
+                        {data.deliveryChallanDate
+                          ? new Date(
+                              data.deliveryChallanDate
+                            ).toLocaleDateString("en-GB")
+                          : ""}
+                      </td>
                       <td className="text-start">{data.deliveryChallan}</td>
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/challan/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/challan/edit/${data.id}`}
-                            className="px-2"
-                          >
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/challan/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

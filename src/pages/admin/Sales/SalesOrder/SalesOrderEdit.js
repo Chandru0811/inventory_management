@@ -73,6 +73,7 @@ const SalesOrderEdit = () => {
         "salesOrderItemsJson",
         JSON.stringify(
           values.itemDetails?.map((item) => ({
+            id: item.id,
             itemId: item.itemId?.id || item.itemId,
             quantity: item.quantity,
             rate: item.rate,

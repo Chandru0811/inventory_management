@@ -14,11 +14,12 @@ function VendorCreditAdd() {
   const [wareHouseData, setWareHouseData] = useState(null);
   const [vendor, setVendor] = useState(null);
   const [itemData, setItemData] = useState(null);
+  const [itemAccData, setItemAccData] = useState(null);
 
   const validationSchema = Yup.object({
     vendorName: Yup.string().required("*Vendor Name is required"),
-    creditNote: Yup.string().required("*Credit Note is required"),
-    txnVendorCreditItemsModels: Yup.array().of(
+    creditNoteNum: Yup.string().required("*Credit Note is required"),
+    vendorCreditsItemDetails: Yup.array().of(
       Yup.object().shape({
         itemId: Yup.string().required("*Item Details is required"),
       })
@@ -27,19 +28,18 @@ function VendorCreditAdd() {
 
   const formik = useFormik({
     initialValues: {
-      wareHouseData: "",
-      vendorName: "",
-      creditNote: "",
+      wareHouseId: "",
+      vendorId: "",
+      creditNoteNum: "",
       orderNumber: "",
-      vendorCreditDdate: "",
-      subject: "",
+      orderCreditDate: "",
       notes: "",
-      file: "",
-      txnVendorCreditItemsModels: [
+      files: null,
+      vendorCreditsItemDetails: [
         {
           itemId: "",
-          account: "",
-          qty: "",
+          accountId: "",
+          quantity: "",
           rate: "",
           amount: "",
         },
@@ -52,37 +52,30 @@ function VendorCreditAdd() {
         const formData = new FormData();
         formData.append("wareHouseId", values.wareHouseData);
         formData.append("vendorId", values.vendorName);
-        formData.append("creditNote", values.creditNote);
+        formData.append("creditNoteNum", values.creditNoteNum);
         formData.append("orderNumber", values.orderNumber);
-        formData.append("vendorCreditDdate", values.vendorCreditDdate);
-        formData.append("subject", values.subject);
+        formData.append("orderCreditDate", values.orderCreditDate);
         formData.append("notes", values.notes);
-        formData.append("file", values.file);
+        formData.append("subTotal", values.subTotal);
+        formData.append("discount", values.discount);
+        formData.append("total", values.total);
+        formData.append("companyId", "1");
+        formData.append("files", values.files);
         formData.append(
-          "txnVendorCreditItemsModels",
-          JSON.stringify(values.txnVendorCreditItemsModels)
-        );
-        formData.append(
-          "txnVendorCreditItemsModels",
+          "vendorCreditsItemDetails",
           JSON.stringify(
-            values.purchaseOrderItemsJson.map((item) => ({
-              itemId: item.itemId,
+            values.vendorCreditsItemDetails?.map((item) => ({
+              itemId: item.itemId?.id || item.itemId,
               accountId: item.accountId,
-              qty: item.qty,
+              quantity: item.quantity,
               rate: item.rate,
               amount: item.amount,
             }))
           )
         );
 
-        for (const key in values) {
-          if (values.hasOwnProperty(key)) {
-            formData.append(key, values[key]);
-          }
-        }
-
         const response = await api.post(
-          "createVendorCreditsProfileImage",
+          "vendorCreditCreationWithItems",
           formData,
           {
             headers: {
@@ -91,7 +84,7 @@ function VendorCreditAdd() {
           }
         );
 
-        if (response.status === 201) {
+        if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/vendorcredit");
         } else {
@@ -104,6 +97,30 @@ function VendorCreditAdd() {
       }
     },
   });
+
+  useEffect(() => {
+    const getItemData = async () => {
+      try {
+        const response = await api.get("itemId-name");
+        setItemData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getItemData();
+  }, []);
+
+  useEffect(() => {
+    const getItemData = async () => {
+      try {
+        const response = await api.get("getAllAccounts");
+        setItemAccData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getItemData();
+  }, []);
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -138,7 +155,7 @@ function VendorCreditAdd() {
   //         let totalTax = 0;
   //         let discAmount = 0;
   //         const updatedItems = await Promise.all(
-  //           formik.values.txnVendorCreditItemsModels.map(
+  //           formik.values.vendorCreditsItemDetails.map(
   //             async (item, index) => {
   //               if (item.item) {
   //                 try {
@@ -146,15 +163,15 @@ function VendorCreditAdd() {
   //                   const updatedItem = {
   //                     ...item,
   //                     rate: response.data.salesPrice,
-  //                     qty: 1,
+  //                     quantity: 1,
   //                   };
   //                   const amount = calculateAmount(
-  //                     updatedItem.qty,
+  //                     updatedItem.quantity,
   //                     updatedItem.rate,
   //                     updatedItem.discount,
   //                     updatedItem.taxRate
   //                   );
-  //                   const itemTotalRate = updatedItem.qty * updatedItem.rate;
+  //                   const itemTotalRate = updatedItem.quantity * updatedItem.rate;
   //                   const itemTotalTax =
   //                     itemTotalRate * (updatedItem.taxRate / 100);
   //                   const itemTotalDisc =
@@ -177,7 +194,7 @@ function VendorCreditAdd() {
   //         );
   //         formik.setValues({
   //           ...formik.values,
-  //           txnVendorCreditItemsModels: updatedItems,
+  //           vendorCreditsItemDetails: updatedItems,
   //         });
   //         formik.setFieldValue("subTotal", totalRate);
   //         formik.setFieldValue("total", totalAmount);
@@ -191,7 +208,7 @@ function VendorCreditAdd() {
   //     updateAndCalculate();
   //   },
   //   [
-  //     // formik.values.txnVendorCreditItemsModels.map((item) => item.item).join(""),
+  //     // formik.values.vendorCreditsItemDetails.map((item) => item.item).join(""),
   //   ]
   // );
 
@@ -204,21 +221,21 @@ function VendorCreditAdd() {
   //         let totalTax = 0;
   //         let discAmount = 0;
   //         const updatedItems = await Promise.all(
-  //           formik.values.txnVendorCreditItemsModels.map(
+  //           formik.values.vendorCreditsItemDetails.map(
   //             async (item, index) => {
   //               if (
-  //                 item.qty &&
+  //                 item.quantity &&
   //                 item.rate &&
   //                 item.discount !== undefined &&
   //                 item.taxRate !== undefined
   //               ) {
   //                 const amount = calculateAmount(
-  //                   item.qty,
+  //                   item.quantity,
   //                   item.rate,
   //                   item.discount,
   //                   item.taxRate
   //                 );
-  //                 const itemTotalRate = item.qty * item.rate;
+  //                 const itemTotalRate = item.quantity * item.rate;
   //                 const itemTotalTax = itemTotalRate * (item.taxRate / 100);
   //                 const itemTotalDisc = itemTotalRate * (item.discount / 100);
   //                 discAmount += itemTotalDisc;
@@ -233,7 +250,7 @@ function VendorCreditAdd() {
   //         );
   //         formik.setValues({
   //           ...formik.values,
-  //           txnVendorCreditItemsModels: updatedItems,
+  //           vendorCreditsItemDetails: updatedItems,
   //         });
   //         formik.setFieldValue("subTotal", totalRate);
   //         formik.setFieldValue("total", totalAmount);
@@ -247,19 +264,19 @@ function VendorCreditAdd() {
   //     updateAndCalculate();
   //   },
   //   [
-  //     // formik.values.txnVendorCreditItemsModels.map((item) => item.qty).join(""),
-  //     // formik.values.txnVendorCreditItemsModels.map((item) => item.rate).join(""),
-  //     // formik.values.txnVendorCreditItemsModels
+  //     // formik.values.vendorCreditsItemDetails.map((item) => item.quantity).join(""),
+  //     // formik.values.vendorCreditsItemDetails.map((item) => item.rate).join(""),
+  //     // formik.values.vendorCreditsItemDetails
   //     //   .map((item) => item.discount)
   //     //   .join(""),
-  //     // formik.values.txnVendorCreditItemsModels
+  //     // formik.values.vendorCreditsItemDetails
   //     //   .map((item) => item.taxRate)
   //     //   .join(""),
   //   ]
   // );
 
-  // const calculateAmount = (qty, rate, discount, taxRate) => {
-  //   const totalRate = qty * rate;
+  // const calculateAmount = (quantity, rate, discount, taxRate) => {
+  //   const totalRate = quantity * rate;
   //   const discountAmount = totalRate * (discount / 100);
   //   const taxableAmount = totalRate * (taxRate / 100);
   //   const totalAmount = totalRate + taxableAmount - discountAmount;
@@ -267,11 +284,11 @@ function VendorCreditAdd() {
   // };
 
   const AddRowContent = () => {
-    formik.setFieldValue("txnVendorCreditItemsModels", [
-      ...formik.values.txnVendorCreditItemsModels,
+    formik.setFieldValue("vendorCreditsItemDetails", [
+      ...formik.values.vendorCreditsItemDetails,
       {
         itemId: "",
-        qty: "",
+        quantity: "",
         rate: "",
         discount: "",
         taxRate: "",
@@ -281,12 +298,12 @@ function VendorCreditAdd() {
   };
 
   const deleteRow = (index) => {
-    if (formik.values.txnVendorCreditItemsModels.length === 1) {
+    if (formik.values.vendorCreditsItemDetails.length === 1) {
       return;
     }
-    const updatedRows = [...formik.values.txnVendorCreditItemsModels];
+    const updatedRows = [...formik.values.vendorCreditsItemDetails];
     updatedRows.pop();
-    formik.setFieldValue("txnVendorCreditItemsModels", updatedRows);
+    formik.setFieldValue("vendorCreditsItemDetails", updatedRows);
   };
 
   return (
@@ -345,7 +362,7 @@ function VendorCreditAdd() {
                 <div className="mb-3">
                   <select
                     name="vendorName"
-                    className={`form-select form-select-sm ${
+                    className={`form-select  ${
                       formik.touched.vendorName && formik.errors.vendorName
                         ? "is-invalid"
                         : ""
@@ -374,18 +391,20 @@ function VendorCreditAdd() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control  form-select-sm ${
-                      formik.touched.creditNote && formik.errors.creditNote
+                    className={`form-control   ${
+                      formik.touched.creditNoteNum &&
+                      formik.errors.creditNoteNum
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("creditNote")}
+                    {...formik.getFieldProps("creditNoteNum")}
                   />
-                  {formik.touched.creditNote && formik.errors.creditNote && (
-                    <div className="invalid-feedback">
-                      {formik.errors.creditNote}
-                    </div>
-                  )}
+                  {formik.touched.creditNoteNum &&
+                    formik.errors.creditNoteNum && (
+                      <div className="invalid-feedback">
+                        {formik.errors.creditNoteNum}
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-3">
@@ -393,7 +412,7 @@ function VendorCreditAdd() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control  form-select-sm  ${
+                    className={`form-control    ${
                       formik.touched.orderNumber && formik.errors.orderNumber
                         ? "is-invalid"
                         : ""
@@ -413,54 +432,37 @@ function VendorCreditAdd() {
                 <div className="">
                   <input
                     type="date"
-                    className={`form-control  form-select-sm ${
-                      formik.touched.vendorCreditDdate &&
-                      formik.errors.vendorCreditDdate
+                    className={`form-control   ${
+                      formik.touched.orderCreditDate &&
+                      formik.errors.orderCreditDate
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("vendorCreditDdate")}
+                    {...formik.getFieldProps("orderCreditDate")}
                   />
-                  {formik.touched.vendorCreditDdate &&
-                    formik.errors.vendorCreditDdate && (
+                  {formik.touched.orderCreditDate &&
+                    formik.errors.orderCreditDate && (
                       <div className="invalid-feedback">
-                        {formik.errors.vendorCreditDdate}
+                        {formik.errors.orderCreditDate}
                       </div>
                     )}
                 </div>
               </div>
-
-              <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">Subject</lable>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Attach File</lable>
                 <div className="mb-3">
                   <input
-                    type="text"
-                    className={`form-control  form-select-sm  ${
-                      formik.touched.subject && formik.errors.subject
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("subject")}
+                    type="file"
+                    className="form-control form-control-sm"
+                    onChange={(event) => {
+                      formik.setFieldValue("files", event.target.files[0]);
+                    }}
                   />
-                  {formik.touched.subject && formik.errors.subject && (
+                  {formik.touched.files && formik.errors.files && (
                     <div className="invalid-feedback">
-                      {formik.errors.subject}
+                      {formik.errors.files}
                     </div>
                   )}
-                </div>
-              </div>
-
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">Attach File</label>
-                <div className="">
-                  <input
-                    type="file"
-                    className="form-control  form-select-sm"
-                    onChange={(event) => {
-                      formik.setFieldValue("file", event.target.files[0]);
-                    }}
-                    onBlur={formik.handleBlur}
-                  />
                 </div>
               </div>
 
@@ -469,7 +471,7 @@ function VendorCreditAdd() {
                 <div className="mb-3">
                   <select
                     name="wareHouseData"
-                    className={`form-select form-select-sm ${
+                    className={`form-select  ${
                       formik.touched.wareHouseData &&
                       formik.errors.wareHouseData
                         ? "is-invalid"
@@ -506,28 +508,28 @@ function VendorCreditAdd() {
                         <th style={{ width: "40%" }}>
                           Item Details<span className="text-danger">*</span>
                         </th>
-                        <th style={{ width: "20%" }}>Account</th>
-                        <th style={{ width: "10%" }}>Quantity</th>
-                        <th style={{ width: "10%" }}>Rate</th>
+                        <th style={{ width: "15%" }}>Account</th>
+                        <th style={{ width: "15%" }}>Quantity</th>
+                        <th style={{ width: "15%" }}>Rate</th>
                         <th style={{ width: "15%" }}>Amount</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.txnVendorCreditItemsModels.map(
+                      {formik.values.vendorCreditsItemDetails?.map(
                         (item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>
                               <select
-                                name={`txnVendorCreditItemsModels[${index}].itemId`}
+                                name={`vendorCreditsItemDetails[${index}].itemId`}
                                 {...formik.getFieldProps(
-                                  `txnVendorCreditItemsModels[${index}].itemId`
+                                  `vendorCreditsItemDetails[${index}].itemId`
                                 )}
-                                className={`form-control  form-select-sm ${
-                                  formik.touched.txnVendorCreditItemsModels?.[
+                                className={`form-select ${
+                                  formik.touched.vendorCreditsItemDetails?.[
                                     index
                                   ]?.itemId &&
-                                  formik.errors.txnVendorCreditItemsModels?.[
+                                  formik.errors.vendorCreditsItemDetails?.[
                                     index
                                   ]?.itemId
                                     ? "is-invalid"
@@ -538,19 +540,17 @@ function VendorCreditAdd() {
                                 {itemData &&
                                   itemData.map((itemId) => (
                                     <option key={itemId.id} value={itemId.id}>
-                                      {itemId.itemName}
+                                      {itemId.name}
                                     </option>
                                   ))}
                               </select>
-                              {formik.touched.txnVendorCreditItemsModels?.[
-                                index
-                              ]?.itemId &&
-                                formik.errors.txnVendorCreditItemsModels?.[
-                                  index
-                                ]?.itemId && (
+                              {formik.touched.vendorCreditsItemDetails?.[index]
+                                ?.itemId &&
+                                formik.errors.vendorCreditsItemDetails?.[index]
+                                  ?.itemId && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnVendorCreditItemsModels[
+                                      formik.errors.vendorCreditsItemDetails[
                                         index
                                       ].itemId
                                     }
@@ -558,38 +558,39 @@ function VendorCreditAdd() {
                                 )}
                             </td>
                             <td>
-                              <input
-                                onInput={(event) => {
-                                  event.target.value =
-                                    event.target.value.replace(/[^0-9]/g, "");
-                                }}
-                                type="text"
-                                name={`txnVendorCreditItemsModels[${index}].account`}
-                                className={`form-control  form-select-sm ${
-                                  formik.touched.txnVendorCreditItemsModels?.[
+                              <select
+                                name={`vendorCreditsItemDetails[${index}].accountId`}
+                                {...formik.getFieldProps(
+                                  `vendorCreditsItemDetails[${index}].accountId`
+                                )}
+                                className={`form-select ${
+                                  formik.touched.vendorCreditsItemDetails?.[
                                     index
-                                  ]?.account &&
-                                  formik.errors.txnVendorCreditItemsModels?.[
+                                  ]?.accountId &&
+                                  formik.errors.vendorCreditsItemDetails?.[
                                     index
-                                  ]?.account
+                                  ]?.accountId
                                     ? "is-invalid"
                                     : ""
                                 }`}
-                                {...formik.getFieldProps(
-                                  `txnVendorCreditItemsModels[${index}].account`
-                                )}
-                              />
-                              {formik.touched.txnVendorCreditItemsModels?.[
-                                index
-                              ]?.account &&
-                                formik.errors.txnVendorCreditItemsModels?.[
-                                  index
-                                ]?.account && (
+                              >
+                                <option selected> </option>
+                                {itemAccData &&
+                                  itemAccData?.map((accData) => (
+                                    <option key={accData.id} value={accData.id}>
+                                      {accData.accountName}
+                                    </option>
+                                  ))}
+                              </select>
+                              {formik.touched.vendorCreditsItemDetails?.[index]
+                                ?.accountId &&
+                                formik.errors.vendorCreditsItemDetails?.[index]
+                                  ?.accountId && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnVendorCreditItemsModels[
+                                      formik.errors.vendorCreditsItemDetails[
                                         index
-                                      ].account
+                                      ].accountId
                                     }
                                   </div>
                                 )}
@@ -601,32 +602,30 @@ function VendorCreditAdd() {
                                     event.target.value.replace(/[^0-9]/g, "");
                                 }}
                                 type="text"
-                                name={`txnVendorCreditItemsModels[${index}].qty`}
-                                className={`form-control  form-select-sm ${
-                                  formik.touched.txnVendorCreditItemsModels?.[
+                                name={`vendorCreditsItemDetails[${index}].quantity`}
+                                className={`form-control ${
+                                  formik.touched.vendorCreditsItemDetails?.[
                                     index
-                                  ]?.qty &&
-                                  formik.errors.txnVendorCreditItemsModels?.[
+                                  ]?.quantity &&
+                                  formik.errors.vendorCreditsItemDetails?.[
                                     index
-                                  ]?.qty
+                                  ]?.quantity
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnVendorCreditItemsModels[${index}].qty`
+                                  `vendorCreditsItemDetails[${index}].quantity`
                                 )}
                               />
-                              {formik.touched.txnVendorCreditItemsModels?.[
-                                index
-                              ]?.qty &&
-                                formik.errors.txnVendorCreditItemsModels?.[
-                                  index
-                                ]?.qty && (
+                              {formik.touched.vendorCreditsItemDetails?.[index]
+                                ?.quantity &&
+                                formik.errors.vendorCreditsItemDetails?.[index]
+                                  ?.quantity && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnVendorCreditItemsModels[
+                                      formik.errors.vendorCreditsItemDetails[
                                         index
-                                      ].qty
+                                      ].quantity
                                     }
                                   </div>
                                 )}
@@ -634,30 +633,28 @@ function VendorCreditAdd() {
                             <td>
                               <input
                                 type="text"
-                                name={`txnVendorCreditItemsModels[${index}].rate`}
-                                className={`form-control  form-select-sm ${
-                                  formik.touched.txnVendorCreditItemsModels?.[
+                                name={`vendorCreditsItemDetails[${index}].rate`}
+                                className={`form-control ${
+                                  formik.touched.vendorCreditsItemDetails?.[
                                     index
                                   ]?.rate &&
-                                  formik.errors.txnVendorCreditItemsModels?.[
+                                  formik.errors.vendorCreditsItemDetails?.[
                                     index
                                   ]?.rate
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnVendorCreditItemsModels[${index}].rate`
+                                  `vendorCreditsItemDetails[${index}].rate`
                                 )}
                               />
-                              {formik.touched.txnVendorCreditItemsModels?.[
-                                index
-                              ]?.rate &&
-                                formik.errors.txnVendorCreditItemsModels?.[
-                                  index
-                                ]?.rate && (
+                              {formik.touched.vendorCreditsItemDetails?.[index]
+                                ?.rate &&
+                                formik.errors.vendorCreditsItemDetails?.[index]
+                                  ?.rate && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnVendorCreditItemsModels[
+                                      formik.errors.vendorCreditsItemDetails[
                                         index
                                       ].rate
                                     }
@@ -666,32 +663,29 @@ function VendorCreditAdd() {
                             </td>
                             <td>
                               <input
-                                readOnly
                                 type="text"
-                                name={`txnVendorCreditItemsModels[${index}].amount`}
-                                className={`form-control  form-select-sm ${
-                                  formik.touched.txnVendorCreditItemsModels?.[
+                                name={`vendorCreditsItemDetails[${index}].amount`}
+                                className={`form-control ${
+                                  formik.touched.vendorCreditsItemDetails?.[
                                     index
                                   ]?.amount &&
-                                  formik.errors.txnVendorCreditItemsModels?.[
+                                  formik.errors.vendorCreditsItemDetails?.[
                                     index
                                   ]?.amount
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnVendorCreditItemsModels[${index}].amount`
+                                  `vendorCreditsItemDetails[${index}].amount`
                                 )}
                               />
-                              {formik.touched.txnVendorCreditItemsModels?.[
-                                index
-                              ]?.amount &&
-                                formik.errors.txnVendorCreditItemsModels?.[
-                                  index
-                                ]?.amount && (
+                              {formik.touched.vendorCreditsItemDetails?.[index]
+                                ?.amount &&
+                                formik.errors.vendorCreditsItemDetails?.[index]
+                                  ?.amount && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnVendorCreditItemsModels[
+                                      formik.errors.vendorCreditsItemDetails[
                                         index
                                       ].amount
                                     }
@@ -714,7 +708,7 @@ function VendorCreditAdd() {
                 >
                   Add row
                 </button>
-                {formik.values.txnVendorCreditItemsModels.length > 1 && (
+                {formik.values.vendorCreditsItemDetails.length > 1 && (
                   <button
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
                     onClick={deleteRow}
@@ -729,7 +723,7 @@ function VendorCreditAdd() {
                   <div className="mb-3">
                     <textarea
                       type="text"
-                      className={`form-control  form-select-sm  ${
+                      className={`form-control  ${
                         formik.touched.notes && formik.errors.notes
                           ? "is-invalid"
                           : ""
@@ -754,7 +748,7 @@ function VendorCreditAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control  form-select-sm ${
+                        className={`form-control   ${
                           formik.touched.subTotal && formik.errors.subTotal
                             ? "is-invalid"
                             : ""
@@ -774,20 +768,18 @@ function VendorCreditAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control  form-select-sm ${
-                          formik.touched.discountAmount &&
-                          formik.errors.discountAmount
+                        className={`form-control   ${
+                          formik.touched.discount && formik.errors.discount
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("discountAmount")}
+                        {...formik.getFieldProps("discount")}
                       />
-                      {formik.touched.discountAmount &&
-                        formik.errors.discountAmount && (
-                          <div className="invalid-feedback">
-                            {formik.errors.discountAmount}
-                          </div>
-                        )}
+                      {formik.touched.discount && formik.errors.discount && (
+                        <div className="invalid-feedback">
+                          {formik.errors.discount}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="row mb-3">
@@ -798,7 +790,7 @@ function VendorCreditAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control  form-select-sm ${
+                        className={`form-control   ${
                           formik.touched.totalTax && formik.errors.totalTax
                             ? "is-invalid"
                             : ""
@@ -822,7 +814,7 @@ function VendorCreditAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control  form-select-sm ${
+                        className={`form-control   ${
                           formik.touched.total && formik.errors.total
                             ? "is-invalid"
                             : ""
