@@ -263,7 +263,7 @@ function ChellanAdd() {
   }, []);
 
   useEffect(() => {
-    recalculateTotals();
+    recalculateSubtotalAndTotal();
   }, [formik.values]);
 
   const handleItemSelection = async (index, event) => {
@@ -283,7 +283,7 @@ function ChellanAdd() {
           amount: itemDetails.sellingPrice || 0,
         });
 
-        recalculateTotals();
+        recalculateSubtotalAndTotal();
       }
     } catch (error) {
       toast.error("Error fetching item details: " + error.message);
@@ -295,7 +295,6 @@ function ChellanAdd() {
     const newRate = item.unitPrice * quantity || 0;
     const newDiscount = discount ? (newRate * discount) / 100 : 0;
     const newAmount = newRate - newDiscount || 0;
-    const subTotal = newRate;
 
     await formik.setFieldValue(
       `deliveryChallanItemsJson[${index}].rate`,
@@ -305,35 +304,32 @@ function ChellanAdd() {
       `deliveryChallanItemsJson[${index}].amount`,
       parseFloat(newAmount.toFixed(2))
     );
-    await formik.setFieldValue(subTotal,
-      subTotal
-    );
 
-    recalculateTotals();
+    recalculateSubtotalAndTotal();
   };
 
-  const recalculateTotals = (index) => {
-    const compositeItems = formik.values.compositeAssociateItemsJson || [];
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.deliveryChallanItemsJson || [];
 
-    let totalRate = 0;
+    // Calculate the subtotal by summing up all item amounts
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
 
-    const item = compositeItems[index] || {};
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
 
-    const originalRate = item.originalRate || 0;
+    // Update the total by considering the adjustment
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const total = subTotal + adjustment;
 
-    if (index === 0) {
-      // If it's the first item, use the original cost and selling prices
-      totalRate = originalRate;
-    } else {
-      // For subsequent items, calculate totals from the array
-      totalRate = compositeItems.reduce(
-        (sum, item) => sum + (item.rate || 0),
-        0
-      );
-    }
+    formik.setFieldValue("total", total.toFixed(2));
+  };
 
-    // Update the total values in Formik
-    formik.setFieldValue("aiTotalRate", totalRate);
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
   };
 
   return (
@@ -642,7 +638,7 @@ function ChellanAdd() {
                                     parseInt(e.target.value, 10) || 0;
                                   handleQuantityChange(index, quantity, formik.values.deliveryChallanItemsJson[index].discount);
                                   // handleQuantityChange(index, quantity);
-                                  formik.handleChange(e); // Ensure Formik handles the input value
+                                  formik.handleChange(e);
                                 }}
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
@@ -719,7 +715,7 @@ function ChellanAdd() {
                                     parseInt(e.target.value, 10) || 0;
                                   // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
                                   handleQuantityChange(index, formik.values.deliveryChallanItemsJson[index].quantity, discount);
-                                  formik.handleChange(e); // Ensure Formik handles the input value
+                                  formik.handleChange(e);
                                 }}
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
@@ -827,11 +823,9 @@ function ChellanAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${formik.touched.subTotal && formik.errors.subTotal
-                          ? "is-invalid"
-                          : ""
-                          }`}
-                        {...formik.getFieldProps("subTotal")}
+                        className={`form-control ${formik.touched.subTotal && formik.errors.subTotal ? "is-invalid" : ""}`}
+                        value={formik.values.subTotal}
+                        readOnly
                       />
                       {formik.touched.subTotal && formik.errors.subTotal && (
                         <div className="invalid-feedback">
@@ -841,28 +835,22 @@ function ChellanAdd() {
                     </div>
                   </div>
                   <div className="row mb-3">
-                    <label className="col-sm-4 col-form-label">
-                      Adjustment
-                    </label>
+                    <label className="col-sm-4 col-form-label">Adjustment</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
-                        type="text"
-                        className={`form-control ${formik.touched.adjustment && formik.errors.adjustment
-                          ? "is-invalid"
-                          : ""
-                          }`}
+                        type="number"
+                        className={`form-control ${formik.touched.adjustment && formik.errors.adjustment ? "is-invalid" : ""}`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
-                      {formik.touched.adjustment &&
-                        formik.errors.adjustment && (
-                          <div className="invalid-feedback">
-                            {formik.errors.adjustment}
-                          </div>
-                        )}
+                      {formik.touched.adjustment && formik.errors.adjustment && (
+                        <div className="invalid-feedback">
+                          {formik.errors.adjustment}
+                        </div>
+                      )}
                     </div>
                   </div>
-
                   <hr />
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">Total</label>
@@ -870,11 +858,9 @@ function ChellanAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${formik.touched.total && formik.errors.total
-                          ? "is-invalid"
-                          : ""
-                          }`}
-                        {...formik.getFieldProps("total")}
+                        className={`form-control ${formik.touched.total && formik.errors.total ? "is-invalid" : ""}`}
+                        value={formik.values.total}
+                        readOnly
                       />
                       {formik.touched.total && formik.errors.total && (
                         <div className="invalid-feedback">
