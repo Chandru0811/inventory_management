@@ -72,7 +72,7 @@ function ChellanAdd() {
             }))
           )
         );
-        const response = await api.post("deliveryChallanCreationWithItems", formData, {
+        const response = await api.post("createDeliveryChallansWithItems", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -293,12 +293,13 @@ function ChellanAdd() {
   const handleQuantityChange = async (index, quantity, discount) => {
     const item = formik.values.deliveryChallanItemsJson[index] || {};
     const newRate = item.unitPrice * quantity || 0;
+    const currentRate = item.unitPrice || 0;
     const newDiscount = discount ? (newRate * discount) / 100 : 0;
     const newAmount = newRate - newDiscount || 0;
 
     await formik.setFieldValue(
       `deliveryChallanItemsJson[${index}].rate`,
-      newRate
+      currentRate
     );
     await formik.setFieldValue(
       `deliveryChallanItemsJson[${index}].amount`,
