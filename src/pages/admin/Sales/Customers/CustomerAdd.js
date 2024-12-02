@@ -29,7 +29,7 @@ const CustomerAdd = () => {
 
   const validationSchema = Yup.object({
     customerType: Yup.string().required("*Customer Type is required"),
-    // salutation: Yup.string().required("*Salutation is required"),
+    // salutation: Yup.string().required("*salutation is required"),
     // firstName: Yup.string()
     //   .matches(/^[A-Za-z]+$/, "*First Name must contain only letters")
     //   .required("*First Name is required"),
@@ -48,10 +48,11 @@ const CustomerAdd = () => {
       companyName: "",
       customerDisplayName: "",
       customerEmail: "",
-      customerEmail: "",
       customerPhoneNumber: "",
       currency: "",
       taxRate: "",
+      pan: "",
+      currencyId: "",
       paymentTerms: "",
       enablePortal: "",
       websiteUrl: "",
@@ -101,6 +102,8 @@ const CustomerAdd = () => {
       formData.append("customerType", values.customerType);
       formData.append("salutation", values.salutation);
       formData.append("firstName", values.firstName);
+      formData.append("pan", values.pan);
+      formData.append("currencyId", values.currencyId);
       formData.append("lastName", values.lastName);
       formData.append("companyName", values.companyName);
       formData.append("customerDisplayName", values.customerDisplayName);
@@ -151,12 +154,16 @@ const CustomerAdd = () => {
         )
       );
       try {
-        const response = await api.post("/createCustomerWithContacts", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        if (response.status === 201) {
+        const response = await api.post(
+          "/createCustomerWithContacts",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/customers");
         } else {
@@ -174,47 +181,30 @@ const CustomerAdd = () => {
     setActiveTab(tab);
   };
 
-  const addRow = () => {
-    setRows([
-      ...rows,
+  const AddRowContent = () => {
+    formik.setFieldValue("contactsJson", [
+      ...formik.values.contactsJson,
       {
-        id: rows.length + 1,
-        contacts: [
-          {
-            salutation: "",
-            customerFirstName: "",
-            customerLastName: "",
-            customerEmail: "",
-            customerPhone: "",
-            customerMobile: "",
-            skypeName: "",
-            designation: "",
-            department: "",
-          },
-        ],
+        salutation: "",
+        customerFirstName: "",
+        customerLastName: "",
+        customerEmail: "",
+        customerPhone: "",
+        customerMobile: "",
+        skypeName: "",
+        designation: "",
+        department: "",
       },
     ]);
   };
 
-  const handleInputChange = (rowIndex, field, value) => {
-    setRows((prevRows) =>
-      prevRows.map((row, idx) => {
-        if (idx !== rowIndex) return row;
-
-        const updatedContacts = row.contacts ? [...row.contacts] : [{}];
-        updatedContacts[0] = { ...updatedContacts[0], [field]: value };
-
-        return {
-          ...row,
-          contacts: updatedContacts,
-        };
-      })
-    );
-  };
-
   const deleteRow = (index) => {
-    const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
-    setRows(updatedRows);
+    if (formik.values.contactsJson.length === 1) {
+      return;
+    }
+    const updatedRows = [...formik.values.contactsJson];
+    updatedRows.pop();
+    formik.setFieldValue("contactsJson", updatedRows);
   };
 
   const handleCheckboxChange = (event) => {
@@ -271,7 +261,7 @@ const CustomerAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Salutation<span className="text-danger">*</span>
+                  salutation<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
@@ -506,11 +496,11 @@ const CustomerAdd = () => {
               <li className="nav-item">
                 <span
                   className={`nav-link ${
-                    activeTab === "remarks" ? "active" : ""
+                    activeTab === "remark" ? "active" : ""
                   }`}
-                  onClick={() => handleTabClick("remarks")}
+                  onClick={() => handleTabClick("remark")}
                 >
-                  Remarks
+                  remarks
                 </span>
               </li>
             </ul>
@@ -573,23 +563,23 @@ const CustomerAdd = () => {
                   <div className="mb-3">
                     <select
                       type="text"
-                      name="dueOnReceipt"
+                      name="paymentTerms"
                       className={`form-select  ${
-                        formik.touched.dueOnReceipt &&
-                        formik.errors.dueOnReceipt
+                        formik.touched.paymentTerms &&
+                        formik.errors.paymentTerms
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("dueOnReceipt")}
+                      {...formik.getFieldProps("paymentTerms")}
                     >
                       <option selected></option>
                       <option value="1">Due on Receipt</option>
                       <option value="2">Due end of the month</option>
                     </select>
-                    {formik.touched.dueOnReceipt &&
-                      formik.errors.dueOnReceipt && (
+                    {formik.touched.paymentTerms &&
+                      formik.errors.paymentTerms && (
                         <div className="invalid-feedback">
-                          {formik.errors.dueOnReceipt}
+                          {formik.errors.paymentTerms}
                         </div>
                       )}
                   </div>
@@ -599,22 +589,22 @@ const CustomerAdd = () => {
                   <div className="mb-3">
                     <select
                       type="text"
-                      name="priceList"
+                      name="currencyId"
                       className={`form-select  ${
-                        formik.touched.priceList && formik.errors.priceList
+                        formik.touched.currencyId && formik.errors.currencyId
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("priceList")}
+                      {...formik.getFieldProps("currencyId")}
                     >
                       <option selected></option>
                       <option value="Pen [ 10% Markup]">
                         Pen [ 10% Markup]
                       </option>
                     </select>
-                    {formik.touched.priceList && formik.errors.priceList && (
+                    {formik.touched.currencyId && formik.errors.currencyId && (
                       <div className="invalid-feedback">
-                        {formik.errors.priceList}
+                        {formik.errors.currencyId}
                       </div>
                     )}
                   </div>
@@ -770,17 +760,17 @@ const CustomerAdd = () => {
                     </span>
                     <input
                       type="text"
-                      name="twitter"
+                      name="twitterUrl"
                       className={`form-control ${
-                        formik.touched.twitter && formik.errors.twitter
+                        formik.touched.twitterUrl && formik.errors.twitterUrl
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("twitter")}
+                      {...formik.getFieldProps("twitterUrl")}
                     />
-                    {formik.touched.twitter && formik.errors.twitter && (
+                    {formik.touched.twitterUrl && formik.errors.twitterUrl && (
                       <div className="invalid-feedback">
-                        {formik.errors.twitter}
+                        {formik.errors.twitterUrl}
                       </div>
                     )}
                   </div>
@@ -793,17 +783,17 @@ const CustomerAdd = () => {
                     </span>
                     <input
                       type="text"
-                      name="skype"
+                      name="skypeName"
                       className={`form-control ${
-                        formik.touched.skype && formik.errors.skype
+                        formik.touched.skypeName && formik.errors.skypeName
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("skype")}
+                      {...formik.getFieldProps("skypeName")}
                     />
-                    {formik.touched.skype && formik.errors.skype && (
+                    {formik.touched.skypeName && formik.errors.skypeName && (
                       <div className="invalid-feedback">
-                        {formik.errors.skype}
+                        {formik.errors.skypeName}
                       </div>
                     )}
                   </div>
@@ -816,19 +806,20 @@ const CustomerAdd = () => {
                     </span>
                     <input
                       type="text"
-                      name="facebook"
+                      name="facebookUrl"
                       className={`form-control ${
-                        formik.touched.facebook && formik.errors.facebook
+                        formik.touched.facebookUrl && formik.errors.facebookUrl
                           ? "is-invalid"
                           : ""
                       }`}
-                      {...formik.getFieldProps("facebook")}
+                      {...formik.getFieldProps("facebookUrl")}
                     />
-                    {formik.touched.facebook && formik.errors.facebook && (
-                      <div className="invalid-feedback">
-                        {formik.errors.facebook}
-                      </div>
-                    )}
+                    {formik.touched.facebookUrl &&
+                      formik.errors.facebookUrl && (
+                        <div className="invalid-feedback">
+                          {formik.errors.facebookUrl}
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
@@ -866,19 +857,19 @@ const CustomerAdd = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="billingCountryRegion"
+                          name="billingCountry"
                           className={`form-control  ${
-                            formik.touched.billingCountryRegion &&
-                            formik.errors.billingCountryRegion
+                            formik.touched.billingCountry &&
+                            formik.errors.billingCountry
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("billingCountryRegion")}
+                          {...formik.getFieldProps("billingCountry")}
                         />
-                        {formik.touched.billingCountryRegion &&
-                          formik.errors.billingCountryRegion && (
+                        {formik.touched.billingCountry &&
+                          formik.errors.billingCountry && (
                             <div className="invalid-feedback">
-                              {formik.errors.billingCountryRegion}
+                              {formik.errors.billingCountry}
                             </div>
                           )}
                       </div>
@@ -998,19 +989,19 @@ const CustomerAdd = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="billingFaxnumber"
+                          name="billingFax"
                           className={`form-control  ${
-                            formik.touched.billingFaxnumber &&
-                            formik.errors.billingFaxnumber
+                            formik.touched.billingFax &&
+                            formik.errors.billingFax
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("billingFaxnumber")}
+                          {...formik.getFieldProps("billingFax")}
                         />
-                        {formik.touched.billingFaxnumber &&
-                          formik.errors.billingFaxnumber && (
+                        {formik.touched.billingFax &&
+                          formik.errors.billingFax && (
                             <div className="invalid-feedback">
-                              {formik.errors.billingFaxnumber}
+                              {formik.errors.billingFax}
                             </div>
                           )}
                       </div>
@@ -1033,8 +1024,8 @@ const CustomerAdd = () => {
                               formik.values.billingAttention
                             );
                             formik.setFieldValue(
-                              "shippingCountryRegion",
-                              formik.values.billingCountryRegion
+                              "shippingCountry",
+                              formik.values.billingCountry
                             );
                             formik.setFieldValue(
                               "shippingAddress",
@@ -1057,18 +1048,18 @@ const CustomerAdd = () => {
                               formik.values.billingPhone
                             );
                             formik.setFieldValue(
-                              "shippingFaxnumber",
-                              formik.values.billingFaxnumber
+                              "shippingFax",
+                              formik.values.billingFax
                             );
                           } else {
                             formik.setFieldValue("shippingAttention", "");
-                            formik.setFieldValue("shippingCountryRegion", "");
+                            formik.setFieldValue("shippingCountry", "");
                             formik.setFieldValue("shippingAddress", "");
                             formik.setFieldValue("shippingCity", "");
                             formik.setFieldValue("shippingState", "");
                             formik.setFieldValue("shippingZipcode", "");
                             formik.setFieldValue("shippingPhone", "");
-                            formik.setFieldValue("shippingFaxnumber", "");
+                            formik.setFieldValue("shippingFax", "");
                           }
                         }}
                       />
@@ -1108,19 +1099,19 @@ const CustomerAdd = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="shippingCountryRegion"
+                          name="shippingCountry"
                           className={`form-control  ${
-                            formik.touched.shippingCountryRegion &&
-                            formik.errors.shippingCountryRegion
+                            formik.touched.shippingCountry &&
+                            formik.errors.shippingCountry
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("shippingCountryRegion")}
+                          {...formik.getFieldProps("shippingCountry")}
                         />
-                        {formik.touched.shippingCountryRegion &&
-                          formik.errors.shippingCountryRegion && (
+                        {formik.touched.shippingCountry &&
+                          formik.errors.shippingCountry && (
                             <div className="invalid-feedback">
-                              {formik.errors.shippingCountryRegion}
+                              {formik.errors.shippingCountry}
                             </div>
                           )}
                       </div>
@@ -1240,19 +1231,19 @@ const CustomerAdd = () => {
                       <div className="mb-3">
                         <input
                           type="text"
-                          name="shippingFaxnumber"
+                          name="shippingFax"
                           className={`form-control  ${
-                            formik.touched.shippingFaxnumber &&
-                            formik.errors.shippingFaxnumber
+                            formik.touched.shippingFax &&
+                            formik.errors.shippingFax
                               ? "is-invalid"
                               : ""
                           }`}
-                          {...formik.getFieldProps("shippingFaxnumber")}
+                          {...formik.getFieldProps("shippingFax")}
                         />
-                        {formik.touched.shippingFaxnumber &&
-                          formik.errors.shippingFaxnumber && (
+                        {formik.touched.shippingFax &&
+                          formik.errors.shippingFax && (
                             <div className="invalid-feedback">
-                              {formik.errors.shippingFaxnumber}
+                              {formik.errors.shippingFax}
                             </div>
                           )}
                       </div>
@@ -1268,7 +1259,7 @@ const CustomerAdd = () => {
                   <table className="table table-bordered">
                     <thead>
                       <tr>
-                        <th>Salutation</th>
+                        <th>salutation</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Email Address</th>
@@ -1281,147 +1272,109 @@ const CustomerAdd = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {rows.map((row, index) => (
-                        <tr key={row.id}>
-                          <td>
-                            <div className="">
-                              <input
-                                type="text"
-                                value={row.contacts?.[0]?.salutation || ""}
-                                className="form-control"
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    index,
-                                    "salutation",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                          </td>
+                      {formik.values.contactsJson?.map((contact, index) => (
+                        <tr key={index}>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.customerFirstName || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "customerFirstName",
-                                  e.target.value
-                                )
-                              }
+                              name={`contactsJson.${index}.salutation`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.salutation`
+                              )}
+                              className="form-control"
                             />
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.customerLastName || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "customerLastName",
-                                  e.target.value
-                                )
-                              }
+                              name={`contactsJson.${index}.customerFirstName`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.customerFirstName`
+                              )}
+                              className="form-control"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`contactsJson.${index}.customerLastName`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.customerLastName`
+                              )}
+                              className="form-control"
                             />
                           </td>
                           <td>
                             <input
                               type="email"
-                              value={row.contacts?.[0]?.customerEmail || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "customerEmail",
-                                  e.target.value
-                                )
-                              }
+                              name={`contactsJson.${index}.customerEmail`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.customerEmail`
+                              )}
+                              className="form-control"
                             />
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.customerPhone || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "customerPhone",
-                                  e.target.value
-                                )
-                              }
+                              name={`contactsJson.${index}.customerPhone`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.customerPhone`
+                              )}
+                              className="form-control"
                             />
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.customerMobile || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "customerMobile",
-                                  e.target.value
-                                )
-                              }
+                              name={`contactsJson.${index}.customerMobile`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.customerMobile`
+                              )}
+                              className="form-control"
                             />
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.skypeName || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "skypeName",
-                                  e.target.value
-                                )
-                              }
+                              name={`contactsJson.${index}.skypeName`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.skypeName`
+                              )}
+                              className="form-control"
                             />
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.designation || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "designation",
-                                  e.target.value
-                                )
-                              }
+                              name={`contactsJson.${index}.designation`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.designation`
+                              )}
+                              className="form-control"
                             />
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.department || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  index,
-                                  "department",
-                                  e.target.value
-                                )
-                              }
+                              name={`contactsJson.${index}.department`}
+                              {...formik.getFieldProps(
+                                `contactsJson.${index}.department`
+                              )}
+                              className="form-control"
                             />
                           </td>
                           <td>
-                            {index !== 0 && (
-                              <button
-                                className="btn"
-                                onClick={() => deleteRow(index)}
-                              >
-                                <TbXboxX
-                                  style={{ fontSize: "25px", color: "red" }}
-                                />
-                              </button>
-                            )}
+                            <div>
+                              {formik.values.contactsJson?.length > 1 && (
+                                <button
+                                  className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
+                                  onClick={deleteRow}
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -1429,11 +1382,11 @@ const CustomerAdd = () => {
                   </table>
                 </div>
                 <button
+                  className="btn btn-button btn-sm my-4 mx-1"
                   type="button"
-                  className="btn btn-primary"
-                  onClick={addRow}
+                  onClick={AddRowContent}
                 >
-                  Add More
+                  Add row
                 </button>
               </div>
             )}
@@ -1489,24 +1442,24 @@ const CustomerAdd = () => {
                 </div>
               </div>
             )}
-            {activeTab === "remarks" && (
+            {activeTab === "remark" && (
               <div className="container-fluid row">
                 <div className="col-md-6 col-12 mb-2">
-                  <lable className="form-lable">Remarks</lable>
+                  <lable className="form-lable">remarks</lable>
                   <div className="mb-3">
                     <textarea
-                      name="remarks"
+                      name="remark"
                       className={`form-control  ${
-                        formik.touched.remarks && formik.errors.remarks
+                        formik.touched.remark && formik.errors.remark
                           ? "is-invalid"
                           : ""
                       }`}
                       rows="4"
-                      {...formik.getFieldProps("remarks")}
+                      {...formik.getFieldProps("remark")}
                     ></textarea>
-                    {formik.touched.remarks && formik.errors.remarks && (
+                    {formik.touched.remark && formik.errors.remark && (
                       <div className="invalid-feedback">
-                        {formik.errors.remarks}
+                        {formik.errors.remark}
                       </div>
                     )}
                   </div>

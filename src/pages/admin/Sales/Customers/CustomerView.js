@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../../../config/URL";
-
 import toast from "react-hot-toast";
 
 const CustomerView = () => {
@@ -28,12 +27,12 @@ const CustomerView = () => {
     <div>
       {loading ? (
         <div className="loader-container">
-          <div class="Loader-Div">
+          <div className="Loader-Div">
             <svg id="triangle" width="50px" height="50px" viewBox="-3 -4 39 39">
               <polygon
                 fill="transparent"
                 stroke="blue"
-                stroke-width="1.3"
+                strokeWidth="1.3"
                 points="16,0 32,32 0,32"
               ></polygon>
             </svg>
@@ -68,39 +67,23 @@ const CustomerView = () => {
             className="card shadow border-0 mb-2 minHeight"
             style={{ borderRadius: "0" }}
           >
-            <div className="row container-fluid">
-              <div className="col-md-6 col-12">
-                <div className="d-flex justify-content-center flex-column align-items-start">
-                  <div class="d-flex">
-                    {/* <img src={Logo} alt=".." className="mt-3" width={130} /> */}
-                  </div>
-                  <p className="fw-small mt-2">
-                    Cloud ECS Infotech Pte Ltd<br></br>
-                    Anna Salai<br></br>
-                    Chennai - 600002,<br></br>
-                    Tamil Nadu
-                  </p>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 d-flex justify-end flex-column align-items-end mt-2">
-                <h1>Credit Notes</h1>
-                <h3>#{data.creditNotesNUmber || "#1234"}</h3>
-              </div>
-            </div>
             <div className="row mt-5 container-fluid">
               <div className="col-md-6 col-12">
                 <div className="d-flex justify-content-center flex-column align-items-start">
                   <h3>Bill To</h3>
-                  <span style={{ color: "#2196f3" }}>Manikandan</span>
-                  <p className="fw-small">
-                    Purasaiwalkam,<br></br>
-                    Chennai - 600002,<br></br>
-                    Tamil Nadu
-                  </p>
+                  <span>
+                    {data.salutation || ""} {data.firstName || ""}{" "}
+                    {data.lastName || ""}
+                  </span>
+                  <p className="fw-small">{data.customerType}</p>
+                  <p className="fw-small">{data.companyName}</p>
+                  <p className="fw-small">{data.customerDisplayName}</p>
+                  <p className="fw-small">{data.customerEmail}</p>
+                  <p className="fw-small">{data.customerPhoneNumber}</p>
                 </div>
               </div>
               <div className="col-md-6 col-12 text-end">
-                <div className="row mb-2  d-flex justify-content-end align-items-end">
+                <div className="row mb-2 d-flex justify-content-end align-items-end">
                   <div className="col-6">
                     <p className="text-sm">
                       <b>Issues Date</b>
@@ -108,18 +91,13 @@ const CustomerView = () => {
                   </div>
                   <div className="col-6">
                     <p className="text-muted text-sm">
-                      : {data.issuesDate?.split("-").reverse().join("-") || ""}
+                      :{" "}
+                      {data.createdDate
+                        ?.split("T")[0]
+                        ?.split("-")
+                        .reverse()
+                        .join("-") || ""}
                     </p>
-                  </div>
-                </div>
-                <div className="row mb-2 d-flex justify-content-end align-items-end">
-                  <div className="col-6">
-                    <p className="text-sm">
-                      <b>Reference</b>
-                    </p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm">: {data.reference}</p>
                   </div>
                 </div>
                 <div className="row mb-2 d-flex justify-content-end align-items-end">
@@ -130,7 +108,12 @@ const CustomerView = () => {
                   </div>
                   <div className="col-6">
                     <p className="text-muted text-sm">
-                      : {data.dueDate?.split("-").reverse().join("-") || ""}
+                      :{" "}
+                      {data.lastModifiedDate
+                        ?.split("T")[0]
+                        ?.split("-")
+                        .reverse()
+                        .join("-") || ""}
                     </p>
                   </div>
                 </div>
@@ -138,162 +121,189 @@ const CustomerView = () => {
             </div>
             <div className="container">
               <div className="row mt-2 p-3">
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Customer Type</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.customerType || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Company Name</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.companyName || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Primary Contact</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.primaryContact || ""}
-                      </p>
+                <h4>
+                  <b>Other Details</b>
+                </h4>
+                {[
+                  { label: "Pan", value: data.pan ? data.pan : "N/A" },
+                  { label: "Currency", value: data.currency },
+                  { label: "Payment Terms", value: data.paymentTerms },
+                  {
+                    label: "Price List",
+                    value: data.priceList ? data.priceList : "N/A",
+                  },
+                  {
+                    label: "Enable Portal",
+                    value: data.enablePortal ? "true" : "false",
+                  },
+                  { label: "Portal Language", value: data.portalLanguage },
+                  { label: "Website URL", value: data.websiteUrl },
+                  { label: "Department", value: data.department },
+                  { label: "Designation", value: data.designation },
+                  { label: "Twitter", value: data.twitterUrl },
+                  { label: "Skype", value: data.twitterUrl },
+                  { label: "Facebook", value: data.facebookUrl },
+                ].map((item, index) => (
+                  <div className="col-md-6 col-12" key={index}>
+                    <div className="row mb-3">
+                      <div className="col-6 d-flex justify-content-start align-items-center">
+                        <p className="text-sm">
+                          <b>{item.label}</b>
+                        </p>
+                      </div>
+                      <div className="col-6">
+                        <p className="text-muted text-sm">
+                          : {item.value || ""}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Customer Email </b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.customerEmail || ""}
-                      </p>
-                    </div>
+                ))}
+              </div>
+            </div>
+            <div className="container">
+              <div className="row mt-2 p-3">
+                <div className="row text-start py-4">
+                  <div className="col-6">
+                    <h4>
+                      <b>Billing Address </b>
+                    </h4>
+                  </div>
+                  <div className="col-6">
+                    <h4>
+                      <b>Shipping Address </b>
+                    </h4>
                   </div>
                 </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Customer Phone</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.customerPhoneNumber || ""}
-                      </p>
+                {[
+                  { label: "Billing Attention", value: data.billingAttention },
+                  {
+                    label: "Shipping Attention",
+                    value: data.shippingAttention,
+                  },
+                  {
+                    label: "Billing Country/Region",
+                    value: data.billingCountry,
+                  },
+                  {
+                    label: "Shipping Country/Region",
+                    value: data.shippingCountry,
+                  },
+                  {
+                    label: "Billing Address",
+                    value: data.billingAddress,
+                  },
+                  {
+                    label: "Shipping Address",
+                    value: data.shippingAddress,
+                  },
+                  {
+                    label: "Billing City",
+                    value: data.billingCity,
+                  },
+                  {
+                    label: "Shipping City",
+                    value: data.shippingCity,
+                  },
+                  {
+                    label: "Billing State",
+                    value: data.billingState,
+                  },
+                  {
+                    label: "Shipping State",
+                    value: data.shippingState,
+                  },
+                  {
+                    label: "Billing Zipcode",
+                    value: data.billingZipcode,
+                  },
+                  {
+                    label: "Shipping Zipcode",
+                    value: data.shippingZipcode,
+                  },
+                  {
+                    label: "Billing Phone",
+                    value: data.billingPhone,
+                  },
+                  {
+                    label: "Shipping Phone",
+                    value: data.shippingPhone,
+                  },
+                  {
+                    label: "Billing Fax Number",
+                    value: data.billingFax,
+                  },
+                  {
+                    label: "Shipping Fax Number",
+                    value: data.shippingFax,
+                  },
+                ].map((item, index) => (
+                  <div className="col-md-6 col-12" key={index}>
+                    <div className="row mb-3">
+                      <div className="col-6 d-flex justify-content-start align-items-center">
+                        <p className="text-sm">
+                          <b>{item.label}</b>
+                        </p>
+                      </div>
+                      <div className="col-6">
+                        <p className="text-muted text-sm">
+                          : {item.value || ""}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Customer Display Name</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.customerDisplayName || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
             <div className="row mt-5 flex-nowrap container-fluid">
               <div className="col-12">
-                <div className="table-responsive ">
-                  <div className="">
-                    <h3
-                      style={{ background: "#4066D5" }}
-                      className="text-light p-2"
-                    >
-                      Item Table
-                    </h3>
-                  </div>
-                  <table class="table">
+                <div className="table-responsive">
+                  <h3
+                    style={{ background: "#4066D5" }}
+                    className="text-light p-2"
+                  >
+                    PERSONAL CONTACTS
+                  </h3>
+                  <table className="table">
                     <thead className="thead-light">
                       <tr>
                         <th>S.NO</th>
-                        <th>ITEM DETAILS</th>
-                        <th>QUANTITY</th>
-                        <th>RATE</th>
-                        <th>DISCOUNT</th>
-                        <th>TAX</th>
-                        <th>AMOUNT</th>
+                        <th>salutation</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email Address</th>
+                        <th>Work Phone</th>
+                        <th>Mobile</th>
+                        <th>Skype Name/Number</th>
+                        <th>Designation</th>
+                        <th>Department</th>
                       </tr>
                     </thead>
-                    <tbody className="table-group">
-                      {data &&
-                        data.invoiceItemsModels &&
-                        data.invoiceItemsModels.map((item, index) => (
-                          <tr key={index}>
-                            <th scope="row">{index + 1}</th>
-                            <td>(item.item)</td>
-                            <td>{item.qty}</td>
-                            <td>{item.price}</td>
-                            <td>{item.disc}</td>
-                            <td>{item.taxRate}</td>
-                            <td>{item.amount}</td>
-                          </tr>
-                        ))}
+                    <tbody>
+                      {data.customerContactPersonsModels?.map((item, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{item.salutation}</td>
+                          <td>{item.customerFirstName}</td>
+                          <td>{item.customerLastName}</td>
+                          <td>{item.customerEmail}</td>
+                          <td>{item.customerPhone}</td>
+                          <td>{item.customerMobile}</td>
+                          <td>{item.skypeName}</td>
+                          <td>{item.designation}</td>
+                          <td>{item.department}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            <div class="row mt-5 container-fluid">
-              <div className="col-md-6 col-12 mb-3 mt-5">
-                <lable className="form-lable">Customer Notes :</lable>
-                <div className="mb-3">{data.notes || ""}</div>
+            <div className="row mt-5 container-fluid text-start">
+              <div className="col-md-2 col-12">
+                <label className="form-label">Remarks Notes :</label>
               </div>
-              <div
-                className="col-md-6 col-12 mt-5 mb-3 rounded"
-                style={{ border: "1px solid lightgrey" }}
-              >
-                <div class="row mb-3 mt-2">
-                  <label class="col-sm-4 col-form-label">Sub Total</label>
-                  <div class="col-sm-4"></div>
-                  <div class="col-sm-4 ">: {data.subTotal || ""}</div>
-                </div>
-                <div class="row mb-3">
-                  <label class="col-sm-4 col-form-label">Total Tax</label>
-                  <div class="col-sm-4"></div>
-                  <div class="col-sm-4">: {data.totalTax || ""}</div>
-                  <div class="col-sm-4 "></div>
-                </div>
-                <hr></hr>
-                <div class="row mb-3">
-                  <label class="col-sm-4 col-form-label">Total ( ₹ )</label>
-                  <div class="col-sm-4"></div>
-                  <div class="col-sm-4 ">: {data.total}</div>
-                </div>
-              </div>
+              <div className="col-md-10 col-12">{data.remark || ""}</div>
             </div>
           </div>
         </div>
