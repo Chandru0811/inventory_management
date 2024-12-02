@@ -35,8 +35,10 @@ function ChellanAdd() {
       deliveryChallanItemsJson: [
         {
           itemId: "",
+          unitPrice: "",
           qty: "",
           price: "",
+          discount: "",
           amount: "",
         },
       ],
@@ -70,7 +72,7 @@ function ChellanAdd() {
             }))
           )
         );
-        const response = await api.post("createDeliveryChallansWithItems", formData, {
+        const response = await api.post("deliveryChallanCreationWithItems", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -260,13 +262,87 @@ function ChellanAdd() {
     getItemData();
   }, []);
 
+  useEffect(() => {
+    recalculateTotals();
+  }, [formik.values]);
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`deliveryChallanItemsJson[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateTotals();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.deliveryChallanItemsJson[index] || {};
+    const newRate = item.unitPrice * quantity || 0;
+    const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    const newAmount = newRate - newDiscount || 0;
+    const subTotal = newRate;
+
+    await formik.setFieldValue(
+      `deliveryChallanItemsJson[${index}].rate`,
+      newRate
+    );
+    await formik.setFieldValue(
+      `deliveryChallanItemsJson[${index}].amount`,
+      parseFloat(newAmount.toFixed(2))
+    );
+    await formik.setFieldValue(subTotal,
+      subTotal
+    );
+
+    recalculateTotals();
+  };
+
+  const recalculateTotals = (index) => {
+    const compositeItems = formik.values.compositeAssociateItemsJson || [];
+
+    let totalRate = 0;
+
+    const item = compositeItems[index] || {};
+
+    const originalRate = item.originalRate || 0;
+
+    if (index === 0) {
+      // If it's the first item, use the original cost and selling prices
+      totalRate = originalRate;
+    } else {
+      // For subsequent items, calculate totals from the array
+      totalRate = compositeItems.reduce(
+        (sum, item) => sum + (item.rate || 0),
+        0
+      );
+    }
+
+    // Update the total values in Formik
+    formik.setFieldValue("aiTotalRate", totalRate);
+  };
+
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
-      <div
-            className="card shadow border-0 mb-2 top-header sticky-top"
-            style={{ borderRadius: "0", top: "66px" }}
-          >
+        <div
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
+        >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
               <div className="col">
@@ -316,11 +392,10 @@ function ChellanAdd() {
                 <div className="mb-3">
                   <select
                     {...formik.getFieldProps("customerId")}
-                    className={`form-select form-select-sm   ${
-                      formik.touched.customerId && formik.errors.customerId
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-select form-select-sm   ${formik.touched.customerId && formik.errors.customerId
+                      ? "is-invalid"
+                      : ""
+                      }`}
                   >
                     <option selected></option>
                     {customerData &&
@@ -368,12 +443,11 @@ function ChellanAdd() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control form-control-sm  ${
-                      formik.touched.deliveryChallan &&
+                    className={`form-control form-control-sm  ${formik.touched.deliveryChallan &&
                       formik.errors.deliveryChallan
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     {...formik.getFieldProps("deliveryChallan")}
                   />
                   {formik.touched.deliveryChallan &&
@@ -390,11 +464,10 @@ function ChellanAdd() {
                 <div className="">
                   <input
                     type="text"
-                    className={`form-control form-control-sm ${
-                      formik.touched.reference && formik.errors.reference
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-control form-control-sm ${formik.touched.reference && formik.errors.reference
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     {...formik.getFieldProps("reference")}
                   />
                   {formik.touched.reference && formik.errors.reference && (
@@ -412,12 +485,11 @@ function ChellanAdd() {
                 <div className="">
                   <input
                     type="date"
-                    className={`form-control form-control-sm ${
-                      formik.touched.deliveryChallanDate &&
+                    className={`form-control form-control-sm ${formik.touched.deliveryChallanDate &&
                       formik.errors.deliveryChallanDate
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     {...formik.getFieldProps("deliveryChallanDate")}
                   />
                   {formik.touched.deliveryChallanDate &&
@@ -435,11 +507,10 @@ function ChellanAdd() {
                 <div className="">
                   <select
                     type="text"
-                    className={`form-select form-select-sm ${
-                      formik.touched.challanType && formik.errors.challanType
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-select form-select-sm ${formik.touched.challanType && formik.errors.challanType
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     {...formik.getFieldProps("challanType")}
                   >
                     <option selected></option>
@@ -512,22 +583,24 @@ function ChellanAdd() {
                                 {...formik.getFieldProps(
                                   `deliveryChallanItemsJson[${index}].itemId`
                                 )}
-                                className={`form-select ${
-                                  formik.touched.deliveryChallanItemsJson?.[
-                                    index
-                                  ]?.itemId &&
+                                className={`form-select ${formik.touched.deliveryChallanItemsJson?.[
+                                  index
+                                ]?.itemId &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
                                   ]?.itemId
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
+                                  ? "is-invalid"
+                                  : ""
+                                  }`}
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
-                                  itemData.map((itemId) => (
-                                    <option key={itemId.id} value={itemId.id}>
-                                      {itemId.name}
+                                  itemData.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                      {item.name}
                                     </option>
                                   ))}
                               </select>
@@ -546,27 +619,31 @@ function ChellanAdd() {
                                   </div>
                                 )}
                             </td>
+
                             <td>
                               <input
-                                onInput={(event) => {
-                                  event.target.value =
-                                    event.target.value.replace(/[^0-9]/g, "");
-                                }}
-                                type="text"
+                                type="number"
+                                min="0"
                                 name={`deliveryChallanItemsJson[${index}].quantity`}
-                                className={`form-control ${
-                                  formik.touched.deliveryChallanItemsJson?.[
-                                    index
-                                  ]?.quantity &&
+                                className={`form-control ${formik.touched.deliveryChallanItemsJson?.[
+                                  index
+                                ]?.quantity &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
                                   ]?.quantity
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
+                                  ? "is-invalid"
+                                  : ""
+                                  }`}
                                 {...formik.getFieldProps(
                                   `deliveryChallanItemsJson[${index}].quantity`
                                 )}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(index, quantity, formik.values.deliveryChallanItemsJson[index].discount);
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e); // Ensure Formik handles the input value
+                                }}
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
                                 index
@@ -578,7 +655,7 @@ function ChellanAdd() {
                                     {
                                       formik.errors.deliveryChallanItemsJson[
                                         index
-                                      ].quantity
+                                      ]?.quantity
                                     }
                                   </div>
                                 )}
@@ -587,19 +664,19 @@ function ChellanAdd() {
                               <input
                                 type="text"
                                 name={`deliveryChallanItemsJson[${index}].rate`}
-                                className={`form-control ${
-                                  formik.touched.deliveryChallanItemsJson?.[
-                                    index
-                                  ]?.rate &&
+                                className={`form-control ${formik.touched.deliveryChallanItemsJson?.[
+                                  index
+                                ]?.rate &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
                                   ]?.rate
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
+                                  ? "is-invalid"
+                                  : ""
+                                  }`}
                                 {...formik.getFieldProps(
                                   `deliveryChallanItemsJson[${index}].rate`
                                 )}
+                                readOnly
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
                                 index
@@ -625,19 +702,25 @@ function ChellanAdd() {
                                 }}
                                 type="text"
                                 name={`deliveryChallanItemsJson[${index}].discount`}
-                                className={`form-control ${
-                                  formik.touched.deliveryChallanItemsJson?.[
-                                    index
-                                  ]?.discount &&
+                                className={`form-control ${formik.touched.deliveryChallanItemsJson?.[
+                                  index
+                                ]?.discount &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
                                   ]?.discount
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
+                                  ? "is-invalid"
+                                  : ""
+                                  }`}
                                 {...formik.getFieldProps(
                                   `deliveryChallanItemsJson[${index}].discount`
                                 )}
+                                onChange={(e) => {
+                                  const discount =
+                                    parseInt(e.target.value, 10) || 0;
+                                  // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                                  handleQuantityChange(index, formik.values.deliveryChallanItemsJson[index].quantity, discount);
+                                  formik.handleChange(e); // Ensure Formik handles the input value
+                                }}
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
                                 index
@@ -658,19 +741,19 @@ function ChellanAdd() {
                               <input
                                 type="text"
                                 name={`deliveryChallanItemsJson[${index}].amount`}
-                                className={`form-control ${
-                                  formik.touched.deliveryChallanItemsJson?.[
-                                    index
-                                  ]?.amount &&
+                                className={`form-control ${formik.touched.deliveryChallanItemsJson?.[
+                                  index
+                                ]?.amount &&
                                   formik.errors.deliveryChallanItemsJson?.[
                                     index
                                   ]?.amount
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
+                                  ? "is-invalid"
+                                  : ""
+                                  }`}
                                 {...formik.getFieldProps(
                                   `deliveryChallanItemsJson[${index}].amount`
                                 )}
+                                readOnly
                               />
                               {formik.touched.deliveryChallanItemsJson?.[
                                 index
@@ -718,12 +801,11 @@ function ChellanAdd() {
                   <div className="mb-3">
                     <textarea
                       type="text"
-                      className={`form-control  ${
-                        formik.touched.customerNotes &&
+                      className={`form-control  ${formik.touched.customerNotes &&
                         formik.errors.customerNotes
-                          ? "is-invalid"
-                          : ""
-                      }`}
+                        ? "is-invalid"
+                        : ""
+                        }`}
                       rows="4"
                       {...formik.getFieldProps("customerNotes")}
                     />
@@ -745,11 +827,10 @@ function ChellanAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
-                          formik.touched.subTotal && formik.errors.subTotal
-                            ? "is-invalid"
-                            : ""
-                        }`}
+                        className={`form-control ${formik.touched.subTotal && formik.errors.subTotal
+                          ? "is-invalid"
+                          : ""
+                          }`}
                         {...formik.getFieldProps("subTotal")}
                       />
                       {formik.touched.subTotal && formik.errors.subTotal && (
@@ -767,11 +848,10 @@ function ChellanAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
-                          formik.touched.adjustment && formik.errors.adjustment
-                            ? "is-invalid"
-                            : ""
-                        }`}
+                        className={`form-control ${formik.touched.adjustment && formik.errors.adjustment
+                          ? "is-invalid"
+                          : ""
+                          }`}
                         {...formik.getFieldProps("adjustment")}
                       />
                       {formik.touched.adjustment &&
@@ -790,11 +870,10 @@ function ChellanAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
-                          formik.touched.total && formik.errors.total
-                            ? "is-invalid"
-                            : ""
-                        }`}
+                        className={`form-control ${formik.touched.total && formik.errors.total
+                          ? "is-invalid"
+                          : ""
+                          }`}
                         {...formik.getFieldProps("total")}
                       />
                       {formik.touched.total && formik.errors.total && (
@@ -810,12 +889,11 @@ function ChellanAdd() {
                   <lable className="form-lable">Terms & Conditions</lable>
                   <div className="mb-3">
                     <textarea
-                      className={`form-control  ${
-                        formik.touched.termsConditions &&
+                      className={`form-control  ${formik.touched.termsConditions &&
                         formik.errors.termsConditions
-                          ? "is-invalid"
-                          : ""
-                      }`}
+                        ? "is-invalid"
+                        : ""
+                        }`}
                       rows="4"
                       {...formik.getFieldProps("termsConditions")}
                     />
