@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const Invoices = () => {
   const tableRef = useRef(null);
@@ -93,19 +94,20 @@ const Invoices = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Invoices ({datas.length})</h1>
+                    <h1 className="h4 ls-tight headingColor ">
+                      Invoices ({datas.length})
+                    </h1>
                   </div>
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/invoice/add">
                       <button
                         type="submit"
@@ -116,13 +118,11 @@ const Invoices = () => {
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -131,7 +131,11 @@ const Invoices = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
@@ -143,9 +147,6 @@ const Invoices = () => {
                     <th scope="col" className="text-start">
                       STATUS
                     </th>
-                    {/* <th scope="col" className="text-center">
-                      AMOUNT
-                    </th> */}
                     <th scope="col" className="text-center">
                       Action
                     </th>
@@ -158,20 +159,22 @@ const Invoices = () => {
                       <td className="text-start">{data.customerName}</td>
                       <td className="text-start">{data.invoiceNumber}</td>
                       <td className="text-start">{data.dimensions}</td>
-                      {/* <td className="text-center">{data.dimensions}</td> */}
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/invoice/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/invoice/edit/${data.id}`}
-                            className="px-2"
-                          >
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/invoice/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

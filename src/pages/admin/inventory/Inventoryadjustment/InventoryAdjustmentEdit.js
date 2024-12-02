@@ -221,19 +221,27 @@ const InventoryAdjustmentEdit = () => {
 
   const handleAdjustment = async (index, event) => {
     const item = formik.values.quantityAdjustmentItems[index] || {};
-    const quantityAdjusted = parseInt(event.target.value || 0, 10);
+    const inputValue = event.target.value;
 
-    // Calculate the new quantity on hand
-    const newAdjustment = (item.quantityAvailable || 0) + quantityAdjusted;
+    if (/^-?\d*$/.test(inputValue)) {
+      const quantityAdjusted = parseInt(inputValue, 10);
+      const newAdjustment =
+        (item.quantityAvailable || 0) + (quantityAdjusted || 0);
 
-    await formik.setFieldValue(
-      `quantityAdjustmentItems[${index}].quantityOnHand`,
-      newAdjustment
-    );
-    await formik.setFieldValue(
-      `quantityAdjustmentItems[${index}].quantityAdjusted`,
-      quantityAdjusted
-    );
+      await formik.setFieldValue(
+        `quantityAdjustmentItems[${index}].quantityOnHand`,
+        newAdjustment
+      );
+      await formik.setFieldValue(
+        `quantityAdjustmentItems[${index}].quantityAdjusted`,
+        inputValue
+      );
+    } else {
+      await formik.setFieldValue(
+        `quantityAdjustmentItems[${index}].quantityAdjusted`,
+        ""
+      );
+    }
   };
 
   return (
@@ -335,7 +343,7 @@ const InventoryAdjustmentEdit = () => {
                   <input
                     type="text"
                     name="referenceNumber"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.referenceNumber &&
                       formik.errors.referenceNumber
                         ? "is-invalid"
@@ -360,7 +368,7 @@ const InventoryAdjustmentEdit = () => {
                   <input
                     type="date"
                     name="date"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.date && formik.errors.date
                         ? "is-invalid"
                         : ""
@@ -462,7 +470,7 @@ const InventoryAdjustmentEdit = () => {
                   <input
                     type="text"
                     name="descOfAdjustment"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.descOfAdjustment &&
                       formik.errors.descOfAdjustment
                         ? "is-invalid"
@@ -483,7 +491,7 @@ const InventoryAdjustmentEdit = () => {
                 <div className="mb-3">
                   <input
                     type="file"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     onChange={(event) => {
                       formik.setFieldValue("attachFile", event.target.files[0]);
                     }}
@@ -495,11 +503,11 @@ const InventoryAdjustmentEdit = () => {
                     </div>
                   )}
                 </div>
-                <img
+                {/* <img
                   src={data.inventoryAdjustmentsFile}
                   className="img-fluid ms-2 w-50 rounded mt-2"
                   alt="Profile Image"
-                />
+                /> */}
               </div>
             </div>
             {formik.values.modeOfAdjustment === "Quantity Adjustment" && (
@@ -640,9 +648,11 @@ const InventoryAdjustmentEdit = () => {
                               <td>
                                 <input
                                   onInput={(event) => {
-                                    event.target.value = event.target.value
+                                    const inputValue = event.target.value
                                       .replace(/[^-0-9]/g, "")
-                                      .slice(0, 2);
+                                      .replace(/(?!^)-/g, "");
+
+                                    event.target.value = inputValue;
                                   }}
                                   type="text"
                                   name={`quantityAdjustmentItems[${index}].quantityAdjusted`}

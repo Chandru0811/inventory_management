@@ -72,14 +72,19 @@ function InvoicesView() {
     doc.text(`Package Slip: ${customerData.packageSlip || ""}`, 14, 50);
     doc.text(
       `Package Date: ${
-        customerData.packageDate ? new Date(customerData.packageDate).toLocaleDateString() : ""
+        customerData.packageDate
+          ? new Date(customerData.packageDate).toLocaleDateString()
+          : ""
       }`,
       14,
       60
     );
     doc.text(`Internal Notes: ${customerData.internalNotes || ""}`, 14, 70);
 
-    if (customerData.invoiceItemsModels && customerData.invoiceItemsModels.length > 0) {
+    if (
+      customerData.invoiceItemsModels &&
+      customerData.invoiceItemsModels.length > 0
+    ) {
       const tableColumn = [
         "S.No",
         "Item Details",
@@ -161,8 +166,8 @@ function InvoicesView() {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
@@ -183,44 +188,47 @@ function InvoicesView() {
                         </button>
                       </Link>
                       <div className="hstack gap-2 justify-content-start">
-                      <div className="dropdown">
-                        <button
-                          className="btn btn-sm btn-light"
-                          type="button"
-                          id="pdfDropdown"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <BsThreeDotsVertical />
-                        </button>
-                        <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("open")}
-                            >
-                              Open PDF
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("download")}
-                            >
-                              Download PDF
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("print")}
-                            >
-                              Print PDF
-                            </button>
-                          </li>
-                        </ul>
+                        <div className="dropdown">
+                          <button
+                            className="btn btn-sm btn-light"
+                            type="button"
+                            id="pdfDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <BsThreeDotsVertical />
+                          </button>
+                          <ul
+                            className="dropdown-menu"
+                            aria-labelledby="pdfDropdown"
+                          >
+                            <li>
+                              <button
+                                className="dropdown-item"
+                                onClick={() => handlePDFAction("open")}
+                              >
+                                Open PDF
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className="dropdown-item"
+                                onClick={() => handlePDFAction("download")}
+                              >
+                                Download PDF
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className="dropdown-item"
+                                onClick={() => handlePDFAction("print")}
+                              >
+                                Print PDF
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
-                    </div>
                     </div>
                   </div>
                 </div>
@@ -323,6 +331,20 @@ function InvoicesView() {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
+                        <b>Customer Name</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.customerName || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
                         <b>Invoice </b>
                       </p>
                     </div>
@@ -337,12 +359,76 @@ function InvoicesView() {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
+                        <b>Order Number</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.orderNumber || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Invoice Date</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        :{" "}
+                        {data.invoiceDate
+                          ? new Date(data.invoiceDate).toLocaleDateString(
+                              "en-GB"
+                            )
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Due Date</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        :{" "}
+                        {data.dueDate
+                          ? new Date(data.dueDate).toLocaleDateString("en-GB")
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
                         <b>Sales Person</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
                         : {data.salesperson || ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Subject</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.subject || ""}
                       </p>
                     </div>
                   </div>
@@ -390,21 +476,19 @@ function InvoicesView() {
                           <th>QUANTITY</th>
                           <th>RATE</th>
                           <th>DISCOUNT</th>
-                          <th>TAX</th>
                           <th>AMOUNT</th>
                         </tr>
                       </thead>
                       <tbody className="table-group">
                         {data &&
-                          data.invoiceItemsModels &&
-                          data.invoiceItemsModels.map((item, index) => (
+                          data.invoicesItemDetailsModels &&
+                          data.invoicesItemDetailsModels.map((item, index) => (
                             <tr key={index}>
                               <th scope="row">{index + 1}</th>
-                              <td>{itemName(item.item)}</td>
-                              <td>{item.qty}</td>
-                              <td>{item.price}</td>
-                              <td>{item.disc}</td>
-                              <td>{item.taxRate}</td>
+                              <td>{item.itemName}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.rate}</td>
+                              <td>{item.discount}</td>
                               <td>{item.amount}</td>
                             </tr>
                           ))}
@@ -416,9 +500,9 @@ function InvoicesView() {
               <div class="row mt-5">
                 <div className="col-md-6 col-12 mb-3 mt-5">
                   <lable className="form-lable">Customer Notes</lable>
-                  <div className="mb-3">Thanks For Your Bussiness</div>
+                  <div className="mb-3">{data.customerNotes}</div>
                   <lable className="form-lable mt-2">Terms & Conditions</lable>
-                  <div className="mb-3">{/* <p>{data.}</p> */}</div>
+                  <div className="mb-3">{data.termsAndCondition}</div>
                 </div>
                 <div
                   className="col-md-6 col-12 mt-5 mb-3 rounded"
@@ -427,12 +511,12 @@ function InvoicesView() {
                   <div class="row mb-3 mt-2">
                     <label class="col-sm-4 col-form-label">Sub Total</label>
                     <div class="col-sm-4"></div>
-                    <div class="col-sm-4 ">: {data.subTotal || ""}</div>
+                    <div class="col-sm-4 ">: {data.subtotal || ""}</div>
                   </div>
                   <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label">Total Tax</label>
+                    <label class="col-sm-4 col-form-label">Adjustment</label>
                     <div class="col-sm-4"></div>
-                    <div class="col-sm-4">: {data.totalTax || ""}</div>
+                    <div class="col-sm-4">: {data.adjustment || ""}</div>
                     <div class="col-sm-4 "></div>
                   </div>
                   <hr></hr>
@@ -462,9 +546,6 @@ function InvoicesView() {
                 </div>
               </div>
             </div> */}
-              </div>
-              <div className="col-md-6 col-12 mb-5">
-                Authorized Signature _____________________________
               </div>
             </div>
           </div>

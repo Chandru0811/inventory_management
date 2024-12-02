@@ -54,9 +54,7 @@ const InventoryAdjustmentView = () => {
     doc.text(`Reference Number: ${data.reference_number || ""}`, 14, 50);
     doc.text(
       `Date: ${
-        data.date
-          ? new Date(data.date).toLocaleDateString("en-GB")
-          : ""
+        data.date ? new Date(data.date).toLocaleDateString("en-GB") : ""
       }`,
       14,
       60
@@ -147,8 +145,8 @@ const InventoryAdjustmentView = () => {
       ) : (
         <div className="container-fluid px-2 minHeight" v>
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
@@ -160,56 +158,56 @@ const InventoryAdjustmentView = () => {
                   </div>
                 </div>
                 <div className="col-auto d-flex gap-4">
-                    <div className="hstack gap-2 justify-content-start">
-                      <Link to="/inventoryadjustment">
-                        <button type="submit" className="btn btn-sm btn-light">
-                          <span>Back</span>
-                        </button>
-                      </Link>
-                    </div>
-                    <div className="hstack gap-2 justify-content-start">
-                      <div className="dropdown">
-                        <button
-                          className="btn btn-sm btn-light"
-                          type="button"
-                          id="pdfDropdown"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <BsThreeDotsVertical />
-                        </button>
-                        <ul
-                          className="dropdown-menu"
-                          aria-labelledby="pdfDropdown"
-                        >
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("open")}
-                            >
-                              Open PDF
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("download")}
-                            >
-                              Download PDF
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("print")}
-                            >
-                              Print PDF
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
+                  <div className="hstack gap-2 justify-content-start">
+                    <Link to="/inventoryadjustment">
+                      <button type="submit" className="btn btn-sm btn-light">
+                        <span>Back</span>
+                      </button>
+                    </Link>
+                  </div>
+                  <div className="hstack gap-2 justify-content-start">
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-sm btn-light"
+                        type="button"
+                        id="pdfDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <BsThreeDotsVertical />
+                      </button>
+                      <ul
+                        className="dropdown-menu"
+                        aria-labelledby="pdfDropdown"
+                      >
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handlePDFAction("open")}
+                          >
+                            Open PDF
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handlePDFAction("download")}
+                          >
+                            Download PDF
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handlePDFAction("print")}
+                          >
+                            Print PDF
+                          </button>
+                        </li>
+                      </ul>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </div>
@@ -319,6 +317,44 @@ const InventoryAdjustmentView = () => {
                         : {data.inventoryAdjustmentsFile || ""}
                       </p>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div className="row mt-5 flex-nowrap">
+                <div className="col-12">
+                  <div className="table-responsive ">
+                    <div className="">
+                      <h3
+                        style={{ background: "#4066D5" }}
+                        className="text-light p-2"
+                      >
+                        Item Table
+                      </h3>
+                    </div>
+                    <table class="table">
+                      <thead className="thead-light">
+                        <tr>
+                          <th>S.NO</th>
+                          <th>ITEM DETAILS</th>
+                          <th>Quantity Available</th>
+                          <th>New Quantity on hand</th>
+                          <th>Quantity Adjusted</th>
+                        </tr>
+                      </thead>
+                      <tbody className="table-group">
+                        {data &&
+                          data.quantityAdjustmentItems &&
+                          data.quantityAdjustmentItems.map((item, index) => (
+                            <tr key={index}>
+                              <th scope="row">{index + 1}</th>
+                              <td>{item.itemName}</td>
+                              <td>{item.quantityAvailable}</td>
+                              <td>{item.quantityOnHand}</td>
+                              <td>{item.quantityAdjusted}</td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>

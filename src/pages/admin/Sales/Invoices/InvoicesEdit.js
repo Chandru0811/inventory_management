@@ -5,39 +5,44 @@ import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-// import fetchAllCustomerWithIds from "../../List/CustomerList";
-// import fetchAllItemWithIds from "../../List/ItemList";
-
-function InvoiceEdit() {
+function InvoicesEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [customerData, setCustomerData] = useState(null);
+  const [salespersonData, setSalespersonData] = useState(null);
   const [itemData, setItemData] = useState(null);
   const [data, setData] = useState([]);
 
   const validationSchema = Yup.object({
-    customerName: Yup.string().required("*Customer name is required"),
-    invoiceNumber: Yup.string().required("*Invoice Number is required"),
+    customerId: Yup.string().required("*Customer Name is required"),
+    invoiceNumber: Yup.string().required("*Invoice is required"),
     invoiceDate: Yup.string().required("*Invoice Date is required"),
-    // txnInvoiceOrderItemsModels: Yup.array().of(
-    //   Yup.object({
-    //     item: Yup.string().required("*Item is required"),
-    //   })
-    // ),
+    invoicesItemDetailsModels: Yup.array().of(
+      Yup.object({
+        itemId: Yup.string().required("*Item Detail is required"),
+      })
+    ),
   });
 
   const formik = useFormik({
     initialValues: {
-      customerName: "",
+      customerId: "",
       invoiceNumber: "",
+      orderNumber: "",
       invoiceDate: "",
-      file: null,
-      txnInvoiceOrderItemsModels: [
+      dueDate: "",
+      salesperson: "",
+      subject: "",
+      customerNotes: "",
+      termsAndCondition: "",
+      files: "",
+      invoicesItemDetailsModels: [
         {
-          item: "",
-          qty: "",
-          price: "",
+          itemId: "",
+          quantity: "",
+          rate: "",
+          discount: "",
           amount: "",
         },
       ],
@@ -45,77 +50,57 @@ function InvoiceEdit() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
-
-      const formData = new FormData();
-
-      formData.append("customerName", values.customerName);
-      formData.append("invoiceNumber", values.invoiceNumber);
-      formData.append("orderNumber", values.orderNumber);
-      formData.append("invoiceDate", values.invoiceDate);
-      formData.append("dueDate", values.dueDate);
-      formData.append("salesperson", values.salesperson);
-      formData.append("subject", values.subject);
-      formData.append("customerNotes", values.customerNotes);
-      formData.append("termsAndCondition", values.termsAndCondition);
-      formData.append("file", values.file);
-      // values.txnInvoiceOrderItemsModels.forEach((item) => {
-      //   formData.append("item", item.item);
-      //   formData.append("qty", item.qty);
-      //   formData.append("price", item.price);
-      //   formData.append("taxRate", item.taxRate);
-      //   formData.append("disc", item.disc);
-      //   formData.append("amount", item.amount);
-      //   formData.append("mstrItemsId", item.item);
-      //   formData.append("description", "item.item");
-      //   formData.append("account", "item.item");
-      //   formData.append("taxAmount", "000");
-      //   formData.append("project", "000");
-      // });
-      // if (values.files) {
-      //   formData.append("files", values.files);
-      // }
-
       try {
-        const response = await api.put(`/updateInvoice/${id}`, formData);
-        if (response.status === 201) {
+        const formData = new FormData();
+
+        formData.append("customerId", values.customerId);
+        formData.append("invoiceNumber", values.invoiceNumber);
+        formData.append("orderNumber", values.orderNumber);
+        formData.append("invoiceDate", values.invoiceDate);
+        formData.append("dueDate", values.dueDate);
+        formData.append("salesperson", values.salesperson);
+        formData.append("subject", values.subject);
+        formData.append("subtotal", values.subtotal);
+        formData.append("adjustment", values.adjustment);
+        formData.append("total", values.total);
+        formData.append("customerNotes", values.customerNotes);
+        formData.append("termsAndCondition", values.termsAndCondition);
+        formData.append("files", values.files);
+        formData.append(
+          "itemDetailsList",
+          JSON.stringify(
+            values.invoicesItemDetailsModels?.map((item) => ({
+              itemId: item.itemId?.id || item.itemId,
+              quantity: item.quantity,
+              rate: item.rate,
+              discount: item.discount,
+              amount: item.amount,
+            }))
+          )
+        );
+        const response = await api.put(
+          `/invoiceUpdationWithItems/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/invoice");
         } else {
           toast.error(response.data.message);
         }
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
+      } catch (error) {
+        toast.error("Error: Unable to save sales order.");
       } finally {
         setLoadIndicator(false);
       }
     },
   });
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await api.get(`/getInvoicesById/${id}`);
-        const rest = response.data;
-
-        const formattedData = {
-          ...rest,
-          invoiceDate: rest.invoiceDate
-            ? new Date(rest.invoiceDate).toISOString().split("T")[0]
-            : undefined,
-            dueDate: rest.dueDate
-            ? new Date(rest.dueDate).toISOString().split("T")[0]
-            : undefined,
-        };
-        formik.setValues(formattedData);
-        setData(response.data);
-      } catch (e) {
-        toast.error("Error fetching data: ", e?.response?.data?.message);
-      }
-    };
-
-    getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // useEffect(() => {
   //   const updateAndCalculate = async () => {
@@ -125,27 +110,27 @@ function InvoiceEdit() {
   //       let totalTax = 0;
   //       let discAmount = 0;
   //       const updatedItems = await Promise.all(
-  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
+  //         formik.values.invoicesItemDetailsModels.map(async (item, index) => {
   //           if (item.item) {
   //             try {
   //               const response = await api.get(`itemsById/${item.item}`);
   //               const updatedItem = {
   //                 ...item,
-  //                 price: response.data.salesPrice,
-  //                 qty: 1,
+  //                 rate: response.data.salesPrice,
+  //                 quantity: 1,
   //               };
   //               const amount = calculateAmount(
-  //                 updatedItem.qty,
-  //                 updatedItem.price,
-  //                 updatedItem.disc,
+  //                 updatedItem.quantity,
+  //                 updatedItem.rate,
+  //                 updatedItem.discount,
   //                 updatedItem.taxRate
   //               );
-  //               const itemTotalRate = updatedItem.qty * updatedItem.price;
+  //               const itemTotalRate = updatedItem.quantity * updatedItem.rate;
   //               const itemTotalTax =
   //                 itemTotalRate * (updatedItem.taxRate / 100);
-  //               const itemTotalDisc = itemTotalRate * (updatedItem.disc / 100);
+  //               const itemTotalDisc = itemTotalRate * (updatedItem.discount / 100);
   //               discAmount += itemTotalDisc;
-  //               totalRate += updatedItem.price;
+  //               totalRate += updatedItem.rate;
   //               totalAmount += amount;
   //               totalTax += itemTotalTax;
   //               return { ...updatedItem, amount };
@@ -161,12 +146,12 @@ function InvoiceEdit() {
   //       );
   //       formik.setValues({
   //         ...formik.values,
-  //         txnInvoiceOrderItemsModels: updatedItems,
+  //         invoicesItemDetailsModels: updatedItems,
   //       });
-  //       formik.setFieldValue("subTotal", totalRate);
+  //       formik.setFieldValue("subtotal", totalRate);
   //       formik.setFieldValue("total", totalAmount);
   //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("discountAmount", discAmount);
+  //       formik.setFieldValue("adjustment", discAmount);
   //     } catch (error) {
   //       toast.error("Error updating items: ", error.message);
   //     }
@@ -174,9 +159,7 @@ function InvoiceEdit() {
 
   //   updateAndCalculate();
   // }, [
-  //   formik?.values?.txnInvoiceOrderItemsModels
-  //     .map((item) => item.item)
-  //     .join(""),
+  //   formik.values.invoicesItemDetailsModels.map((item) => item.item).join(""),
   // ]);
 
   // useEffect(() => {
@@ -187,24 +170,24 @@ function InvoiceEdit() {
   //       let totalTax = 0;
   //       let discAmount = 0;
   //       const updatedItems = await Promise.all(
-  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
+  //         formik.values.invoicesItemDetailsModels.map(async (item, index) => {
   //           if (
-  //             item.qty &&
-  //             item.price &&
-  //             item.disc !== undefined &&
+  //             item.quantity &&
+  //             item.rate &&
+  //             item.discount !== undefined &&
   //             item.taxRate !== undefined
   //           ) {
   //             const amount = calculateAmount(
-  //               item.qty,
-  //               item.price,
-  //               item.disc,
+  //               item.quantity,
+  //               item.rate,
+  //               item.discount,
   //               item.taxRate
   //             );
-  //             const itemTotalRate = item.qty * item.price;
+  //             const itemTotalRate = item.quantity * item.rate;
   //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //             const itemTotalDisc = itemTotalRate * (item.disc / 100);
+  //             const itemTotalDisc = itemTotalRate * (item.discount / 100);
   //             discAmount += itemTotalDisc;
-  //             totalRate += item.price;
+  //             totalRate += item.rate;
   //             totalAmount += amount;
   //             totalTax += itemTotalTax;
   //             return { ...item, amount };
@@ -214,12 +197,12 @@ function InvoiceEdit() {
   //       );
   //       formik.setValues({
   //         ...formik.values,
-  //         txnInvoiceOrderItemsModels: updatedItems,
+  //         invoicesItemDetailsModels: updatedItems,
   //       });
-  //       formik.setFieldValue("subTotal", totalRate);
+  //       formik.setFieldValue("subtotal", totalRate);
   //       formik.setFieldValue("total", totalAmount);
   //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("discountAmount", discAmount);
+  //       formik.setFieldValue("adjustment", discAmount);
   //     } catch (error) {
   //       toast.error("Error updating items: ", error.message);
   //     }
@@ -227,51 +210,112 @@ function InvoiceEdit() {
 
   //   updateAndCalculate();
   // }, [
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.qty).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.price).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.disc).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels
+  //   formik.values.invoicesItemDetailsModels.map((item) => item.quantity).join(""),
+  //   formik.values.invoicesItemDetailsModels.map((item) => item.rate).join(""),
+  //   formik.values.invoicesItemDetailsModels.map((item) => item.discount).join(""),
+  //   formik.values.invoicesItemDetailsModels
   //     .map((item) => item.taxRate)
   //     .join(""),
   // ]);
 
-  const calculateAmount = (qty, price, disc, taxRate) => {
-    const totalRate = qty * price;
-    const discountAmount = totalRate * (disc / 100);
-    const taxableAmount = totalRate * (taxRate / 100);
-    const totalAmount = totalRate + taxableAmount - discountAmount;
-    return totalAmount;
-  };
+  // const calculateAmount = (quantity, rate, discount, taxRate) => {
+  //   const totalRate = quantity * rate;
+  //   const adjustment = totalRate * (discount / 100);
+  //   const taxableAmount = totalRate * (taxRate / 100);
+  //   const totalAmount = totalRate + taxableAmount - adjustment;
+  //   return totalAmount;
+  // };
 
   const AddRowContent = () => {
-    formik.setFieldValue("txnInvoiceOrderItemsModels", [
-      ...formik.values.txnInvoiceOrderItemsModels,
+    formik.setFieldValue("invoicesItemDetailsModels", [
+      ...formik.values.invoicesItemDetailsModels,
       {
-        item: "",
-        qty: "",
-        price: "",
-        disc: "",
-        taxRate: "",
+        itemId: "",
+        quantity: "",
+        rate: "",
+        discount: "",
         amount: "",
       },
     ]);
   };
 
   const deleteRow = (index) => {
-    if (formik.values.txnInvoiceOrderItemsModels.length === 1) {
+    if (formik.values.invoicesItemDetailsModels?.length === 1) {
       return;
     }
-    const updatedRows = [...formik.values.txnInvoiceOrderItemsModels];
+    const updatedRows = [...formik.values.invoicesItemDetailsModels];
     updatedRows.pop();
-    formik.setFieldValue("txnInvoiceOrderItemsModels", updatedRows);
+    formik.setFieldValue("invoicesItemDetailsModels", updatedRows);
   };
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get(`/getInvoicesById/${id}`);
+        const rest = response.data;
+
+        const formattedData = {
+          ...rest,
+          invoiceDate: rest.invoiceDate
+            ? new Date(rest.invoiceDate).toISOString().split("T")[0]
+            : undefined,
+          dueDate: rest.dueDate
+            ? new Date(rest.dueDate).toISOString().split("T")[0]
+            : undefined,
+        };
+        formik.setValues(formattedData);
+        setData(response.data);
+      } catch (e) {
+        toast.error("Error fetching data: ", e?.response?.data?.message);
+      }
+    };
+
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllCustomerIdsWithNames");
+        setCustomerData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllSalesPersonIdsWithNames");
+        setSalespersonData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const getItemData = async () => {
+      try {
+        const response = await api.get("itemId-name");
+        setItemData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getItemData();
+  }, []);
 
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
-          className="card shadow border-0 mb-2 top-header"
-          style={{ borderRadius: "0" }}
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
         >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
@@ -313,36 +357,32 @@ function InvoiceEdit() {
         >
           <div className="container mb-5 mt-5">
             <div className="row py-4">
-            <div className="col-md-6 col-12 mb-3">
+              <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">
                   Customer Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("customerName")}
-                    className={`form-select    ${
-                      formik.touched.customerName && formik.errors.customerName
+                    {...formik.getFieldProps("customerId")}
+                    className={`form-select form-select-sm   ${
+                      formik.touched.customerId && formik.errors.customerId
                         ? "is-invalid"
                         : ""
                     }`}
                   >
                     <option selected></option>
-                    <option value="Sakthivel">Sakthivel</option>
-                    <option value="Suriya">Suriya</option>
-                    <option value="Chandru">Chandru</option>
-                    {/* {customerData &&
-                      customerData.map((customerName) => (
-                        <option key={customerName.id} value={customerName.id}>
-                          {customerName.contactName}
+                    {customerData &&
+                      customerData.map((data) => (
+                        <option key={data.customer_id} value={data.customer_id}>
+                          {data.customer_name}
                         </option>
-                      ))} */}
+                      ))}
                   </select>
-                  {formik.touched.customerName &&
-                    formik.errors.customerName && (
-                      <div className="invalid-feedback">
-                        {formik.errors.customerName}
-                      </div>
-                    )}
+                  {formik.touched.customerId && formik.errors.customerId && (
+                    <div className="invalid-feedback">
+                      {formik.errors.customerId}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -375,7 +415,7 @@ function InvoiceEdit() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm  ${
                       formik.touched.invoiceNumber &&
                       formik.errors.invoiceNumber
                         ? "is-invalid"
@@ -397,7 +437,7 @@ function InvoiceEdit() {
                 <div className="">
                   <input
                     type="text"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.orderNumber && formik.errors.orderNumber
                         ? "is-invalid"
                         : ""
@@ -419,7 +459,7 @@ function InvoiceEdit() {
                 <div className="">
                   <input
                     type="date"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.invoiceDate && formik.errors.invoiceDate
                         ? "is-invalid"
                         : ""
@@ -438,7 +478,7 @@ function InvoiceEdit() {
                 <div className="">
                   <input
                     type="date"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.dueDate && formik.errors.dueDate
                         ? "is-invalid"
                         : ""
@@ -455,16 +495,26 @@ function InvoiceEdit() {
 
               <div className="col-md-6 col-12 mb-3">
                 <lable className="form-lable">Salesperson</lable>
-                <div className="">
-                  <input
-                    type="text"
-                    className={`form-control ${
+                <div className="mb-3">
+                  <select
+                    {...formik.getFieldProps("salesperson")}
+                    className={`form-select form-select-sm    ${
                       formik.touched.salesperson && formik.errors.salesperson
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("salesperson")}
-                  />
+                  >
+                    <option selected></option>
+                    {salespersonData &&
+                      salespersonData.map((data) => (
+                        <option
+                          key={data.sales_person_id}
+                          value={data.sales_person_id}
+                        >
+                          {data.sales_person_name}
+                        </option>
+                      ))}
+                  </select>
                   {formik.touched.salesperson && formik.errors.salesperson && (
                     <div className="invalid-feedback">
                       {formik.errors.salesperson}
@@ -478,7 +528,7 @@ function InvoiceEdit() {
                 <div className="">
                   <input
                     type="text"
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.subject && formik.errors.subject
                         ? "is-invalid"
                         : ""
@@ -498,21 +548,18 @@ function InvoiceEdit() {
                 <div className="mb-3">
                   <input
                     type="file"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     onChange={(event) => {
-                      formik.setFieldValue("file", event.target.files[0]);
+                      formik.setFieldValue("files", event.target.files[0]);
                     }}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.touched.file && formik.errors.file && (
-                    <div className="invalid-feedback">{formik.errors.file}</div>
+                  {formik.touched.files && formik.errors.files && (
+                    <div className="invalid-feedback">
+                      {formik.errors.files}
+                    </div>
                   )}
                 </div>
-                <img
-                src={data.attachFile}
-                className="img-fluid ms-2 w-50 rounded mt-2"
-                alt="Profile Image"
-              />
               </div>
 
               <div className="row mt-5">
@@ -529,57 +576,54 @@ function InvoiceEdit() {
                     <thead>
                       <tr>
                         <th>S.NO</th>
-                        <th style={{ width: "25%" }}>
-                          Item<span className="text-danger">*</span>
+                        <th style={{ width: "40%" }}>
+                          Item Details<span className="text-danger">*</span>
                         </th>
-                        <th style={{ width: "10%" }}>Quantity</th>
+                        <th style={{ width: "15%" }}>Quantity</th>
                         <th style={{ width: "15%" }}>Rate</th>
                         <th style={{ width: "15%" }}>Discount(%)</th>
-                        <th style={{ width: "15%" }}>Tax (%)</th>
                         <th style={{ width: "15%" }}>Amount</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.txnInvoiceOrderItemsModels?.map(
+                      {formik.values.invoicesItemDetailsModels?.map(
                         (item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>
                               <select
-                                name={`txnInvoiceOrderItemsModels[${index}].item`}
+                                name={`invoicesItemDetailsModels[${index}].itemId`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].item`
+                                  `invoicesItemDetailsModels[${index}].itemId`
                                 )}
                                 className={`form-select ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.invoicesItemDetailsModels?.[
                                     index
-                                  ]?.item &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.itemId &&
+                                  formik.errors.invoicesItemDetailsModels?.[
                                     index
-                                  ]?.item
+                                  ]?.itemId
                                     ? "is-invalid"
                                     : ""
                                 }`}
                               >
                                 <option selected> </option>
                                 {itemData &&
-                                  itemData.map((itemId) => (
-                                    <option key={itemId.id} value={itemId.id}>
-                                      {itemId.itemName}
+                                  itemData.map((data) => (
+                                    <option key={data.id} value={data.id}>
+                                      {data.name}
                                     </option>
                                   ))}
                               </select>
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.item &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.item && (
+                              {formik.touched.invoicesItemDetailsModels?.[index]
+                                ?.itemId &&
+                                formik.errors.invoicesItemDetailsModels?.[index]
+                                  ?.itemId && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.invoicesItemDetailsModels[
                                         index
-                                      ].item
+                                      ].itemId
                                     }
                                   </div>
                                 )}
@@ -591,104 +635,61 @@ function InvoiceEdit() {
                                     event.target.value.replace(/[^0-9]/g, "");
                                 }}
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].qty`}
+                                name={`invoicesItemDetailsModels[${index}].quantity`}
                                 className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.invoicesItemDetailsModels?.[
                                     index
-                                  ]?.qty &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.quantity &&
+                                  formik.errors.invoicesItemDetailsModels?.[
                                     index
-                                  ]?.qty
+                                  ]?.quantity
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].qty`
+                                  `invoicesItemDetailsModels[${index}].quantity`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.qty &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.qty && (
+                              {formik.touched.invoicesItemDetailsModels?.[index]
+                                ?.quantity &&
+                                formik.errors.invoicesItemDetailsModels?.[index]
+                                  ?.quantity && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.invoicesItemDetailsModels[
                                         index
-                                      ].qty
+                                      ].quantity
                                     }
                                   </div>
                                 )}
                             </td>
                             <td>
                               <input
-                                readOnly
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].price`}
+                                name={`invoicesItemDetailsModels[${index}].rate`}
                                 className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.invoicesItemDetailsModels?.[
                                     index
-                                  ]?.price &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.rate &&
+                                  formik.errors.invoicesItemDetailsModels?.[
                                     index
-                                  ]?.price
+                                  ]?.rate
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].price`
+                                  `invoicesItemDetailsModels[${index}].rate`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.price &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.price && (
+                              {formik.touched.invoicesItemDetailsModels?.[index]
+                                ?.rate &&
+                                formik.errors.invoicesItemDetailsModels?.[index]
+                                  ?.rate && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.invoicesItemDetailsModels[
                                         index
-                                      ].price
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                            <td>
-                              <input
-                                onInput={(event) => {
-                                  event.target.value = event.target.value
-                                    .replace(/[^0-9]/g, "")
-                                    .slice(0, 2);
-                                }}
-                                type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].disc`}
-                                className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.disc &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
-                                    index
-                                  ]?.disc
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].disc`
-                                )}
-                              />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.disc &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.disc && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.txnInvoiceOrderItemsModels[
-                                        index
-                                      ].disc
+                                      ].rate
                                     }
                                   </div>
                                 )}
@@ -701,64 +702,59 @@ function InvoiceEdit() {
                                     .slice(0, 2);
                                 }}
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].taxRate`}
+                                name={`invoicesItemDetailsModels[${index}].discount`}
                                 className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.invoicesItemDetailsModels?.[
                                     index
-                                  ]?.taxRate &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  ]?.discount &&
+                                  formik.errors.invoicesItemDetailsModels?.[
                                     index
-                                  ]?.taxRate
+                                  ]?.discount
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].taxRate`
+                                  `invoicesItemDetailsModels[${index}].discount`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.taxRate &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.taxRate && (
+                              {formik.touched.invoicesItemDetailsModels?.[index]
+                                ?.discount &&
+                                formik.errors.invoicesItemDetailsModels?.[index]
+                                  ?.discount && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.invoicesItemDetailsModels[
                                         index
-                                      ].taxRate
+                                      ].discount
                                     }
                                   </div>
                                 )}
                             </td>
                             <td>
                               <input
-                                readOnly
                                 type="text"
-                                name={`txnInvoiceOrderItemsModels[${index}].amount`}
+                                name={`invoicesItemDetailsModels[${index}].amount`}
                                 className={`form-control ${
-                                  formik.touched.txnInvoiceOrderItemsModels?.[
+                                  formik.touched.invoicesItemDetailsModels?.[
                                     index
                                   ]?.amount &&
-                                  formik.errors.txnInvoiceOrderItemsModels?.[
+                                  formik.errors.invoicesItemDetailsModels?.[
                                     index
                                   ]?.amount
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `txnInvoiceOrderItemsModels[${index}].amount`
+                                  `invoicesItemDetailsModels[${index}].amount`
                                 )}
                               />
-                              {formik.touched.txnInvoiceOrderItemsModels?.[
-                                index
-                              ]?.amount &&
-                                formik.errors.txnInvoiceOrderItemsModels?.[
-                                  index
-                                ]?.amount && (
+                              {formik.touched.invoicesItemDetailsModels?.[index]
+                                ?.amount &&
+                                formik.errors.invoicesItemDetailsModels?.[index]
+                                  ?.amount && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.txnInvoiceOrderItemsModels[
+                                      formik.errors.invoicesItemDetailsModels[
                                         index
                                       ].amount
                                     }
@@ -781,7 +777,7 @@ function InvoiceEdit() {
                 >
                   Add row
                 </button>
-                {formik.values.txnInvoiceOrderItemsModels?.length > 1 && (
+                {formik.values.invoicesItemDetailsModels?.length > 1 && (
                   <button
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
                     onClick={deleteRow}
@@ -818,72 +814,48 @@ function InvoiceEdit() {
                   style={{ border: "1px solid lightgrey" }}
                 >
                   <div className="row mb-3 mt-2">
-                    <label className="col-sm-4 col-form-label">
-                      Sub Total<span className="text-danger">*</span>
-                    </label>
+                    <label className="col-sm-4 col-form-label">Sub Total</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
                         className={`form-control ${
-                          formik.touched.subTotal && formik.errors.subTotal
+                          formik.touched.subtotal && formik.errors.subtotal
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("subTotal")}
+                        {...formik.getFieldProps("subtotal")}
                       />
-                      {formik.touched.subTotal && formik.errors.subTotal && (
+                      {formik.touched.subtotal && formik.errors.subtotal && (
                         <div className="invalid-feedback">
-                          {formik.errors.subTotal}
+                          {formik.errors.subtotal}
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">
-                      Total Discount<span className="text-danger">*</span>
+                      Adjustment
                     </label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
                         className={`form-control ${
-                          formik.touched.discountAmount &&
-                          formik.errors.discountAmount
+                          formik.touched.adjustment && formik.errors.adjustment
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("discountAmount")}
+                        {...formik.getFieldProps("adjustment")}
                       />
-                      {formik.touched.discountAmount &&
-                        formik.errors.discountAmount && (
+                      {formik.touched.adjustment &&
+                        formik.errors.adjustment && (
                           <div className="invalid-feedback">
-                            {formik.errors.discountAmount}
+                            {formik.errors.adjustment}
                           </div>
                         )}
                     </div>
                   </div>
-                  <div className="row mb-3">
-                    <label className="col-sm-4 col-form-label">Total Tax</label>
-                    <div className="col-sm-4"></div>
-                    <div className="col-sm-4">
-                      <input
-                        type="text"
-                        className={`form-control ${
-                          formik.touched.totalTax && formik.errors.totalTax
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                        {...formik.getFieldProps("totalTax")}
-                      />
-                      {formik.touched.totalTax && formik.errors.totalTax && (
-                        <div className="invalid-feedback">
-                          {formik.errors.totalTax}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
                   <hr />
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">Total</label>
@@ -937,4 +909,4 @@ function InvoiceEdit() {
   );
 }
 
-export default InvoiceEdit;
+export default InvoicesEdit;

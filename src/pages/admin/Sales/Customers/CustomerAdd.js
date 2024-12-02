@@ -77,7 +77,7 @@ const CustomerAdd = () => {
       shippingPhone: "",
       shippingFax: "",
       remark: "",
-      fileAttachment: null,
+      fileAttachment: "",
       contactsJson: [
         {
           salutation: "",
@@ -99,14 +99,14 @@ const CustomerAdd = () => {
 
       const formData = new FormData();
       formData.append("customerType", values.customerType);
-      formData.append("primaryContact", values.primaryContact || "Suriya");
+      formData.append("salutation", values.salutation);
+      formData.append("firstName", values.firstName);
+      formData.append("lastName", values.lastName);
       formData.append("companyName", values.companyName);
       formData.append("customerDisplayName", values.customerDisplayName);
       formData.append("customerEmail", values.customerEmail);
       formData.append("customerPhoneNumber", values.customerPhoneNumber);
-      formData.append("descOfAdjustment", values.descOfAdjustment);
       formData.append("currency", values.currency);
-      formData.append("taxRate", values.taxRate);
       formData.append("paymentTerms", values.paymentTerms);
       formData.append("enablePortal", enablePortal);
       formData.append("portalLanguage", values.portalLanguage);
@@ -681,19 +681,21 @@ const CustomerAdd = () => {
                   <div className="mb-3">
                     <input
                       type="file"
-                      name="document"
-                      className={`form-control  ${
-                        formik.touched.document && formik.errors.document
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      {...formik.getFieldProps("document")}
+                      className="form-control form-control-sm"
+                      onChange={(event) => {
+                        formik.setFieldValue(
+                          "fileAttachment",
+                          event.target.files[0]
+                        );
+                      }}
+                      onBlur={formik.handleBlur}
                     />
-                    {formik.touched.document && formik.errors.document && (
-                      <div className="invalid-feedback">
-                        {formik.errors.document}
-                      </div>
-                    )}
+                    {formik.touched.fileAttachment &&
+                      formik.errors.fileAttachment && (
+                        <div className="invalid-feedback">
+                          {formik.errors.fileAttachment}
+                        </div>
+                      )}
                   </div>
                 </div>
                 <div className="col-md-6 col-12 mb-2">
@@ -836,7 +838,7 @@ const CustomerAdd = () => {
               <div className="container-fluid row">
                 <div className="col-md-6 col-12">
                   <h3 className="">Billing Address</h3>
-                  <div className="row">
+                  <div className="row mt-5">
                     <div className="col-12 mb-2">
                       <lable className="form-lable">Attention</lable>
                       <div className="mb-3">
@@ -1078,7 +1080,7 @@ const CustomerAdd = () => {
                       </label>
                     </div>
                   </div>
-                  <div className="row">
+                  <div className="row mt-5">
                     <div className="col-12 mb-2">
                       <lable className="form-lable">Attention</lable>
                       <div className="mb-3">
