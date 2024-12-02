@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
@@ -7,7 +7,6 @@ import api from "../../../../config/URL";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
 const CompositeItemAdd = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [itemData, setItemData] = useState(null);
@@ -65,7 +64,7 @@ const CompositeItemAdd = () => {
       ],
       compositeAssociateServiceJson: [
         {
-          itemId: "",
+          serviceId: "",
           quantity: "1",
           sellingPrice: "",
           costPrice: "",
@@ -75,7 +74,7 @@ const CompositeItemAdd = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
-      console.log("Submmitted Values", values.compositeAssociateServiceJson);
+      console.log(values);
 
       const formData = new FormData();
       formData.append("name", values.name);
@@ -119,26 +118,41 @@ const CompositeItemAdd = () => {
       formData.append(
         "compositeAssociateItemsJson",
         JSON.stringify(
-          values.compositeAssociateItemsJson.map((item) => ({
-            itemId: item.itemId?.id || item.itemId,
-            quantity: parseInt(item.quantity, 10),
-            sellingPrice: parseFloat(item.sellingPrice),
-            costPrice: parseFloat(item.costPrice),
-          }))
+          values.compositeAssociateItemsJson
+            .filter(
+              (item) =>
+                item.itemId &&
+                item.quantity &&
+                item.sellingPrice &&
+                item.costPrice
+            )
+            .map((item) => ({
+              itemId: item.itemId?.id || item.itemId,
+              quantity: parseInt(item.quantity, 10),
+              sellingPrice: parseFloat(item.sellingPrice),
+              costPrice: parseFloat(item.costPrice),
+            }))
         )
       );
-
       formData.append("aiTotalSellingPrice", values.aiTotalSellingPrice || "");
       formData.append("aiTotalCostPrice", values.aiTotalCostPrice || "");
       formData.append(
         "compositeAssociateServiceJson",
         JSON.stringify(
-          values.compositeAssociateServiceJson.map((item) => ({
-            itemId: item.serviveId,
-            quantity: parseInt(item.quantity, 10),
-            sellingPrice: parseFloat(item.sellingPrice),
-            costPrice: parseFloat(item.costPrice),
-          }))
+          values.compositeAssociateServiceJson
+            .filter(
+              (item) =>
+                item.serviceId &&
+                item.quantity &&
+                item.sellingPrice &&
+                item.costPrice
+            ) 
+            .map((item) => ({
+              serviceId: item.serviceId?.id || item.serviceId, 
+              quantity: parseInt(item.quantity, 10),
+              sellingPrice: parseFloat(item.sellingPrice),
+              costPrice: parseFloat(item.costPrice),
+            }))
         )
       );
       formData.append("asTotalSellingPrice", values.asTotalSellingPrice || "");
@@ -223,6 +237,7 @@ const CompositeItemAdd = () => {
       errorElement.focus();
     }
   };
+  
   useEffect(() => {
     if (formik.submitCount > 0 && Object.keys(formik.errors).length > 0) {
       scrollToError(formik.errors);
@@ -286,7 +301,8 @@ const CompositeItemAdd = () => {
       if (itemDetails) {
         await formik.setFieldValue(`compositeAssociateItemsJson[${index}]`, {
           itemId: selectedItemId,
-          quantity: 1,
+          originalCostPrice: itemDetails.costPrice || 0,
+          originalSellingPrice: itemDetails.sellingPrice || 0,
           costPrice: itemDetails.costPrice || 0,
           sellingPrice: itemDetails.sellingPrice || 0,
         });
@@ -301,8 +317,8 @@ const CompositeItemAdd = () => {
   const handleQuantityChange = async (index, quantity) => {
     const item = formik.values.compositeAssociateItemsJson[index] || {};
 
-    const newCostPrice = item.costPrice * quantity || 0;
-    const newSellingPrice = item.sellingPrice * quantity || 0;
+    const newCostPrice = item.originalCostPrice * quantity || 0;
+    const newSellingPrice = item.originalSellingPrice * quantity || 0;
 
     await formik.setFieldValue(
       `compositeAssociateItemsJson[${index}].costPrice`,
@@ -362,7 +378,8 @@ const CompositeItemAdd = () => {
       if (serviceDetails) {
         await formik.setFieldValue(`compositeAssociateServiceJson[${index}]`, {
           serviveId: selectedServiceId,
-          quantity: 1,
+          originalCostPrice: serviceDetails.costPrice || 0,
+          originalSellingPrice: serviceDetails.sellingPrice || 0,
           costPrice: serviceDetails.costPrice || 0,
           sellingPrice: serviceDetails.sellingPrice || 0,
         });
@@ -392,7 +409,6 @@ const CompositeItemAdd = () => {
     recalculateSeriviceTotals();
   };
 
-  // console.log("Formik Values is ", formik.values);
   const recalculateSeriviceTotals = (index) => {
     const compositeItems = formik.values.compositeAssociateServiceJson || [];
 
@@ -405,9 +421,11 @@ const CompositeItemAdd = () => {
     const originalSellingPrice = item.originalSellingPrice || 0;
 
     if (index === 0) {
+      // If it's the first item, use the original cost and selling prices
       totalCostPrice = originalCostPrice;
       totalSellingPrice = originalSellingPrice;
     } else {
+      // For subsequent items, calculate totals from the array
       totalCostPrice = compositeItems.reduce(
         (sum, item) => sum + (item.costPrice || 0),
         0
@@ -1051,7 +1069,7 @@ const CompositeItemAdd = () => {
                                   const quantity =
                                     parseInt(e.target.value, 10) || 0;
                                   handleQuantityChange(index, quantity);
-                                  formik.handleChange(e);
+                                  formik.handleChange(e); // Ensure Formik handles the input value
                                 }}
                               />
                               {formik.touched.compositeAssociateItemsJson?.[
@@ -1069,6 +1087,7 @@ const CompositeItemAdd = () => {
                                   </div>
                                 )}
                             </td>
+
                             <td>
                               <input
                                 onInput={(event) => {
@@ -1273,9 +1292,9 @@ const CompositeItemAdd = () => {
                                 min="0"
                                 name={`compositeAssociateServiceJson[${index}].quantity`}
                                 className={`form-control ${
-                                  formik.touched
-                                    .compositeAssociateServiceJson?.[index]
-                                    ?.quantity &&
+                                  formik.touched.compositeAssociateServiceJson?.[
+                                    index
+                                  ]?.quantity &&
                                   formik.errors.compositeAssociateServiceJson?.[
                                     index
                                   ]?.quantity
@@ -1288,7 +1307,7 @@ const CompositeItemAdd = () => {
                                 onChange={(e) => {
                                   const quantity =
                                     parseInt(e.target.value, 10) || 0;
-                                  handleQuantityServiceChange(index, quantity);
+                                    handleQuantityServiceChange(index, quantity);
                                   formik.handleChange(e); // Ensure Formik handles the input value
                                 }}
                               />
@@ -1300,9 +1319,9 @@ const CompositeItemAdd = () => {
                                 ]?.quantity && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors
-                                        .compositeAssociateServiceJson[index]
-                                        ?.quantity
+                                      formik.errors.compositeAssociateServiceJson[
+                                        index
+                                      ]?.quantity
                                     }
                                   </div>
                                 )}
@@ -1595,6 +1614,7 @@ const CompositeItemAdd = () => {
                         <option value="10">10%</option>
                         <option value="15">15%</option>
                         <option value="20">20%</option>
+                        {/* Add more options as needed */}
                       </select>
                       {formik.touched.salesTax && formik.errors.salesTax && (
                         <div className="invalid-feedback">
@@ -1622,6 +1642,7 @@ const CompositeItemAdd = () => {
                         <option value="10">10%</option>
                         <option value="15">15%</option>
                         <option value="20">20%</option>
+                        {/* Add more options as needed */}
                       </select>
                       {formik.touched.purchaseTax &&
                         formik.errors.purchaseTax && (
