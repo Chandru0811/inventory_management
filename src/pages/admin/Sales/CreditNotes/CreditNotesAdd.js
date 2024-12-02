@@ -297,6 +297,74 @@ function CreditNotesAdd() {
     getData();
   }, []);
 
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`itemDetailsList[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.itemDetailsList[index] || {};
+    const newRate = item.unitPrice * quantity || 0;
+    const currentRate = item.unitPrice || 0;
+    const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `itemDetailsList[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `itemDetailsList[${index}].amount`,
+      parseFloat(newAmount.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.itemDetailsList || [];
+
+    // Calculate the subtotal by summing up all item amounts
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+
+    // Update the total by considering the adjustment
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const total = subTotal + adjustment;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
+  };
+
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -351,11 +419,10 @@ function CreditNotesAdd() {
                 <div className="mb-3">
                   <select
                     {...formik.getFieldProps("customerID")}
-                    className={`form-select form-select-sm   ${
-                      formik.touched.customerID && formik.errors.customerID
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-select form-select-sm   ${formik.touched.customerID && formik.errors.customerID
+                      ? "is-invalid"
+                      : ""
+                      }`}
                   >
                     <option selected></option>
                     {customerData &&
@@ -380,11 +447,10 @@ function CreditNotesAdd() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control  ${
-                      formik.touched.creditNote && formik.errors.creditNote
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-control  ${formik.touched.creditNote && formik.errors.creditNote
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     {...formik.getFieldProps("creditNote")}
                   />
                   {formik.touched.creditNote && formik.errors.creditNote && (
@@ -400,11 +466,10 @@ function CreditNotesAdd() {
                 <div className="">
                   <input
                     type="text"
-                    className={`form-control ${
-                      formik.touched.reference && formik.errors.reference
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-control ${formik.touched.reference && formik.errors.reference
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     {...formik.getFieldProps("reference")}
                   />
                   {formik.touched.reference && formik.errors.reference && (
@@ -422,12 +487,11 @@ function CreditNotesAdd() {
                 <div className="">
                   <input
                     type="date"
-                    className={`form-control ${
-                      formik.touched.creditNoteDate &&
+                    className={`form-control ${formik.touched.creditNoteDate &&
                       formik.errors.creditNoteDate
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     {...formik.getFieldProps("creditNoteDate")}
                   />
                   {formik.touched.creditNoteDate &&
@@ -444,11 +508,10 @@ function CreditNotesAdd() {
                 <div className="mb-3">
                   <select
                     {...formik.getFieldProps("salesPerson")}
-                    className={`form-select form-select-sm  ${
-                      formik.touched.salesPerson && formik.errors.salesPerson
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-select form-select-sm  ${formik.touched.salesPerson && formik.errors.salesPerson
+                      ? "is-invalid"
+                      : ""
+                      }`}
                   >
                     <option selected></option>
                     {salesPerson &&
@@ -473,11 +536,10 @@ function CreditNotesAdd() {
                 <div className="">
                   <input
                     type="text"
-                    className={`form-control ${
-                      formik.touched.subject && formik.errors.subject
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-control ${formik.touched.subject && formik.errors.subject
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     {...formik.getFieldProps("subject")}
                   />
                   {formik.touched.subject && formik.errors.subject && (
@@ -540,27 +602,39 @@ function CreditNotesAdd() {
                               {...formik.getFieldProps(
                                 `itemDetailsList[${index}].itemId`
                               )}
-                              className={`form-select ${
-                                formik.touched.itemDetailsList?.[index]
-                                  ?.itemId &&
-                                formik.errors.itemDetailsList?.[index]?.itemId
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
+                              className={`form-select ${formik.touched.itemDetailsList?.[
+                                index
+                              ]?.itemId &&
+                                formik.errors.itemDetailsList?.[
+                                  index
+                                ]?.itemId
+                                ? "is-invalid"
+                                : ""
+                                }`}
+                              onChange={(event) =>
+                                handleItemSelection(index, event)
+                              }
                             >
                               <option selected> </option>
                               {itemData &&
-                                itemData.map((data) => (
-                                  <option key={data.id} value={data.id}>
-                                    {data.name}
+                                itemData.map((item) => (
+                                  <option key={item.id} value={item.id}>
+                                    {item.name}
                                   </option>
                                 ))}
                             </select>
-                            {formik.touched.itemDetailsList?.[index]?.itemId &&
-                              formik.errors.itemDetailsList?.[index]
-                                ?.itemId && (
+                            {formik.touched.itemDetailsList?.[
+                              index
+                            ]?.itemId &&
+                              formik.errors.itemDetailsList?.[
+                                index
+                              ]?.itemId && (
                                 <div className="invalid-feedback">
-                                  {formik.errors.itemDetailsList[index].itemId}
+                                  {
+                                    formik.errors.itemDetailsList[
+                                      index
+                                    ].itemId
+                                  }
                                 </div>
                               )}
                           </td>
@@ -570,14 +644,13 @@ function CreditNotesAdd() {
                               {...formik.getFieldProps(
                                 `itemDetailsList[${index}].accountId`
                               )}
-                              className={`form-select ${
-                                formik.touched.itemDetailsList?.[index]
-                                  ?.accountId &&
+                              className={`form-select ${formik.touched.itemDetailsList?.[index]
+                                ?.accountId &&
                                 formik.errors.itemDetailsList?.[index]
                                   ?.accountId
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
+                                ? "is-invalid"
+                                : ""
+                                }`}
                             >
                               <option selected> </option>
                               {account &&
@@ -601,33 +674,40 @@ function CreditNotesAdd() {
                           </td>
                           <td>
                             <input
-                              onInput={(event) => {
-                                event.target.value = event.target.value.replace(
-                                  /[^0-9]/g,
-                                  ""
-                                );
-                              }}
-                              type="text"
+                              type="number"
+                              min="0"
                               name={`itemDetailsList[${index}].quantity`}
-                              className={`form-control ${
-                                formik.touched.itemDetailsList?.[index]
-                                  ?.quantity &&
-                                formik.errors.itemDetailsList?.[index]?.quantity
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
+                              className={`form-control ${formik.touched.itemDetailsList?.[
+                                index
+                              ]?.quantity &&
+                                formik.errors.itemDetailsList?.[
+                                  index
+                                ]?.quantity
+                                ? "is-invalid"
+                                : ""
+                                }`}
                               {...formik.getFieldProps(
                                 `itemDetailsList[${index}].quantity`
                               )}
+                              onChange={(e) => {
+                                const quantity =
+                                  parseInt(e.target.value, 10) || 0;
+                                handleQuantityChange(index, quantity, formik.values.itemDetailsList[index].discount);
+                                // handleQuantityChange(index, quantity);
+                                formik.handleChange(e);
+                              }}
                             />
-                            {formik.touched.itemDetailsList?.[index]
-                              ?.quantity &&
-                              formik.errors.itemDetailsList?.[index]
-                                ?.quantity && (
+                            {formik.touched.itemDetailsList?.[
+                              index
+                            ]?.quantity &&
+                              formik.errors.itemDetailsList?.[
+                                index
+                              ]?.quantity && (
                                 <div className="invalid-feedback">
                                   {
-                                    formik.errors.itemDetailsList[index]
-                                      .quantity
+                                    formik.errors.itemDetailsList[
+                                      index
+                                    ]?.quantity
                                   }
                                 </div>
                               )}
@@ -636,20 +716,32 @@ function CreditNotesAdd() {
                             <input
                               type="text"
                               name={`itemDetailsList[${index}].rate`}
-                              className={`form-control ${
-                                formik.touched.itemDetailsList?.[index]?.rate &&
-                                formik.errors.itemDetailsList?.[index]?.rate
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
+                              className={`form-control ${formik.touched.itemDetailsList?.[
+                                index
+                              ]?.rate &&
+                                formik.errors.itemDetailsList?.[
+                                  index
+                                ]?.rate
+                                ? "is-invalid"
+                                : ""
+                                }`}
                               {...formik.getFieldProps(
                                 `itemDetailsList[${index}].rate`
                               )}
+                              readOnly
                             />
-                            {formik.touched.itemDetailsList?.[index]?.rate &&
-                              formik.errors.itemDetailsList?.[index]?.rate && (
+                            {formik.touched.itemDetailsList?.[
+                              index
+                            ]?.rate &&
+                              formik.errors.itemDetailsList?.[
+                                index
+                              ]?.rate && (
                                 <div className="invalid-feedback">
-                                  {formik.errors.itemDetailsList[index].rate}
+                                  {
+                                    formik.errors.itemDetailsList[
+                                      index
+                                    ].rate
+                                  }
                                 </div>
                               )}
                           </td>
@@ -662,25 +754,37 @@ function CreditNotesAdd() {
                               }}
                               type="text"
                               name={`itemDetailsList[${index}].discount`}
-                              className={`form-control ${
-                                formik.touched.itemDetailsList?.[index]
-                                  ?.discount &&
-                                formik.errors.itemDetailsList?.[index]?.discount
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
+                              className={`form-control ${formik.touched.itemDetailsList?.[
+                                index
+                              ]?.discount &&
+                                formik.errors.itemDetailsList?.[
+                                  index
+                                ]?.discount
+                                ? "is-invalid"
+                                : ""
+                                }`}
                               {...formik.getFieldProps(
                                 `itemDetailsList[${index}].discount`
                               )}
+                              onChange={(e) => {
+                                const discount =
+                                  parseInt(e.target.value, 10) || 0;
+                                // handleQuantityChange(index, `itemDetailsList[${index}].quantity`, discount);
+                                handleQuantityChange(index, formik.values.itemDetailsList[index].quantity, discount);
+                                formik.handleChange(e);
+                              }}
                             />
-                            {formik.touched.itemDetailsList?.[index]
-                              ?.discount &&
-                              formik.errors.itemDetailsList?.[index]
-                                ?.discount && (
+                            {formik.touched.itemDetailsList?.[
+                              index
+                            ]?.discount &&
+                              formik.errors.itemDetailsList?.[
+                                index
+                              ]?.discount && (
                                 <div className="invalid-feedback">
                                   {
-                                    formik.errors.itemDetailsList[index]
-                                      .discount
+                                    formik.errors.itemDetailsList[
+                                      index
+                                    ].discount
                                   }
                                 </div>
                               )}
@@ -689,22 +793,32 @@ function CreditNotesAdd() {
                             <input
                               type="text"
                               name={`itemDetailsList[${index}].amount`}
-                              className={`form-control ${
-                                formik.touched.itemDetailsList?.[index]
-                                  ?.amount &&
-                                formik.errors.itemDetailsList?.[index]?.amount
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
+                              className={`form-control ${formik.touched.itemDetailsList?.[
+                                index
+                              ]?.amount &&
+                                formik.errors.itemDetailsList?.[
+                                  index
+                                ]?.amount
+                                ? "is-invalid"
+                                : ""
+                                }`}
                               {...formik.getFieldProps(
                                 `itemDetailsList[${index}].amount`
                               )}
+                              readOnly
                             />
-                            {formik.touched.itemDetailsList?.[index]?.amount &&
-                              formik.errors.itemDetailsList?.[index]
-                                ?.amount && (
+                            {formik.touched.itemDetailsList?.[
+                              index
+                            ]?.amount &&
+                              formik.errors.itemDetailsList?.[
+                                index
+                              ]?.amount && (
                                 <div className="invalid-feedback">
-                                  {formik.errors.itemDetailsList[index].amount}
+                                  {
+                                    formik.errors.itemDetailsList[
+                                      index
+                                    ].amount
+                                  }
                                 </div>
                               )}
                           </td>
@@ -735,18 +849,17 @@ function CreditNotesAdd() {
               <div className="row mt-5 pt-0">
                 <div
                   className="col-md-6 col-12 mb-3 pt-0"
-                  // style={{marginTop:"8rem"}}
+                // style={{marginTop:"8rem"}}
                 >
                   <lable className="form-lable">Customer Notes</lable>
                   <div className="mb-3">
                     <textarea
                       type="text"
-                      className={`form-control  ${
-                        formik.touched.customerNotes &&
+                      className={`form-control  ${formik.touched.customerNotes &&
                         formik.errors.customerNotes
-                          ? "is-invalid"
-                          : ""
-                      }`}
+                        ? "is-invalid"
+                        : ""
+                        }`}
                       rows="4"
                       {...formik.getFieldProps("customerNotes")}
                     />
@@ -760,20 +873,16 @@ function CreditNotesAdd() {
                 </div>
                 <div
                   className="col-md-6 col-12 mt-5 rounded"
-                  style={{ border: "1px solid lightgrey" }}
-                >
+                  style={{ border: "1px solid lightgrey" }}>
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">Sub Total</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
-                          formik.touched.subTotal && formik.errors.subTotal
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                        {...formik.getFieldProps("subTotal")}
+                        className={`form-control ${formik.touched.subTotal && formik.errors.subTotal ? "is-invalid" : ""}`}
+                        value={formik.values.subTotal}
+                        readOnly
                       />
                       {formik.touched.subTotal && formik.errors.subTotal && (
                         <div className="invalid-feedback">
@@ -783,19 +892,14 @@ function CreditNotesAdd() {
                     </div>
                   </div>
                   <div className="row mb-3">
-                    <label className="col-sm-4 col-form-label">
-                      Adjustment
-                    </label>
+                    <label className="col-sm-4 col-form-label">Adjustment</label>
                     <div className="col-sm-4"></div>
                     <div className="col-sm-4">
                       <input
-                        type="text"
-                        className={`form-control ${
-                          formik.touched.adjustment && formik.errors.adjustment
-                            ? "is-invalid"
-                            : ""
-                        }`}
+                        type="number"
+                        className={`form-control ${formik.touched.adjustment && formik.errors.adjustment ? "is-invalid" : ""}`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment && formik.errors.adjustment && (
                         <div className="invalid-feedback">
@@ -804,7 +908,6 @@ function CreditNotesAdd() {
                       )}
                     </div>
                   </div>
-
                   <hr />
                   <div className="row mb-3 mt-2">
                     <label className="col-sm-4 col-form-label">Total</label>
@@ -812,12 +915,9 @@ function CreditNotesAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${
-                          formik.touched.total && formik.errors.total
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                        {...formik.getFieldProps("total")}
+                        className={`form-control ${formik.touched.total && formik.errors.total ? "is-invalid" : ""}`}
+                        value={formik.values.total}
+                        readOnly
                       />
                       {formik.touched.total && formik.errors.total && (
                         <div className="invalid-feedback">
@@ -832,12 +932,11 @@ function CreditNotesAdd() {
                   <lable className="form-lable">Terms & Conditions</lable>
                   <div className="mb-3">
                     <textarea
-                      className={`form-control  ${
-                        formik.touched.termsCondition &&
+                      className={`form-control  ${formik.touched.termsCondition &&
                         formik.errors.termsCondition
-                          ? "is-invalid"
-                          : ""
-                      }`}
+                        ? "is-invalid"
+                        : ""
+                        }`}
                       rows="4"
                       {...formik.getFieldProps("termsCondition")}
                     />
