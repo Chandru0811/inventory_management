@@ -328,16 +328,16 @@ function InvoicesAdd() {
     const deliveryItems = formik.values.itemDetailsList || [];
 
     // Calculate the subtotal by summing up all item amounts
-    const subTotal = deliveryItems.reduce(
+    const subtotal = deliveryItems.reduce(
       (sum, item) => sum + (parseFloat(item.amount) || 0),
       0
     );
 
-    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+    formik.setFieldValue("subtotal", subtotal.toFixed(2));
 
     // Update the total by considering the adjustment
     const adjustment = parseFloat(formik.values.adjustment) || 0;
-    const total = subTotal + adjustment;
+    const total = subtotal + adjustment;
 
     formik.setFieldValue("total", total.toFixed(2));
   };
@@ -870,13 +870,13 @@ function InvoicesAdd() {
                     <div className="col-sm-4">
                       <input
                         type="text"
-                        className={`form-control ${formik.touched.subTotal && formik.errors.subTotal ? "is-invalid" : ""}`}
-                        value={formik.values.subTotal}
+                        className={`form-control ${formik.touched.subtotal && formik.errors.subtotal ? "is-invalid" : ""}`}
+                        value={formik.values.subtotal}
                         readOnly
                       />
-                      {formik.touched.subTotal && formik.errors.subTotal && (
+                      {formik.touched.subtotal && formik.errors.subtotal && (
                         <div className="invalid-feedback">
-                          {formik.errors.subTotal}
+                          {formik.errors.subtotal}
                         </div>
                       )}
                     </div>
