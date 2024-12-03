@@ -375,7 +375,7 @@ function CreditNotesView() {
                       <tbody className="table-group">
                         {data &&
                           data.creditNotesItmDetModels &&
-                          data.creditNotesItmDetModels.map((item, index) => (
+                          data.creditNotesItmDetModels?.map((item, index) => (
                             <tr key={index}>
                               <th scope="row">{index + 1}</th>
                               {/* <td>{itemName(item.item)}</td> */}

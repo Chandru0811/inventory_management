@@ -67,7 +67,7 @@ function ChellanAdd() {
               itemId: item.itemId?.id || item.itemId,
               quantity: item.quantity,
               rate: item.rate,
-              // discount: item.discount,
+              discount: item.discount,
               amount: item.amount,
             }))
           )
