@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const Bills = () => {
   const tableRef = useRef(null);
@@ -148,7 +149,7 @@ const Bills = () => {
                     <th scope="col" className="text-start">
                       DUE DATE
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center ps-5">
                       ACTION
                     </th>
                   </tr>
@@ -165,15 +166,21 @@ const Bills = () => {
                           ? new Date(data.dueDate).toLocaleDateString()
                           : ""}
                       </td>
-                      <td className="text-center">
-                        <div className="gap-2">
+                       <td className="text-center">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/bills/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                              <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link to={`/bills/edit/${data.id}`} className="px-2">
-                            <button className="btn btn-sm">
+                          <Link to={`/bills/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
                               <FaRegEdit />
                             </button>
                           </Link>

@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
 import { FaEye, FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const VendorCredit = () => {
   const tableRef = useRef(null);
@@ -92,19 +93,20 @@ const VendorCredit = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor ">Vendor Credit ({datas.length})</h1>
+                    <h1 className="h4 ls-tight headingColor ">
+                      Vendor Credit ({datas.length})
+                    </h1>
                   </div>
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
-                    {/* {/* {/ {storedScreens?.levelCreate && ( /} */}
                     <Link to="/vendorcredit/add">
                       <button
                         type="submit"
@@ -115,13 +117,11 @@ const VendorCredit = () => {
                         </span>
                       </button>
                     </Link>
-                    {/* {/ )} /} */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <hr className="removeHrMargin"></hr> */}
           <div
             className="card shadow border-0 my-2"
             style={{ borderRadius: "0" }}
@@ -130,7 +130,11 @@ const VendorCredit = () => {
               <table ref={tableRef} className="display table ">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       S.NO
                     </th>
                     <th scope="col" className="text-start">
@@ -145,7 +149,7 @@ const VendorCredit = () => {
                     <th scope="col" className="text-start">
                       ORDER NUMBER
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center ps-5">
                       ACTION
                     </th>
                   </tr>
@@ -158,25 +162,30 @@ const VendorCredit = () => {
                       <td className="text-start">{data.creditNoteNum}</td>
                       <td className="text-start">
                         {data.orderCreditDate
-                          ? data.orderCreditDate.substring(8, 10) + "-" +
-                          data.orderCreditDate.substring(5, 7) + "-" +
-                          data.orderCreditDate.substring(2, 4)
+                          ? data.orderCreditDate.substring(8, 10) +
+                            "-" +
+                            data.orderCreditDate.substring(5, 7) +
+                            "-" +
+                            data.orderCreditDate.substring(2, 4)
                           : ""}
                       </td>
                       <td className="text-start">{data.orderNumber}</td>
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/vendorcredit/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/vendorcredit/edit/${data.id}`}
-                            className="px-2"
-                          >
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link to={`/vendorcredit/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

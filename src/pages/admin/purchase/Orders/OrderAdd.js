@@ -111,73 +111,9 @@ function OrderAdd() {
     },
   });
 
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-  //           if (
-  //             item.qty &&
-  //             item.price &&
-  //             item.disc !== undefined &&
-  //             item.taxRate !== undefined
-  //           ) {
-  //             const amount = calculateAmount(
-  //               item.qty,
-  //               item.price,
-  //               item.disc,
-  //               item.taxRate
-  //             );
-  //             const itemTotalRate = item.qty * item.price;
-  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //             const itemTotalDisc = itemTotalRate * (item.disc / 100);
-  //             discAmount += itemTotalDisc;
-  //             totalRate += item.price;
-  //             totalAmount += amount;
-  //             totalTax += itemTotalTax;
-  //             return { ...item, amount };
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         txnInvoiceOrderItemsModels: updatedItems,
-  //       });
-  //       formik.setFieldValue("subTotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("discountAmount", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.qty).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.price).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.disc).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels
-  //     .map((item) => item.taxRate)
-  //     .join(""),
-  // ]);
-
-  // const calculateAmount = (qty, price, disc, taxRate) => {
-  //   const totalRate = qty * price;
-  //   const discountAmount = totalRate * (disc / 100);
-  //   const taxableAmount = totalRate * (taxRate / 100);
-  //   const totalAmount = totalRate + taxableAmount - discountAmount;
-  //   return totalAmount;
-  // };
-
   const AddRowContent = () => {
-    formik.setFieldValue("txnInvoiceOrderItemsModels", [
-      ...formik.values.txnInvoiceOrderItemsModels,
+    formik.setFieldValue("purchaseOrderItemsJson", [
+      ...formik.values.purchaseOrderItemsJson,
       {
         item: "",
         qty: "",
@@ -190,12 +126,12 @@ function OrderAdd() {
   };
 
   const deleteRow = (index) => {
-    if (formik.values.txnInvoiceOrderItemsModels.length === 1) {
+    if (formik.values.purchaseOrderItemsJson.length === 1) {
       return;
     }
-    const updatedRows = [...formik.values.txnInvoiceOrderItemsModels];
+    const updatedRows = [...formik.values.purchaseOrderItemsJson];
     updatedRows.pop();
-    formik.setFieldValue("txnInvoiceOrderItemsModels", updatedRows);
+    formik.setFieldValue("purchaseOrderItemsJson", updatedRows);
   };
 
   useEffect(() => {
@@ -233,6 +169,77 @@ function OrderAdd() {
     };
     getData();
   }, []);
+
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`purchaseOrderItemsJson[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.purchaseOrderItemsJson[index] || {};
+    const currentRate = item.unitPrice;
+    const newRate = item.unitPrice * quantity || 0;
+    // const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    // const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `purchaseOrderItemsJson[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `purchaseOrderItemsJson[${index}].amount`,
+      parseFloat(newRate.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.purchaseOrderItemsJson || [];
+
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+    const discount = parseFloat(formik.values.discount) || 0;
+
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const discountTotal = subTotal - (subTotal * discount) / 100;
+    const total = discountTotal + adjustment;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
+  };
 
   return (
     <div className="container-fluid p-2 minHeight m-0">
@@ -553,6 +560,9 @@ function OrderAdd() {
                                     ? "is-invalid"
                                     : ""
                                 }`}
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
@@ -630,6 +640,18 @@ function OrderAdd() {
                                 {...formik.getFieldProps(
                                   `purchaseOrderItemsJson[${index}].quantity`
                                 )}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(
+                                    index,
+                                    quantity,
+                                    formik.values.purchaseOrderItemsJson[index]
+                                      .discount
+                                  );
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.purchaseOrderItemsJson?.[index]
                                 ?.quantity &&
@@ -659,6 +681,18 @@ function OrderAdd() {
                                 {...formik.getFieldProps(
                                   `purchaseOrderItemsJson[${index}].rate`
                                 )}
+                                onChange={(e) => {
+                                  const discount =
+                                    parseInt(e.target.value, 10) || 0;
+                                  // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                                  handleQuantityChange(
+                                    index,
+                                    formik.values.purchaseOrderItemsJson[index]
+                                      .quantity,
+                                    discount
+                                  );
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.purchaseOrderItemsJson?.[index]
                                 ?.rate &&
@@ -787,6 +821,15 @@ function OrderAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("discount")}
+                        onChange={(e) => {
+                          const discount = parseInt(e.target.value, 10) || 0;
+                          // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                          handleQuantityChange(
+                            formik.values.purchaseOrderItemsJson.quantity,
+                            discount
+                          );
+                          formik.handleChange(e);
+                        }}
                       />
                       {formik.touched.discount && formik.errors.discount && (
                         <div className="invalid-feedback">
@@ -809,6 +852,7 @@ function OrderAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&
                         formik.errors.adjustment && (

@@ -418,7 +418,7 @@ const SalesOrderView = () => {
                         data.itemDetails.map((item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
-                            <td>{item.itemDetails}</td>
+                            <td>{item.itemName}</td>
                             <td>{item.quantity}</td>
                             <td>{item.rate}</td>
                             <td>{item.discount}</td>

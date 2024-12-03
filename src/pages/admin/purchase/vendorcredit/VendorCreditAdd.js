@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 function VendorCreditAdd() {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
-  const [wareHouseData, setWareHouseData] = useState(null);
+  const [wareHouseId, setWareHouseData] = useState(null);
   const [vendor, setVendor] = useState(null);
   const [itemData, setItemData] = useState(null);
   const [itemAccData, setItemAccData] = useState(null);
@@ -50,7 +50,7 @@ function VendorCreditAdd() {
       setLoadIndicator(true);
       try {
         const formData = new FormData();
-        formData.append("wareHouseId", values.wareHouseData);
+        formData.append("wareHouseId", values.wareHouseId);
         formData.append("vendorId", values.vendorName);
         formData.append("creditNoteNum", values.creditNoteNum);
         formData.append("orderNumber", values.orderNumber);
@@ -146,143 +146,6 @@ function VendorCreditAdd() {
     fetchVendors();
   }, []);
 
-  // useEffect(
-  //   () => {
-  //     const updateAndCalculate = async () => {
-  //       try {
-  //         let totalRate = 0;
-  //         let totalAmount = 0;
-  //         let totalTax = 0;
-  //         let discAmount = 0;
-  //         const updatedItems = await Promise.all(
-  //           formik.values.vendorCreditsItemDetails.map(
-  //             async (item, index) => {
-  //               if (item.item) {
-  //                 try {
-  //                   const response = await api.get(`itemsById/${item.item}`);
-  //                   const updatedItem = {
-  //                     ...item,
-  //                     rate: response.data.salesPrice,
-  //                     quantity: 1,
-  //                   };
-  //                   const amount = calculateAmount(
-  //                     updatedItem.quantity,
-  //                     updatedItem.rate,
-  //                     updatedItem.discount,
-  //                     updatedItem.taxRate
-  //                   );
-  //                   const itemTotalRate = updatedItem.quantity * updatedItem.rate;
-  //                   const itemTotalTax =
-  //                     itemTotalRate * (updatedItem.taxRate / 100);
-  //                   const itemTotalDisc =
-  //                     itemTotalRate * (updatedItem.discount / 100);
-  //                   discAmount += itemTotalDisc;
-  //                   totalRate += updatedItem.rate;
-  //                   totalAmount += amount;
-  //                   totalTax += itemTotalTax;
-  //                   return { ...updatedItem, amount };
-  //                 } catch (error) {
-  //                   toast.error(
-  //                     "Error fetching data: ",
-  //                     error?.response?.data?.message
-  //                   );
-  //                 }
-  //               }
-  //               return item;
-  //             }
-  //           )
-  //         );
-  //         formik.setValues({
-  //           ...formik.values,
-  //           vendorCreditsItemDetails: updatedItems,
-  //         });
-  //         formik.setFieldValue("subTotal", totalRate);
-  //         formik.setFieldValue("total", totalAmount);
-  //         formik.setFieldValue("totalTax", totalTax);
-  //         formik.setFieldValue("discountAmount", discAmount);
-  //       } catch (error) {
-  //         toast.error("Error updating items: ", error.message);
-  //       }
-  //     };
-
-  //     updateAndCalculate();
-  //   },
-  //   [
-  //     // formik.values.vendorCreditsItemDetails.map((item) => item.item).join(""),
-  //   ]
-  // );
-
-  // useEffect(
-  //   () => {
-  //     const updateAndCalculate = async () => {
-  //       try {
-  //         let totalRate = 0;
-  //         let totalAmount = 0;
-  //         let totalTax = 0;
-  //         let discAmount = 0;
-  //         const updatedItems = await Promise.all(
-  //           formik.values.vendorCreditsItemDetails.map(
-  //             async (item, index) => {
-  //               if (
-  //                 item.quantity &&
-  //                 item.rate &&
-  //                 item.discount !== undefined &&
-  //                 item.taxRate !== undefined
-  //               ) {
-  //                 const amount = calculateAmount(
-  //                   item.quantity,
-  //                   item.rate,
-  //                   item.discount,
-  //                   item.taxRate
-  //                 );
-  //                 const itemTotalRate = item.quantity * item.rate;
-  //                 const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //                 const itemTotalDisc = itemTotalRate * (item.discount / 100);
-  //                 discAmount += itemTotalDisc;
-  //                 totalRate += item.rate;
-  //                 totalAmount += amount;
-  //                 totalTax += itemTotalTax;
-  //                 return { ...item, amount };
-  //               }
-  //               return item;
-  //             }
-  //           )
-  //         );
-  //         formik.setValues({
-  //           ...formik.values,
-  //           vendorCreditsItemDetails: updatedItems,
-  //         });
-  //         formik.setFieldValue("subTotal", totalRate);
-  //         formik.setFieldValue("total", totalAmount);
-  //         formik.setFieldValue("totalTax", totalTax);
-  //         formik.setFieldValue("discountAmount", discAmount);
-  //       } catch (error) {
-  //         toast.error("Error updating items: ", error.message);
-  //       }
-  //     };
-
-  //     updateAndCalculate();
-  //   },
-  //   [
-  //     // formik.values.vendorCreditsItemDetails.map((item) => item.quantity).join(""),
-  //     // formik.values.vendorCreditsItemDetails.map((item) => item.rate).join(""),
-  //     // formik.values.vendorCreditsItemDetails
-  //     //   .map((item) => item.discount)
-  //     //   .join(""),
-  //     // formik.values.vendorCreditsItemDetails
-  //     //   .map((item) => item.taxRate)
-  //     //   .join(""),
-  //   ]
-  // );
-
-  // const calculateAmount = (quantity, rate, discount, taxRate) => {
-  //   const totalRate = quantity * rate;
-  //   const discountAmount = totalRate * (discount / 100);
-  //   const taxableAmount = totalRate * (taxRate / 100);
-  //   const totalAmount = totalRate + taxableAmount - discountAmount;
-  //   return totalAmount;
-  // };
-
   const AddRowContent = () => {
     formik.setFieldValue("vendorCreditsItemDetails", [
       ...formik.values.vendorCreditsItemDetails,
@@ -304,6 +167,77 @@ function VendorCreditAdd() {
     const updatedRows = [...formik.values.vendorCreditsItemDetails];
     updatedRows.pop();
     formik.setFieldValue("vendorCreditsItemDetails", updatedRows);
+  };
+
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`vendorCreditsItemDetails[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.vendorCreditsItemDetails[index] || {};
+    const currentRate = item.unitPrice;
+    const newRate = item.unitPrice * quantity || 0;
+    // const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    // const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `vendorCreditsItemDetails[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `vendorCreditsItemDetails[${index}].amount`,
+      parseFloat(newRate.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.vendorCreditsItemDetails || [];
+
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+    const discount = parseFloat(formik.values.discount) || 0;
+
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const discountTotal = subTotal - (subTotal * discount) / 100;
+    const total = discountTotal + adjustment;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
   };
 
   return (
@@ -362,7 +296,7 @@ function VendorCreditAdd() {
                 <div className="mb-3">
                   <select
                     name="vendorName"
-                    className={`form-select  ${
+                    className={`form-select form-select-sm  ${
                       formik.touched.vendorName && formik.errors.vendorName
                         ? "is-invalid"
                         : ""
@@ -391,7 +325,7 @@ function VendorCreditAdd() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control   ${
+                    className={`form-control form-control-sm ${
                       formik.touched.creditNoteNum &&
                       formik.errors.creditNoteNum
                         ? "is-invalid"
@@ -412,7 +346,7 @@ function VendorCreditAdd() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control    ${
+                    className={`form-control form-control-sm ${
                       formik.touched.orderNumber && formik.errors.orderNumber
                         ? "is-invalid"
                         : ""
@@ -432,7 +366,7 @@ function VendorCreditAdd() {
                 <div className="">
                   <input
                     type="date"
-                    className={`form-control   ${
+                    className={`form-control form-control-sm ${
                       formik.touched.orderCreditDate &&
                       formik.errors.orderCreditDate
                         ? "is-invalid"
@@ -470,22 +404,22 @@ function VendorCreditAdd() {
                 <lable className="form-lable">Warehouse</lable>
                 <div className="mb-3">
                   <select
-                    name="wareHouseData"
-                    className={`form-select  ${
-                      formik.touched.wareHouseData &&
-                      formik.errors.wareHouseData
+                    name="wareHouseId"
+                    className={`form-select form-select-sm ${
+                      formik.touched.wareHouseId &&
+                      formik.errors.wareHouseId
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("wareHouseData")}
+                    {...formik.getFieldProps("wareHouseId")}
                   >
                     <option selected></option>
                     <option value="1">Ecs Cloud</option>
                   </select>
-                  {formik.touched.wareHouseData &&
-                    formik.errors.wareHouseData && (
+                  {formik.touched.wareHouseId &&
+                    formik.errors.wareHouseId && (
                       <div className="invalid-feedback">
-                        {formik.errors.wareHouseData}
+                        {formik.errors.wareHouseId}
                       </div>
                     )}
                 </div>
@@ -535,6 +469,9 @@ function VendorCreditAdd() {
                                     ? "is-invalid"
                                     : ""
                                 }`}
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
@@ -616,6 +553,18 @@ function VendorCreditAdd() {
                                 {...formik.getFieldProps(
                                   `vendorCreditsItemDetails[${index}].quantity`
                                 )}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(
+                                    index,
+                                    quantity,
+                                    formik.values.vendorCreditsItemDetails[index]
+                                      .discount
+                                  );
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.vendorCreditsItemDetails?.[index]
                                 ?.quantity &&
@@ -647,6 +596,18 @@ function VendorCreditAdd() {
                                 {...formik.getFieldProps(
                                   `vendorCreditsItemDetails[${index}].rate`
                                 )}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(
+                                    index,
+                                    quantity,
+                                    formik.values.vendorCreditsItemDetails[index]
+                                      .discount
+                                  );
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.vendorCreditsItemDetails?.[index]
                                 ?.rate &&
@@ -774,6 +735,15 @@ function VendorCreditAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("discount")}
+                        onChange={(e) => {
+                          const discount = parseInt(e.target.value, 10) || 0;
+                          // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                          handleQuantityChange(
+                            formik.values.vendorCreditsItemDetails.quantity,
+                            discount
+                          );
+                          formik.handleChange(e);
+                        }}
                       />
                       {formik.touched.discount && formik.errors.discount && (
                         <div className="invalid-feedback">
@@ -791,15 +761,16 @@ function VendorCreditAdd() {
                       <input
                         type="text"
                         className={`form-control   ${
-                          formik.touched.totalTax && formik.errors.totalTax
+                          formik.touched.adjustment && formik.errors.adjustment
                             ? "is-invalid"
                             : ""
                         }`}
-                        {...formik.getFieldProps("totalTax")}
+                        {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
-                      {formik.touched.totalTax && formik.errors.totalTax && (
+                      {formik.touched.adjustment && formik.errors.adjustment && (
                         <div className="invalid-feedback">
-                          {formik.errors.totalTax}
+                          {formik.errors.adjustment}
                         </div>
                       )}
                     </div>

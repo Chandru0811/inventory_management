@@ -148,143 +148,6 @@ function VendorCreditEdit() {
     fetchVendors();
   }, []);
 
-  // useEffect(
-  //   () => {
-  //     const updateAndCalculate = async () => {
-  //       try {
-  //         let totalRate = 0;
-  //         let totalAmount = 0;
-  //         let totalTax = 0;
-  //         let discAmount = 0;
-  //         const updatedItems = await Promise.all(
-  //           formik.values.creditsItems.map(
-  //             async (item, index) => {
-  //               if (item.item) {
-  //                 try {
-  //                   const response = await api.get(`itemsById/${item.item}`);
-  //                   const updatedItem = {
-  //                     ...item,
-  //                     rate: response.data.salesPrice,
-  //                     quantity: 1,
-  //                   };
-  //                   const amount = calculateAmount(
-  //                     updatedItem.quantity,
-  //                     updatedItem.rate,
-  //                     updatedItem.discount,
-  //                     updatedItem.taxRate
-  //                   );
-  //                   const itemTotalRate = updatedItem.quantity * updatedItem.rate;
-  //                   const itemTotalTax =
-  //                     itemTotalRate * (updatedItem.taxRate / 100);
-  //                   const itemTotalDisc =
-  //                     itemTotalRate * (updatedItem.discount / 100);
-  //                   discAmount += itemTotalDisc;
-  //                   totalRate += updatedItem.rate;
-  //                   totalAmount += amount;
-  //                   totalTax += itemTotalTax;
-  //                   return { ...updatedItem, amount };
-  //                 } catch (error) {
-  //                   toast.error(
-  //                     "Error fetching data: ",
-  //                     error?.response?.data?.message
-  //                   );
-  //                 }
-  //               }
-  //               return item;
-  //             }
-  //           )
-  //         );
-  //         formik.setValues({
-  //           ...formik.values,
-  //           creditsItems: updatedItems,
-  //         });
-  //         formik.setFieldValue("subTotal", totalRate);
-  //         formik.setFieldValue("total", totalAmount);
-  //         formik.setFieldValue("totalTax", totalTax);
-  //         formik.setFieldValue("discountAmount", discAmount);
-  //       } catch (error) {
-  //         toast.error("Error updating items: ", error.message);
-  //       }
-  //     };
-
-  //     updateAndCalculate();
-  //   },
-  //   [
-  //     // formik.values.creditsItems.map((item) => item.item).join(""),
-  //   ]
-  // );
-
-  // useEffect(
-  //   () => {
-  //     const updateAndCalculate = async () => {
-  //       try {
-  //         let totalRate = 0;
-  //         let totalAmount = 0;
-  //         let totalTax = 0;
-  //         let discAmount = 0;
-  //         const updatedItems = await Promise.all(
-  //           formik.values.creditsItems.map(
-  //             async (item, index) => {
-  //               if (
-  //                 item.quantity &&
-  //                 item.rate &&
-  //                 item.discount !== undefined &&
-  //                 item.taxRate !== undefined
-  //               ) {
-  //                 const amount = calculateAmount(
-  //                   item.quantity,
-  //                   item.rate,
-  //                   item.discount,
-  //                   item.taxRate
-  //                 );
-  //                 const itemTotalRate = item.quantity * item.rate;
-  //                 const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //                 const itemTotalDisc = itemTotalRate * (item.discount / 100);
-  //                 discAmount += itemTotalDisc;
-  //                 totalRate += item.rate;
-  //                 totalAmount += amount;
-  //                 totalTax += itemTotalTax;
-  //                 return { ...item, amount };
-  //               }
-  //               return item;
-  //             }
-  //           )
-  //         );
-  //         formik.setValues({
-  //           ...formik.values,
-  //           creditsItems: updatedItems,
-  //         });
-  //         formik.setFieldValue("subTotal", totalRate);
-  //         formik.setFieldValue("total", totalAmount);
-  //         formik.setFieldValue("totalTax", totalTax);
-  //         formik.setFieldValue("discountAmount", discAmount);
-  //       } catch (error) {
-  //         toast.error("Error updating items: ", error.message);
-  //       }
-  //     };
-
-  //     updateAndCalculate();
-  //   },
-  //   [
-  //     // formik.values.creditsItems.map((item) => item.quantity).join(""),
-  //     // formik.values.creditsItems.map((item) => item.rate).join(""),
-  //     // formik.values.creditsItems
-  //     //   .map((item) => item.discount)
-  //     //   .join(""),
-  //     // formik.values.creditsItems
-  //     //   .map((item) => item.taxRate)
-  //     //   .join(""),
-  //   ]
-  // );
-
-  // const calculateAmount = (quantity, rate, discount, taxRate) => {
-  //   const totalRate = quantity * rate;
-  //   const discountAmount = totalRate * (discount / 100);
-  //   const taxableAmount = totalRate * (taxRate / 100);
-  //   const totalAmount = totalRate + taxableAmount - discountAmount;
-  //   return totalAmount;
-  // };
-
   const AddRowContent = () => {
     formik.setFieldValue("creditsItems", [
       ...formik.values.creditsItems,
@@ -311,9 +174,7 @@ function VendorCreditEdit() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get(
-          `/vendorCreditRetrivalWithItems/${id}`
-        );
+        const response = await api.get(`/vendorCreditRetrivalWithItems/${id}`);
         const rest = response.data;
 
         const formattedData = {
@@ -389,7 +250,7 @@ function VendorCreditEdit() {
                 <div className="mb-3">
                   <select
                     name="vendorId"
-                    className={`form-select  ${
+                    className={`form-select form-select-sm ${
                       formik.touched.vendorId && formik.errors.vendorId
                         ? "is-invalid"
                         : ""
@@ -418,7 +279,7 @@ function VendorCreditEdit() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control   ${
+                    className={`form-control form-control-sm ${
                       formik.touched.creditNoteNum &&
                       formik.errors.creditNoteNum
                         ? "is-invalid"
@@ -439,7 +300,7 @@ function VendorCreditEdit() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control    ${
+                    className={`form-control form-control-sm ${
                       formik.touched.orderNumber && formik.errors.orderNumber
                         ? "is-invalid"
                         : ""
@@ -459,7 +320,7 @@ function VendorCreditEdit() {
                 <div className="">
                   <input
                     type="date"
-                    className={`form-control   ${
+                    className={`form-control form-control-sm ${
                       formik.touched.orderCreditDdate &&
                       formik.errors.orderCreditDdate
                         ? "is-invalid"
@@ -498,9 +359,8 @@ function VendorCreditEdit() {
                 <div className="mb-3">
                   <select
                     name="wareHouseId"
-                    className={`form-select  ${
-                      formik.touched.wareHouseId &&
-                      formik.errors.wareHouseId
+                    className={`form-select form-select-sm ${
+                      formik.touched.wareHouseId && formik.errors.wareHouseId
                         ? "is-invalid"
                         : ""
                     }`}
@@ -509,12 +369,11 @@ function VendorCreditEdit() {
                     <option selected></option>
                     <option value="1">Ecs Cloud</option>
                   </select>
-                  {formik.touched.wareHouseId &&
-                    formik.errors.wareHouseId && (
-                      <div className="invalid-feedback">
-                        {formik.errors.wareHouseId}
-                      </div>
-                    )}
+                  {formik.touched.wareHouseId && formik.errors.wareHouseId && (
+                    <div className="invalid-feedback">
+                      {formik.errors.wareHouseId}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -542,186 +401,139 @@ function VendorCreditEdit() {
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.creditsItems?.map(
-                        (item, index) => (
-                          <tr key={index}>
-                            <th scope="row">{index + 1}</th>
-                            <td>
-                              <select
-                                name={`creditsItems[${index}].itemId`}
-                                {...formik.getFieldProps(
-                                  `creditsItems[${index}].itemId`
-                                )}
-                                className={`form-select ${
-                                  formik.touched.creditsItems?.[
-                                    index
-                                  ]?.itemId &&
-                                  formik.errors.creditsItems?.[
-                                    index
-                                  ]?.itemId
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                              >
-                                <option selected> </option>
-                                {itemData &&
-                                  itemData.map((itemId) => (
-                                    <option key={itemId.id} value={itemId.id}>
-                                      {itemId.name}
-                                    </option>
-                                  ))}
-                              </select>
-                              {formik.touched.creditsItems?.[index]
-                                ?.itemId &&
-                                formik.errors.creditsItems?.[index]
-                                  ?.itemId && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.creditsItems[
-                                        index
-                                      ].itemId
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                            <td>
-                              <select
-                                name={`creditsItems[${index}].accountId`}
-                                {...formik.getFieldProps(
-                                  `creditsItems[${index}].accountId`
-                                )}
-                                className={`form-select ${
-                                  formik.touched.creditsItems?.[
-                                    index
-                                  ]?.accountId &&
-                                  formik.errors.creditsItems?.[
-                                    index
-                                  ]?.accountId
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                              >
-                                <option selected> </option>
-                                {itemAccData &&
-                                  itemAccData?.map((accData) => (
-                                    <option key={accData.id} value={accData.id}>
-                                      {accData.accountName}
-                                    </option>
-                                  ))}
-                              </select>
-                              {formik.touched.creditsItems?.[index]
-                                ?.accountId &&
-                                formik.errors.creditsItems?.[index]
-                                  ?.accountId && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.creditsItems[
-                                        index
-                                      ].accountId
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                            <td>
-                              <input
-                                onInput={(event) => {
-                                  event.target.value =
-                                    event.target.value.replace(/[^0-9]/g, "");
-                                }}
-                                type="text"
-                                name={`creditsItems[${index}].quantity`}
-                                className={`form-control ${
-                                  formik.touched.creditsItems?.[
-                                    index
-                                  ]?.quantity &&
-                                  formik.errors.creditsItems?.[
-                                    index
-                                  ]?.quantity
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps(
-                                  `creditsItems[${index}].quantity`
-                                )}
-                              />
-                              {formik.touched.creditsItems?.[index]
-                                ?.quantity &&
-                                formik.errors.creditsItems?.[index]
-                                  ?.quantity && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.creditsItems[
-                                        index
-                                      ].quantity
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                name={`creditsItems[${index}].rate`}
-                                className={`form-control ${
-                                  formik.touched.creditsItems?.[
-                                    index
-                                  ]?.rate &&
-                                  formik.errors.creditsItems?.[
-                                    index
-                                  ]?.rate
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps(
-                                  `creditsItems[${index}].rate`
-                                )}
-                              />
-                              {formik.touched.creditsItems?.[index]
-                                ?.rate &&
-                                formik.errors.creditsItems?.[index]
-                                  ?.rate && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.creditsItems[
-                                        index
-                                      ].rate
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                name={`creditsItems[${index}].amount`}
-                                className={`form-control ${
-                                  formik.touched.creditsItems?.[
-                                    index
-                                  ]?.amount &&
-                                  formik.errors.creditsItems?.[
-                                    index
-                                  ]?.amount
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps(
-                                  `creditsItems[${index}].amount`
-                                )}
-                              />
-                              {formik.touched.creditsItems?.[index]
-                                ?.amount &&
-                                formik.errors.creditsItems?.[index]
-                                  ?.amount && (
-                                  <div className="invalid-feedback">
-                                    {
-                                      formik.errors.creditsItems[
-                                        index
-                                      ].amount
-                                    }
-                                  </div>
-                                )}
-                            </td>
-                          </tr>
-                        )
-                      )}
+                      {formik.values.creditsItems?.map((item, index) => (
+                        <tr key={index}>
+                          <th scope="row">{index + 1}</th>
+                          <td>
+                            <select
+                              name={`creditsItems[${index}].itemId`}
+                              {...formik.getFieldProps(
+                                `creditsItems[${index}].itemId`
+                              )}
+                              className={`form-select ${
+                                formik.touched.creditsItems?.[index]?.itemId &&
+                                formik.errors.creditsItems?.[index]?.itemId
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                            >
+                              <option selected> </option>
+                              {itemData &&
+                                itemData.map((itemId) => (
+                                  <option key={itemId.id} value={itemId.id}>
+                                    {itemId.name}
+                                  </option>
+                                ))}
+                            </select>
+                            {formik.touched.creditsItems?.[index]?.itemId &&
+                              formik.errors.creditsItems?.[index]?.itemId && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.creditsItems[index].itemId}
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <select
+                              name={`creditsItems[${index}].accountId`}
+                              {...formik.getFieldProps(
+                                `creditsItems[${index}].accountId`
+                              )}
+                              className={`form-select ${
+                                formik.touched.creditsItems?.[index]
+                                  ?.accountId &&
+                                formik.errors.creditsItems?.[index]?.accountId
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                            >
+                              <option selected> </option>
+                              {itemAccData &&
+                                itemAccData?.map((accData) => (
+                                  <option key={accData.id} value={accData.id}>
+                                    {accData.accountName}
+                                  </option>
+                                ))}
+                            </select>
+                            {formik.touched.creditsItems?.[index]?.accountId &&
+                              formik.errors.creditsItems?.[index]
+                                ?.accountId && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.creditsItems[index].accountId}
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              onInput={(event) => {
+                                event.target.value = event.target.value.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                );
+                              }}
+                              type="text"
+                              name={`creditsItems[${index}].quantity`}
+                              className={`form-control ${
+                                formik.touched.creditsItems?.[index]
+                                  ?.quantity &&
+                                formik.errors.creditsItems?.[index]?.quantity
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `creditsItems[${index}].quantity`
+                              )}
+                            />
+                            {formik.touched.creditsItems?.[index]?.quantity &&
+                              formik.errors.creditsItems?.[index]?.quantity && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.creditsItems[index].quantity}
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`creditsItems[${index}].rate`}
+                              className={`form-control ${
+                                formik.touched.creditsItems?.[index]?.rate &&
+                                formik.errors.creditsItems?.[index]?.rate
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `creditsItems[${index}].rate`
+                              )}
+                            />
+                            {formik.touched.creditsItems?.[index]?.rate &&
+                              formik.errors.creditsItems?.[index]?.rate && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.creditsItems[index].rate}
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`creditsItems[${index}].amount`}
+                              className={`form-control ${
+                                formik.touched.creditsItems?.[index]?.amount &&
+                                formik.errors.creditsItems?.[index]?.amount
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `creditsItems[${index}].amount`
+                              )}
+                            />
+                            {formik.touched.creditsItems?.[index]?.amount &&
+                              formik.errors.creditsItems?.[index]?.amount && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.creditsItems[index].amount}
+                                </div>
+                              )}
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>

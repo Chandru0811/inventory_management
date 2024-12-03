@@ -161,10 +161,10 @@ function VendorCreditView() {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
-          >
+        <div
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
+        >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="row align-items-center">
@@ -416,7 +416,6 @@ function VendorCreditView() {
                           <th>ACCOUNT</th>
                           <th>QUANTITY</th>
                           <th>RATE</th>
-                          <th>DISCOUNT</th>
                           <th>AMOUNT</th>
                         </tr>
                       </thead>
@@ -430,7 +429,6 @@ function VendorCreditView() {
                               <td>{item.accountName}</td>
                               <td>{item.quantity}</td>
                               <td>{item.rate}</td>
-                              <td>{item.discount}</td>
                               <td>{item.amount}</td>
                             </tr>
                           ))}

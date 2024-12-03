@@ -228,7 +228,7 @@ function BillsEdit() {
                 <div className="mb-3">
                   <select
                     {...formik.getFieldProps("vendorId")}
-                    className={`form-select ${
+                    className={`form-select form-select-sm ${
                       formik.touched.vendorId && formik.errors.vendorId
                         ? "is-invalid"
                         : ""
@@ -257,7 +257,7 @@ function BillsEdit() {
                   <input
                     type="text"
                     {...formik.getFieldProps("billNumber")}
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.billNumber && formik.errors.billNumber
                         ? "is-invalid"
                         : ""
@@ -277,7 +277,7 @@ function BillsEdit() {
                   <input
                     type="text"
                     {...formik.getFieldProps("orderNumber")}
-                    className="form-control"
+                    className="form-control form-control-sm"
                   />
                 </div>
               </div>
@@ -288,7 +288,7 @@ function BillsEdit() {
                   <input
                     type="text"
                     {...formik.getFieldProps("subject")}
-                    className="form-control"
+                    className="form-control form-control-sm"
                   />
                 </div>
               </div>
@@ -301,7 +301,7 @@ function BillsEdit() {
                   <input
                     type="date"
                     {...formik.getFieldProps("billDate")}
-                    className={`form-control ${
+                    className={`form-control form-control-sm ${
                       formik.touched.billDate && formik.errors.billDate
                         ? "is-invalid"
                         : ""
@@ -321,7 +321,7 @@ function BillsEdit() {
                   <input
                     type="date"
                     {...formik.getFieldProps("dueDate")}
-                    className="form-control"
+                    className="form-control form-control-sm"
                   />
                 </div>
               </div>
