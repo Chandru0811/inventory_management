@@ -58,7 +58,7 @@ function CreditNotesAdd() {
       formData.append("customerId", values.customerID);
       formData.append("creditNote", values.creditNote);
       formData.append("reference", values.reference);
-      //   formData.append("creditNoteDate", values.creditNoteDate);
+      formData.append("creditNoteDate", values.creditNoteDate);
       formData.append("salesPerson", values.salesPerson);
       formData.append("subject", values.subject);
       formData.append("subTotal", values.subTotal);

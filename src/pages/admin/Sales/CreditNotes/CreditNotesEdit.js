@@ -56,7 +56,7 @@ function CreditNotesEdit() {
       console.log(values);
 
       const formData = new FormData();
-      formData.append("customerID", values.customerID);
+      formData.append("customerId", values.customerID);
       formData.append("creditNote", values.creditNote);
       formData.append("reference", values.reference);
       //   formData.append("creditNoteDate", values.creditNoteDate);
@@ -312,6 +312,73 @@ function CreditNotesEdit() {
     getData();
   }, []);
 
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`creditNotesItmDetModels[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.creditNotesItmDetModels[index] || {};
+    const newRate = item.unitPrice * quantity || item.rate * quantity || 0;
+    const currentRate = item.unitPrice || item.rate || 0;
+    const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `creditNotesItmDetModels[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `creditNotesItmDetModels[${index}].amount`,
+      parseFloat(newAmount.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.creditNotesItmDetModels || [];
+
+    // Calculate the subtotal by summing up all item amounts
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+
+    // Update the total by considering the adjustment
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const total = subTotal + adjustment;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
+  };
+
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -549,12 +616,15 @@ function CreditNotesEdit() {
                                     ? "is-invalid"
                                     : ""
                                 }`}
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
-                                  itemData.map((data) => (
-                                    <option key={data.id} value={data.id}>
-                                      {data.name}
+                                  itemData.map((itemId) => (
+                                    <option key={itemId.id} value={itemId.id}>
+                                      {itemId.name}
                                     </option>
                                   ))}
                               </select>
@@ -628,6 +698,18 @@ function CreditNotesEdit() {
                                 {...formik.getFieldProps(
                                   `creditNotesItmDetModels[${index}].quantity`
                                 )}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(
+                                    index,
+                                    quantity,
+                                    formik.values.creditNotesItmDetModels[index]
+                                      .discount
+                                  );
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.creditNotesItmDetModels?.[index]
                                 ?.quantity &&
@@ -693,6 +775,18 @@ function CreditNotesEdit() {
                                 {...formik.getFieldProps(
                                   `creditNotesItmDetModels[${index}].discount`
                                 )}
+                                onChange={(e) => {
+                                  const discount =
+                                    parseInt(e.target.value, 10) || 0;
+                                  // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                                  handleQuantityChange(
+                                    index,
+                                    formik.values.creditNotesItmDetModels[index]
+                                      .quantity,
+                                    discount
+                                  );
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.creditNotesItmDetModels?.[index]
                                 ?.discount &&
@@ -826,6 +920,7 @@ function CreditNotesEdit() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&
                         formik.errors.adjustment && (
