@@ -431,8 +431,6 @@ const InventoryAdjustmentAdd = () => {
                   >
                     <option selected></option>
                     <option value="1">ECS Cloud Infotech</option>
-                    <option value="2">Cloud ECS</option>
-                    <option value="3">ECS Cloud</option>
                   </select>
                   {formik.touched.wareHouseId && formik.errors.wareHouseId && (
                     <div className="invalid-feedback">
