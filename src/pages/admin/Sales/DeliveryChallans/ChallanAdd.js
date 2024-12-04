@@ -54,6 +54,7 @@ function ChellanAdd() {
         formData.append("deliveryChallan", values.deliveryChallan);
         formData.append("reference", values.reference);
         formData.append("deliveryChallanDate", values.deliveryChallanDate);
+        formData.append("challanType", values.challanType);
         formData.append("subTotal", values.subTotal);
         formData.append("adjustment", values.adjustment);
         formData.append("total", values.total);

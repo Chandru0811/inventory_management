@@ -61,7 +61,7 @@ function ChellanEdit() {
         formData.append("termsConditions", values.termsAndCondition);
         formData.append("attachFile", values.attachFile);
         formData.append(
-          "challanitems",
+          "deliveryChallanItemsJson",
           JSON.stringify(
             values.challanitems?.map((item) => ({
               id: item.id,
@@ -174,8 +174,8 @@ function ChellanEdit() {
 
   const handleQuantityChange = async (index, quantity, discount) => {
     const item = formik.values.challanitems[index] || {};
-    const newRate = item.unitPrice * quantity || 0;
-    const currentRate = item.unitPrice || 0;
+    const newRate = item.unitPrice * quantity || item.rate * quantity || 0;
+    const currentRate = item.unitPrice || item.rate || 0;
     const newDiscount = discount ? (newRate * discount) / 100 : 0;
     const newAmount = newRate - newDiscount || 0;
 
@@ -590,10 +590,10 @@ function ChellanEdit() {
                                 `challanitems[${index}].discount`
                               )}
                               onChange={(e) => {
-                                const quantity =
+                                const discount =
                                   parseInt(e.target.value, 10) || 0;
-                                handleQuantityChange(index, quantity, formik.values.challanitems[index].discount);
-                                // handleQuantityChange(index, quantity);
+                                // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                                handleQuantityChange(index, formik.values.challanitems[index].quantity, discount);
                                 formik.handleChange(e);
                               }}
                             />
