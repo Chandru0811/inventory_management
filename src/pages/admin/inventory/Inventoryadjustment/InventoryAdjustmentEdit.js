@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 const InventoryAdjustmentEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
   const [loading, setLoadIndicator] = useState(false);
   const [itemData, setItemData] = useState(null);
   const [reason, setReason] = useState(null);
@@ -18,6 +17,7 @@ const InventoryAdjustmentEdit = () => {
     modeOfAdjustment: Yup.string().required("*Mode of Adjustment is required"),
     date: Yup.string().required("*Date is required"),
     accountId: Yup.string().required("*Account is required"),
+    wareHouseId: Yup.string().required("*wareHouseId is required"),
     reasonId: Yup.string().required("*Reason is required"),
     quantityAdjustmentItems: Yup.array().of(
       Yup.object().shape({
@@ -88,7 +88,7 @@ const InventoryAdjustmentEdit = () => {
             },
           }
         );
-        if (response.status === 201) {
+        if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/inventoryadjustment");
         } else {
@@ -193,7 +193,6 @@ const InventoryAdjustmentEdit = () => {
             : undefined,
           reference_number: rest.referenceNumber || "",
         };
-        setData(response.data);
         formik.setValues(formattedData);
       } catch (error) {
         toast.error(error.message);
@@ -445,17 +444,15 @@ const InventoryAdjustmentEdit = () => {
                 <div className="mb-3">
                   <select
                     name="wareHouseId"
-                    className={`form-select form-select-sm  ${
+                    className={`form-select form-select-sm ${
                       formik.touched.wareHouseId && formik.errors.wareHouseId
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("wareHouseId")}
                   >
-                    <option selected></option>
+                    <option value=""></option>
                     <option value="1">ECS Cloud Infotech</option>
-                    <option value="2">Cloud ECS</option>
-                    <option value="3">ECS Cloud</option>
                   </select>
                   {formik.touched.wareHouseId && formik.errors.wareHouseId && (
                     <div className="invalid-feedback">
