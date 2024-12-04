@@ -261,7 +261,7 @@ const CustomerAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  salutation<span className="text-danger">*</span>
+                  Salutation<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <select
@@ -1272,7 +1272,7 @@ const CustomerAdd = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.contactsJson?.map((contact, index) => (
+                      {formik.values.contactsJson?.map((rowIndex, index) => (
                         <tr key={index}>
                           <td>
                             <input
@@ -1281,7 +1281,7 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.salutation`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
@@ -1291,7 +1291,7 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.customerFirstName`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
@@ -1301,7 +1301,7 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.customerLastName`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
@@ -1311,7 +1311,7 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.customerEmail`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
@@ -1321,7 +1321,7 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.customerPhone`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
@@ -1331,7 +1331,7 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.customerMobile`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
@@ -1341,7 +1341,7 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.skypeName`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
@@ -1351,7 +1351,7 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.designation`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
@@ -1361,20 +1361,21 @@ const CustomerAdd = () => {
                               {...formik.getFieldProps(
                                 `contactsJson.${index}.department`
                               )}
-                              className="form-control"
+                              className="form-control input-wide"
                             />
                           </td>
                           <td>
-                            <div>
-                              {formik.values.contactsJson?.length > 1 && (
-                                <button
-                                  className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
-                                  onClick={deleteRow}
-                                >
-                                  Delete
-                                </button>
-                              )}
-                            </div>
+                            {rowIndex !== 0 && (
+                              <button
+                                className="btn"
+                                type="button"
+                                onClick={() => deleteRow(rowIndex)}
+                              >
+                                <TbXboxX
+                                  style={{ fontSize: "25px", color: "red" }}
+                                />
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -1445,7 +1446,7 @@ const CustomerAdd = () => {
             {activeTab === "remark" && (
               <div className="container-fluid row">
                 <div className="col-md-6 col-12 mb-2">
-                  <lable className="form-lable">remarks</lable>
+                  <lable className="form-lable">Remarks</lable>
                   <div className="mb-3">
                     <textarea
                       name="remark"

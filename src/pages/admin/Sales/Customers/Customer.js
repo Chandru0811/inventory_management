@@ -93,10 +93,10 @@ const Customer = () => {
       ) : (
         <>
           <div className="container-fluid px-2 minHeight">
-          <div
-            className="card shadow border-0 mb-2 top-header sticky-top"
-            style={{ borderRadius: "0", top: "66px" }}
-          >
+            <div
+              className="card shadow border-0 mb-2 top-header sticky-top"
+              style={{ borderRadius: "0", top: "66px" }}
+            >
               <div className="container-fluid py-4">
                 <div className="row align-items-center justify-content-between ">
                   <div className="col">

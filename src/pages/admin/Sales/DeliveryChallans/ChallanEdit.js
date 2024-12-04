@@ -61,7 +61,7 @@ function ChellanEdit() {
         formData.append("termsConditions", values.termsAndCondition);
         formData.append("attachFile", values.attachFile);
         formData.append(
-          "deliveryChallanItemsJson",
+          "challanitems",
           JSON.stringify(
             values.challanitems?.map((item) => ({
               id: item.id,
@@ -96,130 +96,6 @@ function ChellanEdit() {
       }
     },
   });
-
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.challanitems.map(async (item, index) => {
-  //           if (item.item) {
-  //             try {
-  //               const response = await api.get(`itemsById/${item.item}`);
-  //               const updatedItem = {
-  //                 ...item,
-  //                 price: response.data.salesPrice,
-  //                 qty: 1,
-  //               };
-  //               const amount = calculateAmount(
-  //                 updatedItem.qty,
-  //                 updatedItem.price,
-  //                 updatedItem.disc,
-  //                 updatedItem.taxRate
-  //               );
-  //               const itemTotalRate = updatedItem.qty * updatedItem.price;
-  //               const itemTotalTax =
-  //                 itemTotalRate * (updatedItem.taxRate / 100);
-  //               const itemTotalDisc = itemTotalRate * (updatedItem.disc / 100);
-  //               discAmount += itemTotalDisc;
-  //               totalRate += updatedItem.price;
-  //               totalAmount += amount;
-  //               totalTax += itemTotalTax;
-  //               return { ...updatedItem, amount };
-  //             } catch (error) {
-  //               toast.error(
-  //                 "Error fetching data: ",
-  //                 error?.response?.data?.message
-  //               );
-  //             }
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         challanitems: updatedItems,
-  //       });
-  //       formik.setFieldValue("subTotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("discountAmount", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.challanitems.map((item) => item.item).join(""),
-  // ]);
-
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.challanitems.map(async (item, index) => {
-  //           if (
-  //             item.qty &&
-  //             item.price &&
-  //             item.disc !== undefined &&
-  //             item.taxRate !== undefined
-  //           ) {
-  //             const amount = calculateAmount(
-  //               item.qty,
-  //               item.price,
-  //               item.disc,
-  //               item.taxRate
-  //             );
-  //             const itemTotalRate = item.qty * item.price;
-  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //             const itemTotalDisc = itemTotalRate * (item.disc / 100);
-  //             discAmount += itemTotalDisc;
-  //             totalRate += item.price;
-  //             totalAmount += amount;
-  //             totalTax += itemTotalTax;
-  //             return { ...item, amount };
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         challanitems: updatedItems,
-  //       });
-  //       formik.setFieldValue("subTotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("discountAmount", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.challanitems.map((item) => item.qty).join(""),
-  //   formik.values.challanitems.map((item) => item.price).join(""),
-  //   formik.values.challanitems.map((item) => item.disc).join(""),
-  //   formik.values.challanitems
-  //     .map((item) => item.taxRate)
-  //     .join(""),
-  // ]);
-
-  // const calculateAmount = (qty, price, disc, taxRate) => {
-  //   const totalRate = qty * price;
-  //   const discountAmount = totalRate * (disc / 100);
-  //   const taxableAmount = totalRate * (taxRate / 100);
-  //   const totalAmount = totalRate + taxableAmount - discountAmount;
-  //   return totalAmount;
-  // };
 
   const AddRowContent = () => {
     formik.setFieldValue("challanitems", [
@@ -267,6 +143,77 @@ function ChellanEdit() {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`challanitems[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.challanitems[index] || {};
+    const newRate = item.unitPrice * quantity || 0;
+    const currentRate = item.unitPrice || 0;
+    const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `challanitems[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `challanitems[${index}].amount`,
+      parseFloat(newAmount.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.challanitems || [];
+
+    // Calculate the subtotal by summing up all item amounts
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+
+    // Update the total by considering the adjustment
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const total = subTotal + adjustment;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
+  };
 
   useEffect(() => {
     const getData = async () => {
@@ -548,6 +495,9 @@ function ChellanEdit() {
                                   ? "is-invalid"
                                   : ""
                               }`}
+                              onChange={(event) =>
+                                handleItemSelection(index, event)
+                              }
                             >
                               <option selected> </option>
                               {itemData &&
@@ -584,6 +534,13 @@ function ChellanEdit() {
                               {...formik.getFieldProps(
                                 `challanitems[${index}].quantity`
                               )}
+                              onChange={(e) => {
+                                const quantity =
+                                  parseInt(e.target.value, 10) || 0;
+                                handleQuantityChange(index, quantity, formik.values.challanitems[index].discount);
+                                // handleQuantityChange(index, quantity);
+                                formik.handleChange(e);
+                              }}
                             />
                             {formik.touched.challanitems?.[index]?.quantity &&
                               formik.errors.challanitems?.[index]?.quantity && (
@@ -632,6 +589,13 @@ function ChellanEdit() {
                               {...formik.getFieldProps(
                                 `challanitems[${index}].discount`
                               )}
+                              onChange={(e) => {
+                                const quantity =
+                                  parseInt(e.target.value, 10) || 0;
+                                handleQuantityChange(index, quantity, formik.values.challanitems[index].discount);
+                                // handleQuantityChange(index, quantity);
+                                formik.handleChange(e);
+                              }}
                             />
                             {formik.touched.challanitems?.[index]?.discount &&
                               formik.errors.challanitems?.[index]?.discount && (
@@ -746,6 +710,7 @@ function ChellanEdit() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&
                         formik.errors.adjustment && (

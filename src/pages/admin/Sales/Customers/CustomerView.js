@@ -12,7 +12,7 @@ const CustomerView = () => {
     const getData = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`/getAllCustomersById/${id}`);
+        const response = await api.get(`/customerRetrievalWithContact/${id}`);
         setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
@@ -280,7 +280,7 @@ const CustomerView = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.customerContactPersonsModels?.map((item, index) => (
+                      {data.contacts?.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{item.salutation}</td>

@@ -55,7 +55,7 @@ function CreditNotesAdd() {
       console.log(values);
 
       const formData = new FormData();
-      formData.append("customerID", values.customerID);
+      formData.append("customerId", values.customerID);
       formData.append("creditNote", values.creditNote);
       formData.append("reference", values.reference);
       //   formData.append("creditNoteDate", values.creditNoteDate);
