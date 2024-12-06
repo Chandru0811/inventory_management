@@ -3,8 +3,6 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import toast from "react-hot-toast";
 import api from "../../config/URL";
-import { MdDelete } from "react-icons/md";
-import { SlTrash } from "react-icons/sl";
 import { BiTrashAlt } from "react-icons/bi";
 
 function DeleteModel({ onSuccess, path }) {
