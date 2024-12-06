@@ -98,8 +98,8 @@ function BillsEdit() {
   });
 
   const AddRowContent = () => {
-    formik.setFieldValue("itemDetails", [
-      ...formik.values.itemDetails,
+    formik.setFieldValue("billsItemDetailsDTOList", [
+      ...formik.values.billsItemDetailsDTOList,
       {
         itemId: "",
         quantity: "",
@@ -112,12 +112,85 @@ function BillsEdit() {
   };
 
   const deleteRow = () => {
-    if (formik.values.itemDetails?.length === 1) {
+    if (formik.values.billsItemDetailsDTOList?.length === 1) {
       return;
     }
-    const updatedRows = [...formik.values.itemDetails];
+    const updatedRows = [...formik.values.billsItemDetailsDTOList];
     updatedRows.pop();
-    formik.setFieldValue("itemDetails", updatedRows);
+    formik.setFieldValue("billsItemDetailsDTOList", updatedRows);
+  };
+
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`billsItemDetailsDTOList[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.billsItemDetailsDTOList[index] || {};
+    const newRate = item.unitPrice * quantity || item.rate * quantity || 0;
+    const currentRate = item.unitPrice || item.rate || 0;
+    const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `billsItemDetailsDTOList[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `billsItemDetailsDTOList[${index}].amount`,
+      parseFloat(newAmount.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.billsItemDetailsDTOList || [];
+
+    // Calculate the subtotal by summing up all item amounts
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+
+    const discount = parseFloat(formik.values.discount) || 0;
+
+    const adjustments = parseFloat(formik.values.adjustments) || 0;
+    const discountTotal = subTotal - (subTotal * discount) / 100;
+    const total = discountTotal + adjustments;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustments = event.target.value;
+    formik.setFieldValue("adjustments", adjustments);
+    recalculateSubtotalAndTotal();
   };
 
   useEffect(() => {
@@ -339,12 +412,11 @@ function BillsEdit() {
                   <table className="table table-sm table-nowrap">
                     <thead>
                       <tr>
-                        <th>S.NO</th>
                         <th style={{ width: "20%" }}>Item</th>
-                        <th style={{ width: "25%" }}>Account</th>
-                        <th style={{ width: "15%" }}>Quantity</th>
+                        <th style={{ width: "20%" }}>Account</th>
+                        <th style={{ width: "10%" }}>Quantity</th>
                         <th style={{ width: "15%" }}>Rate</th>
-                        <th style={{ width: "15%" }}>Customer Details</th>
+                        <th style={{ width: "20%" }}>Customer Details</th>
                         <th style={{ width: "15%" }}>Amount</th>
                       </tr>
                     </thead>
@@ -352,7 +424,6 @@ function BillsEdit() {
                       {formik.values.billsItemDetailsDTOList?.map(
                         (item, index) => (
                           <tr key={index}>
-                            <td>{index + 1}</td>
                             <td>
                               <select
                                 name={`billsItemDetailsDTOList.${index}.itemId`}
@@ -360,8 +431,11 @@ function BillsEdit() {
                                   `billsItemDetailsDTOList.${index}.itemId`
                                 )}
                                 className="form-select"
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
-                                <option value="">Select Item</option>
+                                <option value=""></option>
                                 {itemData?.map((item) => (
                                   <option key={item.id} value={item.id}>
                                     {item.name}
@@ -397,6 +471,19 @@ function BillsEdit() {
                                   e.target.value = e.target.value
                                     .replace(/[^0-9]/g, "")
                                     .slice(0, 2);
+                                }}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(
+                                    index,
+                                    quantity,
+                                    formik.values.billsItemDetailsDTOList[
+                                      index
+                                    ].discount
+                                  );
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
                                 }}
                               />
                             </td>
@@ -452,7 +539,7 @@ function BillsEdit() {
                 >
                   Add row
                 </button>
-                {formik.values.itemDetails?.length > 1 && (
+                {formik.values.billsItemDetailsDTOList?.length > 1 && (
                   <button
                     type="button"
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
@@ -497,6 +584,15 @@ function BillsEdit() {
                         type="text"
                         {...formik.getFieldProps("discount")}
                         className="form-control"
+                        onChange={(e) => {
+                          const discount = parseInt(e.target.value, 10) || 0;
+                          // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                          handleQuantityChange(
+                            formik.values.billsItemDetailsDTOList.quantity,
+                            discount
+                          );
+                          formik.handleChange(e);
+                        }}
                       />
                     </div>
                   </div>
@@ -510,6 +606,7 @@ function BillsEdit() {
                         type="text"
                         {...formik.getFieldProps("adjustments")}
                         className="form-control"
+                        onChange={handleAdjustmentChange}
                       />
                     </div>
                   </div>

@@ -15,22 +15,22 @@ function CreditNotesEdit() {
   const [account, setAccount] = useState(null);
 
   const validationSchema = Yup.object({
-    // customerID: Yup.string().required("*Customer Name is required"),
-    // creditNote: Yup.string().required("*Credit Note is required"),
-    // creditNoteDate: Yup.string().required("*Credit Note Date is required"),
-    // creditNotesItmDetModels: Yup.array().of(
-    //   Yup.object({
-    //     itemId: Yup.string().required("*Item Details is required"),
-    //   })
-    // ),
+    customerId: Yup.string().required("*Customer Name is required"),
+    creditNote: Yup.string().required("*Credit Note is required"),
+    creditNoteDate: Yup.string().required("*Credit Note Date is required"),
+    creditNotesItmDetModels: Yup.array().of(
+      Yup.object({
+        itemId: Yup.string().required("*Item Details is required"),
+      })
+    ),
   });
 
   const formik = useFormik({
     initialValues: {
-      customerID: "",
+      customerId: "",
       creditNote: "",
       reference: "",
-      //   creditNoteDate: "",
+      creditNoteDate: "",
       salesPerson: "",
       subject: "",
       subTotal: "",
@@ -38,7 +38,6 @@ function CreditNotesEdit() {
       adjustment: "",
       termsCondition: "",
       customerNotes: "",
-      //   attachFile: null,
       creditNotesItmDetModels: [
         {
           itemId: "",
@@ -56,10 +55,10 @@ function CreditNotesEdit() {
       console.log(values);
 
       const formData = new FormData();
-      formData.append("customerID", values.customerID);
+      formData.append("customerId", values.customerId);
       formData.append("creditNote", values.creditNote);
       formData.append("reference", values.reference);
-      //   formData.append("creditNoteDate", values.creditNoteDate);
+      formData.append("creditNoteDate", values.creditNoteDate);
       formData.append("salesPerson", values.salesPerson);
       formData.append("subject", values.subject);
       formData.append("subTotal", values.subTotal);
@@ -106,127 +105,6 @@ function CreditNotesEdit() {
     },
   });
 
-  //   useEffect(() => {
-  //     const updateAndCalculate = async () => {
-  //       try {
-  //         let totalRate = 0;
-  //         let totalAmount = 0;
-  //         let totalTax = 0;
-  //         let discAmount = 0;
-  //         const updatedItems = await Promise.all(
-  //           formik.values.creditNotesItmDetModels.map(async (item, index) => {
-  //             if (item.item) {
-  //               try {
-  //                 const response = await api.get(`itemsById/${item.item}`);
-  //                 const updatedItem = {
-  //                   ...item,
-  //                   amount: response.data.salesamount,
-  //                   quantity: 1,
-  //                 };
-  //                 const amount = calculateAmount(
-  //                   updatedItem.quantity,
-  //                   updatedItem.amount,
-  //                   updatedItem.discount,
-  //                   updatedItem.accountId
-  //                 );
-  //                 const itemTotalRate = updatedItem.quantity * updatedItem.amount;
-  //                 const itemTotalTax =
-  //                   itemTotalRate * (updatedItem.accountId / 100);
-  //                 const itemTotalDisc =
-  //                   itemTotalRate * (updatedItem.discount / 100);
-  //                 discAmount += itemTotalDisc;
-  //                 totalRate += updatedItem.amount;
-  //                 totalAmount += amount;
-  //                 totalTax += itemTotalTax;
-  //                 return { ...updatedItem, amount };
-  //               } catch (error) {
-  //                 toast.error(
-  //                   "Error fetching data: ",
-  //                   error?.response?.data?.message
-  //                 );
-  //               }
-  //             }
-  //             return item;
-  //           })
-  //         );
-  //         formik.setValues({
-  //           ...formik.values,
-  //           creditNotesItmDetModels: updatedItems,
-  //         });
-  //         formik.setFieldValue("subTotal", totalRate);
-  //         formik.setFieldValue("total", totalAmount);
-  //         formik.setFieldValue("totalTax", totalTax);
-  //         formik.setFieldValue("discountAmount", discAmount);
-  //       } catch (error) {
-  //         toast.error("Error updating items: ", error.message);
-  //       }
-  //     };
-
-  //     updateAndCalculate();
-  //   }, [formik.values.creditNotesItmDetModels.map((item) => item.item).join("")]);
-
-  //   useEffect(() => {
-  //     const updateAndCalculate = async () => {
-  //       try {
-  //         let totalRate = 0;
-  //         let totalAmount = 0;
-  //         let totalTax = 0;
-  //         let discAmount = 0;
-  //         const updatedItems = await Promise.all(
-  //           formik.values.creditNotesItmDetModels.map(async (item, index) => {
-  //             if (
-  //               item.quantity &&
-  //               item.amount &&
-  //               item.discount !== undefined &&
-  //               item.accountId !== undefined
-  //             ) {
-  //               const amount = calculateAmount(
-  //                 item.quantity,
-  //                 item.amount,
-  //                 item.discount,
-  //                 item.accountId
-  //               );
-  //               const itemTotalRate = item.quantity * item.amount;
-  //               const itemTotalTax = itemTotalRate * (item.accountId / 100);
-  //               const itemTotalDisc = itemTotalRate * (item.discount / 100);
-  //               discAmount += itemTotalDisc;
-  //               totalRate += item.amount;
-  //               totalAmount += amount;
-  //               totalTax += itemTotalTax;
-  //               return { ...item, amount };
-  //             }
-  //             return item;
-  //           })
-  //         );
-  //         formik.setValues({
-  //           ...formik.values,
-  //           creditNotesItmDetModels: updatedItems,
-  //         });
-  //         formik.setFieldValue("subTotal", totalRate);
-  //         formik.setFieldValue("total", totalAmount);
-  //         formik.setFieldValue("totalTax", totalTax);
-  //         formik.setFieldValue("discountAmount", discAmount);
-  //       } catch (error) {
-  //         toast.error("Error updating items: ", error.message);
-  //       }
-  //     };
-
-  //     updateAndCalculate();
-  //   }, [
-  //     formik.values.creditNotesItmDetModels.map((item) => item.quantity).join(""),
-  //     formik.values.creditNotesItmDetModels.map((item) => item.amount).join(""),
-  //     formik.values.creditNotesItmDetModels.map((item) => item.discount).join(""),
-  //     formik.values.creditNotesItmDetModels.map((item) => item.accountId).join(""),
-  //   ]);
-
-  //   const calculateAmount = (quantity, amount, discount, accountId) => {
-  //     const totalRate = quantity * amount;
-  //     const discountAmount = totalRate * (discount / 100);
-  //     const taxableAmount = totalRate * (accountId / 100);
-  //     const totalAmount = totalRate + taxableAmount - discountAmount;
-  //     return totalAmount;
-  //   };
-
   const AddRowContent = () => {
     formik.setFieldValue("creditNotesItmDetModels", [
       ...formik.values.creditNotesItmDetModels,
@@ -254,7 +132,15 @@ function CreditNotesEdit() {
     const getData = async () => {
       try {
         const response = await api.get(`/getAllCreditNotesById/${id}`);
-        formik.setValues(response.data);
+        const rest = response.data;
+
+        const formattedData = {
+          ...rest,
+          creditNoteDate: rest.creditNoteDate
+            ? new Date(rest.creditNoteDate).toISOString().split("T")[0]
+            : undefined,
+        };
+        formik.setValues(formattedData);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
       }
@@ -312,6 +198,77 @@ function CreditNotesEdit() {
     getData();
   }, []);
 
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`creditNotesItmDetModels[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.creditNotesItmDetModels[index] || {};
+    const newRate = item.unitPrice * quantity || item.rate * quantity || 0;
+    const currentRate = item.unitPrice || item.rate || 0;
+    const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `creditNotesItmDetModels[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `creditNotesItmDetModels[${index}].amount`,
+      parseFloat(newAmount.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.creditNotesItmDetModels || [];
+
+    // Calculate the subTotal by summing up all item amounts
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+
+    // Update the total by considering the adjustment
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const total = subTotal + adjustment;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
+  };
+
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -367,9 +324,9 @@ function CreditNotesEdit() {
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("customerID")}
+                    {...formik.getFieldProps("customerId")}
                     className={`form-select form-select-sm   ${
-                      formik.touched.customerID && formik.errors.customerID
+                      formik.touched.customerId && formik.errors.customerId
                         ? "is-invalid"
                         : ""
                     }`}
@@ -382,9 +339,9 @@ function CreditNotesEdit() {
                         </option>
                       ))}
                   </select>
-                  {formik.touched.customerID && formik.errors.customerID && (
+                  {formik.touched.customerId && formik.errors.customerId && (
                     <div className="invalid-feedback">
-                      {formik.errors.customerID}
+                      {formik.errors.customerId}
                     </div>
                   )}
                 </div>
@@ -522,8 +479,8 @@ function CreditNotesEdit() {
                         <th style={{ width: "25%" }}>
                           Item Details<span className="text-danger">*</span>
                         </th>
-                        <th style={{ width: "15%" }}>Account</th>
-                        <th style={{ width: "15%" }}>Quantity</th>
+                        <th style={{ width: "20%" }}>Account</th>
+                        <th style={{ width: "10%" }}>Quantity</th>
                         <th style={{ width: "15%" }}>Rate</th>
                         <th style={{ width: "15%" }}>Discount(%)</th>
                         <th style={{ width: "15%" }}>Amount</th>
@@ -549,6 +506,9 @@ function CreditNotesEdit() {
                                     ? "is-invalid"
                                     : ""
                                 }`}
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
@@ -628,6 +588,18 @@ function CreditNotesEdit() {
                                 {...formik.getFieldProps(
                                   `creditNotesItmDetModels[${index}].quantity`
                                 )}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(
+                                    index,
+                                    quantity,
+                                    formik.values.creditNotesItmDetModels[index]
+                                      .discount
+                                  );
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.creditNotesItmDetModels?.[index]
                                 ?.quantity &&
@@ -693,6 +665,18 @@ function CreditNotesEdit() {
                                 {...formik.getFieldProps(
                                   `creditNotesItmDetModels[${index}].discount`
                                 )}
+                                onChange={(e) => {
+                                  const discount =
+                                    parseInt(e.target.value, 10) || 0;
+                                  // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                                  handleQuantityChange(
+                                    index,
+                                    formik.values.creditNotesItmDetModels[index]
+                                      .quantity,
+                                    discount
+                                  );
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.creditNotesItmDetModels?.[index]
                                 ?.discount &&
@@ -826,6 +810,7 @@ function CreditNotesEdit() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&
                         formik.errors.adjustment && (

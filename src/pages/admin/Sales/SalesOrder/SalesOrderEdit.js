@@ -267,7 +267,7 @@ const SalesOrderEdit = () => {
       const itemDetails = response.data;
 
       if (itemDetails) {
-        await formik.setFieldValue(`challanitems[${index}]`, {
+        await formik.setFieldValue(`itemDetails[${index}]`, {
           itemId: selectedItemId,
           name: itemDetails.name || 0,
           rate: itemDetails.sellingPrice || 0,
@@ -285,18 +285,18 @@ const SalesOrderEdit = () => {
   };
 
   const handleQuantityChange = async (index, quantity, discount) => {
-    const item = formik.values.challanitems[index] || {};
+    const item = formik.values.itemDetails[index] || {};
     const newRate = item.unitPrice * quantity || item.rate * quantity || 0;
     const currentRate = item.unitPrice || item.rate || 0;
     const newDiscount = discount ? (newRate * discount) / 100 : 0;
     const newAmount = newRate - newDiscount || 0;
 
     await formik.setFieldValue(
-      `challanitems[${index}].rate`,
+      `itemDetails[${index}].rate`,
       currentRate
     );
     await formik.setFieldValue(
-      `challanitems[${index}].amount`,
+      `itemDetails[${index}].amount`,
       parseFloat(newAmount.toFixed(2))
     );
 
@@ -304,7 +304,7 @@ const SalesOrderEdit = () => {
   };
 
   const recalculateSubtotalAndTotal = () => {
-    const deliveryItems = formik.values.challanitems || [];
+    const deliveryItems = formik.values.itemDetails || [];
 
     // Calculate the subtotal by summing up all item amounts
     const subTotal = deliveryItems.reduce(
@@ -692,7 +692,7 @@ const SalesOrderEdit = () => {
                             onChange={(e) => {
                               const quantity =
                                 parseInt(e.target.value, 10) || 0;
-                              handleQuantityChange(index, quantity, formik.values.challanitems[index].discount);
+                              handleQuantityChange(index, quantity, formik.values.itemDetails[index].discount);
                               // handleQuantityChange(index, quantity);
                               formik.handleChange(e);
                             }}
@@ -747,7 +747,7 @@ const SalesOrderEdit = () => {
                               const discount =
                                 parseInt(e.target.value, 10) || 0;
                               // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
-                              handleQuantityChange(index, formik.values.challanitems[index].quantity, discount);
+                              handleQuantityChange(index, formik.values.itemDetails[index].quantity, discount);
                               formik.handleChange(e);
                             }}
                           />

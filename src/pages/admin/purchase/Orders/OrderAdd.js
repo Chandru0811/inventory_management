@@ -532,13 +532,13 @@ function OrderAdd() {
                     <thead>
                       <tr>
                         <th>S.NO</th>
-                        <th style={{ width: "40%" }}>
+                        <th style={{ width: "20%" }}>
                           Item Details<span className="text-danger">*</span>
                         </th>
-                        <th style={{ width: "15%" }}>Account</th>
-                        <th style={{ width: "15%" }}>Quantity</th>
-                        <th style={{ width: "15%" }}>Rate</th>
-                        <th style={{ width: "15%" }}>Amount</th>
+                        <th style={{ width: "20%" }}>Account</th>
+                        <th style={{ width: "20%" }}>Quantity</th>
+                        <th style={{ width: "20%" }}>Rate</th>
+                        <th style={{ width: "20%" }}>Amount</th>
                       </tr>
                     </thead>
                     <tbody>

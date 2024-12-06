@@ -41,7 +41,7 @@ function OrderAdd() {
       total: "",
       termsCondition: "",
       file: null,
-      purchaseOrderItemsJson: [
+      purchaseItemDetailsModels: [
         {
           itemId: "",
           accountId: "",
@@ -78,7 +78,8 @@ function OrderAdd() {
       formData.append(
         "purchaseOrderItemsJson",
         JSON.stringify(
-          values.purchaseOrderItemsJson.map((item) => ({
+          values.purchaseItemDetailsModels.map((item) => ({
+            id: item.id,
             itemId: item.itemId?.id || item.itemId,
             accountId: item.accountId,
             quantity: item.quantity,
@@ -113,73 +114,9 @@ function OrderAdd() {
     },
   });
 
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.txnInvoiceOrderItemsModels.map(async (item, index) => {
-  //           if (
-  //             item.qty &&
-  //             item.price &&
-  //             item.disc !== undefined &&
-  //             item.taxRate !== undefined
-  //           ) {
-  //             const amount = calculateAmount(
-  //               item.qty,
-  //               item.price,
-  //               item.disc,
-  //               item.taxRate
-  //             );
-  //             const itemTotalRate = item.qty * item.price;
-  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //             const itemTotalDisc = itemTotalRate * (item.disc / 100);
-  //             discAmount += itemTotalDisc;
-  //             totalRate += item.price;
-  //             totalAmount += amount;
-  //             totalTax += itemTotalTax;
-  //             return { ...item, amount };
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         txnInvoiceOrderItemsModels: updatedItems,
-  //       });
-  //       formik.setFieldValue("subTotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("discountAmount", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.qty).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.price).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels.map((item) => item.disc).join(""),
-  //   formik.values.txnInvoiceOrderItemsModels
-  //     .map((item) => item.taxRate)
-  //     .join(""),
-  // ]);
-
-  // const calculateAmount = (qty, price, disc, taxRate) => {
-  //   const totalRate = qty * price;
-  //   const discountAmount = totalRate * (disc / 100);
-  //   const taxableAmount = totalRate * (taxRate / 100);
-  //   const totalAmount = totalRate + taxableAmount - discountAmount;
-  //   return totalAmount;
-  // };
-
   const AddRowContent = () => {
-    formik.setFieldValue("txnInvoiceOrderItemsModels", [
-      ...formik.values.txnInvoiceOrderItemsModels,
+    formik.setFieldValue("purchaseItemDetailsModels", [
+      ...formik.values.purchaseItemDetailsModels,
       {
         item: "",
         qty: "",
@@ -192,12 +129,85 @@ function OrderAdd() {
   };
 
   const deleteRow = (index) => {
-    if (formik.values.txnInvoiceOrderItemsModels.length === 1) {
+    if (formik.values.purchaseItemDetailsModels.length === 1) {
       return;
     }
-    const updatedRows = [...formik.values.txnInvoiceOrderItemsModels];
+    const updatedRows = [...formik.values.purchaseItemDetailsModels];
     updatedRows.pop();
-    formik.setFieldValue("txnInvoiceOrderItemsModels", updatedRows);
+    formik.setFieldValue("purchaseItemDetailsModels", updatedRows);
+  };
+
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`purchaseItemDetailsModels[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.purchaseItemDetailsModels[index] || {};
+    const newRate = item.unitPrice * quantity || item.rate * quantity || 0;
+    const currentRate = item.unitPrice || item.rate || 0;
+    const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `purchaseItemDetailsModels[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `purchaseItemDetailsModels[${index}].amount`,
+      parseFloat(newAmount.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.purchaseItemDetailsModels || [];
+
+    // Calculate the subtotal by summing up all item amounts
+    const subTotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subTotal", subTotal.toFixed(2));
+
+    const discount = parseFloat(formik.values.discount) || 0;
+
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const discountTotal = subTotal - (subTotal * discount) / 100;
+    const total = discountTotal + adjustment;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
   };
 
   useEffect(() => {
@@ -553,34 +563,39 @@ function OrderAdd() {
                     <thead>
                       <tr>
                         <th>S.NO</th>
-                        <th style={{ width: "40%" }}>
+                        <th style={{ width: "20%" }}>
                           Item Details<span className="text-danger">*</span>
                         </th>
-                        <th style={{ width: "15%" }}>Account</th>
-                        <th style={{ width: "15%" }}>Quantity</th>
-                        <th style={{ width: "15%" }}>Rate</th>
-                        <th style={{ width: "15%" }}>Amount</th>
+                        <th style={{ width: "20%" }}>Account</th>
+                        <th style={{ width: "20%" }}>Quantity</th>
+                        <th style={{ width: "20%" }}>Rate</th>
+                        <th style={{ width: "20%" }}>Amount</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.purchaseOrderItemsJson?.map(
+                      {formik.values.purchaseItemDetailsModels?.map(
                         (item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>
                               <select
-                                name={`purchaseOrderItemsJson[${index}].itemId`}
+                                name={`purchaseItemDetailsModels[${index}].itemId`}
                                 {...formik.getFieldProps(
-                                  `purchaseOrderItemsJson[${index}].itemId`
+                                  `purchaseItemDetailsModels[${index}].itemId`
                                 )}
                                 className={`form-select ${
-                                  formik.touched.purchaseOrderItemsJson?.[index]
-                                    ?.itemId &&
-                                  formik.errors.purchaseOrderItemsJson?.[index]
-                                    ?.itemId
+                                  formik.touched.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.itemId &&
+                                  formik.errors.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.itemId
                                     ? "is-invalid"
                                     : ""
                                 }`}
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
@@ -590,13 +605,13 @@ function OrderAdd() {
                                     </option>
                                   ))}
                               </select>
-                              {formik.touched.purchaseOrderItemsJson?.[index]
+                              {formik.touched.purchaseItemDetailsModels?.[index]
                                 ?.itemId &&
-                                formik.errors.purchaseOrderItemsJson?.[index]
+                                formik.errors.purchaseItemDetailsModels?.[index]
                                   ?.itemId && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.purchaseOrderItemsJson[
+                                      formik.errors.purchaseItemDetailsModels[
                                         index
                                       ].itemId
                                     }
@@ -605,15 +620,17 @@ function OrderAdd() {
                             </td>
                             <td>
                               <select
-                                name={`purchaseOrderItemsJson[${index}].accountId`}
+                                name={`purchaseItemDetailsModels[${index}].accountId`}
                                 {...formik.getFieldProps(
-                                  `purchaseOrderItemsJson[${index}].accountId`
+                                  `purchaseItemDetailsModels[${index}].accountId`
                                 )}
                                 className={`form-select ${
-                                  formik.touched.purchaseOrderItemsJson?.[index]
-                                    ?.accountId &&
-                                  formik.errors.purchaseOrderItemsJson?.[index]
-                                    ?.accountId
+                                  formik.touched.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.accountId &&
+                                  formik.errors.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.accountId
                                     ? "is-invalid"
                                     : ""
                                 }`}
@@ -626,13 +643,13 @@ function OrderAdd() {
                                     </option>
                                   ))}
                               </select>
-                              {formik.touched.purchaseOrderItemsJson?.[index]
+                              {formik.touched.purchaseItemDetailsModels?.[index]
                                 ?.accountId &&
-                                formik.errors.purchaseOrderItemsJson?.[index]
+                                formik.errors.purchaseItemDetailsModels?.[index]
                                   ?.accountId && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.purchaseOrderItemsJson[
+                                      formik.errors.purchaseItemDetailsModels[
                                         index
                                       ].accountId
                                     }
@@ -646,26 +663,41 @@ function OrderAdd() {
                                     event.target.value.replace(/[^0-9]/g, "");
                                 }}
                                 type="text"
-                                name={`purchaseOrderItemsJson[${index}].quantity`}
+                                name={`purchaseItemDetailsModels[${index}].quantity`}
                                 className={`form-control ${
-                                  formik.touched.purchaseOrderItemsJson?.[index]
-                                    ?.quantity &&
-                                  formik.errors.purchaseOrderItemsJson?.[index]
-                                    ?.quantity
+                                  formik.touched.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.quantity &&
+                                  formik.errors.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.quantity
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `purchaseOrderItemsJson[${index}].quantity`
+                                  `purchaseItemDetailsModels[${index}].quantity`
                                 )}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(
+                                    index,
+                                    quantity,
+                                    formik.values.purchaseItemDetailsModels[
+                                      index
+                                    ].discount
+                                  );
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
+                                }}
                               />
-                              {formik.touched.purchaseOrderItemsJson?.[index]
+                              {formik.touched.purchaseItemDetailsModels?.[index]
                                 ?.quantity &&
-                                formik.errors.purchaseOrderItemsJson?.[index]
+                                formik.errors.purchaseItemDetailsModels?.[index]
                                   ?.quantity && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.purchaseOrderItemsJson[
+                                      formik.errors.purchaseItemDetailsModels[
                                         index
                                       ].quantity
                                     }
@@ -675,26 +707,28 @@ function OrderAdd() {
                             <td>
                               <input
                                 type="text"
-                                name={`purchaseOrderItemsJson[${index}].rate`}
+                                name={`purchaseItemDetailsModels[${index}].rate`}
                                 className={`form-control ${
-                                  formik.touched.purchaseOrderItemsJson?.[index]
-                                    ?.rate &&
-                                  formik.errors.purchaseOrderItemsJson?.[index]
-                                    ?.rate
+                                  formik.touched.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.rate &&
+                                  formik.errors.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.rate
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `purchaseOrderItemsJson[${index}].rate`
+                                  `purchaseItemDetailsModels[${index}].rate`
                                 )}
                               />
-                              {formik.touched.purchaseOrderItemsJson?.[index]
+                              {formik.touched.purchaseItemDetailsModels?.[index]
                                 ?.rate &&
-                                formik.errors.purchaseOrderItemsJson?.[index]
+                                formik.errors.purchaseItemDetailsModels?.[index]
                                   ?.rate && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.purchaseOrderItemsJson[
+                                      formik.errors.purchaseItemDetailsModels[
                                         index
                                       ].rate
                                     }
@@ -704,26 +738,28 @@ function OrderAdd() {
                             <td>
                               <input
                                 type="text"
-                                name={`purchaseOrderItemsJson[${index}].amount`}
+                                name={`purchaseItemDetailsModels[${index}].amount`}
                                 className={`form-control ${
-                                  formik.touched.purchaseOrderItemsJson?.[index]
-                                    ?.amount &&
-                                  formik.errors.purchaseOrderItemsJson?.[index]
-                                    ?.amount
+                                  formik.touched.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.amount &&
+                                  formik.errors.purchaseItemDetailsModels?.[
+                                    index
+                                  ]?.amount
                                     ? "is-invalid"
                                     : ""
                                 }`}
                                 {...formik.getFieldProps(
-                                  `purchaseOrderItemsJson[${index}].amount`
+                                  `purchaseItemDetailsModels[${index}].amount`
                                 )}
                               />
-                              {formik.touched.purchaseOrderItemsJson?.[index]
+                              {formik.touched.purchaseItemDetailsModels?.[index]
                                 ?.amount &&
-                                formik.errors.purchaseOrderItemsJson?.[index]
+                                formik.errors.purchaseItemDetailsModels?.[index]
                                   ?.amount && (
                                   <div className="invalid-feedback">
                                     {
-                                      formik.errors.purchaseOrderItemsJson[
+                                      formik.errors.purchaseItemDetailsModels[
                                         index
                                       ].amount
                                     }
@@ -746,9 +782,10 @@ function OrderAdd() {
                 >
                   Add row
                 </button>
-                {formik.values.purchaseOrderItemsJson?.length > 1 && (
+                {formik.values.purchaseItemDetailsModels?.length > 1 && (
                   <button
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
+                    type="button"
                     onClick={deleteRow}
                   >
                     Delete
@@ -815,6 +852,15 @@ function OrderAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("discount")}
+                        onChange={(e) => {
+                          const discount = parseInt(e.target.value, 10) || 0;
+                          // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                          handleQuantityChange(
+                            formik.values.purchaseItemDetailsModels.quantity,
+                            discount
+                          );
+                          formik.handleChange(e);
+                        }}
                       />
                       {formik.touched.discount && formik.errors.discount && (
                         <div className="invalid-feedback">
@@ -837,6 +883,7 @@ function OrderAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&
                         formik.errors.adjustment && (

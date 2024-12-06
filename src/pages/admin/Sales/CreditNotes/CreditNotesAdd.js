@@ -14,7 +14,7 @@ function CreditNotesAdd() {
   const [account, setAccount] = useState(null);
 
   const validationSchema = Yup.object({
-    customerID: Yup.string().required("*Customer Name is required"),
+    customerId: Yup.string().required("*Customer Name is required"),
     creditNote: Yup.string().required("*Credit Note is required"),
     creditNoteDate: Yup.string().required("*Credit Note Date is required"),
     itemDetailsList: Yup.array().of(
@@ -26,7 +26,7 @@ function CreditNotesAdd() {
 
   const formik = useFormik({
     initialValues: {
-      customerID: "",
+      customerId: "",
       creditNote: "",
       reference: "",
       creditNoteDate: "",
@@ -55,10 +55,10 @@ function CreditNotesAdd() {
       console.log(values);
 
       const formData = new FormData();
-      formData.append("customerId", values.customerID);
+      formData.append("customerId", values.customerId);
       formData.append("creditNote", values.creditNote);
       formData.append("reference", values.reference);
-      //   formData.append("creditNoteDate", values.creditNoteDate);
+      formData.append("creditNoteDate", values.creditNoteDate);
       formData.append("salesPerson", values.salesPerson);
       formData.append("subject", values.subject);
       formData.append("subTotal", values.subTotal);
@@ -297,6 +297,10 @@ function CreditNotesAdd() {
     getData();
   }, []);
 
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
+
   const handleItemSelection = async (index, event) => {
     const selectedItemId = event.target.value;
     try {
@@ -414,9 +418,9 @@ function CreditNotesAdd() {
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("customerID")}
+                    {...formik.getFieldProps("customerId")}
                     className={`form-select form-select-sm   ${
-                      formik.touched.customerID && formik.errors.customerID
+                      formik.touched.customerId && formik.errors.customerId
                         ? "is-invalid"
                         : ""
                     }`}
@@ -429,9 +433,9 @@ function CreditNotesAdd() {
                         </option>
                       ))}
                   </select>
-                  {formik.touched.customerID && formik.errors.customerID && (
+                  {formik.touched.customerId && formik.errors.customerId && (
                     <div className="invalid-feedback">
-                      {formik.errors.customerID}
+                      {formik.errors.customerId}
                     </div>
                   )}
                 </div>
@@ -565,12 +569,11 @@ function CreditNotesAdd() {
                   <table className="table table-sm table-nowrap">
                     <thead>
                       <tr>
-                        <th>S.NO</th>
                         <th style={{ width: "25%" }}>
                           Item Details<span className="text-danger">*</span>
                         </th>
-                        <th style={{ width: "15%" }}>Account</th>
-                        <th style={{ width: "15%" }}>Quantity</th>
+                        <th style={{ width: "20%" }}>Account</th>
+                        <th style={{ width: "10%" }}>Quantity</th>
                         <th style={{ width: "15%" }}>Rate</th>
                         <th style={{ width: "15%" }}>Discount(%)</th>
                         <th style={{ width: "15%" }}>Amount</th>
@@ -579,7 +582,6 @@ function CreditNotesAdd() {
                     <tbody>
                       {formik.values.itemDetailsList.map((item, index) => (
                         <tr key={index}>
-                          <th scope="row">{index + 1}</th>
                           <td>
                             <select
                               name={`itemDetailsList[${index}].itemId`}

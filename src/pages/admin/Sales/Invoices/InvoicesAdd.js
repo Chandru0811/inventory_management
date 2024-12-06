@@ -99,130 +99,6 @@ function InvoicesAdd() {
     },
   });
 
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.itemDetailsList.map(async (item, index) => {
-  //           if (item.item) {
-  //             try {
-  //               const response = await api.get(`itemsById/${item.item}`);
-  //               const updatedItem = {
-  //                 ...item,
-  //                 rate: response.data.salesPrice,
-  //                 quantity: 1,
-  //               };
-  //               const amount = calculateAmount(
-  //                 updatedItem.quantity,
-  //                 updatedItem.rate,
-  //                 updatedItem.discount,
-  //                 updatedItem.taxRate
-  //               );
-  //               const itemTotalRate = updatedItem.quantity * updatedItem.rate;
-  //               const itemTotalTax =
-  //                 itemTotalRate * (updatedItem.taxRate / 100);
-  //               const itemTotalDisc = itemTotalRate * (updatedItem.discount / 100);
-  //               discAmount += itemTotalDisc;
-  //               totalRate += updatedItem.rate;
-  //               totalAmount += amount;
-  //               totalTax += itemTotalTax;
-  //               return { ...updatedItem, amount };
-  //             } catch (error) {
-  //               toast.error(
-  //                 "Error fetching data: ",
-  //                 error?.response?.data?.message
-  //               );
-  //             }
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         itemDetailsList: updatedItems,
-  //       });
-  //       formik.setFieldValue("subtotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("adjustment", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.itemDetailsList.map((item) => item.item).join(""),
-  // ]);
-
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.itemDetailsList.map(async (item, index) => {
-  //           if (
-  //             item.quantity &&
-  //             item.rate &&
-  //             item.discount !== undefined &&
-  //             item.taxRate !== undefined
-  //           ) {
-  //             const amount = calculateAmount(
-  //               item.quantity,
-  //               item.rate,
-  //               item.discount,
-  //               item.taxRate
-  //             );
-  //             const itemTotalRate = item.quantity * item.rate;
-  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //             const itemTotalDisc = itemTotalRate * (item.discount / 100);
-  //             discAmount += itemTotalDisc;
-  //             totalRate += item.rate;
-  //             totalAmount += amount;
-  //             totalTax += itemTotalTax;
-  //             return { ...item, amount };
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         itemDetailsList: updatedItems,
-  //       });
-  //       formik.setFieldValue("subtotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("adjustment", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.itemDetailsList.map((item) => item.quantity).join(""),
-  //   formik.values.itemDetailsList.map((item) => item.rate).join(""),
-  //   formik.values.itemDetailsList.map((item) => item.discount).join(""),
-  //   formik.values.itemDetailsList
-  //     .map((item) => item.taxRate)
-  //     .join(""),
-  // ]);
-
-  // const calculateAmount = (quantity, rate, discount, taxRate) => {
-  //   const totalRate = quantity * rate;
-  //   const adjustment = totalRate * (discount / 100);
-  //   const taxableAmount = totalRate * (taxRate / 100);
-  //   const totalAmount = totalRate + taxableAmount - adjustment;
-  //   return totalAmount;
-  // };
-
   const AddRowContent = () => {
     formik.setFieldValue("itemDetailsList", [
       ...formik.values.itemDetailsList,
@@ -280,6 +156,10 @@ function InvoicesAdd() {
     };
     getItemData();
   }, []);
+
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
 
   const handleItemSelection = async (index, event) => {
     const selectedItemId = event.target.value;

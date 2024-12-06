@@ -102,130 +102,6 @@ function InvoicesEdit() {
     },
   });
 
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.invoicesItemDetailsModels.map(async (item, index) => {
-  //           if (item.item) {
-  //             try {
-  //               const response = await api.get(`itemsById/${item.item}`);
-  //               const updatedItem = {
-  //                 ...item,
-  //                 rate: response.data.salesPrice,
-  //                 quantity: 1,
-  //               };
-  //               const amount = calculateAmount(
-  //                 updatedItem.quantity,
-  //                 updatedItem.rate,
-  //                 updatedItem.discount,
-  //                 updatedItem.taxRate
-  //               );
-  //               const itemTotalRate = updatedItem.quantity * updatedItem.rate;
-  //               const itemTotalTax =
-  //                 itemTotalRate * (updatedItem.taxRate / 100);
-  //               const itemTotalDisc = itemTotalRate * (updatedItem.discount / 100);
-  //               discAmount += itemTotalDisc;
-  //               totalRate += updatedItem.rate;
-  //               totalAmount += amount;
-  //               totalTax += itemTotalTax;
-  //               return { ...updatedItem, amount };
-  //             } catch (error) {
-  //               toast.error(
-  //                 "Error fetching data: ",
-  //                 error?.response?.data?.message
-  //               );
-  //             }
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         invoicesItemDetailsModels: updatedItems,
-  //       });
-  //       formik.setFieldValue("subtotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("adjustment", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.invoicesItemDetailsModels.map((item) => item.item).join(""),
-  // ]);
-
-  // useEffect(() => {
-  //   const updateAndCalculate = async () => {
-  //     try {
-  //       let totalRate = 0;
-  //       let totalAmount = 0;
-  //       let totalTax = 0;
-  //       let discAmount = 0;
-  //       const updatedItems = await Promise.all(
-  //         formik.values.invoicesItemDetailsModels.map(async (item, index) => {
-  //           if (
-  //             item.quantity &&
-  //             item.rate &&
-  //             item.discount !== undefined &&
-  //             item.taxRate !== undefined
-  //           ) {
-  //             const amount = calculateAmount(
-  //               item.quantity,
-  //               item.rate,
-  //               item.discount,
-  //               item.taxRate
-  //             );
-  //             const itemTotalRate = item.quantity * item.rate;
-  //             const itemTotalTax = itemTotalRate * (item.taxRate / 100);
-  //             const itemTotalDisc = itemTotalRate * (item.discount / 100);
-  //             discAmount += itemTotalDisc;
-  //             totalRate += item.rate;
-  //             totalAmount += amount;
-  //             totalTax += itemTotalTax;
-  //             return { ...item, amount };
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //       formik.setValues({
-  //         ...formik.values,
-  //         invoicesItemDetailsModels: updatedItems,
-  //       });
-  //       formik.setFieldValue("subtotal", totalRate);
-  //       formik.setFieldValue("total", totalAmount);
-  //       formik.setFieldValue("totalTax", totalTax);
-  //       formik.setFieldValue("adjustment", discAmount);
-  //     } catch (error) {
-  //       toast.error("Error updating items: ", error.message);
-  //     }
-  //   };
-
-  //   updateAndCalculate();
-  // }, [
-  //   formik.values.invoicesItemDetailsModels.map((item) => item.quantity).join(""),
-  //   formik.values.invoicesItemDetailsModels.map((item) => item.rate).join(""),
-  //   formik.values.invoicesItemDetailsModels.map((item) => item.discount).join(""),
-  //   formik.values.invoicesItemDetailsModels
-  //     .map((item) => item.taxRate)
-  //     .join(""),
-  // ]);
-
-  // const calculateAmount = (quantity, rate, discount, taxRate) => {
-  //   const totalRate = quantity * rate;
-  //   const adjustment = totalRate * (discount / 100);
-  //   const taxableAmount = totalRate * (taxRate / 100);
-  //   const totalAmount = totalRate + taxableAmount - adjustment;
-  //   return totalAmount;
-  // };
-
   const AddRowContent = () => {
     formik.setFieldValue("invoicesItemDetailsModels", [
       ...formik.values.invoicesItemDetailsModels,
@@ -309,6 +185,77 @@ function InvoicesEdit() {
     };
     getItemData();
   }, []);
+
+  useEffect(() => {
+    recalculateSubtotalAndTotal();
+  }, [formik.values]);
+
+  const handleItemSelection = async (index, event) => {
+    const selectedItemId = event.target.value;
+    try {
+      const response = await api.get(`getItemsById/${selectedItemId}`);
+      const itemDetails = response.data;
+
+      if (itemDetails) {
+        await formik.setFieldValue(`invoicesItemDetailsModels[${index}]`, {
+          itemId: selectedItemId,
+          name: itemDetails.name || 0,
+          rate: itemDetails.sellingPrice || 0,
+          unitPrice: itemDetails.sellingPrice || 0,
+          quantity: 1,
+          discount: 0,
+          amount: itemDetails.sellingPrice || 0,
+        });
+
+        recalculateSubtotalAndTotal();
+      }
+    } catch (error) {
+      toast.error("Error fetching item details: " + error.message);
+    }
+  };
+
+  const handleQuantityChange = async (index, quantity, discount) => {
+    const item = formik.values.invoicesItemDetailsModels[index] || {};
+    const newRate = item.unitPrice * quantity || item.rate * quantity || 0;
+    const currentRate = item.unitPrice || item.rate || 0;
+    const newDiscount = discount ? (newRate * discount) / 100 : 0;
+    const newAmount = newRate - newDiscount || 0;
+
+    await formik.setFieldValue(
+      `invoicesItemDetailsModels[${index}].rate`,
+      currentRate
+    );
+    await formik.setFieldValue(
+      `invoicesItemDetailsModels[${index}].amount`,
+      parseFloat(newAmount.toFixed(2))
+    );
+
+    recalculateSubtotalAndTotal();
+  };
+
+  const recalculateSubtotalAndTotal = () => {
+    const deliveryItems = formik.values.invoicesItemDetailsModels || [];
+
+    // Calculate the subtotal by summing up all item amounts
+    const subtotal = deliveryItems.reduce(
+      (sum, item) => sum + (parseFloat(item.amount) || 0),
+      0
+    );
+
+    formik.setFieldValue("subtotal", subtotal.toFixed(2));
+
+    // Update the total by considering the adjustment
+    const adjustment = parseFloat(formik.values.adjustment) || 0;
+    const total = subtotal + adjustment;
+
+    formik.setFieldValue("total", total.toFixed(2));
+  };
+
+  const handleAdjustmentChange = (event) => {
+    const adjustment = event.target.value;
+    formik.setFieldValue("adjustment", adjustment);
+    recalculateSubtotalAndTotal();
+  };
 
   return (
     <div className="container-fluid px-2 minHeight m-0">
@@ -606,6 +553,9 @@ function InvoicesEdit() {
                                     ? "is-invalid"
                                     : ""
                                 }`}
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
@@ -649,6 +599,13 @@ function InvoicesEdit() {
                                 {...formik.getFieldProps(
                                   `invoicesItemDetailsModels[${index}].quantity`
                                 )}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(index, quantity, formik.values.invoicesItemDetailsModels[index].discount);
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.invoicesItemDetailsModels?.[index]
                                 ?.quantity &&
@@ -716,6 +673,13 @@ function InvoicesEdit() {
                                 {...formik.getFieldProps(
                                   `invoicesItemDetailsModels[${index}].discount`
                                 )}
+                                onChange={(e) => {
+                                  const discount =
+                                    parseInt(e.target.value, 10) || 0;
+                                  // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                                  handleQuantityChange(index, formik.values.invoicesItemDetailsModels[index].quantity, discount);
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.invoicesItemDetailsModels?.[index]
                                 ?.discount &&
@@ -780,6 +744,7 @@ function InvoicesEdit() {
                 {formik.values.invoicesItemDetailsModels?.length > 1 && (
                   <button
                     className="btn btn-sm my-4 mx-1 delete border-danger bg-white text-danger"
+                    type="button"
                     onClick={deleteRow}
                   >
                     Delete
@@ -847,6 +812,7 @@ function InvoicesEdit() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&
                         formik.errors.adjustment && (
