@@ -357,10 +357,10 @@ const VendorEdit = () => {
   return (
     <div className="container-fluid px-2  minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
-      <div
-            className="card shadow border-0 mb-2 top-header sticky-top"
-            style={{ borderRadius: "0", top: "66px" }}
-          >
+        <div
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
+        >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
               <div className="col">
@@ -1408,145 +1408,204 @@ const VendorEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {rows.map((row, rowIndex) => (
-                        <tr key={row.id}>
+                      {formik.values.contacts?.map((item, index) => (
+                        <tr key={index}>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.salutation || ""}
-                              className="form-control"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "salutation",
-                                  e.target.value
-                                )
-                              }
+                              name={`contacts[${index}].salutation`}
+                              className={`form-control ${
+                                formik.touched.contacts?.[index]?.salutation &&
+                                formik.errors.contacts?.[index]?.salutation
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].salutation`
+                              )}
                             />
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              value={row.contacts?.[0]?.vendorFirstName || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "vendorFirstName",
-                                  e.target.value
-                                )
-                              }
-                            />
+                            {formik.touched.contacts?.[index]?.salutation &&
+                              formik.errors.contacts?.[index]?.salutation && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.contacts[index].salutation}
+                                </div>
+                              )}
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.vendorLastName || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "vendorLastName",
-                                  e.target.value
-                                )
-                              }
+                              name={`contacts[${index}].vendorFirstName`}
+                              className={`form-control input-wide ${
+                                formik.touched.contacts?.[index]
+                                  ?.vendorFirstName &&
+                                formik.errors.contacts?.[index]?.vendorFirstName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].vendorFirstName`
+                              )}
                             />
-                          </td>
-                          <td>
-                            <input
-                              type="email"
-                              value={row.contacts?.[0]?.vendorEmail || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "vendorEmail",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              value={row.contacts?.[0]?.vendorPhone || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "vendorPhone",
-                                  e.target.value
-                                )
-                              }
-                            />
+                            {formik.touched.contacts?.[index]
+                              ?.vendorFirstName &&
+                              formik.errors.contacts?.[index]
+                                ?.vendorFirstName && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.contacts[index]
+                                      .vendorFirstName
+                                  }
+                                </div>
+                              )}
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.vendorMobile || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "vendorMobile",
-                                  e.target.value
-                                )
-                              }
+                              name={`contacts[${index}].vendorLastName`}
+                              className={`form-control input-wide ${
+                                formik.touched.contacts?.[index]
+                                  ?.vendorLastName &&
+                                formik.errors.contacts?.[index]?.vendorLastName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].vendorLastName`
+                              )}
                             />
+                            {formik.touched.contacts?.[index]?.vendorLastName &&
+                              formik.errors.contacts?.[index]
+                                ?.vendorLastName && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.contacts[index].vendorLastName}
+                                </div>
+                              )}
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.skypeName || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "skypeName",
-                                  e.target.value
-                                )
-                              }
+                              name={`contacts[${index}].vendorEmail`}
+                              className={`form-control input-wide ${
+                                formik.touched.contacts?.[index]?.vendorEmail &&
+                                formik.errors.contacts?.[index]?.vendorEmail
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].vendorEmail`
+                              )}
                             />
+                            {formik.touched.contacts?.[index]?.vendorEmail &&
+                              formik.errors.contacts?.[index]?.vendorEmail && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.contacts[index].vendorEmail}
+                                </div>
+                              )}
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.designation || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "designation",
-                                  e.target.value
-                                )
-                              }
+                              name={`contacts[${index}].vendorPhone`}
+                              className={`form-control input-wide ${
+                                formik.touched.contacts?.[index]?.vendorPhone &&
+                                formik.errors.contacts?.[index]?.vendorPhone
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].vendorPhone`
+                              )}
                             />
+                            {formik.touched.contacts?.[index]?.vendorPhone &&
+                              formik.errors.contacts?.[index]?.vendorPhone && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.contacts[index].vendorPhone}
+                                </div>
+                              )}
                           </td>
                           <td>
                             <input
                               type="text"
-                              value={row.contacts?.[0]?.department || ""}
-                              className="form-control input-wide"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  "department",
-                                  e.target.value
-                                )
-                              }
+                              name={`contacts[${index}].vendorPhone`}
+                              className={`form-control input-wide ${
+                                formik.touched.contacts?.[index]?.vendorPhone &&
+                                formik.errors.contacts?.[index]?.vendorPhone
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].vendorPhone`
+                              )}
                             />
+                            {formik.touched.contacts?.[index]?.vendorPhone &&
+                              formik.errors.contacts?.[index]?.vendorPhone && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.contacts[index].vendorPhone}
+                                </div>
+                              )}
                           </td>
                           <td>
-                            {rowIndex !== 0 && (
-                              <button
-                                className="btn"
-                                onClick={() => deleteRow(rowIndex)}
-                              >
-                                <TbXboxX
-                                  style={{ fontSize: "25px", color: "red" }}
-                                />
-                              </button>
-                            )}
+                            <input
+                              type="text"
+                              name={`contacts[${index}].skypeName`}
+                              className={`form-control input-wide ${
+                                formik.touched.contacts?.[index]?.skypeName &&
+                                formik.errors.contacts?.[index]?.skypeName
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].skypeName`
+                              )}
+                            />
+                            {formik.touched.contacts?.[index]?.skypeName &&
+                              formik.errors.contacts?.[index]?.skypeName && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.contacts[index].skypeName}
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`contacts[${index}].designation`}
+                              className={`form-control input-wide ${
+                                formik.touched.contacts?.[index]?.designation &&
+                                formik.errors.contacts?.[index]?.designation
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].designation`
+                              )}
+                            />
+                            {formik.touched.contacts?.[index]?.designation &&
+                              formik.errors.contacts?.[index]?.designation && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.contacts[index].designation}
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`contacts[${index}].department`}
+                              className={`form-control input-wide ${
+                                formik.touched.contacts?.[index]?.department &&
+                                formik.errors.contacts?.[index]?.department
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `contacts[${index}].department`
+                              )}
+                            />
+                            {formik.touched.contacts?.[index]?.department &&
+                              formik.errors.contacts?.[index]?.department && (
+                                <div className="invalid-feedback">
+                                  {formik.errors.contacts[index].department}
+                                </div>
+                              )}
                           </td>
                         </tr>
                       ))}

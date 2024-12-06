@@ -556,12 +556,15 @@ function InvoicesEdit() {
                                 onChange={(event) =>
                                   handleItemSelection(index, event)
                                 }
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
-                                  itemData.map((data) => (
-                                    <option key={data.id} value={data.id}>
-                                      {data.name}
+                                  itemData.map((itemId) => (
+                                    <option key={itemId.id} value={itemId.id}>
+                                      {itemId.name}
                                     </option>
                                   ))}
                               </select>
@@ -798,7 +801,7 @@ function InvoicesEdit() {
                       )}
                     </div>
                   </div>
-                  <div className="row mb-3 mt-2">
+                  <div className="row mb-3">
                     <label className="col-sm-4 col-form-label">
                       Adjustment
                     </label>
@@ -812,6 +815,7 @@ function InvoicesEdit() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                         onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&

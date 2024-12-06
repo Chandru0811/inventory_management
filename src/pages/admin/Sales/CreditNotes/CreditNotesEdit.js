@@ -509,12 +509,15 @@ function CreditNotesEdit() {
                                 onChange={(event) =>
                                   handleItemSelection(index, event)
                                 }
+                                onChange={(event) =>
+                                  handleItemSelection(index, event)
+                                }
                               >
                                 <option selected> </option>
                                 {itemData &&
-                                  itemData.map((data) => (
-                                    <option key={data.id} value={data.id}>
-                                      {data.name}
+                                  itemData.map((itemId) => (
+                                    <option key={itemId.id} value={itemId.id}>
+                                      {itemId.name}
                                     </option>
                                   ))}
                               </select>
@@ -600,6 +603,18 @@ function CreditNotesEdit() {
                                   // handleQuantityChange(index, quantity);
                                   formik.handleChange(e);
                                 }}
+                                onChange={(e) => {
+                                  const quantity =
+                                    parseInt(e.target.value, 10) || 0;
+                                  handleQuantityChange(
+                                    index,
+                                    quantity,
+                                    formik.values.creditNotesItmDetModels[index]
+                                      .discount
+                                  );
+                                  // handleQuantityChange(index, quantity);
+                                  formik.handleChange(e);
+                                }}
                               />
                               {formik.touched.creditNotesItmDetModels?.[index]
                                 ?.quantity &&
@@ -665,6 +680,18 @@ function CreditNotesEdit() {
                                 {...formik.getFieldProps(
                                   `creditNotesItmDetModels[${index}].discount`
                                 )}
+                                onChange={(e) => {
+                                  const discount =
+                                    parseInt(e.target.value, 10) || 0;
+                                  // handleQuantityChange(index, `deliveryChallanItemsJson[${index}].quantity`, discount);
+                                  handleQuantityChange(
+                                    index,
+                                    formik.values.creditNotesItmDetModels[index]
+                                      .quantity,
+                                    discount
+                                  );
+                                  formik.handleChange(e);
+                                }}
                                 onChange={(e) => {
                                   const discount =
                                     parseInt(e.target.value, 10) || 0;
@@ -810,6 +837,7 @@ function CreditNotesEdit() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
+                        onChange={handleAdjustmentChange}
                         onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&
