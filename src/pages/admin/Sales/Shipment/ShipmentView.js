@@ -52,10 +52,19 @@ const ShipmentView = () => {
     doc.setFontSize(12);
     doc.text(`Customer Name: ${data.customerName || ""}`, 14, 40);
     doc.text(`Package Number: ${data.packageNumber || ""}`, 14, 50);
-    doc.text(`Ship Date: ${data.shipDate ? new Date(data.shipDate).toLocaleDateString("en-GB") : ""}`, 14, 60);
+    doc.text(
+      `Ship Date: ${
+        data.shipDate ? new Date(data.shipDate).toLocaleDateString("en-GB") : ""
+      }`,
+      14,
+      60
+    );
     doc.text(`Tracking Number: ${data.trackingNumber || ""}`, 14, 70);
 
-    if (customerData.invoiceItemsModels && customerData.invoiceItemsModels.length > 0) {
+    if (
+      customerData.invoiceItemsModels &&
+      customerData.invoiceItemsModels.length > 0
+    ) {
       const tableColumn = [
         "S.No",
         "Item Details",
@@ -137,66 +146,67 @@ const ShipmentView = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor">
-                      View Shipment
-                    </h1>
+                    <h1 className="h4 ls-tight headingColor">View Shipment</h1>
                   </div>
                 </div>
                 <div className="col-auto d-flex gap-4">
-                    <div className="hstack gap-2 justify-content-start">
-                      <Link to="/shipment">
-                        <button type="submit" className="btn btn-sm btn-light">
-                          <span>Back</span>
-                        </button>
-                      </Link>
-                    </div>
-                    <div className="hstack gap-2 justify-content-start">
-                      <div className="dropdown">
-                        <button
-                          className="btn btn-sm btn-light"
-                          type="button"
-                          id="pdfDropdown"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <BsThreeDotsVertical />
-                        </button>
-                        <ul className="dropdown-menu" aria-labelledby="pdfDropdown">
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("open")}
-                            >
-                              Open PDF
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("download")}
-                            >
-                              Download PDF
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handlePDFAction("print")}
-                            >
-                              Print PDF
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
+                  <div className="hstack gap-2 justify-content-start">
+                    <Link to="/shipment">
+                      <button type="submit" className="btn btn-sm btn-light">
+                        <span>Back</span>
+                      </button>
+                    </Link>
+                  </div>
+                  <div className="hstack gap-2 justify-content-start">
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-sm btn-light"
+                        type="button"
+                        id="pdfDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <BsThreeDotsVertical />
+                      </button>
+                      <ul
+                        className="dropdown-menu"
+                        aria-labelledby="pdfDropdown"
+                      >
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handlePDFAction("open")}
+                          >
+                            Open PDF
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handlePDFAction("download")}
+                          >
+                            Download PDF
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handlePDFAction("print")}
+                          >
+                            Print PDF
+                          </button>
+                        </li>
+                      </ul>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </div>
@@ -312,7 +322,7 @@ const ShipmentView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>TrackingUrl</b>
+                        <b>Tracking Url</b>
                       </p>
                     </div>
                     <div className="col-6">

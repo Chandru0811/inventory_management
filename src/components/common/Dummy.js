@@ -5,33 +5,47 @@ import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
 
-const PurchaseReceiveEdit = () => {
+const ShipmentEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object({
-    vendorName: Yup.string().required("*Vendor Name is required"),
-    // purchaseOrder: Yup.string().required("*Purchase Order is required"),
-    purchaseReceiveNum: Yup.string().required("*Purchase Receive is required"),
-    receivedDate: Yup.string().required("*Received Date is required"),
+    salesOrder: Yup.string().required("*Sales Order is required"),
+    packageNumber: Yup.string().required("*Package Number is required"),
+    shipmentOrder: Yup.string().required("*Shipment Order is required"),
+    shipDate: Yup.string().required("*Ship Date is required"),
+    carrier: Yup.string().required("*Carrier is required"),
+    // shipmentDeliver: Yup.string().required("*Shipment Deliver is required"),
+    // statusNotification: Yup.string().required("*Status Notification is required"),
   });
   const formik = useFormik({
     initialValues: {
-      vendorName: "",
-      purchaseOrder: "",
+      // companyName: "",
+      customerId: "",
+      salesId: "",
+      customerName: "",
+      salesOrder: "",
+      packageNumber: "",
+      shipmentOrder: "",
+      shipDate: "",
+      carrier: "",
+      trackingNumber: "",
+      trackingUrl: "",
+      shippingCharge: "",
       notes: "",
-      purchaseReceiveNum: "",
-      receivedDate: "",
+      shipmentDeliver: "",
+      statusNotification: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
+      console.log(values);
       try {
-        const response = await api.put(`/updatePurchaseReceives/${id}`, values);
+        const response = await api.put(`/updateShipment/${id}`, values, {});
         if (response.status === 200) {
           toast.success(response.data.message);
-          navigate("/purchasereceive");
+          navigate("/shipment");
         } else {
           toast.error(response.data.message);
         }
@@ -46,15 +60,11 @@ const PurchaseReceiveEdit = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await api.get(`/getAllPurchaseReceivesById/${id}`);
-        const rest = response.data;
-        const formattedData = {
-            ...rest,
-            receivedDate: rest.receivedDate
-              ? new Date(rest.receivedDate).toISOString().split("T")[0]
-              : undefined,
-          };
-          formik.setValues(formattedData);
+        const response = await api.get(`/getShipmentsById/${id}`);
+        formik.setValues(response.data);
+        // formik.setValues({
+        //     shipDate: data.shipDate ? data.shipDate.split("T")[0] : "",
+        // });
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
       }
@@ -65,7 +75,7 @@ const PurchaseReceiveEdit = () => {
   }, []);
 
   return (
-    <div className="container-fluid px-2  minHeight m-0">
+    <div className="container-fluid p-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
           className="card shadow border-0 mb-2 top-header"
@@ -75,21 +85,19 @@ const PurchaseReceiveEdit = () => {
             <div className="row align-items-center">
               <div className="col">
                 <div className="d-flex align-items-center gap-4">
-                  <h1 className="h4 ls-tight headingColor">
-                    Edit Purchase Receives
-                  </h1>
+                  <h1 className="h4 ls-tight headingColor">Edit Shipment</h1>
                 </div>
               </div>
               <div className="col-auto">
                 <div className="hstack gap-2 justify-content-end">
-                  <Link to="/purchasereceive">
+                  <Link to="/shipment">
                     <button type="submit" className="btn btn-sm btn-light">
                       <span>Back</span>
                     </button>
                   </Link>
                   <button
                     type="submit"
-                    className="btn btn-sm btn-buttonm btn-primary"
+                    className="btn btn-sm btn-button btn-primary"
                     disabled={loading}
                   >
                     {loading ? (
@@ -100,7 +108,7 @@ const PurchaseReceiveEdit = () => {
                     ) : (
                       <span></span>
                     )}
-                    &nbsp;<span>Save</span>
+                    &nbsp;<span>Update</span>
                   </button>
                 </div>
               </div>
@@ -117,105 +125,221 @@ const PurchaseReceiveEdit = () => {
           </div>
           <div className="container mb-5">
             <div className="row py-4">
-            <div className="col-md-6 col-12 mb-3">
-                <lable className="form-lable">
-                  Vendor Name<span className="text-danger">*</span>
-                </lable>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Customer Name</lable>
                 <div className="mb-3">
-                  <select
-                    {...formik.getFieldProps("vendorName")}
-                    className={`form-select    ${
-                      formik.touched.vendorName && formik.errors.vendorName
+                  <input
+                    type="text"
+                    name="customerName"
+                    className={`form-control ${
+                      formik.touched.customerName && formik.errors.customerName
                         ? "is-invalid"
                         : ""
                     }`}
-                  >
-                    <option selected></option>
-                    <option value="John Smith">John Smith</option>
-                    <option value="Emily Johnson">Emily Johnson</option>
-                    <option value="David Williams">David Williams</option>
-                  </select>
-                  {formik.touched.vendorName && formik.errors.vendorName && (
-                    <div className="invalid-feedback">
-                      {formik.errors.vendorName}
-                    </div>
-                  )}
+                    {...formik.getFieldProps("customerName")}
+                  />
+                  {formik.touched.customerName &&
+                    formik.errors.customerName && (
+                      <div className="invalid-feedback">
+                        {formik.errors.customerName}
+                      </div>
+                    )}
                 </div>
               </div>
-               <div className="col-md-6 col-12 mb-2">
+
+              <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Purchase Order Number<span className="text-danger">*</span>
+                  Sales Order<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="purchaseOrder"
+                    name="salesOrder"
                     className={`form-control  ${
-                      formik.touched.purchaseOrder && formik.errors.purchaseOrder
+                      formik.touched.salesOrder && formik.errors.salesOrder
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("purchaseOrder")}
+                    {...formik.getFieldProps("salesOrder")}
                   />
-                  {formik.touched.purchaseOrder && formik.errors.purchaseOrder && (
+                  {formik.touched.salesOrder && formik.errors.salesOrder && (
                     <div className="invalid-feedback">
-                      {formik.errors.purchaseOrder}
+                      {formik.errors.salesOrder}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Package Number<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="packageNumber"
+                    className={`form-control  ${
+                      formik.touched.packageNumber &&
+                      formik.errors.packageNumber
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("packageNumber")}
+                  />
+                  {formik.touched.packageNumber &&
+                    formik.errors.packageNumber && (
+                      <div className="invalid-feedback">
+                        {formik.errors.packageNumber}
+                      </div>
+                    )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Shipment Order<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="shipmentOrder"
+                    className={`form-control  ${
+                      formik.touched.shipmentOrder &&
+                      formik.errors.shipmentOrder
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("shipmentOrder")}
+                  />
+                  {formik.touched.shipmentOrder &&
+                    formik.errors.shipmentOrder && (
+                      <div className="invalid-feedback">
+                        {formik.errors.shipmentOrder}
+                      </div>
+                    )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Ship Date<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="date"
+                    name="shipDate"
+                    className={`form-control ${
+                      formik.touched.shipDate && formik.errors.shipDate
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    value={
+                      formik.values.shipDate
+                        ? new Date(formik.values.shipDate)
+                            .toISOString()
+                            .substring(0, 10)
+                        : ""
+                    }
+                    onChange={formik.handleChange}
+                  />
+                  {formik.touched.shipDate && formik.errors.shipDate && (
+                    <div className="invalid-feedback">
+                      {formik.errors.shipDate}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Carrier<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    name="carrier"
+                    className={`form-control  ${
+                      formik.touched.carrier && formik.errors.carrier
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("carrier")}
+                  />
+                  {formik.touched.carrier && formik.errors.carrier && (
+                    <div className="invalid-feedback">
+                      {formik.errors.carrier}
                     </div>
                   )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Purchase Receive Number<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Tracking Number</lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="purchaseReceiveNum"
-                    className={`form-control ${
-                      formik.touched.purchaseReceiveNum &&
-                      formik.errors.purchaseReceiveNum
+                    name="trackingNumber"
+                    className={`form-control  ${
+                      formik.touched.trackingNumber &&
+                      formik.errors.trackingNumber
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("purchaseReceiveNum")}
+                    {...formik.getFieldProps("trackingNumber")}
                   />
-                  {formik.touched.purchaseReceiveNum &&
-                    formik.errors.purchaseReceiveNum && (
+                  {formik.touched.trackingNumber &&
+                    formik.errors.trackingNumber && (
                       <div className="invalid-feedback">
-                        {formik.errors.purchaseReceiveNum}
+                        {formik.errors.trackingNumber}
                       </div>
                     )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Received Date<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">TrackingUrl</lable>
                 <div className="mb-3">
                   <input
-                    type="date"
-                    name="receivedDate"
+                    type="text"
+                    name="trackingUrl"
                     className={`form-control  ${
-                      formik.touched.receivedDate && formik.errors.receivedDate
+                      formik.touched.trackingUrl && formik.errors.trackingUrl
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("receivedDate")}
+                    {...formik.getFieldProps("trackingUrl")}
                   />
-                  {formik.touched.receivedDate && formik.errors.receivedDate && (
+                  {formik.touched.trackingUrl && formik.errors.trackingUrl && (
                     <div className="invalid-feedback">
-                      {formik.errors.receivedDate}
+                      {formik.errors.trackingUrl}
                     </div>
                   )}
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Notes
-                </lable>
+                <lable className="form-lable">Shipping Charge</lable>
                 <div className="mb-3">
-                  <textarea
+                  <input
+                    type="text"
+                    name="shippingCharge"
+                    className={`form-control  ${
+                      formik.touched.shippingCharge &&
+                      formik.errors.shippingCharge
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("shippingCharge")}
+                  />
+                  {formik.touched.shippingCharge &&
+                    formik.errors.shippingCharge && (
+                      <div className="invalid-feedback">
+                        {formik.errors.shippingCharge}
+                      </div>
+                    )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">Notes</lable>
+                <div className="mb-3">
+                  <input
                     type="text"
                     name="notes"
                     className={`form-control  ${
@@ -223,7 +347,6 @@ const PurchaseReceiveEdit = () => {
                         ? "is-invalid"
                         : ""
                     }`}
-                    rows="4"
                     {...formik.getFieldProps("notes")}
                   />
                   {formik.touched.notes && formik.errors.notes && (
@@ -231,6 +354,58 @@ const PurchaseReceiveEdit = () => {
                       {formik.errors.notes}
                     </div>
                   )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable" for="shipmentDeliver">
+                  Shipment Deliver
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="checkbox"
+                    name="shipmentDeliver"
+                    className={`form-check-input  ${
+                      formik.touched.shipmentDeliver &&
+                      formik.errors.shipmentDeliver
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("shipmentDeliver")}
+                    id="shipmentDeliver"
+                    value="true"
+                  />
+                  {formik.touched.shipmentDeliver &&
+                    formik.errors.shipmentDeliver && (
+                      <div className="invalid-feedback">
+                        {formik.errors.shipmentDeliver}
+                      </div>
+                    )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-check-lable" for="statusNotification">
+                  Status Notification
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="checkbox"
+                    name="statusNotification"
+                    className={`form-check-input  ${
+                      formik.touched.statusNotification &&
+                      formik.errors.statusNotification
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("statusNotification")}
+                    id="statusNotification"
+                    value="true"
+                  />
+                  {formik.touched.statusNotification &&
+                    formik.errors.statusNotification && (
+                      <div className="invalid-feedback">
+                        {formik.errors.statusNotification}
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
@@ -241,4 +416,4 @@ const PurchaseReceiveEdit = () => {
   );
 };
 
-export default PurchaseReceiveEdit;
+export default ShipmentEdit;

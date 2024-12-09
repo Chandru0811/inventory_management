@@ -44,8 +44,8 @@ const PaymentMadeView = () => {
           style={{ borderRadius: "0" }}
         >
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
@@ -78,12 +78,12 @@ const PaymentMadeView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Customer Name</b>
+                        <b>Vendor Name</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.contactName || ""}
+                        : {data.vendorName || ""}
                       </p>
                     </div>
                   </div>
@@ -97,7 +97,7 @@ const PaymentMadeView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.accNumber || ""}
+                        : {data.payment || ""}
                       </p>
                     </div>
                   </div>
@@ -106,12 +106,12 @@ const PaymentMadeView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Amount Receives</b>
+                        <b>Payment Made</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.primaryContact || ""}
+                        : {data.paymentMade || ""}
                       </p>
                     </div>
                   </div>
@@ -120,29 +120,17 @@ const PaymentMadeView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Payment Charges</b>
+                        <b>Payment Date</b>
                       </p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.email || ""}</p>
+                      <p className="text-muted text-sm">
+                        : {data.paymentDate || ""}
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Tax Deduction</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
                 <div className="col-md-6 col-12">
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
@@ -152,7 +140,7 @@ const PaymentMadeView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccNumber || ""}
+                        : {data.paymentMode || ""}
                       </p>
                     </div>
                   </div>
@@ -161,12 +149,12 @@ const PaymentMadeView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Deposit To</b>
+                        <b>Paid Through</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.paidThrough || ""}
                       </p>
                     </div>
                   </div>
@@ -180,21 +168,7 @@ const PaymentMadeView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 col-12">
-                  <div className="row mb-3">
-                    <div className="col-6 d-flex justify-content-start align-items-center">
-                      <p className="text-sm">
-                        <b>Notes</b>
-                      </p>
-                    </div>
-                    <div className="col-6">
-                      <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.reference || ""}
                       </p>
                     </div>
                   </div>
@@ -208,14 +182,65 @@ const PaymentMadeView = () => {
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.bankAccName || ""}
+                        : {data.attachFile || ""}
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
+              <div className="row mt-5 flex-nowrap">
+                <div className="col-12">
+                  <div className="table-responsive ">
+                    <div className="">
+                      <h3
+                        style={{ background: "#4066D5" }}
+                        className="text-light p-2"
+                      >
+                        Item Table
+                      </h3>
+                    </div>
+                    <table class="table">
+                      <thead className="thead-light">
+                        <tr>
+                          <th>ITEM DETAILS</th>
+                          <th>Account</th>
+                          <th>QUANTITY</th>
+                          <th>RATE</th>
+                          <th>AMOUNT</th>
+                        </tr>
+                      </thead>
+                      <tbody className="table-group">
+                        {data &&
+                          data.items &&
+                          data.items.map((item, index) => (
+                            <tr key={index}>
+                              <td>{item.itemName}</td>
+                              <td>{item.account}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.rate}</td>
+                              <td>{item.amount}</td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div className="row mt-5 pt-5">
+                <div className="col-md-6 col-12">
+                  <div className="row mb-3">
+                    <div className="col-6 d-flex justify-content-start align-items-center">
+                      <p className="text-sm">
+                        <b>Notes</b>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">: {data.notes || ""}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            {/* Users Information */}
           </div>
         </div>
       )}

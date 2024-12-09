@@ -9,7 +9,6 @@ import { FaEye, FaRegEdit } from "react-icons/fa";
 
 const PaymentMade = () => {
   const tableRef = useRef(null);
-  // const storedScreens = JSON.parse(sessionStorage.getItem("screens") || "{}");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,8 +90,8 @@ const PaymentMade = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
