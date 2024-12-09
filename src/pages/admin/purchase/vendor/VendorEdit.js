@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { TbXboxX } from "react-icons/tb";
 import { SlTrash } from "react-icons/sl";
 import { IoMdInformationCircleOutline } from "react-icons/io";
+import CurrencyList from "../../../list/CurrencyList";
+import PaymentTermList from "../../../list/PaymentTermList";
 
 const VendorEdit = () => {
   const { id } = useParams();
@@ -16,6 +18,8 @@ const VendorEdit = () => {
   const [enablePortal, setEnablePortal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [currency, setCurrency] = useState(null);
+  const [paymentTerm, setPaymentTerm] = useState(null);
   const [fields, setFields] = useState([
     {
       id: 1,
@@ -354,6 +358,29 @@ const VendorEdit = () => {
     getData();
   }, [id]);
 
+  const getCurrencyData = async () => {
+    try {
+      const currencyData = await CurrencyList();
+      setCurrency(currencyData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const getPaymentTermData = async () => {
+    try {
+      const currencyData = await PaymentTermList();
+      setPaymentTerm(currencyData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    getPaymentTermData();
+    getCurrencyData();
+  }, []);
+
   return (
     <div className="container-fluid px-2  minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -681,9 +708,12 @@ const VendorEdit = () => {
                       {...formik.getFieldProps("currency")}
                     >
                       <option></option>
-                      <option value="INR">Indian Rupee</option>
-                      <option value="SGD">Sigapore Dollor</option>
-                      <option value="AED">United Arab Emirates</option>
+                      {currency &&
+                        currency.map((data) => (
+                          <option key={data.id} value={data.id}>
+                            {data.currencyName}
+                          </option>
+                        ))}
                     </select>
                     {formik.touched.currency && formik.errors.currency && (
                       <div className="invalid-feedback">
@@ -707,9 +737,12 @@ const VendorEdit = () => {
                       {...formik.getFieldProps("paymentTerms")}
                     >
                       <option selected></option>
-                      <option value="1" selected>
-                        Due on Receipt
-                      </option>
+                      {paymentTerm &&
+                        paymentTerm.map((data) => (
+                          <option key={data.id} value={data.id}>
+                            {data.termName}
+                          </option>
+                        ))}
                     </select>
                     {formik.touched.paymentTerms &&
                       formik.errors.paymentTerms && (
@@ -1408,7 +1441,7 @@ const VendorEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formik.values.contacts?.map((item, index) => (
+                      {formik.values.contacts?.map((rowIndex, index) => (
                         <tr key={index}>
                           <td>
                             <input
@@ -1607,6 +1640,19 @@ const VendorEdit = () => {
                                 </div>
                               )}
                           </td>
+                          <td>
+                            {rowIndex !== 0 && (
+                              <button
+                                className="btn"
+                                type="button"
+                                onClick={() => deleteRow(rowIndex)}
+                              >
+                                <TbXboxX
+                                  style={{ fontSize: "25px", color: "red" }}
+                                />
+                              </button>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1645,7 +1691,6 @@ const VendorEdit = () => {
                         <div className="col-md-6 col-12 mb-2">
                           <label className="form-label">
                             Account Holder Name
-                            <span className="text-danger">*</span>
                           </label>
                           <div className="mb-3">
                             <input
@@ -1677,9 +1722,7 @@ const VendorEdit = () => {
                           </div>
                         </div>
                         <div className="col-md-6 col-12 mb-2">
-                          <label className="form-label">
-                            Bank Name<span className="text-danger">*</span>
-                          </label>
+                          <label className="form-label">Bank Name</label>
                           <div className="mb-3">
                             <input
                               type="text"
@@ -1703,9 +1746,7 @@ const VendorEdit = () => {
                           </div>
                         </div>
                         <div className="col-md-6 col-12 mb-2">
-                          <label className="form-label">
-                            Account Number<span className="text-danger">*</span>
-                          </label>
+                          <label className="form-label">Account Number</label>
                           <div className="mb-3">
                             <input
                               type="text"
@@ -1738,7 +1779,6 @@ const VendorEdit = () => {
                         <div className="col-md-6 col-12 mb-2">
                           <label className="form-label">
                             Re-enter Account Number
-                            <span className="text-danger">*</span>
                           </label>
                           <div className="mb-3">
                             <input
@@ -1770,9 +1810,7 @@ const VendorEdit = () => {
                           </div>
                         </div>
                         <div className="col-md-6 col-12 mb-2">
-                          <label className="form-label">
-                            IFSC<span className="text-danger">*</span>
-                          </label>
+                          <label className="form-label">IFSC</label>
                           <div className="mb-3">
                             <input
                               type="text"

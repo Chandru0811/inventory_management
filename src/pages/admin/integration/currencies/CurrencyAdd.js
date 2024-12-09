@@ -93,7 +93,7 @@ const CurrencyAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Currency Name <span className="text-danger">*</span>
+                  Currency Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
@@ -116,7 +116,7 @@ const CurrencyAdd = () => {
               </div>
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Currency Code <span className="text-danger">*</span>
+                  Currency Code<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input

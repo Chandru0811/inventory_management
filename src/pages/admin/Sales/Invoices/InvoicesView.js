@@ -471,7 +471,6 @@ function InvoicesView() {
                     <table class="table">
                       <thead className="thead-light">
                         <tr>
-                          <th>S.NO</th>
                           <th>ITEM DETAILS</th>
                           <th>QUANTITY</th>
                           <th>RATE</th>
@@ -484,7 +483,6 @@ function InvoicesView() {
                           data.invoicesItemDetailsModels &&
                           data.invoicesItemDetailsModels.map((item, index) => (
                             <tr key={index}>
-                              <th scope="row">{index + 1}</th>
                               <td>{item.itemName}</td>
                               <td>{item.quantity}</td>
                               <td>{item.rate}</td>

@@ -14,7 +14,7 @@ function BillsView() {
     const getData = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`getBillsById/${id}`);
+        const response = await api.get(`billsRetrivalWithItems/${id}`);
         setData(response.data);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
@@ -54,7 +54,7 @@ function BillsView() {
     doc.text(`Notes: ${data.notes || ""}`, 14, 90);
 
     // Table
-    if (data.billsItemDetailsModels && data.billsItemDetailsModels.length > 0) {
+    if (data.billsItemDetailsDTOList && data.billsItemDetailsDTOList.length > 0) {
       const tableColumn = [
         "S.No",
         "ITEM",
@@ -64,7 +64,7 @@ function BillsView() {
         "CUSTOMER DETAILS",
         "AMOUNT",
       ];
-      const tableRows = data.billsItemDetailsModels.map((item, index) => [
+      const tableRows = data.billsItemDetailsDTOList.map((item, index) => [
         String(index + 1),
         String(item.itemId || ""),
         String(item.accountName || ""),
@@ -320,11 +320,11 @@ function BillsView() {
                       </thead>
                       <tbody className="table-group">
                         {data &&
-                          data.billsItemDetailsModels &&
-                          data.billsItemDetailsModels.map((item, index) => (
+                          data.billsItemDetailsDTOList &&
+                          data.billsItemDetailsDTOList.map((item, index) => (
                             <tr key={index}>
                               <th scope="row">{index + 1}</th>
-                              <td>{item.itemId}</td>
+                              <td>{item.itemName}</td>
                               <td>{item.accountName}</td>
                               <td>{item.quantity}</td>
                               <td>{item.rate}</td>

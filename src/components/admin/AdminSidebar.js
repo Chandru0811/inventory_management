@@ -200,11 +200,11 @@ function AdminSidebar({ handleLogout }) {
                       Vendors
                     </NavLink>
                   </li>
-                  <li className="nav-item">
+                  {/* <li className="nav-item">
                     <NavLink className="nav-link" to="/expense">
                       Expense
                     </NavLink>
-                  </li>
+                  </li> */}
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/order">
                       Purchases Order
@@ -222,13 +222,13 @@ function AdminSidebar({ handleLogout }) {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/vendorcredit">
-                      Vendor credit
+                    <NavLink className="nav-link" to="/paymentmade">
+                      Payment Made
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/paymentmade">
-                      Payment Made
+                    <NavLink className="nav-link" to="/vendorcredit">
+                      Vendor credit
                     </NavLink>
                   </li>
                 </ul>

@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
-import { FaEye, FaRegEdit } from "react-icons/fa";
+import { FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const PurchaseReceive = () => {
   const tableRef = useRef(null);
@@ -92,8 +93,8 @@ const PurchaseReceive = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between ">
@@ -140,10 +141,10 @@ const PurchaseReceive = () => {
                       VENDOR NAME
                     </th>
                     <th scope="col" className="text-start">
-                      PURCHASE ORDER
+                      PURCHASE RECEIVE
                     </th>
                     <th scope="col" className="text-start">
-                      PURCHASE RECEIVE
+                      PURCHASE ORDER
                     </th>
                     <th scope="col" className="text-start">
                       RECEIVED DATE
@@ -158,26 +159,29 @@ const PurchaseReceive = () => {
                     <tr key={index}>
                       <td className="text-start">{index + 1}</td>
                       <td className="text-start">{data.vendorName}</td>
-                      <td className="text-start">{data.purchaseOrderId}</td>
                       <td className="text-start">{data.purchaseReceiveNum}</td>
+                      <td className="text-start">{data.purchaseOrderId}</td>
                       <td className="text-start">
                         {data.receivedDate
                           ? new Date(data.receivedDate).toLocaleDateString()
                           : ""}
                       </td>
                       <td className="text-center">
-                        <div className="gap-2">
+                        <div className="d-flex justify-content-center gap-1">
                           <Link to={`/purchasereceive/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                              <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link
-                            to={`/purchasereceive/edit/${data.id}`}
-                            className="px-2"
-                          >
-                            <button className="btn btn-sm">
-                              <FaRegEdit />{" "}
+                          <Link to={`/purchasereceive/edit/${data.id}`}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

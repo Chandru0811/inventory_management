@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -7,12 +7,16 @@ import toast from "react-hot-toast";
 import { TbXboxX } from "react-icons/tb";
 import { SlTrash } from "react-icons/sl";
 import { IoMdInformationCircleOutline } from "react-icons/io";
+import CurrencyList from "../../../list/CurrencyList";
+import PaymentTermList from "../../../list/PaymentTermList";
 
 const VendorAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [activeTab, setActiveTab] = useState("otherDetails");
   const [enablePortal, setEnablePortal] = useState(false);
+  const [currency, setCurrency] = useState(null);
+  const [paymentTerm, setPaymentTerm] = useState(null);
   const [fields, setFields] = useState([
     {
       id: 1,
@@ -125,7 +129,7 @@ const VendorAdd = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      setLoadIndicator(true); 
+      setLoadIndicator(true);
       console.log(values);
 
       // FormData initialization
@@ -143,11 +147,11 @@ const VendorAdd = () => {
       formData.append("currency", values.currency || "");
       formData.append("taxRate", values.taxRate || "");
       formData.append("paymentTerms", values.paymentTerms || "");
-      formData.append("enablePortal", enablePortal); 
+      formData.append("enablePortal", enablePortal);
       formData.append("portalLanguage", values.portalLanguage || "");
       formData.append("websiteUrl", values.websiteUrl || "");
       formData.append("department", values.department || "");
-      formData.append("designation", values.designation || ""); 
+      formData.append("designation", values.designation || "");
       formData.append("twitterUrl", values.twitterUrl || "");
       formData.append("skypeName", values.skypeName || "");
       formData.append("facebookUrl", values.facebookUrl || "");
@@ -212,7 +216,7 @@ const VendorAdd = () => {
               bankName: item.bankName,
               accountNumber: item.accountNumber,
               reAccountNumber: item.reAccountNumber,
-              ifsc: item.ifsc, 
+              ifsc: item.ifsc,
             }))
         )
       );
@@ -303,13 +307,36 @@ const VendorAdd = () => {
     setEnablePortal(event.target.checked);
   };
 
+  const getCurrencyData = async () => {
+    try {
+      const currencyData = await CurrencyList();
+      setCurrency(currencyData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const getPaymentTermData = async () => {
+    try {
+      const currencyData = await PaymentTermList();
+      setPaymentTerm(currencyData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    getPaymentTermData();
+    getCurrencyData();
+  }, []);
+
   return (
     <div className="container-fluid px-2  minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
-      <div
-            className="card shadow border-0 mb-2 top-header sticky-top"
-            style={{ borderRadius: "0", top: "66px" }}
-          >
+        <div
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
+        >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
               <div className="col">
@@ -629,9 +656,12 @@ const VendorAdd = () => {
                       {...formik.getFieldProps("currency")}
                     >
                       <option></option>
-                      <option value="INR">Indian Rupee</option>
-                      <option value="SGD">Sigapore Dollor</option>
-                      <option value="AED">United Arab Emirates</option>
+                      {currency &&
+                        currency.map((data) => (
+                          <option key={data.id} value={data.id}>
+                            {data.currencyName}
+                          </option>
+                        ))}
                     </select>
                     {formik.touched.currency && formik.errors.currency && (
                       <div className="invalid-feedback">
@@ -655,9 +685,12 @@ const VendorAdd = () => {
                       {...formik.getFieldProps("paymentTerms")}
                     >
                       <option selected></option>
-                      <option value="1" selected>
-                        Due on Receipt
-                      </option>
+                      {paymentTerm &&
+                        paymentTerm.map((data) => (
+                          <option key={data.id} value={data.id}>
+                            {data.termName}
+                          </option>
+                        ))}
                     </select>
                     {formik.touched.paymentTerms &&
                       formik.errors.paymentTerms && (
@@ -1487,6 +1520,7 @@ const VendorAdd = () => {
                             {rowIndex !== 0 && (
                               <button
                                 className="btn"
+                                type="button"
                                 onClick={() => deleteRow(rowIndex)}
                               >
                                 <TbXboxX
@@ -1533,7 +1567,6 @@ const VendorAdd = () => {
                         <div className="col-md-6 col-12 mb-2">
                           <label className="form-label">
                             Account Holder Name
-                            <span className="text-danger">*</span>
                           </label>
                           <div className="mb-3">
                             <input
@@ -1565,9 +1598,7 @@ const VendorAdd = () => {
                           </div>
                         </div>
                         <div className="col-md-6 col-12 mb-2">
-                          <label className="form-label">
-                            Bank Name<span className="text-danger">*</span>
-                          </label>
+                          <label className="form-label">Bank Name</label>
                           <div className="mb-3">
                             <input
                               type="text"
@@ -1591,9 +1622,7 @@ const VendorAdd = () => {
                           </div>
                         </div>
                         <div className="col-md-6 col-12 mb-2">
-                          <label className="form-label">
-                            Account Number<span className="text-danger">*</span>
-                          </label>
+                          <label className="form-label">Account Number</label>
                           <div className="mb-3">
                             <input
                               type="text"
@@ -1626,7 +1655,6 @@ const VendorAdd = () => {
                         <div className="col-md-6 col-12 mb-2">
                           <label className="form-label">
                             Re-enter Account Number
-                            <span className="text-danger">*</span>
                           </label>
                           <div className="mb-3">
                             <input
@@ -1658,9 +1686,7 @@ const VendorAdd = () => {
                           </div>
                         </div>
                         <div className="col-md-6 col-12 mb-2">
-                          <label className="form-label">
-                            IFSC<span className="text-danger">*</span>
-                          </label>
+                          <label className="form-label">IFSC</label>
                           <div className="mb-3">
                             <input
                               type="text"

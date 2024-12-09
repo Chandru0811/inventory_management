@@ -401,7 +401,6 @@ function OrderView() {
                     <table class="table">
                       <thead className="thead-light">
                         <tr>
-                          <th>S.NO</th>
                           <th>ITEM DETAILS</th>
                           <th>Account</th>
                           <th>QUANTITY</th>
@@ -414,9 +413,8 @@ function OrderView() {
                           data.items &&
                           data.items.map((item, index) => (
                             <tr key={index}>
-                              <th scope="row">{index + 1}</th>
                               <td>{item.itemName}</td>
-                              <td>{item.accountId}</td>
+                              <td>{item.account}</td>
                               <td>{item.quantity}</td>
                               <td>{item.rate}</td>
                               <td>{item.amount}</td>

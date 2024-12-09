@@ -18,22 +18,8 @@ const PaymentMadeAdd = () => {
     website: Yup.string().required("*Website is required"),
     bankAccName: Yup.string().required("*Account Nameis required"),
     bankAccNumber: Yup.string().required("*Account Number is required"),
-
-    // deliCountry: Yup.number().required("*Country is required"),
-    // deliAddress: Yup.string().required("*Address is required"),
-    // deliCity: Yup.string().required("*City is required"),
-    // deliState: Yup.string().required("*State is required"),
-    // deliZip: Yup.number().required("*Zip is required"),
-    // deliAttention: Yup.number().required("*Attention is required"),
-
-    // billCountry: Yup.number().required("*Country is required"),
-    // billAddress: Yup.string().required("*Address is required"),
-    // billCity: Yup.string().required("*City is required"),
-    // billState: Yup.string().required("*State is required"),
-    // billZip: Yup.number().required("*Zip is required"),
-    // billAttention: Yup.number().required("*Attention is required"),
-    // notes: Yup.number().required("*Remarks is required"),
   });
+
   const formik = useFormik({
     initialValues: {
       // companyName: "",
@@ -132,22 +118,22 @@ const PaymentMadeAdd = () => {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Customer Name <span className="text-danger">*</span>
+                  Vendor Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="text"
-                    name="contactName"
+                    name="vendorName"
                     className={`form-control ${
-                      formik.touched.contactName && formik.errors.contactName
+                      formik.touched.vendorName && formik.errors.vendorName
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("contactName")}
+                    {...formik.getFieldProps("vendorName")}
                   />
-                  {formik.touched.contactName && formik.errors.contactName && (
+                  {formik.touched.vendorName && formik.errors.vendorName && (
                     <div className="invalid-feedback">
-                      {formik.errors.contactName}
+                      {formik.errors.vendorName}
                     </div>
                   )}
                 </div>
@@ -174,14 +160,35 @@ const PaymentMadeAdd = () => {
                   )}
                 </div>
               </div>
-
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
-                  Amount Receives<span className="text-danger">*</span>
+                  Payment Made<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
                   <input
                     type="text"
+                    name="accNumber"
+                    className={`form-control  ${
+                      formik.touched.accNumber && formik.errors.accNumber
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("accNumber")}
+                  />
+                  {formik.touched.accNumber && formik.errors.accNumber && (
+                    <div className="invalid-feedback">
+                      {formik.errors.accNumber}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 col-12 mb-2">
+                <lable className="form-lable">
+                  Payment Date<span className="text-danger">*</span>
+                </lable>
+                <div className="mb-3">
+                  <input
+                    type="date"
                     name="primaryContact"
                     className={`form-control ${
                       formik.touched.primaryContact &&
@@ -200,20 +207,22 @@ const PaymentMadeAdd = () => {
                 </div>
               </div>
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Payment Charge<span className="text-danger">*</span>
-                </lable>
+                <lable className="form-lable">Payment Mode</lable>
                 <div className="mb-3">
-                  <input
+                  <select
                     type="text"
                     name="email"
-                    className={`form-control  ${
+                    className={`form-select form-select-sm ${
                       formik.touched.email && formik.errors.email
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("email")}
-                  />
+                  >
+                    <option selected></option>
+                    <option value="Cash">Cash</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                  </select>
                   {formik.touched.email && formik.errors.email && (
                     <div className="invalid-feedback">
                       {formik.errors.email}

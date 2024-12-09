@@ -522,7 +522,6 @@ function InvoicesEdit() {
                   <table className="table table-sm table-nowrap">
                     <thead>
                       <tr>
-                        <th>S.NO</th>
                         <th style={{ width: "40%" }}>
                           Item Details<span className="text-danger">*</span>
                         </th>
@@ -536,7 +535,6 @@ function InvoicesEdit() {
                       {formik.values.invoicesItemDetailsModels?.map(
                         (item, index) => (
                           <tr key={index}>
-                            <th scope="row">{index + 1}</th>
                             <td>
                               <select
                                 name={`invoicesItemDetailsModels[${index}].itemId`}
@@ -553,9 +551,6 @@ function InvoicesEdit() {
                                     ? "is-invalid"
                                     : ""
                                 }`}
-                                onChange={(event) =>
-                                  handleItemSelection(index, event)
-                                }
                                 onChange={(event) =>
                                   handleItemSelection(index, event)
                                 }
@@ -815,7 +810,6 @@ function InvoicesEdit() {
                             : ""
                         }`}
                         {...formik.getFieldProps("adjustment")}
-                        onChange={handleAdjustmentChange}
                         onChange={handleAdjustmentChange}
                       />
                       {formik.touched.adjustment &&

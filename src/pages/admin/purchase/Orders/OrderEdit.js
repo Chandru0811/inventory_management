@@ -562,7 +562,6 @@ function OrderAdd() {
                   <table className="table table-sm table-nowrap">
                     <thead>
                       <tr>
-                        <th>S.NO</th>
                         <th style={{ width: "20%" }}>
                           Item Details<span className="text-danger">*</span>
                         </th>
@@ -576,7 +575,6 @@ function OrderAdd() {
                       {formik.values.purchaseItemDetailsModels?.map(
                         (item, index) => (
                           <tr key={index}>
-                            <th scope="row">{index + 1}</th>
                             <td>
                               <select
                                 name={`purchaseItemDetailsModels[${index}].itemId`}
@@ -721,6 +719,7 @@ function OrderAdd() {
                                 {...formik.getFieldProps(
                                   `purchaseItemDetailsModels[${index}].rate`
                                 )}
+                                readOnly
                               />
                               {formik.touched.purchaseItemDetailsModels?.[index]
                                 ?.rate &&
@@ -752,6 +751,7 @@ function OrderAdd() {
                                 {...formik.getFieldProps(
                                   `purchaseItemDetailsModels[${index}].amount`
                                 )}
+                                readOnly
                               />
                               {formik.touched.purchaseItemDetailsModels?.[index]
                                 ?.amount &&
@@ -832,6 +832,7 @@ function OrderAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("subTotal")}
+                        readOnly
                       />
                       {formik.touched.subTotal && formik.errors.subTotal && (
                         <div className="invalid-feedback">
@@ -907,6 +908,7 @@ function OrderAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("total")}
+                        readOnly
                       />
                       {formik.touched.total && formik.errors.total && (
                         <div className="invalid-feedback">

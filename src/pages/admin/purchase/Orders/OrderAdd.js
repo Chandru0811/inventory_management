@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
 import api from "../../../../config/URL";
+import PaymentTermList from "../../../list/PaymentTermList";
 
 function OrderAdd() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ function OrderAdd() {
   const [itemData, setItemData] = useState(null);
   const [account, setAccount] = useState(null);
   const [vendor, setVendor] = useState(null);
+  const [paymentTerm, setPaymentTerm] = useState(null);
 
   const validationSchema = Yup.object({
     vendorId: Yup.string().required("*Vendor name is required"),
@@ -241,6 +243,19 @@ function OrderAdd() {
     recalculateSubtotalAndTotal();
   };
 
+  const getPaymentTermData = async () => {
+    try {
+      const currencyData = await PaymentTermList();
+      setPaymentTerm(currencyData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    getPaymentTermData();
+  }, []);
+
   return (
     <div className="container-fluid p-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
@@ -464,18 +479,27 @@ function OrderAdd() {
                     )}
                 </div>
               </div>
-              <div className="col-md-6 col-12 mb-3">
+              <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">Payment Terms</lable>
                 <div className="mb-3">
-                  <input
+                  <select
                     type="text"
-                    className={`form-control form-control-sm  ${
+                    name="paymentTerm"
+                    className={`form-select form-select-sm  ${
                       formik.touched.paymentTerm && formik.errors.paymentTerm
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("paymentTerm")}
-                  />
+                  >
+                    <option selected></option>
+                    {paymentTerm &&
+                      paymentTerm.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.termName}
+                        </option>
+                      ))}
+                  </select>
                   {formik.touched.paymentTerm && formik.errors.paymentTerm && (
                     <div className="invalid-feedback">
                       {formik.errors.paymentTerm}
@@ -531,7 +555,6 @@ function OrderAdd() {
                   <table className="table table-sm table-nowrap">
                     <thead>
                       <tr>
-                        <th>S.NO</th>
                         <th style={{ width: "20%" }}>
                           Item Details<span className="text-danger">*</span>
                         </th>
@@ -545,7 +568,6 @@ function OrderAdd() {
                       {formik.values.purchaseOrderItemsJson.map(
                         (item, index) => (
                           <tr key={index}>
-                            <th scope="row">{index + 1}</th>
                             <td>
                               <select
                                 name={`purchaseOrderItemsJson[${index}].itemId`}
@@ -693,6 +715,7 @@ function OrderAdd() {
                                   );
                                   formik.handleChange(e);
                                 }}
+                                readOnly
                               />
                               {formik.touched.purchaseOrderItemsJson?.[index]
                                 ?.rate &&
@@ -722,6 +745,7 @@ function OrderAdd() {
                                 {...formik.getFieldProps(
                                   `purchaseOrderItemsJson[${index}].amount`
                                 )}
+                                readOnly
                               />
                               {formik.touched.purchaseOrderItemsJson?.[index]
                                 ?.amount &&
@@ -801,6 +825,7 @@ function OrderAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("subTotal")}
+                        readOnly
                       />
                       {formik.touched.subTotal && formik.errors.subTotal && (
                         <div className="invalid-feedback">
@@ -876,6 +901,7 @@ function OrderAdd() {
                             : ""
                         }`}
                         {...formik.getFieldProps("total")}
+                        readOnly
                       />
                       {formik.touched.total && formik.errors.total && (
                         <div className="invalid-feedback">

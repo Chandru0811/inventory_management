@@ -44,8 +44,8 @@ const PurchaseReceiveView = () => {
           style={{ borderRadius: "0" }}
         >
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
@@ -92,12 +92,12 @@ const PurchaseReceiveView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Purchase Order</b>
+                        <b>Purchase Recived</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.purchaseOrder || ""}
+                        : {data.purchaseReceiveNum || ""}
                       </p>
                     </div>
                   </div>
@@ -106,12 +106,12 @@ const PurchaseReceiveView = () => {
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
                       <p className="text-sm">
-                        <b>Purchase Recived Number</b>
+                        <b>Purchase Order</b>
                       </p>
                     </div>
                     <div className="col-6">
                       <p className="text-muted text-sm">
-                        : {data.purchaseReceiveNum || ""}
+                        : {data.purchaseOrder || ""}
                       </p>
                     </div>
                   </div>
@@ -133,6 +133,46 @@ const PurchaseReceiveView = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="row mt-5 flex-nowrap">
+                <div className="col-12">
+                  <div className="table-responsive ">
+                    <div className="">
+                      <h3
+                        style={{ background: "#4066D5" }}
+                        className="text-light p-2"
+                      >
+                        Item Table
+                      </h3>
+                    </div>
+                    <table class="table">
+                      <thead className="thead-light">
+                        <tr>
+                          <th>ITEM DETAILS</th>
+                          <th>Account</th>
+                          <th>QUANTITY</th>
+                          <th>RATE</th>
+                          <th>AMOUNT</th>
+                        </tr>
+                      </thead>
+                      <tbody className="table-group">
+                        {data &&
+                          data.items &&
+                          data.items.map((item, index) => (
+                            <tr key={index}>
+                              <td>{item.itemName}</td>
+                              <td>{item.account}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.rate}</td>
+                              <td>{item.amount}</td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div className="row mt-5 pt-5">
                 <div className="col-md-6 col-12">
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
