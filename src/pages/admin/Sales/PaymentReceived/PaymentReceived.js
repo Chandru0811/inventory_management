@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
-import { FaEye, FaRegEdit } from "react-icons/fa";
+import { FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const PaymentReceived = () => {
     const tableRef = useRef(null);
@@ -92,8 +93,8 @@ const PaymentReceived = () => {
             ) : (
                 <div className="container-fluid px-2 minHeight">
                     <div
-                        className="card shadow border-0 mb-2 top-header"
-                        style={{ borderRadius: "0" }}
+                        className="card shadow border-0 mb-2 top-header sticky-top"
+                        style={{ borderRadius: "0", top: "66px" }}
                     >
                         <div className="container-fluid py-4">
                             <div className="row align-items-center justify-content-between ">
@@ -157,15 +158,17 @@ const PaymentReceived = () => {
                                             <td className="text-center">
                                                 <div className="gap-2">
                                                     <Link to={`/paymentreceived/view/${data.id}`}>
-                                                        <button className="btn btn-sm">
-                                                        <FaEye />
+                                                        <button className="btn btn-sm"
+                                                        style={{ padding: "7px" }}>
+                                                        <GoEye />
                                                         </button>
                                                     </Link>
                                                     <Link
                                                         to={`/paymentreceived/edit/${data.id}`}
                                                         className="px-2"
                                                     >
-                                                        <button className="btn btn-sm">
+                                                        <button className="btn btn-sm"
+                                                        style={{ padding: "7px" }}>
                                                         <FaRegEdit />
                                                         </button>
                                                     </Link>

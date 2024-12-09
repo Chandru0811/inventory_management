@@ -10,18 +10,19 @@ const PaymentReceivedEdit = () => {
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
   const [data, setData] = useState([]);
+  const [customerData, setCustomerData] = useState(null);
 
   const validationSchema = Yup.object({
-    customerName: Yup.string().required("*Customer name is required"),
-    amountReceive: Yup.string().required("*Amount receive is required"),
+    customerId: Yup.string().required("*Customer Name is required"),
+    amountReceive: Yup.string().required("*Amount Receive is required"),
     payment: Yup.string().required("*Payment is required"),
     depositTo: Yup.string().required("*Deposit to is required"),
-    taxDeduction: Yup.string().required("*Tax deduction is required"),
+    taxDeduction: Yup.string().required("*Tax Deduction is required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      customerName: "",
+      customerId: "",
       payment: "",
       amountReceive: "",
       paymentCharges: "",
@@ -31,6 +32,19 @@ const PaymentReceivedEdit = () => {
       reference: "",
       notes: "",
       file: null,
+      salesOrderItemsJson: [
+        {
+          date: "",
+          invoiceNumber: "",
+          invoiceAmount: "",
+          amountDue: "",
+          payment: "",
+        },
+      ],
+      subAmountExcess: "",
+      subAmountPayment: "",
+      subAmountReceived: "",
+      subAmountRefunded: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -45,11 +59,15 @@ const PaymentReceivedEdit = () => {
         }
       }
       try {
-        const response = await api.put(`/updatePaymentDetailProfileImage/${id}`, values, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        const response = await api.put(
+          `/updatePaymentDetailProfileImage/${id}`,
+          values,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/paymentreceived");
@@ -79,12 +97,24 @@ const PaymentReceivedEdit = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllCustomerIdsWithNames");
+        setCustomerData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
+
   return (
     <div className="container-fluid px-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
-          className="card shadow border-0 mb-2 top-header"
-          style={{ borderRadius: "0" }}
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
         >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
@@ -130,29 +160,34 @@ const PaymentReceivedEdit = () => {
           <div className="row mt-3 me-2">
             <div className="col-12 text-end"></div>
           </div>
-         <div className="container mb-5">
+          <div className="container mb-5">
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Customer Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
-                  <input
-                    type="text"
-                    name="customerName"
-                    className={`form-control ${
-                      formik.touched.customerName && formik.errors.customerName
+                  <select
+                    {...formik.getFieldProps("customerId")}
+                    className={`form-select form-select-sm   ${
+                      formik.touched.customerId && formik.errors.customerId
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("customerName")}
-                  />
-                  {formik.touched.customerName &&
-                    formik.errors.customerName && (
-                      <div className="invalid-feedback">
-                        {formik.errors.customerName}
-                      </div>
-                    )}
+                  >
+                    <option selected></option>
+                    {customerData &&
+                      customerData.map((data) => (
+                        <option key={data.customer_id} value={data.customer_id}>
+                          {data.customer_name}
+                        </option>
+                      ))}
+                  </select>
+                  {formik.touched.customerId && formik.errors.customerId && (
+                    <div className="invalid-feedback">
+                      {formik.errors.customerId}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -164,7 +199,7 @@ const PaymentReceivedEdit = () => {
                   <input
                     type="text"
                     name="payment"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.payment && formik.errors.payment
                         ? "is-invalid"
                         : ""
@@ -187,7 +222,7 @@ const PaymentReceivedEdit = () => {
                   <input
                     type="text"
                     name="amountReceive"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.amountReceive &&
                       formik.errors.amountReceive
                         ? "is-invalid"
@@ -210,7 +245,7 @@ const PaymentReceivedEdit = () => {
                   <input
                     type="text"
                     name="paymentCharges"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.paymentCharges &&
                       formik.errors.paymentCharges
                         ? "is-inpaymentChargesalid"
@@ -271,7 +306,7 @@ const PaymentReceivedEdit = () => {
                 <div className="mb-3">
                   <select
                     name="paymentMode"
-                    className={`form-select  ${
+                    className={`form-select form-select-sm ${
                       formik.touched.paymentMode && formik.errors.paymentMode
                         ? "is-invalid"
                         : ""
@@ -301,7 +336,7 @@ const PaymentReceivedEdit = () => {
                 <div className="mb-3">
                   <select
                     name="depositTo"
-                    className={`form-select  ${
+                    className={`form-select form-select-sm ${
                       formik.touched.depositTo && formik.errors.depositTo
                         ? "is-invalid"
                         : ""
@@ -311,8 +346,12 @@ const PaymentReceivedEdit = () => {
                     <option value=""></option>
                     <option value="PETTY_CASH">Petty Cash</option>
                     <option value="UNDEPOSITED_FUND">Undeposited Fund</option>
-                    <option value="EMPLOYEE_REIMBURSEMENTS">Employee Reimbursements</option>
-                    <option value="OPENING_BALANCE_ADJUSTMENTS">Opening Balance Adjustments</option>
+                    <option value="EMPLOYEE_REIMBURSEMENTS">
+                      Employee Reimbursements
+                    </option>
+                    <option value="OPENING_BALANCE_ADJUSTMENTS">
+                      Opening Balance Adjustments
+                    </option>
                     <option value="TDS_PAYABLE">TDS Payable</option>
                   </select>
                   {formik.touched.depositTo && formik.errors.depositTo && (
@@ -324,14 +363,12 @@ const PaymentReceivedEdit = () => {
               </div>
 
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Reference
-                </lable>
+                <lable className="form-lable">Reference</lable>
                 <div className="mb-3">
                   <input
                     type="text"
                     name="reference"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.reference && formik.errors.reference
                         ? "is-invalid"
                         : ""
@@ -351,7 +388,7 @@ const PaymentReceivedEdit = () => {
                 <div className="mb-3">
                   <input
                     type="file"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     onChange={(event) => {
                       formik.setFieldValue("file", event.target.files[0]);
                     }}
@@ -362,10 +399,183 @@ const PaymentReceivedEdit = () => {
                   )}
                 </div>
                 <img
-                src={data.attachFile}
-                className="img-fluid ms-2 w-50 rounded mt-2"
-                alt="Profile Image"
-              />
+                  src={data.attachFile}
+                  className="img-fluid ms-2 w-50 rounded mt-2"
+                  alt="Profile Image"
+                />
+              </div>
+
+              <div className="row mt-5 mb-4">
+                <div>
+                  <h3
+                    style={{ background: "#4066D5" }}
+                    className="text-light p-2"
+                  >
+                    Item Table
+                  </h3>
+                </div>
+                <div className="table-responsive">
+                  <table className="table table-sm table-nowrap">
+                    <thead>
+                      <tr>
+                        <th style={{ width: "35%" }}>Date</th>
+                        <th style={{ width: "15%" }}>Invoice Number</th>
+                        <th style={{ width: "15%" }}>Invoice Amount</th>
+                        <th style={{ width: "15%" }}>Amount Due</th>
+                        <th style={{ width: "20%" }}>Payment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formik.values.salesOrderItemsJson?.map((item, index) => (
+                        <tr key={index}>
+                          <td>
+                            <input
+                              type="text"
+                              name={`salesOrderItemsJson[${index}].date`}
+                              className={`form-control form-control-sm ${
+                                formik.touched.salesOrderItemsJson?.[index]
+                                  ?.date &&
+                                formik.errors.salesOrderItemsJson?.[index]?.date
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `salesOrderItemsJson[${index}].date`
+                              )}
+                              readOnly
+                            />
+                            {formik.touched.salesOrderItemsJson?.[index]
+                              ?.date &&
+                              formik.errors.salesOrderItemsJson?.[index]
+                                ?.date && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.salesOrderItemsJson[index]
+                                      .date
+                                  }
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`salesOrderItemsJson[${index}].invoiceNumber`}
+                              className={`form-control form-control-sm ${
+                                formik.touched.salesOrderItemsJson?.[index]
+                                  ?.invoiceNumber &&
+                                formik.errors.salesOrderItemsJson?.[index]
+                                  ?.invoiceNumber
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `salesOrderItemsJson[${index}].invoiceNumber`
+                              )}
+                              readOnly
+                            />
+                            {formik.touched.salesOrderItemsJson?.[index]
+                              ?.invoiceNumber &&
+                              formik.errors.salesOrderItemsJson?.[index]
+                                ?.invoiceNumber && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.salesOrderItemsJson[index]
+                                      .invoiceNumber
+                                  }
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`salesOrderItemsJson[${index}].invoiceAmount`}
+                              className={`form-control form-control-sm ${
+                                formik.touched.salesOrderItemsJson?.[index]
+                                  ?.invoiceAmount &&
+                                formik.errors.salesOrderItemsJson?.[index]
+                                  ?.invoiceAmount
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `salesOrderItemsJson[${index}].invoiceAmount`
+                              )}
+                              readOnly
+                            />
+                            {formik.touched.salesOrderItemsJson?.[index]
+                              ?.invoiceAmount &&
+                              formik.errors.salesOrderItemsJson?.[index]
+                                ?.invoiceAmount && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.salesOrderItemsJson[index]
+                                      .invoiceAmount
+                                  }
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`salesOrderItemsJson[${index}].invoiceDue`}
+                              className={`form-control form-control-sm ${
+                                formik.touched.salesOrderItemsJson?.[index]
+                                  ?.invoiceDue &&
+                                formik.errors.salesOrderItemsJson?.[index]
+                                  ?.invoiceDue
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `salesOrderItemsJson[${index}].invoiceDue`
+                              )}
+                              readOnly
+                            />
+                            {formik.touched.salesOrderItemsJson?.[index]
+                              ?.invoiceDue &&
+                              formik.errors.salesOrderItemsJson?.[index]
+                                ?.invoiceDue && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.salesOrderItemsJson[index]
+                                      .invoiceDue
+                                  }
+                                </div>
+                              )}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name={`salesOrderItemsJson[${index}].payment`}
+                              className={`form-control form-control-sm ${
+                                formik.touched.salesOrderItemsJson?.[index]
+                                  ?.payment &&
+                                formik.errors.salesOrderItemsJson?.[index]
+                                  ?.payment
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
+                              {...formik.getFieldProps(
+                                `salesOrderItemsJson[${index}].payment`
+                              )}
+                            />
+                            {formik.touched.salesOrderItemsJson?.[index]
+                              ?.payment &&
+                              formik.errors.salesOrderItemsJson?.[index]
+                                ?.payment && (
+                                <div className="invalid-feedback">
+                                  {
+                                    formik.errors.salesOrderItemsJson[index]
+                                      .payment
+                                  }
+                                </div>
+                              )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               <div className="col-md-6 col-12 mb-2">
@@ -374,7 +584,7 @@ const PaymentReceivedEdit = () => {
                   <textarea
                     type="text"
                     name="notes"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.notes && formik.errors.notes
                         ? "is-invalid"
                         : ""
@@ -387,6 +597,108 @@ const PaymentReceivedEdit = () => {
                       {formik.errors.notes}
                     </div>
                   )}
+                </div>
+              </div>
+
+              <div
+                className="col-md-6 col-12 mt-5 rounded"
+                style={{ border: "1px solid lightgrey" }}
+              >
+                <div className="row mb-3 mt-2">
+                  <label className="col-sm-4 col-form-label">
+                    Amount Received
+                  </label>
+                  <div className="col-sm-4"></div>
+                  <div className="col-sm-4">
+                    <input
+                      type="text"
+                      className={`form-control form-control-sm${
+                        formik.touched.subAmountReceived &&
+                        formik.errors.subAmountReceived
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      {...formik.getFieldProps("subAmountReceived")}
+                    />
+                    {formik.touched.subAmountReceived &&
+                      formik.errors.subAmountReceived && (
+                        <div className="invalid-feedback">
+                          {formik.errors.subAmountReceived}
+                        </div>
+                      )}
+                  </div>
+                </div>
+                <div className="row mb-3">
+                  <label className="col-sm-4 col-form-label">
+                    Amount used for Payments
+                  </label>
+                  <div className="col-sm-4"></div>
+                  <div className="col-sm-4">
+                    <input
+                      type="text"
+                      className={`form-control form-control-sm ${
+                        formik.touched.subAmountPayment &&
+                        formik.errors.subAmountPayment
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      {...formik.getFieldProps("subAmountPayment")}
+                    />
+                    {formik.touched.subAmountPayment &&
+                      formik.errors.subAmountPayment && (
+                        <div className="invalid-feedback">
+                          {formik.errors.subAmountPayment}
+                        </div>
+                      )}
+                  </div>
+                </div>
+                <div className="row mb-3">
+                  <label className="col-sm-4 col-form-label">
+                    Amount Refunded
+                  </label>
+                  <div className="col-sm-4"></div>
+                  <div className="col-sm-4">
+                    <input
+                      type="text"
+                      className={`form-control form-control-sm ${
+                        formik.touched.subAmountRefunded &&
+                        formik.errors.subAmountRefunded
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      {...formik.getFieldProps("subAmountRefunded")}
+                    />
+                    {formik.touched.subAmountRefunded &&
+                      formik.errors.subAmountRefunded && (
+                        <div className="invalid-feedback">
+                          {formik.errors.subAmountRefunded}
+                        </div>
+                      )}
+                  </div>
+                </div>
+                <div className="row mb-3 mt-2">
+                  <label className="col-sm-4 col-form-label">
+                    Amount in Excess
+                  </label>
+                  <div className="col-sm-4"></div>
+                  <div className="col-sm-4">
+                    <input
+                      type="text"
+                      className={`form-control form-control-sm ${
+                        formik.touched.subAmountExcess &&
+                        formik.errors.subAmountExcess
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      {...formik.getFieldProps("subAmountExcess")}
+                    />
+                    {formik.touched.subAmountExcess &&
+                      formik.errors.subAmountExcess && (
+                        <div className="invalid-feedback">
+                          {formik.errors.subAmountExcess}
+                        </div>
+                      )}
+                  </div>
                 </div>
               </div>
             </div>

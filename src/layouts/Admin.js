@@ -108,6 +108,10 @@ import Manufacture from "../pages/admin/Settings/Manufacture/Manufacture";
 import PaymentTerms from "../pages/admin/Settings/PaymentTerms/PaymentTerms";
 import Reason from "../pages/admin/Settings/Reason/Reason";
 import Account from "../pages/admin/Settings/Account/Account";
+import TransferOrders from "../pages/admin/inventory/transferOrders/TransferOrders";
+import TransferOrdersAdd from "../pages/admin/inventory/transferOrders/TransferOrdersAdd";
+import TransferOrdersEdit from "../pages/admin/inventory/transferOrders/TransferOrdersEdit";
+import TransferOrdersView from "../pages/admin/inventory/transferOrders/TransferOrdersView";
 
 function Admin({ handleLogout }) {
   return (
@@ -183,6 +187,24 @@ function Admin({ handleLogout }) {
                   <Route
                     path="/inventoryadjustment/view/:id"
                     element={<InventoryAdjustmentView />}
+                  />
+
+                  {/* Transfer Order  */}
+                  <Route
+                    path="/transferOrder"
+                    element={<TransferOrders />}
+                  />
+                  <Route
+                    path="/transferOrder/add"
+                    element={<TransferOrdersAdd />}
+                  />
+                  <Route
+                    path="/transferOrder/edit"
+                    element={<TransferOrdersEdit />}
+                  />
+                  <Route
+                    path="/transferOrder/view"
+                    element={<TransferOrdersView />}
                   />
 
                   {/* Sales */}

@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import api from "../../../../config/URL";
 import DeleteModel from "../../../../components/admin/DeleteModel";
-import { FaEye, FaRegEdit } from "react-icons/fa";
+import { FaRegEdit } from "react-icons/fa";
+import { GoEye } from "react-icons/go";
 
 const Packages = () => {
   const tableRef = useRef(null);
@@ -82,18 +83,26 @@ const Packages = () => {
         </div>
       ) : (
         <div className="container-fluid px-2 minHeight">
-          <div className="card shadow border-0 my-2" style={{ borderRadius: "0" }}>
+          <div
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
+          >
             <div className="container-fluid py-4">
               <div className="row align-items-center justify-content-between">
                 <div className="col">
                   <div className="d-flex align-items-center gap-4">
-                    <h1 className="h4 ls-tight headingColor">Packages ({datas.length})</h1>
+                    <h1 className="h4 ls-tight headingColor">
+                      Packages ({datas.length})
+                    </h1>
                   </div>
                 </div>
                 <div className="col-auto">
                   <div className="hstack gap-2 justify-content-end">
                     <Link to="/packages/add">
-                      <button type="submit" className="btn btn-sm btn-button btn-primary">
+                      <button
+                        type="submit"
+                        className="btn btn-sm btn-button btn-primary"
+                      >
                         <span>
                           Add <FaPlus className="pb-1" />
                         </span>
@@ -104,17 +113,36 @@ const Packages = () => {
               </div>
             </div>
           </div>
-          <div className="card shadow border-0 my-2" style={{ borderRadius: "0" }}>
+          <div
+            className="card shadow border-0 my-2"
+            style={{ borderRadius: "0" }}
+          >
             <div className="table-responsive p-2 minHeight">
               <table ref={tableRef} className="display table">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start" style={{ whiteSpace: "nowrap" }}>S.NO</th>
-                    <th scope="col" className="text-start">CUSTOMER NAME</th>
-                    <th scope="col" className="text-start">SALES ORDER</th>
-                    <th scope="col" className="text-start">PACKAGE DATE</th>
-                    <th scope="col" className="text-start">Status</th>
-                    <th scope="col" className="text-center">ACTION</th>
+                    <th
+                      scope="col"
+                      className="text-start"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      S.NO
+                    </th>
+                    <th scope="col" className="text-start">
+                      CUSTOMER NAME
+                    </th>
+                    <th scope="col" className="text-start">
+                      SALES ORDER
+                    </th>
+                    <th scope="col" className="text-start">
+                      PACKAGE DATE
+                    </th>
+                    <th scope="col" className="text-start">
+                      Status
+                    </th>
+                    <th scope="col" className="text-center">
+                      ACTION
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -129,26 +157,47 @@ const Packages = () => {
                           : ""}
                       </td>
                       <td className="text-start">
-                        {data.status === "Shipped" &&(
-                          <span className="badge bg-success text-white">Shipped</span>
+                        {data.status === "Shipped" && (
+                          <span className="badge bg-success text-white">
+                            Shipped
+                          </span>
                         )}
                         {data.status === "Not Shipped" && (
-                          <span className="badge text-dark" style={{background:"#e9e943"}}>Not Shipped</span>
+                          <span
+                            className="badge text-dark"
+                            style={{ background: "#e9e943" }}
+                          >
+                            Not Shipped
+                          </span>
                         )}
                         {data.status === "Delivered" || (
-                          <span className="badge text-white" style={{background:"green"}}>Delivered</span>
+                          <span
+                            className="badge text-white"
+                            style={{ background: "green" }}
+                          >
+                            Delivered
+                          </span>
                         )}
                       </td>
                       <td className="text-center">
                         <div className="gap-2">
                           <Link to={`/packages/view/${data.id}`}>
-                            <button className="btn btn-sm">
-                            <FaEye />
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <GoEye />
                             </button>
                           </Link>
-                          <Link to={`/packages/edit/${data.id}`} className="px-2">
-                            <button className="btn btn-sm">
-                            <FaRegEdit />
+                          <Link
+                            to={`/packages/edit/${data.id}`}
+                            className="px-2"
+                          >
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
+                              <FaRegEdit />
                             </button>
                           </Link>
                           <DeleteModel

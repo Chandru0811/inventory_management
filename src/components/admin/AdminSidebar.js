@@ -110,6 +110,11 @@ function AdminSidebar({ handleLogout }) {
                       Inventory Adjustments
                     </NavLink>
                   </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/transferOrder">
+                      Transfer Orders
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </li>
