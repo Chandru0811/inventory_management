@@ -17,19 +17,18 @@ const PaymentReceivedView = () => {
     packageDate: new Date(),
     internalNotes: "Please deliver on time.",
     invoiceItemsModels: [
-      { item: "Item 1", qty: 2, price: 100, disc: 10, taxRate: 5, amount: 190 },
       {
-        item: "Item 2",
-        qty: 1,
-        price: 200,
-        disc: 20,
-        taxRate: 10,
-        amount: 180,
+        date: "09-12-2022",
+        invoiceNumber: 2682677594,
+        invoiceAmount: 150,
+        invoiceDue: 10,
+        payment: 100,
       },
     ],
-    subTotal: 370,
-    totalTax: 15,
-    total: 385,
+    subAmountExcess: "100",
+    subAmountPayment: "120",
+    subAmountReceived: "112",
+    subAmountRefunded: "0",
   });
 
   useEffect(() => {
@@ -73,25 +72,22 @@ const PaymentReceivedView = () => {
       customerData.invoiceItemsModels.length > 0
     ) {
       const tableColumn = [
-        "S.No",
-        "Item Details",
-        "Quantity",
-        "Rate",
-        "Discount",
-        "Tax",
-        "Amount",
+        "Date",
+        "Invoice Number",
+        "Invoice Amount",
+        "Invoice Due",
+        "Payment",
       ];
       const tableRows = [];
 
       customerData.invoiceItemsModels.forEach((item, index) => {
         const rowData = [
           index + 1,
-          item.item || "",
-          item.qty || "",
-          item.price || "",
-          item.discount || "",
-          item.taxRate || "",
-          item.amount || "",
+          item.date || "",
+          item.invoiceNumber || "",
+          item.invoiceAmount || "",
+          item.invoiceDue || "",
+          item.payment || "",
         ];
         tableRows.push(rowData);
       });
@@ -153,8 +149,8 @@ const PaymentReceivedView = () => {
       ) : (
         <div className="container-fluid px-2 minHeight">
           <div
-            className="card shadow border-0 mb-2 top-header"
-            style={{ borderRadius: "0" }}
+            className="card shadow border-0 mb-2 top-header sticky-top"
+            style={{ borderRadius: "0", top: "66px" }}
           >
             <div className="container-fluid py-4">
               <div className="row align-items-center">
@@ -295,7 +291,6 @@ const PaymentReceivedView = () => {
                     </div>
                   </div>
                 </div>
-
                 <div className="col-md-6 col-12">
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">
@@ -361,6 +356,95 @@ const PaymentReceivedView = () => {
                     </div>
                   </div>
                 </div>
+
+                <div className="row mt-5 flex-nowrap container-fluid">
+                  <div className="col-12">
+                    <div className="table-responsive">
+                      <div>
+                        <h3
+                          style={{ background: "#4066D5" }}
+                          className="text-light p-2"
+                        >
+                          Item Table
+                        </h3>
+                      </div>
+                      <table className="table">
+                        <thead className="thead-light">
+                          <tr>
+                            <th>date</th>
+                            <th>invoice number</th>
+                            <th>invoice amount</th>
+                            <th>invoice due</th>
+                            <th>payment</th>
+                          </tr>
+                        </thead>
+                        <tbody className="table-group">
+                          {customerData.invoiceItemsModels &&
+                            customerData.invoiceItemsModels.map(
+                              (item, index) => (
+                                <tr key={index}>
+                                  <td>{item.date}</td>
+                                  <td>{item.invoiceNumber}</td>
+                                  <td>{item.invoiceAmount}</td>
+                                  <td>{item.invoiceDue}</td>
+                                  <td>{item.payment}</td>
+                                </tr>
+                              )
+                            )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row mt-5 container-fluid">
+                  <div className="col-md-6 col-12 mb-3 mt-5"></div>
+                  <div
+                    className="col-md-6 col-12 mt-5 mb-3 rounded"
+                    style={{ border: "1px solid lightgrey" }}
+                  >
+                    <div className="row mb-3 mt-2">
+                      <label className="col-sm-4 col-form-label">
+                        Amount Received
+                      </label>
+                      <div className="col-sm-4"></div>
+                      <div className="col-sm-4 ">
+                        : {customerData.subAmountReceived || ""}
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <label className="col-sm-4 col-form-label">
+                        Amount used for Payments
+                      </label>
+                      <div className="col-sm-4"></div>
+                      <div className="col-sm-4">
+                        : {customerData.subAmountPayment || ""}
+                      </div>
+                      <div className="col-sm-4 "></div>
+                    </div>
+                    <div className="row mb-3">
+                      <label className="col-sm-4 col-form-label">
+                        Amount Refunded
+                      </label>
+                      <div className="col-sm-4"></div>
+                      <div className="col-sm-4">
+                        : {customerData.subAmountRefunded || ""}
+                      </div>
+                      <div className="col-sm-4 "></div>
+                    </div>
+                    <div className="row mb-3">
+                      <label className="col-sm-4 col-form-label">
+                        Amount in Excess
+                      </label>
+                      <div className="col-sm-4"></div>
+                      <div className="col-sm-4 ">
+                        {" "}
+                        : {customerData.subAmountExcess}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="col-md-6 col-12">
                   <div className="row mb-3">
                     <div className="col-6 d-flex justify-content-start align-items-center">

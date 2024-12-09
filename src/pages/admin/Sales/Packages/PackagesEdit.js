@@ -9,9 +9,10 @@ const PackagesEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoadIndicator] = useState(false);
+  const [customerData, setCustomerData] = useState(null);
 
   const validationSchema = Yup.object({
-    customerName: Yup.string().required("*Customer Name is required"),
+    customerId: Yup.string().required("*Customer Name is required"),
     salesOrder: Yup.string().required("*Sales Order is required"),
     packageSlip: Yup.string().required("*Reference Number is required"),
     packageDate: Yup.string().required("*Sales Order Date is required"),
@@ -19,14 +20,36 @@ const PackagesEdit = () => {
 
   const formik = useFormik({
     initialValues: {
-      customerName: "",
-      salesOrder: "",
-      customerName: "",
-      salesOrder: "",
-      packageSlip: "",
-      packageDate: "",
-      internalNotes: "",
+      customerId: "",
+      purchaseOrder: "",
+      notes: "",
+      purchaseReceiveNum: "",
+      receivedDate: "",
+      salesOrderItemsJson: [
+        {
+          itemId: "",
+          accountId: "",
+          quantity: "",
+          rate: "",
+          amount: "",
+        },
+      ],
     },
+    // initialValues: {
+    //   customerId: "",
+    //   salesOrder: "",
+    //   packageSlip: "",
+    //   packageDate: "",
+    //   internalNotes: "",
+    //   salesOrderItemsJson: [
+    //     {
+    //       itemId: "",
+    //       ordered: "",
+    //       received: "",
+    //       quantity: "",
+    //     },
+    //   ],
+    // },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
@@ -53,12 +76,12 @@ const PackagesEdit = () => {
         const response = await api.get(`/getPackagesById/${id}`);
         const rest = response.data;
         const formattedData = {
-            ...rest,
-            packageDate: rest.packageDate
-              ? new Date(rest.packageDate).toISOString().split("T")[0]
-              : undefined,
-          };
-          formik.setValues(formattedData);
+          ...rest,
+          packageDate: rest.packageDate
+            ? new Date(rest.packageDate).toISOString().split("T")[0]
+            : undefined,
+        };
+        formik.setValues(formattedData);
       } catch (e) {
         toast.error("Error fetching data: ", e?.response?.data?.message);
       }
@@ -68,12 +91,24 @@ const PackagesEdit = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get("getAllCustomerIdsWithNames");
+        setCustomerData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getData();
+  }, []);
+
   return (
     <div className="container-fluid p-2 minHeight m-0">
       <form onSubmit={formik.handleSubmit}>
         <div
-          className="card shadow border-0 mb-2 top-header"
-          style={{ borderRadius: "0" }}
+          className="card shadow border-0 mb-2 top-header sticky-top"
+          style={{ borderRadius: "0", top: "66px" }}
         >
           <div className="container-fluid py-4">
             <div className="row align-items-center">
@@ -124,22 +159,27 @@ const PackagesEdit = () => {
                   Customer Name<span className="text-danger">*</span>
                 </lable>
                 <div className="mb-3">
-                  <input
-                    type="text"
-                    name="customerName"
-                    className={`form-control ${
-                      formik.touched.customerName && formik.errors.customerName
+                  <select
+                    {...formik.getFieldProps("customerId")}
+                    className={`form-select form-select-sm   ${
+                      formik.touched.customerId && formik.errors.customerId
                         ? "is-invalid"
                         : ""
                     }`}
-                    {...formik.getFieldProps("customerName")}
-                  />
-                  {formik.touched.customerName &&
-                    formik.errors.customerName && (
-                      <div className="invalid-feedback">
-                        {formik.errors.customerName}
-                      </div>
-                    )}
+                  >
+                    <option selected></option>
+                    {customerData &&
+                      customerData.map((data) => (
+                        <option key={data.customer_id} value={data.customer_id}>
+                          {data.customer_name}
+                        </option>
+                      ))}
+                  </select>
+                  {formik.touched.customerId && formik.errors.customerId && (
+                    <div className="invalid-feedback">
+                      {formik.errors.customerId}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -151,7 +191,7 @@ const PackagesEdit = () => {
                   <input
                     type="text"
                     name="salesOrder"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.salesOrder && formik.errors.salesOrder
                         ? "is-invalid"
                         : ""
@@ -174,7 +214,7 @@ const PackagesEdit = () => {
                   <input
                     type="text"
                     name="packageSlip"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.packageSlip && formik.errors.packageSlip
                         ? "is-invalid"
                         : ""
@@ -197,7 +237,7 @@ const PackagesEdit = () => {
                   <input
                     type="date"
                     name="packageDate"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm ${
                       formik.touched.packageDate && formik.errors.packageDate
                         ? "is-invalid"
                         : ""
@@ -212,20 +252,169 @@ const PackagesEdit = () => {
                 </div>
               </div>
 
+              <div className="row mt-5 mb-4">
+                <div>
+                  <h3
+                    style={{ background: "#4066D5" }}
+                    className="text-light p-2"
+                  >
+                    Item Table
+                  </h3>
+                </div>
+                <div className="table-responsive">
+                  <table className="table table-sm table-nowrap">
+                    <thead>
+                      <tr>
+                        <th style={{ width: "35%" }}>Item</th>
+                        <th style={{ width: "15%" }}>Ordered</th>
+                        <th style={{ width: "15%" }}>Received</th>
+                        <th style={{ width: "20%" }}>Quantity to Pack</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formik.values.salesOrderItemsJson?.map(
+                        (item, index) => (
+                          <tr key={index}>
+                            <td>
+                              <input
+                                type="text"
+                                name={`saleseOrderItemsJson[${index}].itemId`}
+                                className={`form-control ${
+                                  formik.touched.salesOrderItemsJson?.[index]
+                                    ?.itemId &&
+                                  formik.errors.salesOrderItemsJson?.[index]
+                                    ?.itemId
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                                readOnly
+                                {...formik.getFieldProps(
+                                  `salesOrderItemsJson[${index}].itemId`
+                                )}
+                              />
+                              {formik.touched.salesOrderItemsJson?.[index]
+                                ?.itemId &&
+                                formik.errors.salesOrderItemsJson?.[index]
+                                  ?.itemId && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors.salesOrderItemsJson[
+                                        index
+                                      ].itemId
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name={`salesOrderItemsJson[${index}].ordered`}
+                                className={`form-control ${
+                                  formik.touched.salesOrderItemsJson?.[index]
+                                    ?.ordered &&
+                                  formik.errors.salesOrderItemsJson?.[index]
+                                    ?.ordered
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                                readOnly
+                                {...formik.getFieldProps(
+                                  `salesOrderItemsJson[${index}].ordered`
+                                )}
+                              />
+                              {formik.touched.salesOrderItemsJson?.[index]
+                                ?.ordered &&
+                                formik.errors.salesOrderItemsJson?.[index]
+                                  ?.ordered && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors.salesOrderItemsJson[
+                                        index
+                                      ].ordered
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name={`salesOrderItemsJson[${index}].received`}
+                                className={`form-control ${
+                                  formik.touched.salesOrderItemsJson?.[index]
+                                    ?.received &&
+                                  formik.errors.salesOrderItemsJson?.[index]
+                                    ?.received
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                                readOnly
+                                {...formik.getFieldProps(
+                                  `salesOrderItemsJson[${index}].received`
+                                )}
+                              />
+                              {formik.touched.salesOrderItemsJson?.[index]
+                                ?.received &&
+                                formik.errors.salesOrderItemsJson?.[index]
+                                  ?.received && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors.salesOrderItemsJson[
+                                        index
+                                      ].received
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name={`salesOrderItemsJson[${index}].quantity`}
+                                className={`form-control ${
+                                  formik.touched.salesOrderItemsJson?.[index]
+                                    ?.quantity &&
+                                  formik.errors.salesOrderItemsJson?.[index]
+                                    ?.quantity
+                                    ? "is-invalid"
+                                    : ""
+                                }`}
+                                {...formik.getFieldProps(
+                                  `salesOrderItemsJson[${index}].quantity`
+                                )}
+                              />
+                              {formik.touched.salesOrderItemsJson?.[index]
+                                ?.quantity &&
+                                formik.errors.salesOrderItemsJson?.[index]
+                                  ?.quantity && (
+                                  <div className="invalid-feedback">
+                                    {
+                                      formik.errors.salesOrderItemsJson[
+                                        index
+                                      ].quantity
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
               <div className="col-md-6 col-12 mb-2">
-                <lable className="form-lable">
-                  Internal Notes
-                </lable>
+                <lable className="form-lable">Notes</lable>
                 <div className="mb-3">
-                  <input
+                  <textarea
                     type="text"
                     name="internalNotes"
-                    className={`form-control  ${
+                    className={`form-control form-control-sm  ${
                       formik.touched.internalNotes &&
                       formik.errors.internalNotes
                         ? "is-invalid"
                         : ""
                     }`}
+                    rows="4"
                     {...formik.getFieldProps("internalNotes")}
                   />
                   {formik.touched.internalNotes &&
