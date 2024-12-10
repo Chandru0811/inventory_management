@@ -159,16 +159,6 @@ function AdminSidebar({ handleLogout }) {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/paymentreceived">
-                      Payment Received
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink className="nav-link" to="/creditnotes">
-                      Credit Notes
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
                     <NavLink className="nav-link" to="/challan">
                       Delivery Challans
                     </NavLink>
@@ -176,6 +166,16 @@ function AdminSidebar({ handleLogout }) {
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/invoice">
                       Invoices
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/paymentreceived">
+                      Payment Received
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/creditnotes">
+                      Credit Notes
                     </NavLink>
                   </li>
                 </ul>

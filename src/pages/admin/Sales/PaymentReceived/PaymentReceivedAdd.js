@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "../../../../config/URL";
 import toast from "react-hot-toast";
+import CustomerList from "../../../list/CustomerList";
 
 const PaymentReceivedAdd = () => {
   const navigate = useNavigate();
@@ -11,17 +12,15 @@ const PaymentReceivedAdd = () => {
   const [customerData, setCustomerData] = useState(null);
 
   const validationSchema = Yup.object({
-    customerId: Yup.string().required("*Customer Name is required"),
+    customerName: Yup.string().required("*Customer Name is required"),
     amountReceive: Yup.string().required("*Amount Receive is required"),
-    payment: Yup.string().required("*Payment is required"),
     depositTo: Yup.string().required("*Deposit to is required"),
     taxDeduction: Yup.string().required("*Tax Deduction is required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      customerId: "",
-      payment: "",
+      customerName: "",
       amountReceive: "",
       paymentCharges: "",
       taxDeduction: "",
@@ -50,12 +49,30 @@ const PaymentReceivedAdd = () => {
       console.log(values);
 
       const formData = new FormData();
-      // Append each value to the FormData instance
-      for (const key in values) {
-        if (values.hasOwnProperty(key)) {
-          formData.append(key, values[key]);
-        }
-      }
+
+      formData.append("customerName", values.customerName);
+      formData.append("payment", values.payment || "2");
+      formData.append("amountReceive", values.amountReceive);
+      formData.append("paymentCharges", values.paymentCharges);
+      formData.append("taxDeduction", values.taxDeduction);
+      formData.append("paymentMode", values.paymentMode);
+      formData.append("depositTo", values.depositTo);
+      formData.append("reference", values.reference);
+      formData.append("notes", values.notes);
+      formData.append("companyId", values.companyId || "1");
+      formData.append("file", values.file);
+      // formData.append(
+      //   "salesOrderItemsJson",
+      //   JSON.stringify(
+      //     values.salesOrderItemsJson?.map((item) => ({
+      //       itemId: item.itemId?.id || item.itemId,
+      //       quantity: item.quantity,
+      //       rate: item.rate,
+      //       discount: item.discount,
+      //       amount: item.amount,
+      //     }))
+      //   )
+      // );
 
       try {
         const response = await api.post(
@@ -81,16 +98,17 @@ const PaymentReceivedAdd = () => {
     },
   });
 
+  const getCustomerName = async () => {
+    try {
+      const currencyData = await CustomerList();
+      setCustomerData(currencyData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await api.get("getAllCustomerIdsWithNames");
-        setCustomerData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    getData();
+    getCustomerName();
   }, []);
 
   return (
@@ -152,7 +170,7 @@ const PaymentReceivedAdd = () => {
                 </lable>
                 <div className="mb-3">
                   <select
-                    {...formik.getFieldProps("customerId")}
+                    {...formik.getFieldProps("customerName")}
                     className={`form-select form-select-sm   ${
                       formik.touched.customerId && formik.errors.customerId
                         ? "is-invalid"
@@ -174,8 +192,7 @@ const PaymentReceivedAdd = () => {
                   )}
                 </div>
               </div>
-
-              <div className="col-md-6 col-12 mb-2">
+              {/* <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Payment<span className="text-danger">*</span>
                 </lable>
@@ -196,8 +213,7 @@ const PaymentReceivedAdd = () => {
                     </div>
                   )}
                 </div>
-              </div>
-
+              </div> */}
               <div className="col-md-6 col-12 mb-2">
                 <lable className="form-lable">
                   Amount Receive<span className="text-danger">*</span>
@@ -586,7 +602,7 @@ const PaymentReceivedAdd = () => {
                   <textarea
                     type="text"
                     name="notes"
-                    className={`form-control form-control-sm ${
+                    className={`form-control ${
                       formik.touched.notes && formik.errors.notes
                         ? "is-invalid"
                         : ""

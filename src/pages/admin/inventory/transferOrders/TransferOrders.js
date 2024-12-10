@@ -15,8 +15,18 @@ const TransferOrders = () => {
   useEffect(() => {
     setTimeout(() => {
       const fetchedData = [
-        { transferOrder: "TO-001", reason: "Restock", receivedDate: "2024-07-01" },
-        { transferOrder: "TO-002", reason: "Return", receivedDate: "2024-07-02" },
+        {
+          transferOrder: "TO-001",
+          reason: "Restock",
+          receivedDate: "2024-07-01",
+          status: "Tranfered",
+        },
+        {
+          transferOrder: "TO-002",
+          reason: "Return",
+          receivedDate: "2024-07-02",
+          status: "Tranfered",
+        },
       ];
       setDatas(fetchedData);
       setLoading(false);
@@ -84,16 +94,32 @@ const TransferOrders = () => {
           </div>
 
           {/* Table */}
-          <div className="card shadow border-0 my-2" style={{ borderRadius: "0" }}>
+          <div
+            className="card shadow border-0 my-2"
+            style={{ borderRadius: "0" }}
+          >
             <div className="table-responsive p-2 minHeight">
               <table ref={tableRef} className="display table">
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col" className="text-start">S.NO</th>
-                    <th scope="col" className="text-start">TRANSFER ORDER</th>
-                    <th scope="col" className="text-start">REASON</th>
-                    <th scope="col" className="text-start">DATE</th>
-                    <th scope="col" className="text-center">ACTION</th>
+                    <th scope="col" className="text-start">
+                      S.NO
+                    </th>
+                    <th scope="col" className="text-start">
+                      TRANSFER ORDER
+                    </th>
+                    <th scope="col" className="text-start">
+                      REASON
+                    </th>
+                    <th scope="col" className="text-start">
+                      DATE
+                    </th>
+                    <th scope="col" className="text-start">
+                      STATUS
+                    </th>
+                    <th scope="col" className="text-center">
+                      ACTION
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -107,15 +133,22 @@ const TransferOrders = () => {
                           ? new Date(data.receivedDate).toLocaleDateString()
                           : ""}
                       </td>
+                      <td className="text-start">{data.status}</td>
                       <td className="text-center">
                         <div className="d-flex justify-content-center gap-1">
                           <Link to={`/transferOrder/view`}>
-                            <button className="btn btn-sm" style={{ padding: "7px" }}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
                               <GoEye />
                             </button>
                           </Link>
                           <Link to={`/transferOrder/edit`}>
-                            <button className="btn btn-sm" style={{ padding: "7px" }}>
+                            <button
+                              className="btn btn-sm"
+                              style={{ padding: "7px" }}
+                            >
                               <FaRegEdit />
                             </button>
                           </Link>
